@@ -21,7 +21,7 @@ export const DashboardPageContent = () => {
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });
-  const customApplyLink = `${WEBSITE_URL}/${user.orgId}/apply`;
+  const customApplyLink = `${WEBSITE_URL}/${user.org}/apply`;
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);

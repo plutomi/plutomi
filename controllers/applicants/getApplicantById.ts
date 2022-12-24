@@ -4,7 +4,7 @@ export const getApplicantById = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
 
   // const [applicant, error] = await DB.Applicants.getApplicant({
-  //   orgId: user.orgId,
+  //   orgId: user.org,
   //   applicantId,
   // });
 

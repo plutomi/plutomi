@@ -1,7 +1,23 @@
 import ksuid from 'ksuid';
 
+export enum AllEntities {
+  Org = 'Org',
+  User = 'User',
+  Application = 'Application',
+  Applicant = 'Applicant',
+  Stage = 'Stage',
+  Question = 'Question',
+  Invite = 'Invite',
+  Webhook = 'Webhook',
+  StageRule = 'StageRule',
+  QuestionRule = 'QuestionRule',
+  Event = 'Event',
+  Session = 'Session',
+  LoginLink = 'LoginLink',
+}
+
 export enum EntityPrefix {
-  Company = 'co_',
+  Org = 'org_',
   User = 'usr_',
   Application = 'appl_',
   Applicant = 'apcnt_',
@@ -9,10 +25,11 @@ export enum EntityPrefix {
   Question = 'ques_',
   Invite = 'inv_',
   Webhook = 'wbhk_',
-  StageRule = 'stgrl_',
-  QuestionRule = 'quesrl_',
-  Event = 'evt_',
+  StageRule = 'stgrul_',
+  QuestionRule = 'quesrul_',
+  Event = 'evnt_',
   Session = 'sesh_',
+  LoginLink = 'lgnlnk_',
 }
 
 interface GenerateIdProps {
@@ -27,7 +44,7 @@ interface GenerateIdProps {
 
 export type PlutomiId = `${EntityPrefix}${string}`;
 
-const main = ({ date, entityPrefix }: GenerateIdProps): PlutomiId => {
+export const generatePlutomiId = ({ date, entityPrefix }: GenerateIdProps): PlutomiId => {
   const id = ksuid.randomSync(date).string;
 
   return `${entityPrefix}${id}`;

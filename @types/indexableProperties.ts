@@ -1,18 +1,10 @@
-export enum AllEntities {
-  User = 'User',
-  Org = 'Org',
-  Opening = 'Opening',
-  Stage = 'Stage',
-  Question = 'Question',
-  Webhook = 'Webhook',
-  Applicant = 'Applicant',
-  LoginLink = 'LoginLink',
-}
+import { AllEntities } from '../utils';
 
 // Note: These are properties inside of the above top level entities
 export enum IndexableProperties {
-  CreatedAt = 'CreatedAt',
-  UpdatedAt = 'UpdatedAt',
+  Entity = 'Entity',
+  User = 'User',
+  Id = 'Id',
   Email = 'Email',
   OpeningState = 'OpeningState',
   NextStage = 'NextStage',
@@ -21,14 +13,17 @@ export enum IndexableProperties {
   PreviousQuestion = 'PreviousQuestion',
 }
 
-export interface SelfTargetArrayItem {
+export interface EntityTargetArrayItem {
   id: AllEntities;
-  type: 'entityType';
+  type: IndexableProperties.Entity;
 }
 
 export interface IdTargetArrayItem {
   id: string;
-  type: 'id';
+  /**
+   * Raw prefixed ID
+   */
+  type: IndexableProperties.Id;
 }
 
 export interface IndexedTargetArrayItem {
@@ -42,7 +37,7 @@ export interface IndexedTargetArrayItem {
  * 2. The ID of the item
  */
 export type IndexedTargetArray = [
-  SelfTargetArrayItem,
-  IdTargetArrayItem,
+  EntityTargetArrayItem,
+  IdTargetArrayItem, // "raw" id
   ...IndexedTargetArrayItem[],
 ];

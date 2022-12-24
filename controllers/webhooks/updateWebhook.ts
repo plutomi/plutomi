@@ -39,7 +39,7 @@ export const updateWebhook = async (req: Request, res: Response) => {
 
   // const [updatedWebhook, error] = await DB.Webhooks.updateWebhook({
   //   webhookId,
-  //   orgId: user.orgId,
+  //   orgId: user.org,
   //   updatedValues,
   // });
 

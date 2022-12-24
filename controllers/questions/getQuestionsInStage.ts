@@ -8,7 +8,7 @@ export const getQuestionsInStage = async (req: Request, res: Response) => {
   // const [stage, stageError] = await DB.Stages.getStage({
   //   openingId,
   //   stageId,
-  //   orgId: user.orgId,
+  //   orgId: user.org,
   // });
 
   // if (stageError) {
@@ -31,7 +31,7 @@ export const getQuestionsInStage = async (req: Request, res: Response) => {
   //   const results = await Promise.all(
   //     questionOrder.map(async (id: string) => {
   //       const [question, error] = await DB.Questions.getQuestion({
-  //         orgId: user.orgId,
+  //         orgId: user.org,
   //         questionId: id,
   //       });
 

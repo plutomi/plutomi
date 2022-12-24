@@ -46,7 +46,7 @@ export const getUser = async (req: Request, res: Response) => {
   // // TODO RBAC here
   // // Only allow viewing users in the same org
   // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
-  // if (orgId !== requestedUser.orgId) {
+  // if (orgId !== requesteduser.org) {
   //   return res.status(403).json({
   //     message: 'You are not authorized to view this user since you are not in the same org',
   //   });

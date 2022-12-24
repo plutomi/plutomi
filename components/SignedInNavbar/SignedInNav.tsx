@@ -38,7 +38,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
 
   if (user) {
     userEmail = findInTargetArray(IndexableProperties.Email, user); // TODO make this a property on the user
-    orgId = user.orgId;
+    orgId = user.org;
   }
 
   return (

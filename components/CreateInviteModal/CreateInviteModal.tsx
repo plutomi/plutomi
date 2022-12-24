@@ -41,7 +41,7 @@ export const CreateInviteModal = () => {
       alert(error.response.data.message);
     }
 
-    mutate(GetOrgInvitesURL(user.orgId));
+    mutate(GetOrgInvitesURL(user.org));
   };
   return (
     <Transition.Root show={visibility} as={Fragment}>

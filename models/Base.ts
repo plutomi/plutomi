@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { IndexedTargetArray } from '../@types/indexableProperties';
 export interface BaseEntity {
   /**
    *
@@ -15,4 +16,5 @@ export interface BaseEntity {
    * Everything else has a compound index with orgId and id
    */
   id: string;
+  target: IndexedTargetArray;
 }

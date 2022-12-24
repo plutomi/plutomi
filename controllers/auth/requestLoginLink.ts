@@ -17,8 +17,7 @@ import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
-import { generateId } from '../../utils';
-import { Time } from '../../utils';
+import { AllEntities, EntityPrefix, Time, generatePlutomiId } from '../../utils';
 
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
@@ -31,6 +30,7 @@ interface APIRequestLoginLinkQuery {
   callbackUrl?: string;
 }
 
+// TODO switch to next auth
 const schema = Joi.object({
   body: {
     email: Joi.string().email(),
@@ -65,7 +65,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let user: UserEntity | undefined;
 
   try {
-    user = (await collections.users.findOne({
+    user = (await req.db.findOne({
       target: { property: IndexableProperties.Email, value: email },
     } as Filter<UserEntity>)) as UserEntity;
   } catch (error) {
@@ -83,10 +83,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       console.log(`Creating new user`);
 
       const now = new Date();
-      const newUserId = generateId({});
+      const newUserId = generatePlutomiId({ date: now, entityPrefix: EntityPrefix.User });
       const newUser: UserEntity = {
         id: newUserId,
-        orgId: null,
+        org: null,
         createdAt: now,
         updatedAt: now,
         totalInvites: 0,
@@ -94,7 +94,11 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         lastName: null,
         emailVerified: false,
         canReceiveEmails: true,
-        target: [{ property: IndexableProperties.Email, value: email }],
+        target: [
+          { id: AllEntities.User, type: IndexableProperties.Entity },
+          { id: newUserId, type: IndexableProperties.Id },
+          { id: req.body.email, type: IndexableProperties.Email },
+        ],
       };
 
       console.log(`Creating new user`, newUser);
@@ -131,9 +135,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   };
 
   try {
-    const latestLinkArray = await collections.loginLinks
-      .find(loginLinkFilter, loginLinkFindOptions)
-      .toArray();
+    const latestLinkArray = await req.db.find(loginLinkFilter, loginLinkFindOptions).toArray();
 
     latestLoginLink = latestLinkArray[0] as UserLoginLinkEntity;
   } catch (error) {
@@ -170,11 +172,11 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     const newLoginLink: UserLoginLinkEntity = {
       createdAt: now,
       updatedAt: now,
-      id: generateId({ length: 100, fullAlphabet: true }),
+      id: generatePlutomiId({ date: now, entityPrefix: EntityPrefix.LoginLink }),
       userId,
       target: [],
     };
-    await collections.loginLinks.insertOne(newLoginLink);
+    await req.db.insertOne(newLoginLink);
 
     // TODO types
     const tokenData = {
@@ -182,7 +184,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       loginLinkId: newLoginLink.id,
     };
 
-    token = await jwt.sign(tokenData, env.loginLinksPassword, {
+    token = await jwt.sign(tokenData, envVars.LOGIN_LINKS_PASSWORD, {
       expiresIn: Time().add(10, 'minutes').unix() - Time().unix(),
     });
 

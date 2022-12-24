@@ -22,7 +22,7 @@ export const getWebhook = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'TODO endpoint temporary disabled' });
   // const [webhook, error] = await DB.Webhooks.getWebhook({
-  //   orgId: user.orgId,
+  //   orgId: user.org,
   //   webhookId,
   // });
 

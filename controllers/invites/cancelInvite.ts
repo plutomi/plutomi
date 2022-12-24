@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { Filter, UpdateFilter } from 'mongodb';
-import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS } from '../../Config';
 import { InviteEntity, UserEntity } from '../../models';
-import { findInTargetArray } from '../../utils';
-import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 const schema = Joi.object({
   body: {
@@ -23,7 +20,7 @@ export const cancelInvite = async (req: Request, res: Response) => {
   const { inviteId, orgId } = req.params;
   const { user } = req;
 
-  const { orgId: userOrgId } = user;
+  const { org: userOrgId } = user;
 
   if (userOrgId !== orgId) {
     return res.status(403).json({ message: 'You cannot delete that invite' });
@@ -32,11 +29,11 @@ export const cancelInvite = async (req: Request, res: Response) => {
   let invite: InviteEntity | undefined;
   const inviteFilter: Filter<InviteEntity> = {
     id: inviteId,
-    orgId: userOrgId,
+    org: userOrgId,
   };
 
   try {
-    invite = (await collections.invites.findOne(inviteFilter)) as InviteEntity;
+    invite = (await req.db.findOne(inviteFilter)) as InviteEntity;
   } catch (error) {
     const msg = 'An error ocurred retrieving that invite';
     console.error(msg, error);
@@ -47,12 +44,12 @@ export const cancelInvite = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Invite not found!' });
   }
 
-  const session = mongoClient.startSession();
+  const session = req.client.startSession();
   let transactionResults;
 
   try {
     transactionResults = await session.withTransaction(async () => {
-      await collections.invites.deleteOne(inviteFilter, { session });
+      await req.db.deleteOne(inviteFilter, { session });
 
       const userFilter: Filter<UserEntity> = {
         id: invite.userId,
@@ -60,7 +57,7 @@ export const cancelInvite = async (req: Request, res: Response) => {
       const userUpdate: UpdateFilter<UserEntity> = {
         $inc: { totalInvites: -1 },
       };
-      await collections.users.updateOne(userFilter, userUpdate, { session });
+      await req.db.updateOne(userFilter, userUpdate, { session });
 
       await session.commitTransaction();
     });

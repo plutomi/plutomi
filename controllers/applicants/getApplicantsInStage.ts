@@ -4,7 +4,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;
 
   // const [applicants, applicantsError] = await DB.Applicants.getApplicantsInStage({
-  //   orgId: user.orgId,
+  //   orgId: user.org,
   //   openingId,
   //   stageId,
   // });
