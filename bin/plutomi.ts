@@ -3,9 +3,12 @@ import 'source-map-support';
 import * as cdk from 'aws-cdk-lib';
 import AppStack from '../lib/AppStack';
 import StorageStack from '../lib/StorageStack';
-import { env } from '../env';
+import { envVars } from '../env';
 
 const app = new cdk.App();
-const { bucket } = new StorageStack(app, `${env.deploymentEnvironment}-StorageStack`);
+const { bucket } = new StorageStack(
+  app,
+  `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-StorageStack`,
+);
 
-new AppStack(app, `${env.deploymentEnvironment}-AppStack`, {});
+new AppStack(app, `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-AppStack`, {});

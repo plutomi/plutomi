@@ -8,7 +8,7 @@ import timeout from 'connect-timeout';
 import withCleanOrgId from './middleware/withCleanOrgId';
 import withCleanQuestionId from './middleware/withCleanQuestionId';
 import withCleanWebhookId from './middleware/withCleanWebhookId';
-import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from './Config';
+import { COOKIE_SETTINGS, PORT, WEBSITE_URL } from './Config';
 import next from 'next';
 import { openings } from './routes/openings';
 import { orgs } from './routes/orgs';
@@ -87,8 +87,8 @@ app
       return handle(req, res);
     });
 
-    server.listen(EXPRESS_PORT, () => {
-      console.log(`Server running on http://localhost:${EXPRESS_PORT}`);
+    server.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
     });
   })
   .catch((error) => {

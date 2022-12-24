@@ -11,11 +11,12 @@ import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Policy } from 'aws-cdk-lib/aws-iam';
-import { DOMAIN_NAME, EXPRESS_PORT, NOT_SET, Policies, Servers } from '../Config';
+import { DOMAIN_NAME, NOT_SET, Policies, Servers } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
-import { env } from '../env';
+import { envVars } from '../env';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 
+console.log(`ENVVVVV\n\n\n\n\n`, envVars);
 interface AppStackServiceProps extends cdk.StackProps {}
 const baseEnv = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
@@ -56,9 +57,13 @@ export default class AppStack extends cdk.Stack {
       ],
     });
 
-    const policy = new Policy(this, `${env.deploymentEnvironment}-plutomi-api-policy`, {
-      statements: [sesSendEmailPolicy],
-    });
+    const policy = new Policy(
+      this,
+      `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-plutomi-api-policy`,
+      {
+        statements: [sesSendEmailPolicy],
+      },
+    );
     taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles
     const taskDefinition = new ecs.FargateTaskDefinition(
@@ -81,11 +86,12 @@ export default class AppStack extends cdk.Stack {
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
       }),
-      environment: { ...ENVIRONMENT },
+      // TODO vomit
+      environment: envVars as unknown as { [key: string]: string },
     });
 
     container.addPortMappings({
-      containerPort: EXPRESS_PORT || 3000,
+      containerPort: envVars.PORT,
     });
 
     // https://fck-nat.dev/
@@ -107,7 +113,7 @@ export default class AppStack extends cdk.Stack {
 
     // Get a reference to AN EXISTING hosted zone
     const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'plutomi-hosted-zone', {
-      hostedZoneId: env.hostedZoneId,
+      hostedZoneId: envVars.HOSTED_ZONE_ID,
       zoneName: DOMAIN_NAME,
     });
 
@@ -115,7 +121,7 @@ export default class AppStack extends cdk.Stack {
     const apiCert = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
-      `arn:aws:acm:${this.region}:${this.account}:certificate/${env.acmCertificateId}`,
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`,
     );
 
     /**
@@ -174,153 +180,159 @@ export default class AppStack extends cdk.Stack {
 
     // Create the WAF & its rules
     // TODO move this out
-    const API_WAF = new waf.CfnWebACL(this, `${env.deploymentEnvironment}-API-WAF`, {
-      name: `${env.deploymentEnvironment}-API-WAF`,
-      description: 'Blocks IPs that make too many requests',
-      defaultAction: {
-        allow: {},
-      },
-      scope: 'CLOUDFRONT',
-      visibilityConfig: {
-        cloudWatchMetricsEnabled: true,
-        metricName: 'cloudfront-ipset-waf',
-        sampledRequestsEnabled: true,
-      },
-      rules: [
-        {
-          name: `too-many-api-requests-rule`,
-          priority: 0,
-          statement: {
-            rateBasedStatement: {
-              limit: Servers.rateLimit.api, // In a 5 minute period
-              aggregateKeyType: 'IP',
-              scopeDownStatement: {
-                byteMatchStatement: {
-                  fieldToMatch: {
-                    uriPath: {},
-                  },
-                  positionalConstraint: 'CONTAINS',
-                  textTransformations: [
-                    {
-                      priority: 0,
-                      type: 'LOWERCASE',
+    const API_WAF = new waf.CfnWebACL(
+      this,
+      `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-API-WAF`,
+      {
+        name: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-API-WAF`,
+        description: 'Blocks IPs that make too many requests',
+        defaultAction: {
+          allow: {},
+        },
+        scope: 'CLOUDFRONT',
+        visibilityConfig: {
+          cloudWatchMetricsEnabled: true,
+          metricName: 'cloudfront-ipset-waf',
+          sampledRequestsEnabled: true,
+        },
+        rules: [
+          {
+            name: `too-many-api-requests-rule`,
+            priority: 0,
+            statement: {
+              rateBasedStatement: {
+                limit: Servers.rateLimit.api, // In a 5 minute period
+                aggregateKeyType: 'IP',
+                scopeDownStatement: {
+                  byteMatchStatement: {
+                    fieldToMatch: {
+                      uriPath: {},
                     },
-                  ],
-                  searchString: '/api/',
+                    positionalConstraint: 'CONTAINS',
+                    textTransformations: [
+                      {
+                        priority: 0,
+                        type: 'LOWERCASE',
+                      },
+                    ],
+                    searchString: '/api/',
+                  },
                 },
               },
             },
-          },
-          action: {
-            block: {
-              customResponse: {
-                responseCode: 429,
+            action: {
+              block: {
+                customResponse: {
+                  responseCode: 429,
+                },
               },
             },
-          },
-          visibilityConfig: {
-            sampledRequestsEnabled: true,
-            cloudWatchMetricsEnabled: true,
-            metricName: `${env.deploymentEnvironment}-WAF-API-BLOCKED-IPs`,
-          },
-        },
-        {
-          name: `too-many-web-requests-rule`,
-          priority: 1,
-          statement: {
-            rateBasedStatement: {
-              limit: Servers.rateLimit.web, // In a 5 minute period
-              aggregateKeyType: 'IP',
+            visibilityConfig: {
+              sampledRequestsEnabled: true,
+              cloudWatchMetricsEnabled: true,
+              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-API-BLOCKED-IPs`,
             },
           },
-          action: {
-            block: {
-              customResponse: {
-                responseCode: 429,
+          {
+            name: `too-many-web-requests-rule`,
+            priority: 1,
+            statement: {
+              rateBasedStatement: {
+                limit: Servers.rateLimit.web, // In a 5 minute period
+                aggregateKeyType: 'IP',
               },
             },
-          },
-          visibilityConfig: {
-            sampledRequestsEnabled: true,
-            cloudWatchMetricsEnabled: true,
-            metricName: `${env.deploymentEnvironment}-WAF-GENERAL-BLOCKED-IPs`,
-          },
-        },
-        // { // TODO this is blocking postman requests :/
-        //   name: "AWS-AWSManagedRulesBotControlRuleSet",
-        //   priority: 1,
-        //   statement: {
-        //     managedRuleGroupStatement: {
-        //       vendorName: "AWS",
-        //       name: "AWSManagedRulesBotControlRuleSet",
-        //     },
-        //   },
-        //   overrideAction: {
-        //     none: {},
-        //   },
-        //   visibilityConfig: {
-        //     sampledRequestsEnabled: false,
-        //     cloudWatchMetricsEnabled: true,
-        //     metricName: "AWS-AWSManagedRulesBotControlRuleSet",
-        //   },
-        // },
-        {
-          name: 'AWS-AWSManagedRulesAmazonIpReputationList',
-          priority: 2,
-          statement: {
-            managedRuleGroupStatement: {
-              vendorName: 'AWS',
-              name: 'AWSManagedRulesAmazonIpReputationList',
+            action: {
+              block: {
+                customResponse: {
+                  responseCode: 429,
+                },
+              },
+            },
+            visibilityConfig: {
+              sampledRequestsEnabled: true,
+              cloudWatchMetricsEnabled: true,
+              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-GENERAL-BLOCKED-IPs`,
             },
           },
-          overrideAction: {
-            none: {},
+          // { // TODO this is blocking postman requests :/
+          //   name: "AWS-AWSManagedRulesBotControlRuleSet",
+          //   priority: 1,
+          //   statement: {
+          //     managedRuleGroupStatement: {
+          //       vendorName: "AWS",
+          //       name: "AWSManagedRulesBotControlRuleSet",
+          //     },
+          //   },
+          //   overrideAction: {
+          //     none: {},
+          //   },
+          //   visibilityConfig: {
+          //     sampledRequestsEnabled: false,
+          //     cloudWatchMetricsEnabled: true,
+          //     metricName: "AWS-AWSManagedRulesBotControlRuleSet",
+          //   },
+          // },
+          {
+            name: 'AWS-AWSManagedRulesAmazonIpReputationList',
+            priority: 2,
+            statement: {
+              managedRuleGroupStatement: {
+                vendorName: 'AWS',
+                name: 'AWSManagedRulesAmazonIpReputationList',
+              },
+            },
+            overrideAction: {
+              none: {},
+            },
+            visibilityConfig: {
+              sampledRequestsEnabled: false,
+              cloudWatchMetricsEnabled: true,
+              metricName: 'AWS-AWSManagedRulesAmazonIpReputationList',
+            },
           },
-          visibilityConfig: {
-            sampledRequestsEnabled: false,
-            cloudWatchMetricsEnabled: true,
-            metricName: 'AWS-AWSManagedRulesAmazonIpReputationList',
-          },
-        },
-        // {
-        // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
-        //   name: "AWS-AWSManagedRulesCommonRuleSet",
-        //   priority: 3,
-        //   statement: {
-        //     managedRuleGroupStatement: {
-        //       vendorName: "AWS",
-        //       name: "AWSManagedRulesCommonRuleSet",
-        //     },
-        //   },
-        //   overrideAction: {
-        //     none: {},
-        //   },
-        //   visibilityConfig: {
-        //     sampledRequestsEnabled: false,
-        //     cloudWatchMetricsEnabled: true,
-        //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
-        //   },
-        // },
-      ],
-    });
+          // {
+          // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
+          //   name: "AWS-AWSManagedRulesCommonRuleSet",
+          //   priority: 3,
+          //   statement: {
+          //     managedRuleGroupStatement: {
+          //       vendorName: "AWS",
+          //       name: "AWSManagedRulesCommonRuleSet",
+          //     },
+          //   },
+          //   overrideAction: {
+          //     none: {},
+          //   },
+          //   visibilityConfig: {
+          //     sampledRequestsEnabled: false,
+          //     cloudWatchMetricsEnabled: true,
+          //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
+          //   },
+          // },
+        ],
+      },
+    );
 
     // No caching! We're using Cloudfront for its global network and WAF
-    const cachePolicy = new cf.CachePolicy(this, `${env.deploymentEnvironment}-Cache-Policy`, {
-      defaultTtl: cdk.Duration.seconds(0),
-      minTtl: cdk.Duration.seconds(0),
-      maxTtl: cdk.Duration.seconds(0),
-    });
+    const cachePolicy = new cf.CachePolicy(
+      this,
+      `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-Cache-Policy`,
+      {
+        defaultTtl: cdk.Duration.seconds(0),
+        minTtl: cdk.Duration.seconds(0),
+        maxTtl: cdk.Duration.seconds(0),
+      },
+    );
 
     const distribution = new cf.Distribution(
       this,
-      `${env.deploymentEnvironment}-CF-API-Distribution`,
+      `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
       {
         certificate: apiCert,
         webAclId: API_WAF.attrArn,
-        // @ts-ignore // TODO: Add a type for NODE_ENV for staging!!!!!!
-        domainNames: [
-          env.deploymentEnvironment === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
-        ],
+        // TODO others?
+        domainNames: [envVars.IS_STAGE ? `stage.${DOMAIN_NAME}` : DOMAIN_NAME],
         defaultBehavior: {
           origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 

@@ -5950,10 +5950,10 @@
   "resolved" "https://registry.npmjs.org/env-paths/-/env-paths-2.2.1.tgz"
   "version" "2.2.1"
 
-"env-var@^7.1.1":
-  "integrity" "sha512-4+vvlq+wwGQNwY/nI3/+Ojc1MKHCmITRJ6VWkQzDtMD6fAEb60ACRUCnlIAonMKW9YzqYmYxbyVu9vTb++yNRg=="
-  "resolved" "https://registry.npmjs.org/env-var/-/env-var-7.1.1.tgz"
-  "version" "7.1.1"
+"env-var@^7.3.0":
+  "integrity" "sha512-qwtwYJ9d3XFxXRDudPEAMszaggpDgcfb1ZGYb9/cNyMugN2/a8EtviopnRL6c+petj2vp6/gxwYd9ExL1/iPcw=="
+  "resolved" "https://registry.npmjs.org/env-var/-/env-var-7.3.0.tgz"
+  "version" "7.3.0"
 
 "err-code@^2.0.2":
   "integrity" "sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA=="

@@ -9,7 +9,7 @@
     "test": "jest",
     "docker-fix": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs",
     "dev-server": "nodemon --config nodemon.json app.ts --watch",
-    "dev": "npm run docker-fix && cross-env NODE_ENV=development NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=development cdk deploy  development-StreamProcessorStack --verbose && npm run dev-server",
+    "dev": "npm run docker-fix && cross-env NODE_ENV=development NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=development ACM_CERTIFICATE_ID=test cdk deploy  development-StreamProcessorStack --verbose && npm run dev-server",
     "start": "ts-node --transpile-only app.ts",
     "deploy-production": "cdk deploy production-DynamoDBStack production-StreamProcessorStack production-AppStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack production-WebhooksMachineStack --verbose --require-approval never"
   },
@@ -56,7 +56,7 @@
     "deep-email-validator": "^0.1.21",
     "delay": "^5.0.0",
     "dotenv": "^16.0.3",
-    "env-var": "^7.1.1",
+    "env-var": "^7.3.0",
     "express": "^4.17.1",
     "express-list-endpoints": "^6.0.0",
     "helmet": "^4.6.0",
