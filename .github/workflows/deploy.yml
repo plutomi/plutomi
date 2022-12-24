@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment Environment (production / staging)'
+        description: 'Deployment Environment ('prod' / 'stage')'
         type: environment
         required: true
       notes:
@@ -14,17 +14,17 @@ on:
         type: text
 
 env:
-  DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
+  DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'stage' }}
   NODE_VERSION: 16
 
 concurrency:
-  group: ${{ github.event.inputs.environment || 'staging' }}
+  group: ${{ github.event.inputs.environment || 'stage' }}
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'staging' }}
+    environment: ${{ github.event.inputs.environment || 'stage' }}
     steps:
       - name: Print Deployment Target
         run: |
@@ -41,7 +41,7 @@ jobs:
         run: npm i && npm i aws-cdk -g
 
       - name: Print destination
-        run: echo "Deploying to staging environment"
+        run: echo "Deploying to stage environment"
 
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@master

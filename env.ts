@@ -1,6 +1,9 @@
 import * as e from 'env-var';
 import { DOMAIN_NAME } from './Config';
 
+// Read in the .env file if running locally
+require('dotenv').config();
+
 // These is a deps of the other env vars
 const NODE_ENV = e.get('NODE_ENV').required().asEnum(['production', 'development']);
 const NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT = e
