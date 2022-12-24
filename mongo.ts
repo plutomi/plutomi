@@ -1,4 +1,4 @@
-import { AllCollectionsResponse, connectToDatabase } from './utils/connectToDatabase';
+import { connectToDatabase } from './utils/connectToDatabase';
 import { randomNumberInclusive } from './utils/randomNumberInclusive';
 import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
@@ -94,10 +94,11 @@ import axios from 'axios';
 //       }
 //   }
 // ]
+
 const numberOfBatches = randomNumberInclusive(10, 50);
 const applicantsPerBatch = randomNumberInclusive(2000, 2000);
 const orgsToCreate = randomNumberInclusive(1, 1);
-const dbName = 'development';
+const dbName = 'plutomi';
 
 // Fidning them in the UI
 // var findElements = function(tag, text) {
@@ -145,26 +146,61 @@ const weightedRandom = (items: string[], weights: number[]) => {
 const main = async () => {
   const startTime = dayjs();
   try {
-    const { client, collections } = await connectToDatabase({ databaseName: dbName });
+    const { client, db } = await connectToDatabase({ databaseName: dbName });
 
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
-    await collections.applicants.deleteMany({});
+    const agg = [
+      {
+        $match: {
+          _id: new RegExp('^ORG#plutomi#OPENING#nyc#STAGE#questionnaire#QUESTIONS'),
+        },
+      },
+      {
+        $unwind: {
+          path: '$target',
+        },
+      },
+      {
+        $match: {
+          'target.type': 'Question',
+        },
+      },
+      {
+        $lookup: {
+          from: 'dev',
+          localField: 'target.id',
+          foreignField: '_id',
+          as: 'questionData',
+        },
+      },
+      {
+        $unwind: {
+          path: '$questionData',
+        },
+      },
+    ];
+
+    const result = await db.aggregate(agg, { explain: true }).toArray();
+
+    console.log(`AGGREGATE`, result[0].stages[0]);
+
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
 
     let processedApplicants = 0;
 
@@ -466,7 +502,7 @@ const main = async () => {
       applicantsToCreate.push(localBatch);
     }
 
-    const sendToMongo = async (collections: AllCollectionsResponse) => {
+    const sendToMongo = async (collections) => {
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
 
@@ -573,7 +609,7 @@ const main = async () => {
     };
 
     console.log('Sending to mongo');
-    await sendToMongo(collections);
+    await sendToMongo(db);
   } catch (error) {
     console.error(`error `, error);
   }

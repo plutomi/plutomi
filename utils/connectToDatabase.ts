@@ -10,7 +10,7 @@ interface ConnectToDatabaseProps {
 }
 
 export enum CollectionName {
-  db = 'db',
+  db = 'dev',
 }
 
 export type ConnectToDatabaseResponse = {
