@@ -3,6 +3,7 @@
     "basex",
     "Embeddable",
     "Fargate",
+    "ksuid",
     "Mikro",
     "Plutomi",
     "singlecollectiondesign",

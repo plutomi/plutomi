@@ -22,7 +22,7 @@ export type ConnectToDatabaseResponse = {
 export const connectToDatabase = async ({
   databaseName,
 }: ConnectToDatabaseProps): Promise<ConnectToDatabaseResponse> => {
-  const client = new mongoDB.MongoClient(env.mongoConnection);
+  const client = new mongoDB.MongoClient(envVars.MONGO_URL);
 
   try {
     console.log('Attempting to connect to MongoDB');
@@ -41,8 +41,16 @@ export const connectToDatabase = async ({
 
   console.log(`Creating necessary collections and indexes`);
 
-  const allCollectionNames = await database.listCollections({}, { nameOnly: true }).toArray();
+  const allCollectionNames = await database.listCollections({}).toArray();
   const collectionExists = allCollectionNames.find((item) => item.name === collectionName);
+
+  // Define our two indexes
+  const targetArrayIndexName = 'targetArray';
+  const targetArrayIndexSpec: mongoDB.IndexSpecification = { 'target.id': 1, 'target.type': 1 };
+
+  const uniqueIdIndexName = 'uniqueId';
+  const uniqueIdIndexSpec: mongoDB.IndexSpecification = { uniqueId: 1 };
+  const uniqueIdIndexOptions: mongoDB.CreateIndexesOptions = { unique: true };
 
   if (!collectionExists) {
     try {
@@ -51,6 +59,36 @@ export const connectToDatabase = async ({
     } catch (error) {
       console.error(`An error ocurred creating collection ${collectionName}`, error);
     }
+  }
+
+  // ! Create the target array index, if it doesn't exist
+  try {
+    const targetArrayIndexExists = await db.indexExists(targetArrayIndexName);
+
+    if (!targetArrayIndexExists) {
+      try {
+        await db.createIndex(targetArrayIndexSpec);
+      } catch (error) {
+        console.error(`An error ocurred creating the target array index `, error);
+      }
+    }
+  } catch (error) {
+    console.error(`An error ocurred checking if the target array index exists`, error);
+  }
+
+  // ! Create the unique id (prefix_ksuid) index, if it doesn't exist
+  try {
+    const uniqueIdIndexExists = await db.indexExists(uniqueIdIndexName);
+
+    if (!uniqueIdIndexExists) {
+      try {
+        await db.createIndex(uniqueIdIndexSpec, uniqueIdIndexOptions);
+      } catch (error) {
+        console.error(`An error ocurred creating the unique id index `, error);
+      }
+    }
+  } catch (error) {
+    console.error(`An error ocurred checking if the unique id index exists`, error);
   }
 
   console.log('Ready.\n');
