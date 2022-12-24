@@ -18,26 +18,6 @@ import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 
 console.log(`ENVVVVV\n\n\n\n\n`, envVars);
 interface AppStackServiceProps extends cdk.StackProps {}
-const baseEnv = {
-  NODE_ENV: process.env.NODE_ENV ?? 'development',
-  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ?? NOT_SET,
-  NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL, // If none is set, defaults to localhost. Override in config.ts
-};
-
-export const ENVIRONMENT = {
-  ...baseEnv,
-  HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID ?? NOT_SET,
-  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID ?? NOT_SET,
-  LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD ?? NOT_SET,
-  SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1 ?? NOT_SET,
-  MONGO_CONNECTION: process.env.MONGO_CONNECTION ?? NOT_SET,
-};
-
-// ! Must match what is in the Docker container
-const NEXT_ENVIRONMENT = {
-  ...baseEnv,
-  COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? NOT_SET,
-};
 
 export default class AppStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
@@ -80,7 +60,12 @@ export default class AppStack extends cdk.Stack {
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
       image: ecs.ContainerImage.fromAsset('.', {
-        buildArgs: { ...NEXT_ENVIRONMENT }, // Pass any variables to the front end
+        // ! Must match the ARGs in the docker file!
+        buildArgs: {
+          COMMITS_TOKEN: envVars.COMMITS_TOKEN,
+          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
+          NEXT_PUBLIC_WEBSITE_URL: envVars.NEXT_PUBLIC_WEBSITE_URL,
+        },
       }),
 
       logging: new ecs.AwsLogDriver({

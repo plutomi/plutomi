@@ -35,6 +35,7 @@ const env = e.from(process.env, {
     if (IS_LIVE && value !== DOMAIN_NAME) {
       throw new Error(`domain must be '${DOMAIN_NAME}' in a live environment`);
     }
+    return value;
   },
 });
 
