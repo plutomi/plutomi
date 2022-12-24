@@ -37,6 +37,7 @@ export const deleteStage = async (req: Request, res: Response) => {
   const stageFilter: Filter<StageEntity> = {
     id: stageId,
     $and: [
+      // ! TODO: Replace with elemmatch
       { target: { property: IndexableProperties.Opening, value: openingId } },
       { target: { property: IndexableProperties.Org, value: orgId } },
     ],
@@ -82,6 +83,7 @@ export const deleteStage = async (req: Request, res: Response) => {
         const oldPreviousStageFilter: Filter<StageEntity> = {
           id: oldPreviousStageId,
           $and: [
+            // ! TODO: Replace with elemmatch
             { target: { property: IndexableProperties.Opening, value: openingId } },
             { target: { property: IndexableProperties.Org, value: orgId } },
           ],
@@ -120,6 +122,7 @@ export const deleteStage = async (req: Request, res: Response) => {
         const oldNextStageFilter: Filter<StageEntity> = {
           id: oldNextStageId,
           $and: [
+            // ! TODO: Replace with elemmatch
             { target: { property: IndexableProperties.Opening, value: openingId } },
             { target: { property: IndexableProperties.Org, value: orgId } },
           ],

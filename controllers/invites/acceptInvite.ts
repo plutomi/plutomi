@@ -21,7 +21,7 @@ export const acceptInvite = async (req: Request, res: Response) => {
 
   const inviteFilter: Filter<InviteEntity> = {
     id: inviteId,
-    $and: [
+    $and: [ // ! TODO: Replace with elemmatch
       { target: { property: IndexableProperties.User, value: user.id } },
       {
         // This is redundant but :)

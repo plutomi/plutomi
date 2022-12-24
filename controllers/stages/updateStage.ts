@@ -97,6 +97,7 @@ export const updateStage = async (req: Request, res: Response) => {
         let unsortedStages: StageEntity[];
         const allStagesInOpeningFilter: Filter<StageEntity> = {
           $and: [
+            // ! TODO: Replace with elemmatch
             { target: { property: IndexableProperties.Org, value: orgId } },
             { target: { property: IndexableProperties.Opening, value: openingId } },
           ],
@@ -241,6 +242,7 @@ export const updateStage = async (req: Request, res: Response) => {
         const updateOldNextStageFilter: Filter<StageEntity> = {
           id: oldNextStageId,
           $and: [
+            // ! TODO: Replace with elemmatch
             { target: { property: IndexableProperties.Org, value: orgId } },
             { target: { property: IndexableProperties.Opening, value: openingId } },
           ],
@@ -258,6 +260,7 @@ export const updateStage = async (req: Request, res: Response) => {
         const updateOldPreviousStageFilter: Filter<StageEntity> = {
           id: oldPreviousStageId,
           $and: [
+            // ! TODO: Replace with elemmatch
             { target: { property: IndexableProperties.Org, value: orgId } },
             { target: { property: IndexableProperties.Opening, value: openingId } },
           ],
@@ -334,6 +337,7 @@ export const updateStage = async (req: Request, res: Response) => {
           const updateNewNextStageFilter: Filter<StageEntity> = {
             id: newNextStageId,
             $and: [
+              // ! TODO: Replace with elemmatch
               { target: { property: IndexableProperties.Org, value: orgId } },
               { target: { property: IndexableProperties.Opening, value: openingId } },
             ],
@@ -394,6 +398,7 @@ export const updateStage = async (req: Request, res: Response) => {
           const updateNewPreviousStageFilter: Filter<StageEntity> = {
             id: newPreviousStageId,
             $and: [
+              // ! TODO: Replace with elemmatch
               { target: { property: IndexableProperties.Org, value: orgId } },
               { target: { property: IndexableProperties.Opening, value: openingId } },
             ],

@@ -79,6 +79,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   let currentLastStageQuestionItem: StageQuestionItemEntity;
   const currentLastStageQuestionItemFilter: Filter<StageQuestionItemEntity> = {
     $and: [
+      // ! TODO: Replace with elemmatch
       {
         target: { property: IndexableProperties.Org, value: orgId },
       },
