@@ -1,9 +1,6 @@
-import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config();
-
 import * as mongoDB from 'mongodb';
 import { IndexedTargetArrayItem } from '../@types/indexableProperties';
-import { env } from '../env';
+import { envVars } from '../env';
 
 interface ConnectToDatabaseProps {
   databaseName: string;

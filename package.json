@@ -8,10 +8,10 @@
     "prettier": "prettier --write .",
     "test": "jest",
     "docker-fix": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs",
-    "dev-server": "nodemon --config nodemon.json app.ts --watch",
-    "dev": "npm run docker-fix && cross-env NODE_ENV=development NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=dev ACM_CERTIFICATE_ID=test cdk deploy  development-StreamProcessorStack --verbose && npm run dev-server",
+    "cdk-deploy:dev": "CDK_DEBUG=true cdk deploy --verbose && npm run dev-server",
     "start": "ts-node --transpile-only app.ts",
-    "deploy-production": "cdk deploy production-DynamoDBStack production-StreamProcessorStack production-AppStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack production-WebhooksMachineStack --verbose --require-approval never"
+    "start:dev": "nodemon --config nodemon.json app.ts --watch",
+    "dev": "cross-env NODE_ENV=development NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=dev npm run docker-fix && npm run start:dev"
   },
   "dependencies": {
     "@americanairlines/simple-env": "^1.0.5",
