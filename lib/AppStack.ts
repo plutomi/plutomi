@@ -11,7 +11,7 @@ import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Policy } from 'aws-cdk-lib/aws-iam';
-import { DOMAIN_NAME, NOT_SET, Policies, Servers } from '../Config';
+import { DOMAIN_NAME, NOT_SET, Policies, STAGE_DOMAIN_NAME, Servers } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { envVars } from '../env';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
@@ -76,7 +76,9 @@ export default class AppStack extends cdk.Stack {
     });
 
     container.addPortMappings({
-      containerPort: envVars.PORT,
+      // TODO i think this cdk type is wrong? Says should be a number but got:
+      // supplied properties not correct for "KeyValuePairProperty" value: 3000 should be a string.
+      containerPort: Number(envVars.PORT),
     });
 
     // https://fck-nat.dev/
@@ -317,7 +319,9 @@ export default class AppStack extends cdk.Stack {
         certificate: apiCert,
         webAclId: API_WAF.attrArn,
         // TODO others?
-        domainNames: [envVars.IS_STAGE ? `stage.${DOMAIN_NAME}` : DOMAIN_NAME],
+        domainNames: [
+          envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ? STAGE_DOMAIN_NAME : DOMAIN_NAME,
+        ],
         defaultBehavior: {
           origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 
@@ -335,7 +339,8 @@ export default class AppStack extends cdk.Stack {
 
     //  Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `APIAlias`, {
-      recordName: envVars.IS_STAGE ? `stage.${DOMAIN_NAME}` : DOMAIN_NAME,
+      recordName:
+        envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ? STAGE_DOMAIN_NAME : DOMAIN_NAME,
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });

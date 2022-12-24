@@ -4,15 +4,16 @@ import { DOMAIN_NAME } from './Config';
 // Read in the .env file if running locally
 require('dotenv').config();
 
-// These is a deps of the other env vars
-const NODE_ENV = e.get('NODE_ENV').required().asEnum(['production', 'development']);
 const NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT = e
   .get('NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT')
   .asEnum(['prod', 'stage', 'dev']);
 
-const IS_PROD = NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod';
-const IS_STAGE = NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage';
-const IS_LIVE = IS_PROD || IS_STAGE;
+const NODE_ENV = e
+  .get('NODE_ENV')
+  .required()
+  .asEnum(
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod' ? ['production'] : ['production', 'development'],
+  );
 
 const env = e.from(process.env, {
   asEmail: (value, requiredDomain) => {
@@ -26,16 +27,20 @@ const env = e.from(process.env, {
     }
     return value;
   },
-  asPort: (value): number => {
+  asPort: (value) => {
     if (value !== '3000') {
       throw new Error(
         `port must be set to '3000', you will have to change it in multiple places if you decide to use another value!`,
       );
     }
-    return Number(value);
+    return value;
   },
   asDomain: (value) => {
-    if (IS_LIVE && value !== DOMAIN_NAME) {
+    if (
+      (NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ||
+        NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod') &&
+      value !== DOMAIN_NAME
+    ) {
       throw new Error(`domain must be '${DOMAIN_NAME}' in a live environment`);
     }
     return value;
@@ -47,7 +52,9 @@ const PORT = env.get('PORT').default(3000).required().asPort();
 const NEXT_PUBLIC_WEBSITE_URL = env
   .get('NEXT_PUBLIC_WEBSITE_URL')
   .default(`http://localhost:${PORT}`)
-  .required(IS_LIVE)
+  .required(
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' || NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod',
+  )
   .asDomain();
 const COMMITS_TOKEN = env
   .get('COMMITS_TOKEN')
@@ -63,12 +70,17 @@ const MONGO_URL = env
   .asString();
 const ACM_CERTIFICATE_ID = env
   .get('ACM_CERTIFICATE_ID')
-  .required(IS_LIVE)
-  .example('af409ft9-3u66-1ew8-33n9-5d3jn142x70c');
+  .required(
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' || NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod',
+  )
+  .example('af409ft9-3u66-1ew8-33n9-5d3jn142x70c')
+  .asString();
 
 const HOSTED_ZONE_ID = env
   .get('HOSTED_ZONE_ID')
-  .required(IS_LIVE)
+  .required(
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' || NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod',
+  )
   .example('F2938137XC4J29KLUTXE')
   .asString();
 
@@ -80,9 +92,6 @@ export const envVars = {
   NODE_ENV,
   PORT,
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
-  IS_PROD,
-  IS_STAGE,
-  IS_LIVE,
   NEXT_PUBLIC_WEBSITE_URL,
   COMMITS_TOKEN,
   MONGO_URL,

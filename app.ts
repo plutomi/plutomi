@@ -8,7 +8,7 @@ import timeout from 'connect-timeout';
 import withCleanOrgId from './middleware/withCleanOrgId';
 import withCleanQuestionId from './middleware/withCleanQuestionId';
 import withCleanWebhookId from './middleware/withCleanWebhookId';
-import { COOKIE_SETTINGS, PORT, WEBSITE_URL } from './Config';
+import { COOKIE_SETTINGS, IS_LIVE, WEBSITE_URL } from './Config';
 import next from 'next';
 import { openings } from './routes/openings';
 import { orgs } from './routes/orgs';
@@ -20,26 +20,26 @@ import { invites } from './routes/invites';
 import { publicInfo } from './routes/public';
 import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
-import { env } from './env';
+import { envVars } from './env';
 import { connectToDatabase } from './utils/connectToDatabase';
 import API from './controllers';
 
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
-console.log(`NODE NEV`, env.nodeEnv);
-const dev = env.nodeEnv !== 'production';
+console.log(`NODE NEV`, envVars.NODE_ENV);
+const dev = envVars.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app
   .prepare()
   .then(async () => {
-    const morganSettings = env.nodeEnv === 'development' ? 'dev' : 'combined';
-    const sessionSecrets = [env.sessionSignatureSecret1];
+    const morganSettings = envVars.NODE_ENV === 'development' ? 'dev' : 'combined';
+    const sessionSecrets = [envVars.SESSION_SIGNATURE_SECRET_1];
 
     const server = express();
-    await connectToDatabase();
+    await connectToDatabase(); // TODO db name
 
     server.use(timeout('5s'));
     server.use(
@@ -64,7 +64,7 @@ app
       cookieParser(sessionSecrets, COOKIE_SETTINGS),
     ]);
 
-    if (env.nodeEnv === 'development') {
+    if (envVars.NODE_ENV === 'development' && !IS_LIVE) {
       server.post('/jest-setup', API.Misc.jestSetup);
     }
 
@@ -87,8 +87,8 @@ app
       return handle(req, res);
     });
 
-    server.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+    server.listen(envVars.PORT, () => {
+      console.log(`Server running on http://localhost:${envVars.PORT}`);
     });
   })
   .catch((error) => {

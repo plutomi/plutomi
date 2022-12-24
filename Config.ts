@@ -3,14 +3,32 @@ import axios from 'axios';
 import TagGenerator from './utils/tagGenerator';
 import { envVars } from './env';
 
-/**
- * Some backend dependencies (SES, ACM, Route53, etc..) depend on
- * DOMAIN_NAME being the actual domain name, do not change!
- */
+export const IS_STAGE = envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage';
+export const IS_PROD = envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod';
+export const IS_LIVE = IS_STAGE || IS_PROD;
 
+/**
+ * ! Some backend dependencies (SES, ACM, Route53, etc..) depend on
+ * ! DOMAIN_NAME being the actual domain name, do not change!
+ */
 export const DOMAIN_NAME = `plutomi.com`;
-export const API_URL = `${DOMAIN_NAME}/api`;
-export const COOKIE_NAME = envVars.IS_LIVE ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
+export const STAGE_DOMAIN_NAME = `stage.plutomi.com`;
+
+const getWebsiteUrl = () => {
+  if (IS_LIVE) return `https://${IS_PROD ? DOMAIN_NAME : STAGE_DOMAIN_NAME}`;
+  return `http://localhost:${envVars.PORT}`;
+};
+export const WEBSITE_URL = getWebsiteUrl();
+
+export const API_URL = `${IS_STAGE ? STAGE_DOMAIN_NAME : DOMAIN_NAME}/api`;
+
+// TODO replace with next-auth
+const getCookieName = () => {
+  if (IS_PROD) return 'plutomi-cookie';
+  if (IS_STAGE) return 'stage-plutomi-cookie';
+  return 'dev-plutomi-cookie';
+};
+export const COOKIE_NAME = getCookieName();
 
 console.log('EXPRESS APP STARTING, CONFIG', envVars);
 
