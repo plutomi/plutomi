@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
-import emailValidator from 'deep-email-validator';
-import * as crypto from 'crypto';
 import Joi from 'joi';
 import { Filter, FindOptions } from 'mongodb';
-import { nanoid } from 'nanoid';
 import {
   Defaults,
   TIME_UNITS,
@@ -14,9 +11,8 @@ import {
   DOMAIN_NAME,
   Emails,
 } from '../../Config';
-import { env } from '../../env';
+import { envVars } from '../../env';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { collections } from '../../utils/connectToDatabase';
 import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
@@ -103,7 +99,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       console.log(`Creating new user`, newUser);
 
-      await collections.users.insertOne(newUser);
+      await req.db.insertOne(newUser);
       console.log(`User created!`);
       user = newUser;
     } catch (error) {

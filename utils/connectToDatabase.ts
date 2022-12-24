@@ -2,12 +2,8 @@ import * as mongoDB from 'mongodb';
 import { IndexedTargetArrayItem } from '../@types/indexableProperties';
 import { envVars } from '../env';
 
-interface ConnectToDatabaseProps {
-  databaseName: string;
-}
-
 export enum CollectionName {
-  db = 'dev',
+  items = 'items',
 }
 
 export type ConnectToDatabaseResponse = {
@@ -19,9 +15,7 @@ export type ConnectToDatabaseResponse = {
   client: mongoDB.MongoClient;
 };
 
-export const connectToDatabase = async ({
-  databaseName,
-}: ConnectToDatabaseProps): Promise<ConnectToDatabaseResponse> => {
+export const connectToDatabase = async (): Promise<ConnectToDatabaseResponse> => {
   const client = new mongoDB.MongoClient(envVars.MONGO_URL);
 
   try {
@@ -33,9 +27,11 @@ export const connectToDatabase = async ({
     throw new Error(errorMessage);
   }
 
+  const databaseName = 'plutomi';
+
   const database: mongoDB.Db = client.db(databaseName);
   console.log(`Successfully connected to database: ${database.databaseName}.`);
-  const collectionName = CollectionName.db;
+  const collectionName = CollectionName.items;
 
   const db: mongoDB.Collection = database.collection(collectionName);
 

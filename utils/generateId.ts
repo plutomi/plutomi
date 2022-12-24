@@ -1,20 +1,33 @@
 import ksuid from 'ksuid';
 
-// TODO nanoid alphabet '23456789abcdefghjklmnpqrstuvwxyz'
+export enum EntityPrefix {
+  Company = 'co_',
+  User = 'usr_',
+  Application = 'appl_',
+  Applicant = 'apcnt_',
+  Stage = 'stg_',
+  Question = 'ques_',
+  Invite = 'inv_',
+  Webhook = 'wbhk_',
+  StageRule = 'stgrl_',
+  QuestionRule = 'quesrl_',
+  Event = 'evt_',
+}
 
-// TODO add interface here, generate entity prefix
-// org for org
-// appl for application
-// stage for stage
-// apcnt for applicant
-//
-// TODO
-const main = async () => {
-  const ksuidFromAsync = await ksuid.random();
+interface GenerateIdProps {
+  /**
+   * Manually generated createdAt date
+   * There will be a top level `createdAt`
+   * and this ensures that the ID and that value have the same date
+   */
+  date: Date;
+  entityPrefix: EntityPrefix;
+}
 
-  const x = ksuidFromAsync;
-  console.log(ksuidFromAsync.date);
-  return ksuidFromAsync;
+export type PlutomiId = `${EntityPrefix}${string}`;
+
+const main = ({ date, entityPrefix }: GenerateIdProps): PlutomiId => {
+  const id = ksuid.randomSync(date).string;
+
+  return `${entityPrefix}${id}`;
 };
-
-console.log(main());

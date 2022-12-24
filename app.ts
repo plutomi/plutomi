@@ -39,7 +39,14 @@ app
     const sessionSecrets = [envVars.SESSION_SIGNATURE_SECRET_1];
 
     const server = express();
-    await connectToDatabase(); // TODO db name
+    
+    const { client, db } = await connectToDatabase();
+    const includeDb: express.Handler = (req, _res, next) => {
+      req.db = db;
+      req.client = client;
+      next();
+    };
+    server.use(includeDb);
 
     server.use(timeout('5s'));
     server.use(
@@ -64,6 +71,7 @@ app
       cookieParser(sessionSecrets, COOKIE_SETTINGS),
     ]);
 
+    // Run jest setup if locally testing
     if (envVars.NODE_ENV === 'development' && !IS_LIVE) {
       server.post('/jest-setup', API.Misc.jestSetup);
     }

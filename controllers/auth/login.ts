@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
-import { env } from '../../env';
+import { envVars } from '../../env';
 import { UserEntity, UserLoginLinkEntity } from '../../models';
 import { Filter } from 'mongodb';
-import { collections } from '../../utils/connectToDatabase';
 
 const jwt = require('jsonwebtoken');
 
@@ -33,7 +32,7 @@ export const login = async (req: Request, res: Response) => {
 
   try {
     // TODO add types for this
-    const data = await jwt.verify(token, env.loginLinksPassword);
+    const data = await jwt.verify(token, envVars.LOGIN_LINKS_PASSWORD);
 
     console.log(`Token data`, data);
 
@@ -55,7 +54,7 @@ export const login = async (req: Request, res: Response) => {
     userId,
   };
   try {
-    loginLink = (await collections.loginLinks.findOne(loginLinkFilter)) as UserLoginLinkEntity;
+    loginLink = (await req.db.findOne(loginLinkFilter)) as UserLoginLinkEntity;
 
     console.log(loginLink);
   } catch (error) {
@@ -69,7 +68,7 @@ export const login = async (req: Request, res: Response) => {
 
   try {
     console.log('Deleting login link');
-    await collections.loginLinks.deleteOne(loginLinkFilter);
+    await req.db.deleteOne(loginLinkFilter);
     console.log('Login link deleted!');
   } catch (error) {
     const msg = 'Error ocurred deleting login link';
@@ -100,7 +99,7 @@ export const login = async (req: Request, res: Response) => {
     id: userId,
   };
   try {
-    user = (await collections.users.findOne(userFilter)) as UserEntity;
+    user = (await req.db.findOne(userFilter)) as UserEntity;
   } catch (error) {
     const msg = 'An error ocurred tryingn to find your user account';
     console.error(msg, error);
