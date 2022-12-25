@@ -1,20 +1,15 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import emailValidator from 'deep-email-validator';
-import { pick } from 'lodash';
+import { Emails, JOI_SETTINGS, WEBSITE_URL } from '../../Config';
 import {
-  Defaults,
-  Emails,
-  ERRORS,
-  JOI_SETTINGS,
-  ORG_INVITE_EXPIRY_DAYS,
-  TIME_UNITS,
-  WEBSITE_URL,
-} from '../../Config';
-import { findInTargetArray, generateId, sendEmail } from '../../utils';
+  AllEntities,
+  EntityPrefix,
+  findInTargetArray,
+  generatePlutomiId,
+  sendEmail,
+} from '../../utils';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { OrgEntity, UserEntity } from '../../models';
-import { collections, mongoClient } from '../../utils/connectToDatabase';
 import { Filter, UpdateFilter } from 'mongodb';
 import dayjs from 'dayjs';
 import { InviteEntity } from '../../models/Invites';
@@ -37,7 +32,7 @@ export const createInvite = async (req: Request, res: Response) => {
   const senderHasBothNames = user.firstName && user.lastName;
   const { recipientEmail, expiresInDays } = req.body;
   const userEmail = findInTargetArray(IndexableProperties.Email, user); // TODO update this
-  const { orgId: userOrgId } = user;
+  const { org: userOrgId } = user;
 
   if (!userOrgId) {
     return res.status(404).json({ message: 'You must belong to an org to invite other users' });
@@ -52,7 +47,7 @@ export const createInvite = async (req: Request, res: Response) => {
 
   let orgInfo: OrgEntity | undefined;
   try {
-    orgInfo = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+    orgInfo = (await req.db.findOne(orgFilter)) as OrgEntity;
   } catch (error) {
     const msg = 'An error ocurred finding info for that org';
     console.error(msg, error);
@@ -67,11 +62,12 @@ export const createInvite = async (req: Request, res: Response) => {
   let recipient: UserEntity | undefined;
 
   const recipientFilter: Filter<UserEntity> = {
+    // !TODO: Not type safe!!!
     target: { property: IndexableProperties.Email, value: recipientEmail },
   };
 
   try {
-    recipient = (await collections.users.findOne(recipientFilter)) as UserEntity;
+    recipient = (await req.db.findOne(recipientFilter)) as UserEntity;
   } catch (error) {
     const msg = 'An error ocurred sending that invite';
     console.error(msg, error);
@@ -87,22 +83,26 @@ export const createInvite = async (req: Request, res: Response) => {
   if (!recipient) {
     console.log('Recipient not found');
     // Invite is for a user that doesn't exist
-    const userId = generateId({});
+    const userId = generatePlutomiId({ date: now, entityPrefix: EntityPrefix.User });
     const newUser: UserEntity = {
       id: userId,
       createdAt: now,
       updatedAt: now,
-      orgId: null,
+      org: null,
       totalInvites: 0, // Will be incremented in a transaction below
       firstName: null,
       lastName: null,
       emailVerified: false,
       canReceiveEmails: true,
-      target: [{ property: IndexableProperties.Email, value: recipientEmail }],
+      target: [
+        { id: AllEntities.User, type: IndexableProperties.Entity },
+        { id: userId, type: IndexableProperties.Id },
+        { id: recipientEmail, type: IndexableProperties.Email },
+      ],
     };
 
     try {
-      await collections.users.insertOne(newUser);
+      await req.db.insertOne(newUser);
       recipient = newUser;
     } catch (error) {
       const msg = `An error ocurred creating that user's account`;
@@ -111,16 +111,18 @@ export const createInvite = async (req: Request, res: Response) => {
     }
   }
 
-  const { orgId: recipientOrgId } = recipient;
+  const { org: recipientOrgId } = recipient;
   if (recipientOrgId === userOrgId) {
     return res.status(403).json({ message: 'User is already in your org!' });
   }
 
   const recipientHasBothNames = recipient.firstName && recipient.lastName;
   // Now let's create an invite
+  const newInviteDate = new Date();
+  const newInviteId = generatePlutomiId({ date: newInviteDate, entityPrefix: EntityPrefix.Invite });
   const newInvite: InviteEntity = {
-    id: generateId({ fullAlphabet: true }),
-    orgId: orgInfo.id,
+    id: newInviteId,
+    org: orgInfo.id,
     userId: recipient.id,
     orgName: orgInfo.displayName,
     createdAt: now,
@@ -131,7 +133,15 @@ export const createInvite = async (req: Request, res: Response) => {
       email: userEmail,
     },
     expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
-    target: [{ property: IndexableProperties.Email, value: recipientEmail }],
+    target: [
+      { id: AllEntities.Invite, type: IndexableProperties.Entity },
+      { id: newInviteId, type: IndexableProperties.Id },
+      { id: recipientEmail, type: IndexableProperties.Email },
+      {
+        id: recipient.id,
+        type: IndexableProperties.User,
+      },
+    ],
   };
 
   // Check if the user already has a pending invite for the org they are being invited to
@@ -139,7 +149,7 @@ export const createInvite = async (req: Request, res: Response) => {
     orgId: userOrgId,
     target: { property: IndexableProperties.Email, value: recipientEmail },
   };
-  const currentInvite = await collections.invites.findOne(invitesFilter);
+  const currentInvite = await req.db.findOne(invitesFilter);
   if (currentInvite) {
     return res.status(403).json({
       message: 'This user already has a pending invite for your org, they can log in to claim it',
@@ -147,7 +157,7 @@ export const createInvite = async (req: Request, res: Response) => {
   }
 
   // Create invite and increment the user's total invites
-  const session = mongoClient.startSession();
+  const session = req.client.startSession();
   let transactionResults;
 
   try {
@@ -155,8 +165,8 @@ export const createInvite = async (req: Request, res: Response) => {
       const recipientUpdateFilter: UpdateFilter<UserEntity> = {
         $inc: { totalInvites: 1 },
       };
-      await collections.users.updateOne(recipientFilter, recipientUpdateFilter, { session });
-      await collections.invites.insertOne(newInvite, { session });
+      await req.db.updateOne(recipientFilter, recipientUpdateFilter, { session });
+      await req.db.insertOne(newInvite, { session });
       await session.commitTransaction();
     });
   } catch (error) {
