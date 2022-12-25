@@ -1,22 +1,20 @@
 import * as mongoDB from 'mongodb';
-import { IndexedTargetArrayItem } from '../@types/indexableProperties';
 import { envVars } from '../env';
 
 export enum CollectionName {
   items = 'items',
 }
 
-export type ConnectToDatabaseResponse = {
-  /**
-   * https://youtu.be/eEENrNKxCdw?t=2721
-   * #singlecollectiondesign - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
-   */
-  db: mongoDB.Collection;
-  client: mongoDB.MongoClient;
-};
+let client: mongoDB.MongoClient;
+let items: mongoDB.Collection;
 
-export const connectToDatabase = async (): Promise<ConnectToDatabaseResponse> => {
-  const client = new mongoDB.MongoClient(envVars.MONGO_URL);
+/**
+ * https://youtu.be/eEENrNKxCdw?t=2721
+ * #singlecollectiondesign - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
+ */
+
+export const connectToDatabase = async () => {
+  client = new mongoDB.MongoClient(envVars.MONGO_URL);
 
   try {
     console.log('Attempting to connect to MongoDB');
@@ -33,7 +31,7 @@ export const connectToDatabase = async (): Promise<ConnectToDatabaseResponse> =>
   console.log(`Successfully connected to database: ${database.databaseName}.`);
   const collectionName = CollectionName.items;
 
-  const db: mongoDB.Collection = database.collection(collectionName);
+  items = database.collection(collectionName);
 
   console.log(`Creating necessary collections and indexes`);
 
@@ -59,11 +57,11 @@ export const connectToDatabase = async (): Promise<ConnectToDatabaseResponse> =>
 
   // ! Create the target array index, if it doesn't exist
   try {
-    const targetArrayIndexExists = await db.indexExists(targetArrayIndexName);
+    const targetArrayIndexExists = await items.indexExists(targetArrayIndexName);
 
     if (!targetArrayIndexExists) {
       try {
-        await db.createIndex(targetArrayIndexSpec);
+        await items.createIndex(targetArrayIndexSpec);
       } catch (error) {
         console.error(`An error ocurred creating the target array index `, error);
       }
@@ -74,11 +72,11 @@ export const connectToDatabase = async (): Promise<ConnectToDatabaseResponse> =>
 
   // ! Create the unique id (prefix_ksuid) index, if it doesn't exist
   try {
-    const uniqueIdIndexExists = await db.indexExists(uniqueIdIndexName);
+    const uniqueIdIndexExists = await items.indexExists(uniqueIdIndexName);
 
     if (!uniqueIdIndexExists) {
       try {
-        await db.createIndex(uniqueIdIndexSpec, uniqueIdIndexOptions);
+        await items.createIndex(uniqueIdIndexSpec, uniqueIdIndexOptions);
       } catch (error) {
         console.error(`An error ocurred creating the unique id index `, error);
       }
@@ -88,9 +86,6 @@ export const connectToDatabase = async (): Promise<ConnectToDatabaseResponse> =>
   }
 
   console.log('Ready.\n');
-
-  return {
-    client,
-    db,
-  };
 };
+
+export { client, items };
