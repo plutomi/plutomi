@@ -1,16 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { Filter, FindOptions } from 'mongodb';
-import {
-  Defaults,
-  TIME_UNITS,
-  JOI_SETTINGS,
-  WEBSITE_URL,
-  ERRORS,
-  API_URL,
-  DOMAIN_NAME,
-  Emails,
-} from '../../Config';
+import { Defaults, JOI_SETTINGS, WEBSITE_URL, API_URL, DOMAIN_NAME, Emails } from '../../Config';
 import { envVars } from '../../env';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { UserEntity } from '../../models';

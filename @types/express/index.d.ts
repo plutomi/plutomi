@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, Document } from 'mongodb';
 import { UserEntity } from '../../models';
 
 declare global {
