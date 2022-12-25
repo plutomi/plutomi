@@ -48,7 +48,7 @@ export type PlutomiId = `${EntityPrefixValues}${string}`;
 
 export const generatePlutomiId = ({ date, entity }: GenerateIdProps): PlutomiId => {
   if (!Object.values(AllEntities).includes(entity)) {
-    throw new Error('Invalid Entity - Cannot Create ID');
+    throw new Error(`Invalid Entity: ${entity} - Cannot Create ID`);
   }
 
   const id = ksuid.randomSync(date).string;
