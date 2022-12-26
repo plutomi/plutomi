@@ -16,8 +16,6 @@ export enum AllEntities {
   LoginLink = 'LoginLink',
 }
 
-type PrefixFormat = `${string}_`;
-
 export const EntityPrefixes = {
   [AllEntities.User]: 'usr_',
   [AllEntities.Org]: 'org_',
@@ -48,10 +46,6 @@ interface GenerateIdProps {
 type PlutomiId = `${typeof EntityPrefixes[EntityValues]}${string}`;
 
 export const generatePlutomiId = ({ date, entity }: GenerateIdProps): PlutomiId => {
-  // if (!Object.values(AllEntities).includes(entity)) {
-  //   throw new Error(`Invalid Entity: ${entity} - Cannot Create ID`);
-  // }
-
   const id = ksuid.randomSync(date).string;
 
   return `${EntityPrefixes[entity]}${id}`;
