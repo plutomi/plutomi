@@ -8,7 +8,8 @@ import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
-import { AllEntities, EntityPrefix, Time, generatePlutomiId } from '../../utils';
+import { AllEntities, EntityPrefixes, Time, generatePlutomiId } from '../../utils';
+import { items } from '../../utils/connectToDatabase';
 
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
@@ -55,10 +56,11 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   // If a user is signing in for the first time, create an account for them
   let user: UserEntity | undefined;
 
+  const findUserFilter: Filter<UserEntity> = {
+    target: { id: email, type: IndexableProperties.Email },
+  };
   try {
-    user = (await req.db.findOne({
-      target: { property: IndexableProperties.Email, value: email },
-    } as Filter<UserEntity>)) as UserEntity;
+    user = await items.findOne<UserEntity>(findUserFilter);
   } catch (error) {
     const msg = `Error retrieving user info`;
     console.error(msg, error);
@@ -69,14 +71,15 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   if (!user) {
-    console.log('User not found');
+    console.log('User not found:', email);
     try {
       console.log(`Creating new user`);
 
       const now = new Date();
-      const newUserId = generatePlutomiId({ date: now, entityPrefix: EntityPrefix.User });
+      const newUserId = generatePlutomiId({ date: now, entity: AllEntities.User });
       const newUser: UserEntity = {
-        id: newUserId,
+        _id: newUserId,
+        uniqueId: newUserId,
         org: null,
         createdAt: now,
         updatedAt: now,
@@ -94,7 +97,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       console.log(`Creating new user`, newUser);
 
-      await req.db.insertOne(newUser);
+      await items.insertOne<UserEntity>(newUser);
       console.log(`User created!`);
       user = newUser;
     } catch (error) {
@@ -161,13 +164,13 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     const newLoginLink: UserLoginLinkEntity = {
+      _id: generatePlutomiId({ date: now, entity: AllEntities.LoginLink }),
       createdAt: now,
       updatedAt: now,
-      id: generatePlutomiId({ date: now, entityPrefix: EntityPrefix.LoginLink }),
       userId,
       target: [],
     };
-    await req.db.insertOne(newLoginLink);
+    await items.insertOne(newLoginLink);
 
     // TODO types
     const tokenData = {

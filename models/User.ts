@@ -1,8 +1,9 @@
 import { IndexableProperties } from '../@types/indexableProperties';
-import { AllEntities } from '../utils';
+import { AllEntities, EntityPrefix } from '../utils';
 import { BaseEntity } from './Base';
 
-export type UniqueUserId = `${AllEntities.User}${string}`;
+export type UniqueUserId = `${typeof EntityPrefix[AllEntities.User]}${string}`;
+
 export type UserTargetArray = [
   { id: AllEntities.User; type: IndexableProperties.Entity },
   { id: UniqueUserId; type: IndexableProperties.Id },
@@ -15,7 +16,7 @@ export interface UserEntity extends BaseEntity {
    * Top level items will have duplicate data here and in the uniqueId due to the polymorphic design
    */
   _id: UniqueUserId;
-  uniqueId: UniqueUserId;
+  uniqueId: UniqueUserId; // TODO remove this index? TODO Rename to customId?
   org: string | null;
   firstName: string;
   lastName: string;

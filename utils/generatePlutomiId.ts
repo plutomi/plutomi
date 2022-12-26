@@ -16,17 +16,9 @@ export enum AllEntities {
   LoginLink = 'LoginLink',
 }
 
-interface GenerateIdProps {
-  /**
-   * Manually generated createdAt date
-   * There will be a top level `createdAt`
-   * and this ensures that the ID and that value have the same date
-   */
-  date: Date;
-  entity: AllEntities;
-}
+type PrefixFormat = `${string}_`;
 
-export const EntityPrefix = {
+export const EntityPrefixes = {
   [AllEntities.User]: 'usr_',
   [AllEntities.Org]: 'org_',
   [AllEntities.Application]: 'appl_',
@@ -42,16 +34,25 @@ export const EntityPrefix = {
   [AllEntities.LoginLink]: 'lgnlnk_',
 } as const;
 
-type EntityPrefixValues = typeof EntityPrefix[keyof typeof EntityPrefix];
+type EntityValues = keyof typeof AllEntities;
+interface GenerateIdProps {
+  /**
+   * Manually generated createdAt date
+   * There will be a top level `createdAt`
+   * and this ensures that the ID and that value have the same date
+   */
+  date: Date;
+  entity: EntityValues;
+}
 
-export type PlutomiId = `${EntityPrefixValues}${string}`;
+type PlutomiId = `${typeof EntityPrefixes[EntityValues]}${string}`;
 
 export const generatePlutomiId = ({ date, entity }: GenerateIdProps): PlutomiId => {
-  if (!Object.values(AllEntities).includes(entity)) {
-    throw new Error(`Invalid Entity: ${entity} - Cannot Create ID`);
-  }
+  // if (!Object.values(AllEntities).includes(entity)) {
+  //   throw new Error(`Invalid Entity: ${entity} - Cannot Create ID`);
+  // }
 
   const id = ksuid.randomSync(date).string;
 
-  return `${EntityPrefix[entity]}${id}`;
+  return `${EntityPrefixes[entity]}${id}`;
 };
