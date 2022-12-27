@@ -78,7 +78,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       const x = generatePlutomiId({
         date: now,
-        entity: AllEntities.Applicant,
+        entity: AllEntities.Org,
       });
       const newUserId = generatePlutomiId<AllEntities.User>({
         date: now,

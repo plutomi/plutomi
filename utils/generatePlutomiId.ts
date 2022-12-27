@@ -32,28 +32,20 @@ export const EntityPrefixes = {
   [AllEntities.LoginLink]: 'lgnlnk_',
 } as const;
 
-type EntityValues = keyof typeof AllEntities;
-type GenerateIdProps = {
+interface GenerateIdProps<T> {
   /**
-   * Manually generated createdAt date
+   * Manually generated createdAt date.
    * There will be a top level `createdAt`
    * and this ensures that the ID and that value have the same date
    */
   date: Date;
-  entity: EntityValues;
-};
-
-type PlutomiId = `${typeof EntityPrefixes[EntityValues]}${string}`;
-
-type x = typeof EntityPrefixes;
+  entity: T;
+}
 
 export const generatePlutomiId = <T extends AllEntities>({
   date,
   entity,
-}: {
-  date: Date;
-  entity: T;
-}): `${typeof EntityPrefixes[T]}${string}` => {
+}: GenerateIdProps<T>): `${typeof EntityPrefixes[T]}${string}` => {
   const id = ksuid.randomSync(date).string;
   const prefix = EntityPrefixes[entity];
 
