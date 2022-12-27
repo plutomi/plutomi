@@ -1,8 +1,8 @@
 import { IndexableProperties } from '../@types/indexableProperties';
-import { AllEntities, EntityPrefix } from '../utils';
+import { AllEntities, EntityPrefixes } from '../utils';
 import { BaseEntity } from './Base';
 
-export type UniqueUserId = `${typeof EntityPrefix[AllEntities.User]}${string}`;
+export type UniqueUserId = `${typeof EntityPrefixes[AllEntities.User]}${string}`;
 
 export type UserTargetArray = [
   { id: AllEntities.User; type: IndexableProperties.Entity },

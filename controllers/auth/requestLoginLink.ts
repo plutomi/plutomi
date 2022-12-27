@@ -97,7 +97,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       console.log(`Creating new user`, newUser);
 
-      await items.insertOne<UserEntity>(newUser);
+      await items.insertOne(newUser);
       console.log(`User created!`);
       user = newUser;
     } catch (error) {
@@ -129,7 +129,9 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   };
 
   try {
-    const latestLinkArray = await req.db.find(loginLinkFilter, loginLinkFindOptions).toArray();
+    const latestLinkArray = await items
+      .find<UserLoginLinkEntity>(loginLinkFilter, loginLinkFindOptions)
+      .toArray();
 
     latestLoginLink = latestLinkArray[0] as UserLoginLinkEntity;
   } catch (error) {
@@ -163,8 +165,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   const userId = user.id;
 
   try {
+    const loginLinkId = generatePlutomiId({ date: now, entity: AllEntities.LoginLink });
     const newLoginLink: UserLoginLinkEntity = {
-      _id: generatePlutomiId({ date: now, entity: AllEntities.LoginLink }),
+      _id: loginLinkId, // ! TODO nested user property with target.id
+      uniqueId: loginLinkId,
       createdAt: now,
       updatedAt: now,
       userId,
