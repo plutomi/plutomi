@@ -1,9 +1,9 @@
 import { IndexableProperties } from '../@types/indexableProperties';
-import { AllEntities } from '../utils';
+import { AllEntityNames } from '../utils';
 import { BaseEntity } from './Base';
 
 export type InvitesTargetArray = [
-  { id: AllEntities.Invite; type: IndexableProperties.Entity },
+  { id: AllEntityNames.Invite; type: IndexableProperties.Entity },
   { id: string; type: IndexableProperties.Id },
   /**
    * Get all invites for a given email

@@ -8,9 +8,9 @@ import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
-import { AllEntities, EntityPrefixes, Time, generatePlutomiId } from '../../utils';
+import { AllEntityNames, EntityPrefixes, Time, generatePlutomiId } from '../../utils';
 import { items } from '../../utils/connectToDatabase';
-
+import { ObjectId } from 'mongodb';
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
 const jwt = require('jsonwebtoken');
@@ -74,29 +74,26 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     console.log('User not found:', email);
     try {
       console.log(`Creating new user`);
-      const now = new Date();
+      const userCreationDate = new Date();
 
-      const x = generatePlutomiId({
-        date: now,
-        entity: AllEntities.Org,
+      const newUserId = generatePlutomiId({
+        date: userCreationDate,
+        entity: AllEntityNames.User,
       });
-      const newUserId = generatePlutomiId<AllEntities.User>({
-        date: now,
-        entity: AllEntities.User,
-      });
+
       const newUser: UserEntity = {
         _id: newUserId,
         uniqueId: newUserId,
         org: null,
-        createdAt: now,
-        updatedAt: now,
+        createdAt: userCreationDate,
+        updatedAt: userCreationDate,
         totalInvites: 0,
         firstName: null,
         lastName: null,
         emailVerified: false,
         canReceiveEmails: true,
         target: [
-          { id: AllEntities.User, type: IndexableProperties.Entity },
+          { id: AllEntityNames.User, type: IndexableProperties.Entity },
           { id: newUserId, type: IndexableProperties.Id },
           { id: req.body.email, type: IndexableProperties.Email },
         ],
@@ -105,6 +102,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       console.log(`Creating new user`, newUser);
 
       await items.insertOne(newUser);
+
       console.log(`User created!`);
       user = newUser;
     } catch (error) {
@@ -172,7 +170,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   const userId = user.id;
 
   try {
-    const loginLinkId = generatePlutomiId({ date: now, entity: AllEntities.LoginLink });
+    const loginLinkId = generatePlutomiId({ date: now, entity: AllEntityNames.LoginLink });
     const newLoginLink: UserLoginLinkEntity = {
       _id: loginLinkId, // ! TODO nested user property with target.id
       uniqueId: loginLinkId,

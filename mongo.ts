@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Collection } from 'mongodb';
 import { randomItemFromArray } from './utils/randomItemFromArray';
 import {
-  AllEntities,
+  AllEntityNames,
   IndexableProperties,
   IndexedTargetArray,
   IndexedTargetArrayItem,

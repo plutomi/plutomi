@@ -1,12 +1,14 @@
 import * as mongoDB from 'mongodb';
 import { envVars } from '../env';
+import { AllEntityNames } from './generatePlutomiId';
+import { UserEntity } from '../models';
 
 export enum CollectionName {
   items = 'items',
 }
 
 let client: mongoDB.MongoClient;
-let items: mongoDB.Collection;
+let items: mongoDB.Collection<UserEntity>;
 
 /**
  * https://youtu.be/eEENrNKxCdw?t=2721
@@ -31,7 +33,7 @@ export const connectToDatabase = async () => {
   console.log(`Successfully connected to database: ${database.databaseName}.`);
   const collectionName = CollectionName.items;
 
-  items = database.collection(collectionName);
+  items = database.collection<UserEntity>(collectionName);
 
   console.log(`Creating necessary collections and indexes`);
 

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { Emails, JOI_SETTINGS, WEBSITE_URL } from '../../Config';
 import {
-  AllEntities,
+  AllEntityNames,
   EntityPrefix,
   findInTargetArray,
   generatePlutomiId,
@@ -95,7 +95,7 @@ export const createInvite = async (req: Request, res: Response) => {
       emailVerified: false,
       canReceiveEmails: true,
       target: [
-        { id: AllEntities.User, type: IndexableProperties.Entity },
+        { id: AllEntityNames.User, type: IndexableProperties.Entity },
         { id: userId, type: IndexableProperties.Id },
         { id: recipientEmail, type: IndexableProperties.Email },
       ],
@@ -134,7 +134,7 @@ export const createInvite = async (req: Request, res: Response) => {
     },
     expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
     target: [
-      { id: AllEntities.Invite, type: IndexableProperties.Entity },
+      { id: AllEntityNames.Invite, type: IndexableProperties.Entity },
       { id: newInviteId, type: IndexableProperties.Id },
       { id: recipientEmail, type: IndexableProperties.Email },
       {

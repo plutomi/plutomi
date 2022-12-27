@@ -1,4 +1,4 @@
-import { AllEntities } from '../utils';
+import { AllEntityNames } from '../utils';
 
 // Note: These are properties inside of the above top level entities
 export enum IndexableProperties {
@@ -14,7 +14,7 @@ export enum IndexableProperties {
 }
 
 export interface EntityTargetArrayItem {
-  id: AllEntities;
+  id: AllEntityNames;
   type: IndexableProperties.Entity;
 }
 
@@ -28,7 +28,7 @@ export interface IdTargetArrayItem {
 
 export interface IndexedTargetArrayItem {
   id: string | null;
-  type: IndexableProperties | AllEntities;
+  type: IndexableProperties | AllEntityNames;
 }
 
 /**
