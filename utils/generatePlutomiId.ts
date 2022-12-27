@@ -33,7 +33,7 @@ export const EntityPrefixes = {
 } as const;
 
 type EntityValues = keyof typeof AllEntities;
-interface GenerateIdProps {
+type GenerateIdProps = {
   /**
    * Manually generated createdAt date
    * There will be a top level `createdAt`
@@ -41,12 +41,21 @@ interface GenerateIdProps {
    */
   date: Date;
   entity: EntityValues;
-}
+};
 
 type PlutomiId = `${typeof EntityPrefixes[EntityValues]}${string}`;
 
-export const generatePlutomiId = ({ date, entity }: GenerateIdProps): PlutomiId => {
-  const id = ksuid.randomSync(date).string;
+type x = typeof EntityPrefixes;
 
-  return `${EntityPrefixes[entity]}${id}`;
+export const generatePlutomiId = <T extends AllEntities>({
+  date,
+  entity,
+}: {
+  date: Date;
+  entity: T;
+}): `${typeof EntityPrefixes[T]}${string}` => {
+  const id = ksuid.randomSync(date).string;
+  const prefix = EntityPrefixes[entity];
+
+  return `${prefix}${id}`;
 };

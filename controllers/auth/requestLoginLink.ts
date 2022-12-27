@@ -74,9 +74,16 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     console.log('User not found:', email);
     try {
       console.log(`Creating new user`);
-
       const now = new Date();
-      const newUserId = generatePlutomiId({ date: now, entity: AllEntities.User });
+
+      const x = generatePlutomiId({
+        date: now,
+        entity: AllEntities.Applicant,
+      });
+      const newUserId = generatePlutomiId<AllEntities.User>({
+        date: now,
+        entity: AllEntities.User,
+      });
       const newUser: UserEntity = {
         _id: newUserId,
         uniqueId: newUserId,
