@@ -14,10 +14,10 @@ export interface UserEntity extends BaseEntity {
   /**
    * For most entities, this would be nested like ORG#orgId#APPLICATION#applicationId
    *
-   * Top level items will have duplicate data here and in the uniqueId due to the polymorphic design
+   * Top level items will have duplicate data here and in the itemId due to the polymorphic design
    */
   _id: UniqueUserId;
-  uniqueId: UniqueUserId; // TODO remove this index? TODO Rename to rawId?
+  itemId: UniqueUserId; // TODO remove this index?
   org: string | null;
   firstName: string;
   lastName: string;

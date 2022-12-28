@@ -82,7 +82,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       const newUser: UserEntity = {
         _id: newUserId,
-        uniqueId: newUserId,
+        itemId: newUserId,
         org: null,
         createdAt: userCreationDate,
         updatedAt: userCreationDate,
@@ -172,7 +172,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     const loginLinkId = generatePlutomiId({ date: now, entity: AllEntityNames.LoginLink });
     const newLoginLink: UserLoginLinkEntity = {
       _id: loginLinkId, // ! TODO nested user property with target.id
-      uniqueId: loginLinkId,
+      itemId: loginLinkId,
       createdAt: now,
       updatedAt: now,
       userId,

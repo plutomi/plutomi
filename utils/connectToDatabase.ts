@@ -1,11 +1,9 @@
 import * as mongoDB from 'mongodb';
 import { envVars } from '../env';
-import { AllEntityNames } from './generatePlutomiId';
 import { UserEntity } from '../models';
 
-export enum CollectionName {
-  items = 'items',
-}
+export const collectionName = 'items';
+export const databaseName = 'plutomi';
 
 let client: mongoDB.MongoClient;
 let items: mongoDB.Collection<UserEntity>;
@@ -27,11 +25,8 @@ export const connectToDatabase = async () => {
     throw new Error(errorMessage);
   }
 
-  const databaseName = 'plutomi';
-
   const database: mongoDB.Db = client.db(databaseName);
   console.log(`Successfully connected to database: ${database.databaseName}.`);
-  const collectionName = CollectionName.items;
 
   items = database.collection<UserEntity>(collectionName);
 
@@ -44,9 +39,10 @@ export const connectToDatabase = async () => {
   const targetArrayIndexName = 'targetArray';
   const targetArrayIndexSpec: mongoDB.IndexSpecification = { 'target.id': 1, 'target.type': 1 };
 
-  const uniqueIdIndexName = 'uniqueId';
-  const uniqueIdIndexSpec: mongoDB.IndexSpecification = { uniqueId: 1 };
-  const uniqueIdIndexOptions: mongoDB.CreateIndexesOptions = { unique: true };
+  // ! TODO this might not be needed! The target ID reference can and should(?) use the _id value
+  const itemIdIndexName = 'itemId';
+  const itemIdIndexSpec: mongoDB.IndexSpecification = { itemId: 1 };
+  const itemIdIndexOptions: mongoDB.CreateIndexesOptions = { unique: true };
 
   if (!collectionExists) {
     try {
@@ -74,11 +70,11 @@ export const connectToDatabase = async () => {
 
   // ! Create the unique id (prefix_ksuid) index, if it doesn't exist
   try {
-    const uniqueIdIndexExists = await items.indexExists(uniqueIdIndexName);
+    const itemIdIndexExists = await items.indexExists(itemIdIndexName);
 
-    if (!uniqueIdIndexExists) {
+    if (!itemIdIndexExists) {
       try {
-        await items.createIndex(uniqueIdIndexSpec, uniqueIdIndexOptions);
+        await items.createIndex(itemIdIndexSpec, itemIdIndexOptions);
       } catch (error) {
         console.error(`An error ocurred creating the unique id index `, error);
       }

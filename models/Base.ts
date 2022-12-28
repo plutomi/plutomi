@@ -10,6 +10,6 @@ export interface BaseEntity {
   /**
    * Created with {@link generatePlutomiId}.
    */
-  uniqueId: string;
+  itemId: string;
   target: IndexedTargetArray;
 }
