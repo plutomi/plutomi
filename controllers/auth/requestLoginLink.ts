@@ -4,8 +4,7 @@ import { Filter, FindOptions } from 'mongodb';
 import { Defaults, JOI_SETTINGS, WEBSITE_URL, API_URL, DOMAIN_NAME, Emails } from '../../Config';
 import { envVars } from '../../env';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { UserEntity } from '../../models';
-import { UserLoginLinkEntity } from '../../models';
+import { UserEntity, UserLoginLinkEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
 import { AllEntityNames, EntityPrefixes, Time, generatePlutomiId } from '../../utils';
@@ -101,7 +100,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       console.log(`Creating new user`, newUser);
 
-      await items.insertOne(newUser);
+      const x = await items.insertOne(newUser);
 
       console.log(`User created!`);
       user = newUser;

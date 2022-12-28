@@ -1,6 +1,10 @@
 import { IndexedTargetArray } from '../@types/indexableProperties';
+import { AllEntityNames, EntityPrefixes } from '../utils';
+
+type PlutomiId = `${typeof EntityPrefixes[AllEntityNames]}${string}`;
+
 export interface BaseEntity {
-  _id: string;
+  _id: PlutomiId;
   createdAt: Date;
   updatedAt: Date;
   /**

@@ -17,7 +17,7 @@ export interface UserEntity extends BaseEntity {
    * Top level items will have duplicate data here and in the uniqueId due to the polymorphic design
    */
   _id: UniqueUserId;
-  uniqueId: UniqueUserId; // TODO remove this index? TODO Rename to customId?
+  uniqueId: UniqueUserId; // TODO remove this index? TODO Rename to rawId?
   org: string | null;
   firstName: string;
   lastName: string;

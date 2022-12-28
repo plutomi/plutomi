@@ -17,20 +17,22 @@ export enum AllEntityNames {
 }
 
 export const EntityPrefixes = {
-  [AllEntityNames.User]: 'usr_',
-  [AllEntityNames.Org]: 'org_',
-  [AllEntityNames.Application]: 'appl_',
-  [AllEntityNames.Applicant]: 'apcnt_',
-  [AllEntityNames.Stage]: 'stg_',
-  [AllEntityNames.StageRule]: 'stgrul_',
-  [AllEntityNames.Question]: 'ques_',
-  [AllEntityNames.QuestionRule]: 'quesrul_',
-  [AllEntityNames.Invite]: 'inv_',
-  [AllEntityNames.Webhook]: 'wbhk_',
-  [AllEntityNames.Event]: 'evnt_',
-  [AllEntityNames.Session]: 'sesh_',
-  [AllEntityNames.LoginLink]: 'lgnlnk_',
+  [AllEntityNames.User]: 'usr',
+  [AllEntityNames.Org]: 'org',
+  [AllEntityNames.Application]: 'appl',
+  [AllEntityNames.Applicant]: 'apcnt',
+  [AllEntityNames.Stage]: 'stg',
+  [AllEntityNames.StageRule]: 'stgrul',
+  [AllEntityNames.Question]: 'ques',
+  [AllEntityNames.QuestionRule]: 'quesrul',
+  [AllEntityNames.Invite]: 'inv',
+  [AllEntityNames.Webhook]: 'wbhk',
+  [AllEntityNames.Event]: 'evnt',
+  [AllEntityNames.Session]: 'sesh',
+  [AllEntityNames.LoginLink]: 'lgnlnk',
 } as const;
+
+type ksuidIdString = `_${string}`;
 
 interface GenerateIdProps<T> {
   /**
@@ -42,12 +44,14 @@ interface GenerateIdProps<T> {
   entity: T;
 }
 
+export type PlutomiId<T extends AllEntityNames> = `${typeof EntityPrefixes[T]}${ksuidIdString}`;
+
 export const generatePlutomiId = <T extends AllEntityNames>({
   date,
   entity,
-}: GenerateIdProps<T>): `${typeof EntityPrefixes[T]}${string}` => {
+}: GenerateIdProps<T>): PlutomiId<T> => {
   const id = ksuid.randomSync(date).string;
   const prefix = EntityPrefixes[entity];
 
-  return `${prefix}${id}`;
+  return `${prefix}_${id}`;
 };
