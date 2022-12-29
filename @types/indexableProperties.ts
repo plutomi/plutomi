@@ -90,3 +90,5 @@ export type IndexedTargetArray = [
    */
   ...IndexedTargetArrayItem[],
 ];
+
+// { $and: [{ target: { $elemMatch: { id: "ORG#plutomi#STAGE#Review", type: "Stage" } }}, { target: { $elemMatch: { id: "Applicant", type: "Entity" } }}]}
