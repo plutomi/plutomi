@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import axios from 'axios';
-import TagGenerator from './utils/tagGenerator';
 import { envVars } from './env';
 
 export const IS_STAGE = envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage';

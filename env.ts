@@ -1,8 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import * as e from 'env-var';
-import { DOMAIN_NAME } from './Config';
-
-// Read in the .env file if running locally
-require('dotenv').config();
 
 const NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT = e
   .get('NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT')
@@ -35,16 +33,18 @@ const env = e.from(process.env, {
     }
     return value;
   },
-  asDomain: (value) => {
-    if (
-      (NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ||
-        NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod') &&
-      value !== DOMAIN_NAME
-    ) {
-      throw new Error(`domain must be '${DOMAIN_NAME}' in a live environment`);
-    }
-    return value;
-  },
+  // ! TODO enable this again, but will have a dependency loop since config has the domain while env pulls it,
+  // but config depends on .env :T
+  // asDomain: (value) => {
+  //   if (
+  //     (NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ||
+  //       NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod') &&
+  //     value !== DOMAIN_NAME
+  //   ) {
+  //     throw new Error(`domain must be '${DOMAIN_NAME}' in a live environment`);
+  //   }
+  //   return value;
+  // },
 });
 
 const PORT = env.get('PORT').default(3000).required().asPort();
@@ -54,8 +54,8 @@ const NEXT_PUBLIC_WEBSITE_URL = env
   .default(`http://localhost:${PORT}`)
   .required(
     NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' || NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod',
-  )
-  .asDomain();
+  );
+// .asDomain();
 const COMMITS_TOKEN = env
   .get('COMMITS_TOKEN')
   .required()

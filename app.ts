@@ -39,14 +39,8 @@ app
     const sessionSecrets = [envVars.SESSION_SIGNATURE_SECRET_1];
 
     const server = express();
-    
-    const { client, db } = await connectToDatabase();
-    const includeDb: express.Handler = (req, _res, next) => {
-      req.db = db;
-      req.client = client;
-      next();
-    };
-    server.use(includeDb);
+
+    await connectToDatabase();
 
     server.use(timeout('5s'));
     server.use(

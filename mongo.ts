@@ -2,97 +2,10 @@ import { connectToDatabase } from './utils/connectToDatabase';
 import { randomNumberInclusive } from './utils/randomNumberInclusive';
 import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
-import { v4 as uuidv4 } from 'uuid';
-
-import { Collection } from 'mongodb';
-import { randomItemFromArray } from './utils/randomItemFromArray';
-import {
-  IndexableProperties,
-  IndexedTargetArray,
-  IndexedTargetArrayItem,
-} from './@types/indexableProperties';
+import { items } from './utils/connectToDatabase';
 import dayjs from 'dayjs';
-import axios from 'axios';
 // Direct target array!
 // Applicant info: { $or: [ { $and: [ { target: { id: "DI_46-2lfGbv3xeMlSLA1UsomjAa_tr3cHYWSLnIMsAtKI2gyb" }} ]}] }
-
-// [
-//   {
-//       '$search': {
-//           'index': 'default',
-//           'compound': {
-//               'filter': [
-//                   {
-//                       'text': {
-//                           'query': 'hauckgroup',
-//                           'path': 'orgId'
-//                       }
-//                   }
-//               ],
-//               'must': [
-//                   {
-//                       'text': {
-//                           'query': 'jose',
-//                           'path': 'value'
-//                       }
-//                   }
-//               ]
-//           },
-//           'compound': {
-//               'filter': [
-//                   {
-//                       'text': {
-//                           'query': 'hauckgroup',
-//                           'path': 'orgId'
-//                       }
-//                   }
-//               ],
-//               'must': [
-//                   {
-//                       'text': {
-//                           'query': 'Male',
-//                           'path': 'value'
-//                       }
-//                   }
-//               ]
-//           }
-//       }
-//   }, {
-//       '$group': {
-//           '_id': None,
-//           'matchingApplicantIds': {
-//               '$addToSet': '$applicantId'
-//           }
-//       }
-//   }, {
-//       '$unwind': {
-//           'path': '$matchingApplicantIds'
-//       }
-//   }, {
-//       '$lookup': {
-//           'from': 'Applicants',
-//           'localField': 'matchingApplicantIds',
-//           'foreignField': 'id',
-//           'as': 'applicantData'
-//       }
-//   }, {
-//       '$unwind': {
-//           'path': '$applicantData'
-//       }
-//   }, {
-//       '$unset': [
-//           '_id', 'matchingApplicantIds'
-//       ]
-//   }, {
-//       '$unwind': {
-//           'path': '$applicantData'
-//       }
-//   }, {
-//       '$replaceRoot': {
-//           'newRoot': '$applicantData'
-//       }
-//   }
-// ]
 
 const numberOfBatches = randomNumberInclusive(10, 50);
 const applicantsPerBatch = randomNumberInclusive(2000, 2000);
@@ -145,42 +58,7 @@ const weightedRandom = (items: string[], weights: number[]) => {
 const main = async () => {
   const startTime = dayjs();
   try {
-    const { client, db } = await connectToDatabase({ databaseName: dbName });
-
-    const agg = [
-      {
-        $match: {
-          _id: new RegExp('^ORG#plutomi#OPENING#nyc#STAGE#questionnaire#QUESTIONS'),
-        },
-      },
-      {
-        $unwind: {
-          path: '$target',
-        },
-      },
-      {
-        $match: {
-          'target.type': 'Question',
-        },
-      },
-      {
-        $lookup: {
-          from: 'dev',
-          localField: 'target.id',
-          foreignField: '_id',
-          as: 'questionData',
-        },
-      },
-      {
-        $unwind: {
-          path: '$questionData',
-        },
-      },
-    ];
-
-    const result = await db.aggregate(agg, { explain: true }).toArray();
-
-    console.log(`AGGREGATE`, result[0].stages[0]);
+    await connectToDatabase();
 
     // await collections.applicants.deleteMany({});
     // await collections.applicants.deleteMany({});
@@ -476,6 +354,7 @@ const main = async () => {
         const openingIndex = `ORG#${orgForApplicant}#OPENING#${openingForApplicant}#APPLICANTS`;
         const stageIndex = `ORG#${orgForApplicant}#OPENING#${openingForApplicant}#STAGE#${stageForApplicant}#APPLICANTS`;
         // { $and: [ { _id: /^ORG#plutomi#APPLICANT/ },  { "target.id": "ORG#plutomi#OPENING#Miami#APPLICANTS"}] }
+
         const newApplicant = {
           _id: `ORG#${orgForApplicant}#APPLICANT#${applicantId}`,
           id: applicantId,
@@ -501,11 +380,11 @@ const main = async () => {
       applicantsToCreate.push(localBatch);
     }
 
-    const sendToMongo = async (collections) => {
+    const sendToMongo = async () => {
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
 
-        await collections.applicants.insertMany(batch);
+        await items.insertMany(batch);
 
         // const responses = [];
 
@@ -608,7 +487,7 @@ const main = async () => {
     };
 
     console.log('Sending to mongo');
-    await sendToMongo(db);
+    await sendToMongo();
   } catch (error) {
     console.error(`error `, error);
   }
