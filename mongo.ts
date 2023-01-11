@@ -7,8 +7,8 @@ import dayjs from 'dayjs';
 // Direct target array!
 // Applicant info: { $or: [ { $and: [ { target: { id: "DI_46-2lfGbv3xeMlSLA1UsomjAa_tr3cHYWSLnIMsAtKI2gyb" }} ]}] }
 
-const numberOfBatches = randomNumberInclusive(10, 50);
-const applicantsPerBatch = randomNumberInclusive(2000, 2000);
+const numberOfBatches = randomNumberInclusive(30, 50);
+const applicantsPerBatch = randomNumberInclusive(4000, 5000);
 const orgsToCreate = randomNumberInclusive(1, 1);
 const dbName = 'plutomi';
 
@@ -60,24 +60,7 @@ const main = async () => {
   try {
     await connectToDatabase();
 
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
+    // await items.deleteMany({});
 
     let processedApplicants = 0;
 
@@ -245,34 +228,6 @@ const main = async () => {
           }
         };
 
-        // TODO saving
-
-        // {
-        //   index: 'default',
-        //   compound: {
-
-        //     must: {
-        //         text: {
-        //     query: 'jose',
-        //     path: 'value'
-        //     }
-
-        //   }
-
-        //   },
-
-        //     compound: {
-        //       must: {
-        //         text: {
-        //         query: 'jose',
-        //         path: 'value'
-        //       }
-
-        //   }
-
-        //   }
-
-        // }
         const stageForApplicant = getStage();
         const applicantId = nanoid(10);
         const createdAt = faker.date.between(
@@ -313,6 +268,7 @@ const main = async () => {
           account: faker.finance.accountName(),
           direction: faker.address.direction(),
           city: faker.address.city(),
+
           country: faker.address.country(),
           latitude: faker.address.latitude(),
           longitude: faker.address.longitude(),
@@ -350,11 +306,6 @@ const main = async () => {
           stageId: stageForApplicant,
         };
 
-        const orgIndex = `ORG#${orgForApplicant}#APPLICANTS`;
-        const openingIndex = `ORG#${orgForApplicant}#OPENING#${openingForApplicant}#APPLICANTS`;
-        const stageIndex = `ORG#${orgForApplicant}#OPENING#${openingForApplicant}#STAGE#${stageForApplicant}#APPLICANTS`;
-        // { $and: [ { _id: /^ORG#plutomi#APPLICANT/ },  { "target.id": "ORG#plutomi#OPENING#Miami#APPLICANTS"}] }
-
         const newApplicant = {
           _id: `ORG#${orgForApplicant}#APPLICANT#${applicantId}`,
           id: applicantId,
@@ -366,11 +317,14 @@ const main = async () => {
           type: 'Applicant',
           target: [
             { id: 'Applicant', type: 'Entity' },
-            { id: Math.random() > 0.5 ? 'IDLE' : 'ACTIVE', type: 'Status' }, // ORG + ID
-            { id: openingIndex, type: 'Opening' },
-            { id: stageIndex, type: 'Stage' },
+            { id: Math.random() > 0.5 ? 'IDLE' : 'ACTIVE', type: 'Status' },
+            { id: `${orgForApplicant}`, type: 'applicant' },
+            { id: `${orgForApplicant}-${openingForApplicant}`, type: 'applicant' },
+            {
+              id: `${orgForApplicant}-${openingForApplicant}-${stageForApplicant}`,
+              type: 'applicant',
+            },
             { id: createdAt, type: 'CreatedAt' },
-            //{ $and: [{ "target": { $elemMatch: { id:  "ORG#plutomi#OPENING#Chicago#APPLICANTS" } } }, { "target": { $elemMatch: { id:  "ACTIVE" } } } ] }
             { id: updatedAt, type: 'UpdatedAt' },
             { id: birthDate, type: 'BirthDate' },
           ],
