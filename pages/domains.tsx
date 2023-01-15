@@ -11,27 +11,20 @@ const products = [
   },
   {
     id: 2,
-    name: 'creditcardhoroscope.com',
-    category: 'Host: AWS (Route53)',
-    href: 'https://buy.stripe.com/aEU7tiduW8lyeLm9AC',
-    price: '$20',
-  },
-  {
-    id: 3,
     name: 'gelgy.com',
     category: 'Host: AWS (Route53)',
     href: 'https://buy.stripe.com/4gw5la0IabxK9r26ow',
     price: '$59',
   },
   {
-    id: 4,
+    id: 3,
     name: 'kajua.com',
     category: 'Host: AWS (Route53)',
     href: 'https://buy.stripe.com/4gwaFufD46dq9r2eV1',
     price: '$59',
   },
   {
-    id: 5,
+    id: 4,
     name: 'serverlessasaservice.com',
     category: 'Host: Google Domains',
     href: 'https://buy.stripe.com/7sI7ti8aC8lyeLm5kp',
@@ -39,7 +32,7 @@ const products = [
   },
 
   {
-    id: 6,
+    id: 5,
     name: 'cavlia.com',
     category: 'Host: Google Domains',
     href: 'https://buy.stripe.com/7sIdRGbmO6dq0Uw006',
