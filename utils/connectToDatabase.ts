@@ -69,19 +69,19 @@ export const connectToDatabase = async () => {
   }
 
   // ! Create the unique id (prefix_ksuid) index, if it doesn't exist
-  try {
-    const itemIdIndexExists = await items.indexExists(itemIdIndexName);
+  // try {
+  //   const itemIdIndexExists = await items.indexExists(itemIdIndexName);
 
-    if (!itemIdIndexExists) {
-      try {
-        await items.createIndex(itemIdIndexSpec, itemIdIndexOptions);
-      } catch (error) {
-        console.error(`An error ocurred creating the unique id index `, error);
-      }
-    }
-  } catch (error) {
-    console.error(`An error ocurred checking if the unique id index exists`, error);
-  }
+  //   if (!itemIdIndexExists) {
+  //     try {
+  //       await items.createIndex(itemIdIndexSpec, itemIdIndexOptions);
+  //     } catch (error) {
+  //       console.error(`An error ocurred creating the unique id index `, error);
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.error(`An error ocurred checking if the unique id index exists`, error);
+  // }
 
   console.log('Ready.\n');
 };

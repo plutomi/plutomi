@@ -60,24 +60,24 @@ const main = async () => {
   try {
     await connectToDatabase();
 
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
+    await items.deleteMany({});
 
     let processedApplicants = 0;
 
@@ -130,7 +130,7 @@ const main = async () => {
     // for await (const org of orgs) {
     //   const data = {
     //     name: `${org}Index`,
-    //     collectionName: collections.Applicants.collectionName,
+    //     collectionName: items.collectionName,
     //     database: dbName,
     //     mappings: {
     //       dynamic: false,
@@ -229,7 +229,7 @@ const main = async () => {
 
           for (const opening of openings) {
             if (num < opening.weight) {
-              return opening.name;
+              return `${opening.name}${orgForApplicant !== 'plutomi' ? '2' : ''}`;
             }
           }
         };
@@ -240,7 +240,9 @@ const main = async () => {
 
           for (const stage of stages) {
             if (num < stage.weight) {
-              return stage.name;
+              return `${openingForApplicant.slice(0, 2)}-${stage.name}${
+                orgForApplicant !== 'plutomi' ? '2' : ''
+              }`;
             }
           }
         };
@@ -274,7 +276,7 @@ const main = async () => {
 
         // }
         const stageForApplicant = getStage();
-        const applicantId = nanoid(10);
+        const applicantId = `apcnt_${nanoid(20)}`;
         const createdAt = faker.date.between(
           dayjs().subtract(5, 'years').toDate(),
           dayjs().toDate(),
@@ -364,11 +366,21 @@ const main = async () => {
           // TODO Unique search index will be created per org
           data: app,
           type: 'Applicant',
+          values: [
+            { id: Math.random() > 0.5 ? 'Status' : 'Active', type: 'Status' },
+            { id: Math.random() > 0.5 ? 'Bike' : 'Car', type: 'Vehicle' },
+          ],
           target: [
             { id: 'Applicant', type: 'Entity' },
-            { id: Math.random() > 0.5 ? 'IDLE' : 'ACTIVE', type: 'Status' }, // ORG + ID
-            { id: openingIndex, type: 'Opening' },
-            { id: stageIndex, type: 'Stage' },
+            { id: Math.random() > 0.5 ? 'IDLE' : 'ACTIVE', type: 'Status' },
+            { id: openingForApplicant, type: 'Opening' },
+            { id: stageForApplicant, type: 'Stage' },
+            { id: orgForApplicant, type: 'Org' },
+
+            // TODo pt 2
+            { id: openingForApplicant, type: 'Applicant' },
+            { id: stageForApplicant, type: 'Applicant' },
+            { id: orgForApplicant, type: 'Applicant' },
             { id: createdAt, type: 'CreatedAt' },
             //{ $and: [{ "target": { $elemMatch: { id:  "ORG#plutomi#OPENING#Chicago#APPLICANTS" } } }, { "target": { $elemMatch: { id:  "ACTIVE" } } } ] }
             { id: updatedAt, type: 'UpdatedAt' },
@@ -475,7 +487,7 @@ const main = async () => {
       const start2 = dayjs();
 
       // console.log('Start');
-      // await collections.applicants.updateMany(
+      // await items.updateMany(
       //   { 'target.id': /^ORG#plutomi#APPLICANTS/ },
       //   { $set: { testData: 'BEANS' } },
       // );
