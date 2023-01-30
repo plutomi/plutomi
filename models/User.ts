@@ -2,7 +2,7 @@ import { IndexableProperties } from '../@types/indexableProperties';
 import { AllEntityNames, EntityPrefixes } from '../utils';
 import { BaseEntity } from './Base';
 
-export type UserItemId = `${typeof EntityPrefixes[AllEntityNames.User]}${string}`;
+export type UserItemId = `${typeof EntityPrefixes[AllEntityNames.User]}_${string}`;
 
 export type UserTargetArray = [
   { id: AllEntityNames.User; type: IndexableProperties.Entity },
