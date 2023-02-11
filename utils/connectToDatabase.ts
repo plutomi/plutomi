@@ -42,6 +42,7 @@ export const connectToDatabase = async () => {
   // ! TODO this might not be needed! The target ID reference can and should(?) use the _id value
   const itemIdIndexName = 'itemId';
   const itemIdIndexSpec: mongoDB.IndexSpecification = { itemId: 1 };
+  // TODO add a check for this
   const itemIdIndexOptions: mongoDB.CreateIndexesOptions = { unique: true };
 
   if (!collectionExists) {
@@ -67,21 +68,6 @@ export const connectToDatabase = async () => {
   } catch (error) {
     console.error(`An error ocurred checking if the target array index exists`, error);
   }
-
-  // ! Create the unique id (prefix_ksuid) index, if it doesn't exist
-  // try {
-  //   const itemIdIndexExists = await items.indexExists(itemIdIndexName);
-
-  //   if (!itemIdIndexExists) {
-  //     try {
-  //       await items.createIndex(itemIdIndexSpec, itemIdIndexOptions);
-  //     } catch (error) {
-  //       console.error(`An error ocurred creating the unique id index `, error);
-  //     }
-  //   }
-  // } catch (error) {
-  //   console.error(`An error ocurred checking if the unique id index exists`, error);
-  // }
 
   console.log('Ready.\n');
 };

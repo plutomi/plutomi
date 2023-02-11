@@ -17,19 +17,19 @@ export enum AllEntityNames {
 }
 
 export const EntityPrefixes = {
-  [AllEntityNames.User]: 'usr',
+  [AllEntityNames.User]: 'user',
   [AllEntityNames.Org]: 'org',
-  [AllEntityNames.Application]: 'appl',
-  [AllEntityNames.Applicant]: 'apcnt',
-  [AllEntityNames.Stage]: 'stg',
-  [AllEntityNames.StageRule]: 'stgrul',
-  [AllEntityNames.Question]: 'ques',
-  [AllEntityNames.QuestionRule]: 'quesrul',
-  [AllEntityNames.Invite]: 'inv',
-  [AllEntityNames.Webhook]: 'wbhk',
-  [AllEntityNames.Event]: 'evnt',
-  [AllEntityNames.Session]: 'sesh',
-  [AllEntityNames.LoginLink]: 'lgnlnk',
+  [AllEntityNames.Application]: 'application',
+  [AllEntityNames.Applicant]: 'applicant',
+  [AllEntityNames.Stage]: 'stage',
+  [AllEntityNames.StageRule]: 'stagerule',
+  [AllEntityNames.Question]: 'question',
+  [AllEntityNames.QuestionRule]: 'questionrule',
+  [AllEntityNames.Invite]: 'invite',
+  [AllEntityNames.Webhook]: 'webhook',
+  [AllEntityNames.Event]: 'event',
+  [AllEntityNames.Session]: 'session',
+  [AllEntityNames.LoginLink]: 'loginlink',
 } as const;
 
 type ksuidIdString = `_${string}`;
