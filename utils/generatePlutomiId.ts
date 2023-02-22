@@ -16,7 +16,7 @@ export enum AllEntityNames {
   LoginLink = 'LoginLink',
 }
 
-export const EntityPrefixes = {
+export const EntityPrefixes: Record<keyof AllEntityNames, AllEntityNames> = {
   [AllEntityNames.User]: 'user',
   [AllEntityNames.Org]: 'org',
   [AllEntityNames.Application]: 'application',
