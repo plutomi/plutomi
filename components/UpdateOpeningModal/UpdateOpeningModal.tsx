@@ -7,7 +7,7 @@ import useStore from '../../utils/store';
 import { OpeningState } from '../../Config';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 
 export const UpdateOpeningModal = ({ opening }: { opening: OpeningEntity }) => {
   const [openingName, setOpeningName] = useState(opening?.name);

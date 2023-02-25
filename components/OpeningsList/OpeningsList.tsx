@@ -1,4 +1,4 @@
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
 import useStore from '../../utils/store';
 import { Loader } from '../Loader/Loader';

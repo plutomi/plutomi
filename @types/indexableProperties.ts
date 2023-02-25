@@ -1,4 +1,4 @@
-import { AllEntityNames, EntityKeys, PlutomiId, EntityIdPrefixes } from '../utils';
+import { AllEntityNames, PlutomiId, EntityIdPrefixes } from '../utils';
 
 // These are properties, aside from each entity type, that can be indexed
 export enum IndexableProperties {

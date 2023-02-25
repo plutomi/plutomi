@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS } from '../../Config';
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 import { collections } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 

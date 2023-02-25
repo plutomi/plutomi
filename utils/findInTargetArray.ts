@@ -11,7 +11,7 @@ import {
   IndexedTargetArray,
   IndexedTargetArrayItem,
 } from '../@types/indexableProperties';
-import { OpeningEntity } from '../models/Opening';
+import { OpeningEntity } from '../@types/entities/application';
 
 /**
  * Finds a value in a {@link IndexedTargetArray}

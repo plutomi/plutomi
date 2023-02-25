@@ -1,6 +1,6 @@
 import { Extends } from '../@types/extends';
 import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
-import { BaseEntity } from './Base';
+import { BaseEntity } from './baseEntity';
 
 export type StageTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {

@@ -4,7 +4,7 @@ import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { combineClassNames, findInTargetArray } from '../../utils';
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 import { IndexableProperties } from '../../@types/indexableProperties';
 
 interface OpeningsDropdownProps {

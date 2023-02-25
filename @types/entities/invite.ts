@@ -1,6 +1,4 @@
-import { IndexableProperties } from '../@types/indexableProperties';
-import { AllEntityNames } from '../utils';
-import { BaseEntity } from './Base';
+import { BaseEntity } from './baseEntity';
 
 export type InvitesTargetArray = [
   { id: AllEntityNames.Invite; type: IndexableProperties.Entity },
@@ -15,7 +13,7 @@ export type InvitesTargetArray = [
   { id: string; type: IndexableProperties.User },
 ];
 
-export interface InviteEntity extends BaseEntity {
+export interface InviteEntity extends BaseEntity<AllEntityNames.Invite> {
   userId: string;
   org: string;
   /**

@@ -1,5 +1,5 @@
 import { AllEntityNames } from '../utils';
-import { BaseEntity } from './Base';
+import { BaseEntity } from './baseEntity';
 
 export interface UserEntity extends BaseEntity<AllEntityNames.User> {
   org: string | null; // ! TODO multiple orgs

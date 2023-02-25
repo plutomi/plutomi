@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { OrgEntity, StageEntity } from '../../models';
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 import { generateId } from '../../utils';
 import { collections, mongoClient } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';

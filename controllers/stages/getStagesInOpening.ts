@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { StageEntity } from '../../models';
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 import { collections } from '../../utils/connectToDatabase';
 import { sortStages } from '../../utils/sortStages';
 

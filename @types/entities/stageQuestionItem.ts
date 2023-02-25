@@ -1,5 +1,5 @@
 import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
-import { BaseEntity } from './Base';
+import { BaseEntity } from './baseEntity';
 import { Extends } from '../@types/extends';
 
 /**

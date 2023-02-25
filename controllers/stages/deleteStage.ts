@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Filter, UpdateFilter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { OrgEntity, StageEntity, StageTargetArray } from '../../models';
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 import { collections, mongoClient } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 

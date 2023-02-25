@@ -5,7 +5,7 @@ import { OpeningState, WEBSITE_URL } from '../../Config';
 import { ClickToCopy } from '../ClickToCopy';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { Loader } from '../Loader';
-import { OpeningEntity } from '../../models/Opening';
+import { OpeningEntity } from '../../@types/entities/application';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { Time, findInTargetArray } from '../../utils';
 
