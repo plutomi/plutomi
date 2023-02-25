@@ -2,7 +2,7 @@ import ksuid from 'ksuid';
 
 type PlutomiIdSuffix = `_${string}`;
 
-export enum AllEntities {
+export enum AllEntityNames {
   Org = 'Org',
   User = 'User',
   Application = 'Application',
@@ -16,23 +16,23 @@ export enum AllEntities {
   LoginLink = 'LoginLink',
 }
 
-type EntityKeys = keyof typeof AllEntities;
+type EntityKeys = keyof typeof AllEntityNames;
 type EntityIdPrefixes = {
   [K in EntityKeys]: Lowercase<K>;
 };
 
 export const EntityIdPrefixes: EntityIdPrefixes = {
-  [AllEntities.User]: 'user',
-  [AllEntities.Org]: 'org',
-  [AllEntities.Application]: 'application',
-  [AllEntities.Applicant]: 'applicant',
-  [AllEntities.Stage]: 'stage',
-  [AllEntities.Question]: 'question',
-  [AllEntities.Invite]: 'invite',
-  [AllEntities.Webhook]: 'webhook',
-  [AllEntities.Event]: 'event',
-  [AllEntities.Session]: 'session',
-  [AllEntities.LoginLink]: 'loginlink',
+  [AllEntityNames.User]: 'user',
+  [AllEntityNames.Org]: 'org',
+  [AllEntityNames.Application]: 'application',
+  [AllEntityNames.Applicant]: 'applicant',
+  [AllEntityNames.Stage]: 'stage',
+  [AllEntityNames.Question]: 'question',
+  [AllEntityNames.Invite]: 'invite',
+  [AllEntityNames.Webhook]: 'webhook',
+  [AllEntityNames.Event]: 'event',
+  [AllEntityNames.Session]: 'session',
+  [AllEntityNames.LoginLink]: 'loginlink',
 };
 
 export type PlutomiId<T extends EntityKeys> = `${EntityIdPrefixes[T]}${PlutomiIdSuffix}`;
@@ -47,7 +47,7 @@ interface GenerateIdProps<T> {
   entity: T;
 }
 
-export const generatePlutomiId = <T extends AllEntities>({
+export const generatePlutomiId = <T extends AllEntityNames>({
   date,
   entity,
 }: GenerateIdProps<T>): PlutomiId<T> => {
