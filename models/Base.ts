@@ -1,15 +1,9 @@
 import { IndexedTargetArray } from '../@types/indexableProperties';
-import { AllEntityNames, EntityPrefixes } from '../utils';
+import { AllEntityNames, PlutomiId } from '../utils';
 
-type PlutomiId = `${typeof EntityPrefixes[AllEntityNames]}${string}`;
-
-export interface BaseEntity {
-  _id: PlutomiId;
+export interface BaseEntity<T extends AllEntityNames> {
+  _id: PlutomiId<T>;
   createdAt: Date;
   updatedAt: Date;
-  /**
-   * Created with {@link generatePlutomiId}.
-   */
-  itemId: string;
-  target: IndexedTargetArray;
+  target: IndexedTargetArray<T>;
 }

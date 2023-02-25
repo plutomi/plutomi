@@ -16,7 +16,7 @@ export enum AllEntityNames {
   LoginLink = 'LoginLink',
 }
 
-type EntityKeys = keyof typeof AllEntityNames;
+export type EntityKeys = keyof typeof AllEntityNames;
 type EntityIdPrefixes = {
   [K in EntityKeys]: Lowercase<K>;
 };
