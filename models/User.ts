@@ -1,11 +1,11 @@
 import { IndexableProperties } from '../@types/indexableProperties';
-import { AllEntityNames, EntityPrefixes } from '../utils';
+import { AllEntities, PlutomiId } from '../utils';
 import { BaseEntity } from './Base';
 
-export type UserItemId = `${typeof EntityPrefixes[AllEntityNames.User]}_${string}`;
+export type UserItemId = PlutomiId<AllEntities.User>;
 
 export type UserTargetArray = [
-  { id: AllEntityNames.User; type: IndexableProperties.Entity },
+  { id: AllEntities.User; type: IndexableProperties.Entity },
   { id: UserItemId; type: IndexableProperties.Id },
   { id: string; type: IndexableProperties.Email },
 ];
@@ -17,13 +17,12 @@ export interface UserEntity extends BaseEntity {
    * Top level items will have duplicate data here and in the itemId due to the polymorphic design
    */
   _id: UserItemId;
-  itemId: UserItemId; // TODO remove this index?
   org: string | null;
   firstName: string;
   lastName: string;
   emailVerified: boolean;
   canReceiveEmails: boolean;
   totalInvites: number;
-  orgJoinDate?: Date;
+  orgJoinDate?: Date; // ! TODO: this should be on the org or another org event object
   target: UserTargetArray;
 }

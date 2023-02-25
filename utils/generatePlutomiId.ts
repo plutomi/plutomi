@@ -1,6 +1,8 @@
 import ksuid from 'ksuid';
 
-export enum AllEntityNames {
+type PlutomiIdSuffix = `_${string}`;
+
+export enum AllEntities {
   Org = 'Org',
   User = 'User',
   Application = 'Application',
@@ -9,30 +11,31 @@ export enum AllEntityNames {
   Question = 'Question',
   Invite = 'Invite',
   Webhook = 'Webhook',
-  StageRule = 'StageRule',
-  QuestionRule = 'QuestionRule',
   Event = 'Event',
   Session = 'Session',
   LoginLink = 'LoginLink',
 }
 
-export const EntityPrefixes: Record<keyof AllEntityNames, AllEntityNames> = {
-  [AllEntityNames.User]: 'user',
-  [AllEntityNames.Org]: 'org',
-  [AllEntityNames.Application]: 'application',
-  [AllEntityNames.Applicant]: 'applicant',
-  [AllEntityNames.Stage]: 'stage',
-  [AllEntityNames.StageRule]: 'stagerule',
-  [AllEntityNames.Question]: 'question',
-  [AllEntityNames.QuestionRule]: 'questionrule',
-  [AllEntityNames.Invite]: 'invite',
-  [AllEntityNames.Webhook]: 'webhook',
-  [AllEntityNames.Event]: 'event',
-  [AllEntityNames.Session]: 'session',
-  [AllEntityNames.LoginLink]: 'loginlink',
-} as const;
+type EntityKeys = keyof typeof AllEntities;
+type EntityIdPrefixes = {
+  [K in EntityKeys]: Lowercase<K>;
+};
 
-type ksuidIdString = `_${string}`;
+export const EntityIdPrefixes: EntityIdPrefixes = {
+  [AllEntities.User]: 'user',
+  [AllEntities.Org]: 'org',
+  [AllEntities.Application]: 'application',
+  [AllEntities.Applicant]: 'applicant',
+  [AllEntities.Stage]: 'stage',
+  [AllEntities.Question]: 'question',
+  [AllEntities.Invite]: 'invite',
+  [AllEntities.Webhook]: 'webhook',
+  [AllEntities.Event]: 'event',
+  [AllEntities.Session]: 'session',
+  [AllEntities.LoginLink]: 'loginlink',
+};
+
+export type PlutomiId<T extends EntityKeys> = `${EntityIdPrefixes[T]}${PlutomiIdSuffix}`;
 
 interface GenerateIdProps<T> {
   /**
@@ -44,14 +47,12 @@ interface GenerateIdProps<T> {
   entity: T;
 }
 
-export type PlutomiId<T extends AllEntityNames> = `${typeof EntityPrefixes[T]}${ksuidIdString}`;
-
-export const generatePlutomiId = <T extends AllEntityNames>({
+export const generatePlutomiId = <T extends AllEntities>({
   date,
   entity,
 }: GenerateIdProps<T>): PlutomiId<T> => {
   const id = ksuid.randomSync(date).string;
-  const prefix = EntityPrefixes[entity];
+  const prefix = EntityIdPrefixes[entity];
 
   return `${prefix}_${id}`;
 };
