@@ -1,7 +1,7 @@
 import ksuid from 'ksuid';
 import { AllEntityNames } from '../@types/allEntityNames';
 
-type PlutomiId<T extends AllEntityNames> = `${T}_${string}`;
+export type PlutomiId<T extends AllEntityNames> = `${T}_${string}`;
 
 interface GenerateIdProps<T extends AllEntityNames> {
   date: Date;
