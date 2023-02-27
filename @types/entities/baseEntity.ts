@@ -8,5 +8,4 @@ export interface BaseEntity<T extends AllEntityNames> {
   updatedAt: Date;
   entityType: T;
   target: IndexedTargetArray<T>;
-  count: EntityCount<T>;
 }

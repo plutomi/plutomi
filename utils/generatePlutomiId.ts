@@ -1,16 +1,11 @@
 import ksuid from 'ksuid';
-import { AllEntityNames } from '../@types/entities';
+import { AllEntityNames } from '../@types/allEntityNames';
 
-export type PlutomiId<T extends AllEntityNames> = `${T}_${string}`;
+export type PlutomiId<T extends AllEntityNames> = `${typeof AllEntityNames[T]}_${string}`;
 
-interface GenerateIdProps<T> {
-  /**
-   * Manually generated createdAt date.
-   * There will be a top level `createdAt`
-   * and this ensures that the ID and that value have the same date
-   */
+interface GenerateIdProps<T extends AllEntityNames> {
   date: Date;
-  entity: AllEntityNames;
+  entity: T;
 }
 
 export const generatePlutomiId = <T extends AllEntityNames>({
@@ -22,3 +17,5 @@ export const generatePlutomiId = <T extends AllEntityNames>({
 
   return `${prefix}_${id}`;
 };
+
+const x = generatePlutomiId({ date: new Date(), entity: AllEntityNames.Org });

@@ -1,4 +1,5 @@
-import { AllEntityNames, PlutomiId, EntityIdPrefixes } from '../utils';
+import { PlutomiId } from '../utils';
+import { AllEntityNames } from './entities';
 
 // These are properties, aside from each entity type, that can be indexed
 export enum IndexableProperties {
@@ -13,27 +14,15 @@ export enum IndexableProperties {
   PreviousItem = 'previousItem',
 }
 
-export type AllIndexableProperties = IndexableProperties | typeof EntityIdPrefixes;
-
-// ! First two entries are always the entity type and the raw ID
-type EntityTargetArrayItem = {
-  id: AllEntityNames;
-  type: IndexableProperties.Entity;
-};
-
-type IdTargetArrayItem = {
-  id: PlutomiId<AllEntityNames>;
-  type: IndexableProperties.Id;
-};
-
 // These can be anything
 type OtherTargetArrayItems = {
   id: PlutomiId<AllEntityNames> | string | boolean | number;
-  type: AllIndexableProperties;
+  type: IndexableProperties;
 };
 
 export type IndexedTargetArray<T extends AllEntityNames> = [
-  { id: PlutomiId<T>; type: IndexableProperties.Entity },
+  // These two will always be the first two
+  { id: T; type: IndexableProperties.Entity },
   { id: PlutomiId<T>; type: IndexableProperties.Id },
   ...OtherTargetArrayItems[],
 ];
