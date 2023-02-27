@@ -1,4 +1,4 @@
-export enum AllEsntityNames {
+export enum AllEntityNames {
   Application = 'application',
   Invite = 'invite',
   Org = 'org',
