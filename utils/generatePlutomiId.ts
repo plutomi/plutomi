@@ -1,7 +1,16 @@
 import ksuid from 'ksuid';
-import { AllEntityNames } from '../@types/allEntityNames';
+// import { AllEntityNames } from '../@types/allEntityNames';
 
-export type PlutomiId<T extends AllEntityNames> = `${typeof AllEntityNames[T]}_${string}`;
+export enum AllEntityNames {
+  Application = 'application',
+  Invite = 'invite',
+  Org = 'org',
+  User = 'user',
+  Question = 'question',
+  Stage = 'stage',
+}
+
+type PlutomiId<T extends AllEntityNames> = `${T}_${string}`;
 
 interface GenerateIdProps<T extends AllEntityNames> {
   date: Date;
@@ -13,9 +22,12 @@ export const generatePlutomiId = <T extends AllEntityNames>({
   entity,
 }: GenerateIdProps<T>): PlutomiId<T> => {
   const id = ksuid.randomSync(date).string;
-  const prefix = AllEntityNames[entity];
+  const prefix = AllEntityNames[entity as unknown as keyof typeof AllEntityNames];
 
-  return `${prefix}_${id}`;
+  return `${prefix}_${id}` as PlutomiId<T>;
 };
 
-const x = generatePlutomiId({ date: new Date(), entity: AllEntityNames.Org });
+const x = generatePlutomiId({
+  date: new Date(),
+  entity: AllEntityNames.Org,
+});
