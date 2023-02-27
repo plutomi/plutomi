@@ -1,15 +1,6 @@
 import ksuid from 'ksuid';
 import { AllEntityNames } from '../@types/entities/allEntityNames';
 
-// export enum AllEntityNames {
-//   Application = 'application',
-//   Invite = 'invite',
-//   Org = 'org',
-//   User = 'user',
-//   Question = 'question',
-//   Stage = 'stage',
-// }
-
 type PlutomiId<T extends AllEntityNames> = `${T}_${string}`;
 
 interface GenerateIdProps<T extends AllEntityNames> {
@@ -25,8 +16,3 @@ export const generatePlutomiId = <T extends AllEntityNames>({
 
   return `${entity}_${id}`;
 };
-
-const x = generatePlutomiId({
-  date: new Date(),
-  entity: AllEntityNames.User,
-});
