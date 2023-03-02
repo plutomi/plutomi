@@ -1,7 +1,7 @@
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
 
-export interface InviteEntity extends BaseEntity<AllEntityNames.Invite> {
+export type InviteEntity = BaseEntity<AllEntityNames.Invite> & {
   userId: string;
   /**
    * Display name and createdBy denormalized for convenience
@@ -17,4 +17,4 @@ export interface InviteEntity extends BaseEntity<AllEntityNames.Invite> {
   };
   recipientName: string | null;
   expiresAt: Date;
-}
+};

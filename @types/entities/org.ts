@@ -8,8 +8,8 @@ type Entity = AllEntityNames.Org;
 
 type OrgTargetArray = IndexedTargetArray<Entity>;
 
-export interface Org extends BaseEntity<Entity> {
+export type Org = BaseEntity<Entity> & {
   displayName: string;
   totals: OrgTotals;
   target: OrgTargetArray;
-}
+};

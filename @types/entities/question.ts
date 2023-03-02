@@ -7,10 +7,10 @@ export enum QuestionType {
   // TODO: More question types
 }
 
-export interface QuestionEntity extends BaseEntity<AllEntityNames.Question> {
+export type QuestionEntity = BaseEntity<AllEntityNames.Question> & {
   title: string;
   description: string;
   org: string;
   type: QuestionType;
   totals: QuestionTotals;
-}
+};

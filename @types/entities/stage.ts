@@ -9,9 +9,9 @@ type Entity = AllEntityNames.Stage;
 type StageTargetArray = IndexedTargetArray<Entity> &
   [{ id: PlutomiId<AllEntityNames.Application>; type: AllEntityNames.Stage }];
 
-export interface StageEntity extends BaseEntity<Entity> {
+export type StageEntity = BaseEntity<Entity> & {
   name: string;
   org: string;
   totals: StageTotals;
   target: StageTargetArray;
-}
+};
