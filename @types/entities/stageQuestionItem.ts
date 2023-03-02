@@ -1,21 +1,14 @@
-import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
+import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
-import { Extends } from '../@types/extends';
 
 /**
  * Many to Many between stages and question item
  */
 
-export type StageQuestionItemTargetArray = Array<
-  Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<
-      keyof typeof IndexableProperties,
-      'PreviousQuestion' | 'NextQuestion' | 'Stage' | 'Question'
-    >;
-  }
->;
-
-export interface StageQuestionItemEntity extends BaseEntity {
+export interface StageQuestionItem extends BaseEntity<StageQuestionItemEntity> {
   orgId: string; // Compound index with ID
-  target: StageQuestionItemTargetArray;
+  target: [
+    { id: PlutomiId<AllEntityNames.Stage>; type: AllEntityNames.Stage },
+    { id: PlutomiId<AllEntityNames.QuestionItem>; type: AllEntityNames.QuestionItem },
+  ];
 }

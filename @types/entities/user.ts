@@ -1,8 +1,16 @@
+import { PlutomiId } from '../../utils';
+import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
 import { UserTotals } from './totalsCount';
 
-export interface UserEntity extends BaseEntity<AllEntityNames.User> {
+type Entity = AllEntityNames.User;
+
+type UserTargetArray = IndexedTargetArray<Entity> &
+  // Get all users in an org
+  [{ id: PlutomiId<AllEntityNames.Org>; type: AllEntityNames.User }];
+
+export interface UserEntity extends BaseEntity<Entity> {
   org: string | null; // ! TODO multiple orgs, stored on session
   orgJoinDate?: Date; // ! TODO: this should be on the org or another org event object
   firstName: string;
@@ -10,4 +18,5 @@ export interface UserEntity extends BaseEntity<AllEntityNames.User> {
   emailVerified: boolean;
   canReceiveEmails: boolean;
   totals: UserTotals;
+  target: UserTargetArray;
 }

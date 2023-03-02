@@ -3,10 +3,13 @@ import { BaseEntity } from './baseEntity';
 
 export interface InviteEntity extends BaseEntity<AllEntityNames.Invite> {
   userId: string;
-  org: string;
   /**
-   * Display name and created by denormalized for convenience
+   * Display name and createdBy denormalized for convenience
    */
+  org: {
+    id: string;
+    name: string;
+  };
   orgName: string;
   createdBy: {
     name: string | null; // TODO Why would this ever be null?
