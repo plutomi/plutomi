@@ -1,17 +1,9 @@
-import { Extends } from '../@types/extends';
-import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
+import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
+import { StageTotals } from './totalsCount';
 
-export type StageTargetArray = Array<
-  Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'NextStage' | 'PreviousStage' | 'Opening'>;
-  }
->;
-
-export interface StageEntity extends BaseEntity {
+export interface StageEntity extends BaseEntity<AllEntityNames.Stage> {
   name: string;
-  org: string; // Compound index with Id
-  totalApplicants: number;
-  totalQuestions: number;
-  target: StageTargetArray;
+  org: string;
+  totals: StageTotals;
 }
