@@ -1,8 +1,15 @@
+import { PlutomiId } from '../../utils';
+import { IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
 import { OrgTotals } from './totalsCount';
 
-export interface Org extends BaseEntity<AllEntityNames.Org> {
+type Entity = AllEntityNames.Org;
+
+type OrgTargetArray = IndexedTargetArray<Entity>;
+
+export interface Org extends BaseEntity<Entity> {
   displayName: string;
   totals: OrgTotals;
+  target: OrgTargetArray;
 }
