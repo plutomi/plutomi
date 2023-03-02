@@ -7,3 +7,4 @@ export * from './user';
 export * from './question';
 export * from './stage';
 export * from './stageQuestionItem';
+export * from './totalsCount';

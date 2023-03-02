@@ -10,7 +10,7 @@ export type StageTargetArray = Array<
 
 export interface StageEntity extends BaseEntity {
   name: string;
-  orgId: string; // Compound index with Id
+  org: string; // Compound index with Id
   totalApplicants: number;
   totalQuestions: number;
   target: StageTargetArray;
