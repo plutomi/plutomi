@@ -1,14 +1,17 @@
+import { PlutomiId } from '../../utils';
+import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
 
-/**
- * Many to Many between stages and question item
- */
+type Entity = AllEntityNames.StageQuestionItem;
 
-export interface StageQuestionItem extends BaseEntity<StageQuestionItemEntity> {
-  orgId: string; // Compound index with ID
-  target: [
-    { id: PlutomiId<AllEntityNames.Stage>; type: AllEntityNames.Stage },
-    { id: PlutomiId<AllEntityNames.QuestionItem>; type: AllEntityNames.QuestionItem },
+type StageQuestionItemTargetArray = IndexedTargetArray<Entity> &
+  [
+    { id: PlutomiId<AllEntityNames.Stage>; type: IndexableType.Id },
+    { id: PlutomiId<AllEntityNames.Question>; type: IndexableType.Id },
   ];
-}
+
+export type StageQuestionItem = BaseEntity<Entity> & {
+  org: string;
+  target: StageQuestionItemTargetArray;
+};

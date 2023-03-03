@@ -5,4 +5,6 @@ export enum AllEntityNames {
   User = 'user',
   Question = 'question',
   Stage = 'stage',
+  StageQuestionItem = 'stageQuestionItem',
+  Workspace = 'workspace',
 }

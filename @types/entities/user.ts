@@ -7,8 +7,12 @@ import { UserTotals } from './totalsCount';
 type Entity = AllEntityNames.User;
 
 type UserTargetArray = IndexedTargetArray<Entity> &
-  // Get all users in an org
-  [{ id: PlutomiId<AllEntityNames.Org>; type: AllEntityNames.User }];
+  [
+    // Get all users in an org
+    { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.User },
+    // All users in a workspace
+    { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.User },
+  ];
 
 export type UserEntity = BaseEntity<Entity> & {
   org: string | null; // ! TODO multiple orgs, stored on session
@@ -19,4 +23,4 @@ export type UserEntity = BaseEntity<Entity> & {
   canReceiveEmails: boolean;
   totals: UserTotals;
   target: UserTargetArray;
-}
+};
