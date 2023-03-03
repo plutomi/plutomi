@@ -8,9 +8,6 @@ type Entity = AllEntityNames.Org;
 
 type OrgTargetArray = IndexedTargetArray<Entity>;
 
-// TODO memberships? 
-// TODO workspace?
-
 export type Org = BaseEntity<Entity> & {
   displayName: string;
   totals: OrgTotals;

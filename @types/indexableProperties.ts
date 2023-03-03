@@ -8,7 +8,7 @@ export enum IndexableType {
    */
 
   // ! TODO: Please TS gods add a way to extract this from AllEntityName.
-  // I reaaaaaaaaaaaaally dont like how we have duplicate data here
+  // I reaaaaaaaaaaaaally don't like how we have duplicate data here
   User = 'user',
   Org = 'org',
   Application = 'application',
@@ -17,6 +17,7 @@ export enum IndexableType {
   Stage = 'stage',
   StageQuestionItem = 'stageQuestionItem',
   Workspace = 'workspace',
+  Membership = 'membership',
   /**
    * Misc
    */
