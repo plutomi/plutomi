@@ -2,7 +2,11 @@ import { PlutomiId } from '../../utils';
 import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
-import { StageTotals } from './totalsCount';
+
+type StageTotals = {
+  applicants: number;
+  questions: number;
+};
 
 type Entity = AllEntityNames.Stage;
 

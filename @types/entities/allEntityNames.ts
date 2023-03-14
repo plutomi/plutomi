@@ -1,3 +1,5 @@
+// ! If you modify this file, make sure to update indexableProperties.ts
+
 export enum AllEntityNames {
   Application = 'application',
   Invite = 'invite',
@@ -9,5 +11,3 @@ export enum AllEntityNames {
   Workspace = 'workspace',
   Membership = 'membership',
 }
-
-// ! If you modify this file, make sure to update indexableProperties.ts

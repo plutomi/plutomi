@@ -2,7 +2,10 @@ import { PlutomiId } from '../../utils';
 import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
-import { QuestionTotals } from './totalsCount';
+
+export type QuestionTotals = {
+  stages: number;
+};
 
 export enum QuestionType {
   Text = 'Text',

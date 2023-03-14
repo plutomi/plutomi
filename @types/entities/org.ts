@@ -2,7 +2,21 @@ import { PlutomiId } from '../../utils';
 import { IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
-import { OrgTotals } from './totalsCount';
+
+/**
+ * These totals are for an org, across all workspaces!
+ */
+export type OrgTotals = {
+  applicants: number;
+  applications: number;
+  users: number;
+  invites: number;
+  memberships: number; // Should be identical to memberships
+  stages: number;
+  webhooks: number;
+  questions: number;
+  workspaces: number;
+};
 
 type Entity = AllEntityNames.Org;
 

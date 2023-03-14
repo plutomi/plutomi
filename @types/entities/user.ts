@@ -2,7 +2,12 @@ import { PlutomiId } from '../../utils';
 import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
-import { UserTotals } from './totalsCount';
+
+type UserTotals = {
+  invites: number;
+  memberships: number;
+  workspaces: number;
+};
 
 type Entity = AllEntityNames.User;
 

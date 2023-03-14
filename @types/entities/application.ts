@@ -3,6 +3,11 @@ import { PlutomiId } from '../../utils';
 import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { BaseEntity } from './baseEntity';
 
+type ApplicationTotals = {
+  applicants: number;
+  stages: number;
+};
+
 type Entity = AllEntityNames.Application;
 
 type ApplicationTargetArray = IndexedTargetArray<Entity> &
@@ -17,5 +22,6 @@ export type Application = BaseEntity<Entity> & {
   name: string;
   org: string;
   workspace: string;
+  totals: ApplicationTotals;
   target: ApplicationTargetArray;
 };
