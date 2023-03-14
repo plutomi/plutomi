@@ -10,6 +10,7 @@ import { Question } from './question';
 import { Stage } from './stage';
 import { StageQuestionItem } from './stageQuestionItem';
 import { Workspace } from './workspace';
+import { LoginLink } from './loginLink';
 
 export type AllEntities =
   | Application
@@ -20,4 +21,5 @@ export type AllEntities =
   | Question
   | Stage
   | StageQuestionItem
-  | Workspace;
+  | Workspace
+  | LoginLink;

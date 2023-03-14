@@ -10,4 +10,6 @@ export enum AllEntityNames {
   StageQuestionItem = 'stageQuestionItem',
   Workspace = 'workspace',
   Membership = 'membership',
+  // ! TODO: Temporary entity!
+  LoginLink = 'loginLink',
 }

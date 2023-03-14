@@ -18,6 +18,7 @@ export enum IndexableType {
   StageQuestionItem = 'stageQuestionItem',
   Workspace = 'workspace',
   Membership = 'membership',
+  LoginLink = 'loginLink',
   /**
    * Misc
    */
