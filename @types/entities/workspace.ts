@@ -8,9 +8,9 @@ type WorkspaceTotals = Omit<OrgTotals, 'workspaces'>;
 
 type Entity = AllEntityNames.Workspace;
 
-type WorkspaceTargetArray = IndexedTargetArray<Entity> &
+type WorkspaceTargetArray =
   // Get all workspaces for an org
-  [{ id: PlutomiId<Entity>; type: IndexableType.Workspace }];
+  [...IndexedTargetArray<Entity>, { id: PlutomiId<Entity>; type: IndexableType.Workspace }];
 
 export type Workspace = BaseEntity<Entity> & {
   name: string;

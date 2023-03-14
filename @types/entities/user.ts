@@ -11,15 +11,15 @@ type UserTotals = {
 
 type Entity = AllEntityNames.User;
 
-type UserTargetArray = IndexedTargetArray<AllEntityNames.User> &
-  [
-    // Get all users in an org
-    { id: PlutomiId<AllEntityNames.Org> | null; type: IndexableType.User },
-    // Get all users in a workspace
-    { id: PlutomiId<AllEntityNames.Workspace> | null; type: IndexableType.User },
-    // Get a user by email
-    { id: `${string}@${string}.${string}`; type: IndexableType.Email },
-  ];
+type UserTargetArray = [
+  ...IndexedTargetArray<Entity>,
+  // Get all users in an org
+  { id: PlutomiId<AllEntityNames.Org> | null; type: IndexableType.User },
+  // Get all users in a workspace
+  { id: PlutomiId<AllEntityNames.Workspace> | null; type: IndexableType.User },
+  // Get a user by email
+  { id: `${string}@${string}.${string}`; type: IndexableType.Email },
+];
 
 export type User = BaseEntity<Entity> & {
   firstName: string;

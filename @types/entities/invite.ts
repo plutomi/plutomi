@@ -5,17 +5,17 @@ import { BaseEntity } from './baseEntity';
 
 export type Entity = AllEntityNames.Invite;
 
-export type InviteTargetArray = IndexedTargetArray<Entity> &
-  [
-    // Get all invites for a user (to accept)
-    { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Invite },
-    // Get all invites sent by a given user - // TODO not necessary, just filter on createdBy
-    { id: `${PlutomiId<AllEntityNames.User>}#SENT`; type: IndexableType.Invite },
-    // Get all invites for an org
-    { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Invite },
-    // Get invites associated for a given membership (should only ever be one)
-    { id: PlutomiId<AllEntityNames.Membership>; type: IndexableType.Invite },
-  ];
+export type InviteTargetArray = [
+  ...IndexedTargetArray<Entity>,
+  // Get all invites for a user (to accept)
+  { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Invite },
+  // Get all invites sent by a given user - // TODO not necessary, just filter on createdBy
+  { id: `${PlutomiId<AllEntityNames.User>}#SENT`; type: IndexableType.Invite },
+  // Get all invites for an org
+  { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Invite },
+  // Get invites associated for a given membership (should only ever be one)
+  { id: PlutomiId<AllEntityNames.Membership>; type: IndexableType.Invite },
+];
 
 export type Invite = BaseEntity<Entity> & {
   org: {

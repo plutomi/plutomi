@@ -6,11 +6,11 @@ import { BaseEntity } from './baseEntity';
 type Entity = AllEntityNames.StageQuestionItem;
 
 // TODO add the explainer here
-type StageQuestionItemTargetArray = IndexedTargetArray<Entity> &
-  [
-    { id: PlutomiId<AllEntityNames.Stage>; type: IndexableType.Id },
-    { id: PlutomiId<AllEntityNames.Question>; type: IndexableType.Id },
-  ];
+type StageQuestionItemTargetArray = [
+  ...IndexedTargetArray<Entity>,
+  { id: PlutomiId<AllEntityNames.Stage>; type: IndexableType.Id },
+  { id: PlutomiId<AllEntityNames.Question>; type: IndexableType.Id },
+];
 
 export type StageQuestionItem = BaseEntity<Entity> & {
   org: string;

@@ -13,15 +13,15 @@ import { BaseEntity } from './baseEntity';
  */
 type Entity = AllEntityNames.Membership;
 
-type MembershipTargetArray = IndexedTargetArray<Entity> &
-  [
-    // Get all members of an org
-    { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Membership },
-    // Get all memberships for a user and with it, all the workspaces they are in
-    { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Membership },
-    // Get all memberships for a workspace and with it, all the users in that workspace
-    { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Membership },
-  ];
+type MembershipTargetArray = [
+  ...IndexedTargetArray<Entity>,
+  // Get all members of an org
+  { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Membership },
+  // Get all memberships for a user and with it, all the workspaces they are in
+  { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Membership },
+  // Get all memberships for a workspace and with it, all the users in that workspace
+  { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Membership },
+];
 
 export type Membership = BaseEntity<Entity> & {
   org: string;
