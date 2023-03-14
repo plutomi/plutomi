@@ -1,18 +1,24 @@
 import * as mongoDB from 'mongodb';
+import { AllEntities } from '../@types/entities';
 import { envVars } from '../env';
 
 export const collectionName = 'items';
 export const databaseName = 'plutomi';
 
 let client: mongoDB.MongoClient;
-let items: mongoDB.Collection<UserEntity>;
+let items: mongoDB.Collection<AllEntities>;
+
+type ConnectToDatabaseResponse = {
+  client: mongoDB.MongoClient;
+  items: mongoDB.Collection<AllEntities>;
+};
 
 /**
  * https://youtu.be/eEENrNKxCdw?t=2721
  * #singlecollectiondesign - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
  */
 
-export const connectToDatabase = async () => {
+export const connectToDatabase = async (): Promise<ConnectToDatabaseResponse> => {
   client = new mongoDB.MongoClient(envVars.MONGO_URL);
 
   try {
@@ -27,7 +33,7 @@ export const connectToDatabase = async () => {
   const database: mongoDB.Db = client.db(databaseName);
   console.log(`Successfully connected to database: ${database.databaseName}.`);
 
-  items = database.collection<UserEntity>(collectionName);
+  items = database.collection<AllEntities>(collectionName);
 
   // console.log(`Creating necessary collections and indexes`);
 
@@ -67,8 +73,7 @@ export const connectToDatabase = async () => {
   // } catch (error) {
   //   console.error(`An error ocurred checking if the target array index exists`, error);
   // }
-
   console.log('Ready.\n');
-};
 
-export { client, items };
+  return { client, items };
+};

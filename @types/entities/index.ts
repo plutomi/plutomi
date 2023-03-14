@@ -10,3 +10,14 @@ import { Question } from './question';
 import { Stage } from './stage';
 import { StageQuestionItem } from './stageQuestionItem';
 import { Workspace } from './workspace';
+
+export type AllEntities =
+  | Application
+  | Invite
+  | Membership
+  | Org
+  | User
+  | Question
+  | Stage
+  | StageQuestionItem
+  | Workspace;

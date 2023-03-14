@@ -40,8 +40,14 @@ app
 
     const server = express();
 
-    await connectToDatabase();
+    server.use(async (req, res, next) => {
+      const { client, items } = await connectToDatabase();
 
+      req.mongoClient = client;
+      req.items = items;
+      next();
+    });
+    
     server.use(timeout('5s'));
     server.use(
       cors({
