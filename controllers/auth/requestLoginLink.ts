@@ -11,12 +11,13 @@ import { ObjectId } from 'mongodb';
 import { User } from '../../@types/entities/user';
 import { IndexableType } from '../../@types/indexableProperties';
 import { AllEntities, AllEntityNames } from '../../@types/entities';
+import { Email } from '../../@types/email';
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
 const jwt = require('jsonwebtoken');
 
 type APIRequestLoginLinkBody = {
-  email: string;
+  email: Email;
 };
 
 type APIRequestLoginLinkQuery = {
@@ -40,7 +41,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'An error ocurred', error });
   }
 
-  const { email } = req.body;
+  const { email } = req.body as APIRequestLoginLinkBody;
 
   const { callbackUrl }: APIRequestLoginLinkQuery = req.query;
 
@@ -94,11 +95,18 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         lastName: null,
         emailVerified: false,
         canReceiveEmails: true,
+        totals: {
+          invites: 0,
+          memberships: 0,
+          workspaces: 0,
+        },
         target: [
+          // ! TODO: Target array is not accurate at all!
           { id: AllEntityNames.User, type: IndexableType.Entity },
+          { id: null, type: IndexableType.Id },
           { id: null, type: IndexableType.User },
           { id: null, type: IndexableType.User },
-          //   { id: req.body.email, type: IndexableType.Email },
+          { id: email, type: IndexableType.Email },
         ],
         // target: [
         //   { id: null, type: IndexableType.User },

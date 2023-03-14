@@ -1,4 +1,5 @@
 import { PlutomiId } from '../../utils';
+import { Email } from '../email';
 import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
@@ -18,7 +19,7 @@ type UserTargetArray = [
   // Get all users in a workspace
   { id: PlutomiId<AllEntityNames.Workspace> | null; type: IndexableType.User },
   // Get a user by email
-  { id: `${string}@${string}.${string}`; type: IndexableType.Email },
+  { id: Email; type: IndexableType.Email },
 ];
 
 export type User = BaseEntity<Entity> & {
