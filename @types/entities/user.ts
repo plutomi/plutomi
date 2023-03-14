@@ -11,7 +11,7 @@ type UserTotals = {
 
 type Entity = AllEntityNames.User;
 
-type UserTargetArray = IndexedTargetArray<Entity | AllEntityNames> &
+type UserTargetArray = IndexedTargetArray<AllEntityNames.User> &
   [
     // Get all users in an org
     { id: PlutomiId<AllEntityNames.Org> | null; type: IndexableType.User },

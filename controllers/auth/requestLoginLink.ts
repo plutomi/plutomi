@@ -97,6 +97,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         target: [
           { id: AllEntityNames.User, type: IndexableType.Entity },
           { id: null, type: IndexableType.User },
+          { id: null, type: IndexableType.User },
           //   { id: req.body.email, type: IndexableType.Email },
         ],
         // target: [
