@@ -17,7 +17,7 @@ export type InviteTargetArray = IndexedTargetArray<Entity> &
     { id: PlutomiId<AllEntityNames.Membership>; type: IndexableType.Invite },
   ];
 
-export type InviteEntity = BaseEntity<Entity> & {
+export type Invite = BaseEntity<Entity> & {
   org: {
     id: string;
     name: string;

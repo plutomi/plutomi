@@ -20,7 +20,7 @@ type QuestionTargetArray = IndexedTargetArray<Entity> &
     { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Question },
   ];
 
-export type QuestionEntity = BaseEntity<Entity> & {
+export type Question = BaseEntity<Entity> & {
   title: string;
   description: string;
   org: string;

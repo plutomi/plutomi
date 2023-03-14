@@ -26,7 +26,7 @@ type StageTargetArray = IndexedTargetArray<Entity> &
     },
   ];
 
-export type StageEntity = BaseEntity<Entity> & {
+export type Stage = BaseEntity<Entity> & {
   name: string;
   org: string;
   workspace: string;

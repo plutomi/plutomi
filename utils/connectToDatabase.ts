@@ -1,6 +1,5 @@
 import * as mongoDB from 'mongodb';
 import { envVars } from '../env';
-import { UserEntity } from '../models';
 
 export const collectionName = 'items';
 export const databaseName = 'plutomi';
@@ -30,44 +29,44 @@ export const connectToDatabase = async () => {
 
   items = database.collection<UserEntity>(collectionName);
 
-  console.log(`Creating necessary collections and indexes`);
+  // console.log(`Creating necessary collections and indexes`);
 
-  const allCollectionNames = await database.listCollections({}).toArray();
-  const collectionExists = allCollectionNames.find((item) => item.name === collectionName);
+  // const allCollectionNames = await database.listCollections({}).toArray();
+  // const collectionExists = allCollectionNames.find((item) => item.name === collectionName);
 
-  // Define our two indexes
-  const targetArrayIndexName = 'targetArray';
-  const targetArrayIndexSpec: mongoDB.IndexSpecification = { 'target.id': 1, 'target.type': 1 };
+  // // Define our two indexes
+  // const targetArrayIndexName = 'targetArray';
+  // const targetArrayIndexSpec: mongoDB.IndexSpecification = { 'target.id': 1, 'target.type': 1 };
 
-  // ! TODO this might not be needed! The target ID reference can and should(?) use the _id value
-  const itemIdIndexName = 'itemId';
-  const itemIdIndexSpec: mongoDB.IndexSpecification = { itemId: 1 };
-  // TODO add a check for this
-  const itemIdIndexOptions: mongoDB.CreateIndexesOptions = { unique: true };
+  // // ! TODO this might not be needed! The target ID reference can and should(?) use the _id value
+  // const itemIdIndexName = 'itemId';
+  // const itemIdIndexSpec: mongoDB.IndexSpecification = { itemId: 1 };
+  // // TODO add a check for this
+  // const itemIdIndexOptions: mongoDB.CreateIndexesOptions = { unique: true };
 
-  if (!collectionExists) {
-    try {
-      console.log('Creating collection', collectionName);
-      await database.createCollection(collectionName);
-    } catch (error) {
-      console.error(`An error ocurred creating collection ${collectionName}`, error);
-    }
-  }
+  // if (!collectionExists) {
+  //   try {
+  //     console.log('Creating collection', collectionName);
+  //     await database.createCollection(collectionName);
+  //   } catch (error) {
+  //     console.error(`An error ocurred creating collection ${collectionName}`, error);
+  //   }
+  // }
 
-  // ! Create the target array index, if it doesn't exist
-  try {
-    const targetArrayIndexExists = await items.indexExists(targetArrayIndexName);
+  // // ! Create the target array index, if it doesn't exist
+  // try {
+  //   const targetArrayIndexExists = await items.indexExists(targetArrayIndexName);
 
-    if (!targetArrayIndexExists) {
-      try {
-        await items.createIndex(targetArrayIndexSpec);
-      } catch (error) {
-        console.error(`An error ocurred creating the target array index `, error);
-      }
-    }
-  } catch (error) {
-    console.error(`An error ocurred checking if the target array index exists`, error);
-  }
+  //   if (!targetArrayIndexExists) {
+  //     try {
+  //       await items.createIndex(targetArrayIndexSpec);
+  //     } catch (error) {
+  //       console.error(`An error ocurred creating the target array index `, error);
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.error(`An error ocurred checking if the target array index exists`, error);
+  // }
 
   console.log('Ready.\n');
 };

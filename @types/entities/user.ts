@@ -19,7 +19,7 @@ type UserTargetArray = IndexedTargetArray<Entity> &
     { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.User },
   ];
 
-export type UserEntity = BaseEntity<Entity> & {
+export type User = BaseEntity<Entity> & {
   firstName: string;
   lastName: string;
   emailVerified: boolean;
