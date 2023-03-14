@@ -4,31 +4,34 @@ import { Filter, FindOptions } from 'mongodb';
 import { Defaults, JOI_SETTINGS, WEBSITE_URL, API_URL, DOMAIN_NAME, Emails } from '../../Config';
 import { envVars } from '../../env';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { UserEntity, UserLoginLinkEntity } from '../../models';
-import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
-import { AllEntityNames, EntityPrefixes, Time, generatePlutomiId } from '../../utils';
-import { items } from '../../utils/connectToDatabase';
+import { Time, generatePlutomiId } from '../../utils';
+
 import { ObjectId } from 'mongodb';
+import { User } from '../../@types/entities/user';
+import { IndexableType } from '../../@types/indexableProperties';
+import { AllEntities, AllEntityNames } from '../../@types/entities';
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
 const jwt = require('jsonwebtoken');
 
-interface APIRequestLoginLinkBody {
-  email?: string;
-}
-interface APIRequestLoginLinkQuery {
-  callbackUrl?: string;
-}
+type APIRequestLoginLinkBody = {
+  email: string;
+};
 
-// TODO switch to next auth
+type APIRequestLoginLinkQuery = {
+  // ! TODO
+  callbackUrl?: string;
+};
+
+// TODO switch to zod
 const schema = Joi.object({
   body: {
     email: Joi.string().email(),
   },
-  query: {
-    callbackUrl: Joi.string().uri(),
-  },
+  // query: {
+  //   callbackUrl: Joi.string().uri(),
+  // },
 }).options(JOI_SETTINGS);
 export const requestLoginLink = async (req: Request, res: Response) => {
   try {
@@ -53,13 +56,14 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   // }
 
   // If a user is signing in for the first time, create an account for them
-  let user: UserEntity | undefined;
+  let user: User | undefined;
 
-  const findUserFilter: Filter<UserEntity> = {
-    target: { id: email, type: IndexableProperties.Email },
+  const findUserFilter: Filter<User> = {
+    target: { $elemMatch: { id: email, type: IndexableType.Email } },
   };
+
   try {
-    user = await items.findOne<UserEntity>(findUserFilter);
+    user = await req.items.findOne<User>(findUserFilter);
   } catch (error) {
     const msg = `Error retrieving user info`;
     console.error(msg, error);
@@ -80,22 +84,26 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         entity: AllEntityNames.User,
       });
 
-      const newUser: UserEntity = {
+      const newUser: User = {
         _id: newUserId,
-        itemId: newUserId,
         org: null,
+        entityType: AllEntityNames.User,
         createdAt: userCreationDate,
         updatedAt: userCreationDate,
-        totalInvites: 0,
         firstName: null,
         lastName: null,
         emailVerified: false,
         canReceiveEmails: true,
         target: [
-          { id: AllEntityNames.User, type: IndexableProperties.Entity },
-          { id: newUserId, type: IndexableProperties.Id },
-          { id: req.body.email, type: IndexableProperties.Email },
+          { id: AllEntityNames.User, type: IndexableType.Entity },
+          { id: null, type: IndexableType.User },
+          //   { id: req.body.email, type: IndexableType.Email },
         ],
+        // target: [
+        //   { id: null, type: IndexableType.User },
+        //   { id: null, type: IndexableType.User },
+        //   { id: req.body.email, type: IndexableType.Email },
+        // ],
       };
 
       console.log(`Creating new user`, newUser);
