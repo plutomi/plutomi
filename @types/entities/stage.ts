@@ -7,12 +7,17 @@ import { StageTotals } from './totalsCount';
 type Entity = AllEntityNames.Stage;
 
 type StageTargetArray = IndexedTargetArray<Entity> &
-  // Get all stages in an application
   [
+    // Get all stages in an application
     { id: PlutomiId<AllEntityNames.Application>; type: IndexableType.Stage },
     // Get all stages in an org
     {
       id: PlutomiId<AllEntityNames.Org>;
+      type: IndexableType.Stage;
+    },
+    // Get all stages in a workspace
+    {
+      id: PlutomiId<AllEntityNames.Workspace>;
       type: IndexableType.Stage;
     },
   ];
@@ -20,6 +25,7 @@ type StageTargetArray = IndexedTargetArray<Entity> &
 export type StageEntity = BaseEntity<Entity> & {
   name: string;
   org: string;
+  workspace: string;
   totals: StageTotals;
   target: StageTargetArray;
 };

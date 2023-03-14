@@ -10,14 +10,18 @@ export enum QuestionType {
 }
 type Entity = AllEntityNames.Question;
 type QuestionTargetArray = IndexedTargetArray<Entity> &
-  // Get questions in an org
-  [{ id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Question }];
+  [
+    // Get questions in an org
+    { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Question },
+    // Get questions in a workspace
+    { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Question },
+  ];
 
 export type QuestionEntity = BaseEntity<Entity> & {
   title: string;
   description: string;
   org: string;
-  type: QuestionType;
+  workspace: string;
   totals: QuestionTotals;
   target: QuestionTargetArray;
 };

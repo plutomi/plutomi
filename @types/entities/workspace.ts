@@ -10,8 +10,6 @@ type WorkspaceTargetArray = IndexedTargetArray<Entity> &
   // Get all workspaces for an org
   [{ id: PlutomiId<Entity>; type: IndexableType.Workspace }];
 
-// TODO memberships?
-
 export type Workspace = BaseEntity<Entity> & {
   name: string;
   totals: WorkspaceTotals;

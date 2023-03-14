@@ -7,25 +7,32 @@ export type Entity = AllEntityNames.Invite;
 
 export type InviteTargetArray = IndexedTargetArray<Entity> &
   [
-    // Get all invites for a user
+    // Get all invites for a user (to accept)
     { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Invite },
-    // Get all invites for an org - // TODO memberships?
+    // Get all invites sent by a given user
+    { id: `${PlutomiId<AllEntityNames.User>}#SENT`; type: IndexableType.Invite },
+    // Get all invites for an org
     { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Invite },
+    // Get invites associated for a given membership (should only ever be one)
+    { id: PlutomiId<AllEntityNames.Membership>; type: IndexableType.Invite },
   ];
 export type InviteEntity = BaseEntity<Entity> & {
-  userId: string;
-  /**
-   * Display name and createdBy denormalized for convenience
-   */
   org: {
     id: string;
     name: string;
   };
   createdBy: {
-    name: string | null; // TODO Why would this ever be null?
+    // Null incase that user hasn't setup their name,
+    // we show on the invite that "You have been invited" instead of by <name>
+    id: string;
+    name: string | null;
     email: string;
   };
-  recipientName: string | null;
+  recipient: {
+    id: string;
+    name: string;
+    email: string;
+  };
   expiresAt: Date;
   target: InviteTargetArray;
 };
