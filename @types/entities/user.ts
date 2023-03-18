@@ -11,13 +11,15 @@ type UserTotals = {
 };
 
 type Entity = AllEntityNames.User;
+type UserOrgId = PlutomiId<AllEntityNames.Org> | null;
+type UserWorkspaceId = PlutomiId<AllEntityNames.Workspace> | null;
 
 type UserTargetArray = [
   ...IndexedTargetArray<Entity>,
   // Get all users in an org
-  { id: PlutomiId<AllEntityNames.Org> | null; type: IndexableType.User },
+  { id: UserOrgId; type: IndexableType.User },
   // Get all users in a workspace
-  { id: PlutomiId<AllEntityNames.Workspace> | null; type: IndexableType.User },
+  { id: UserWorkspaceId; type: IndexableType.User },
   // Get a user by email
   { id: Email; type: IndexableType.Email },
 ];
@@ -25,7 +27,9 @@ type UserTargetArray = [
 export type User = BaseEntity<Entity> & {
   firstName: string;
   lastName: string;
-  org: PlutomiId<AllEntityNames.Org> | null;
+  org: UserOrgId;
+  workspace: UserWorkspaceId;
+  email: Email;
   emailVerified: boolean;
   canReceiveEmails: boolean;
   totals: UserTotals;

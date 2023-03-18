@@ -88,6 +88,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       const newUser: User = {
         _id: newUserId,
         org: null,
+        workspace: null,
+        email,
         entityType: AllEntityNames.User,
         createdAt: userCreationDate,
         updatedAt: userCreationDate,
@@ -101,23 +103,19 @@ export const requestLoginLink = async (req: Request, res: Response) => {
           workspaces: 0,
         },
         target: [
-          // ! TODO: Target array is not accurate at all!
           { id: AllEntityNames.User, type: IndexableType.Entity },
-          { id: null, type: IndexableType.Id },
+          { id: newUserId, type: IndexableType.Id },
+          // Org
           { id: null, type: IndexableType.User },
+          // Workspace
           { id: null, type: IndexableType.User },
           { id: email, type: IndexableType.Email },
         ],
-        // target: [
-        //   { id: null, type: IndexableType.User },
-        //   { id: null, type: IndexableType.User },
-        //   { id: req.body.email, type: IndexableType.Email },
-        // ],
       };
 
       console.log(`Creating new user`, newUser);
 
-      const x = await items.insertOne(newUser);
+      await req.items.insertOne(newUser);
 
       console.log(`User created!`);
       user = newUser;
@@ -128,7 +126,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     }
   }
 
-  const userEmail = findInTargetArray(IndexableProperties.Email, user);
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({
