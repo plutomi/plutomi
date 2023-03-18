@@ -3,15 +3,14 @@ import Joi from 'joi';
 import { Filter, FindOptions } from 'mongodb';
 import { Defaults, JOI_SETTINGS, WEBSITE_URL, API_URL, DOMAIN_NAME, Emails } from '../../Config';
 import { envVars } from '../../env';
-import { findInTargetArray } from '../../utils/findInTargetArray';
 import { sendEmail } from '../../utils/sendEmail';
 import { Time, generatePlutomiId } from '../../utils';
-
 import { ObjectId } from 'mongodb';
 import { User } from '../../@types/entities/user';
 import { IndexableType } from '../../@types/indexableProperties';
 import { AllEntities, AllEntityNames } from '../../@types/entities';
 import { Email } from '../../@types/email';
+import { LoginLink } from '../../@types/entities/loginLink';
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
 const jwt = require('jsonwebtoken');
@@ -74,6 +73,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     });
   }
 
+  let newUserCreated = false;
   if (!user) {
     console.log('User not found:', email);
     try {
@@ -119,6 +119,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       console.log(`User created!`);
       user = newUser;
+      newUserCreated = true;
     } catch (error) {
       const errMsg = `An error ocurred creating your account`;
       console.error(errMsg, error);
@@ -133,30 +134,33 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     });
   }
 
-  let latestLoginLink: UserLoginLinkEntity;
+  let latestLoginLink: LoginLink;
 
-  const loginLinkFilter: Filter<UserLoginLinkEntity> = {
-    userId: user.id,
+  const loginLinkFilter: Filter<LoginLink> = {
+    $and: [{ target: { $elemMatch: { id: user._id, type: IndexableType.LoginLink } } }],
   };
 
-  const loginLinkFindOptions: FindOptions<UserLoginLinkEntity> = {
-    sort: {
-      createdAt: -1,
-    },
-    limit: 1,
-  };
+  if (!newUserCreated) {
+    // Get the latest login link if a returning user
+    const loginLinkFindOptions: FindOptions<LoginLink> = {
+      sort: {
+        createdAt: -1,
+      },
+      limit: 1,
+    };
 
-  try {
-    const latestLinkArray = await items
-      .find<UserLoginLinkEntity>(loginLinkFilter, loginLinkFindOptions)
-      .toArray();
+    try {
+      const latestLinkArray = await req.items
+        .find<LoginLink>(loginLinkFilter, loginLinkFindOptions)
+        .toArray();
 
-    latestLoginLink = latestLinkArray[0] as UserLoginLinkEntity;
-  } catch (error) {
-    console.error(`An error ocurred finding your info (login links error)`);
-    return res
-      .status(500)
-      .json({ message: 'An error ocurred finding your info (login links error)' });
+      latestLoginLink = latestLinkArray[0];
+    } catch (error) {
+      console.error(`An error ocurred finding your info (login links error)`);
+      return res
+        .status(500)
+        .json({ message: 'An error ocurred finding your info (login links error)' });
+    }
   }
 
   const now = new Date();
@@ -164,7 +168,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   if (
     latestLoginLink &&
     latestLoginLink.createdAt >= Time(now).subtract(10, 'minutes').toDate() &&
-    !userEmail.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
+    !email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short time-span
   ) {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
@@ -184,7 +188,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     const loginLinkId = generatePlutomiId({ date: now, entity: AllEntityNames.LoginLink });
-    const newLoginLink: UserLoginLinkEntity = {
+    const newLoginLink: LoginLink = {
       _id: loginLinkId, // ! TODO nested user property with target.id
       itemId: loginLinkId,
       createdAt: now,
@@ -192,7 +196,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       userId,
       target: [],
     };
-    await items.insertOne(newLoginLink);
+    req.items.
+    await req.items.insertOne(newLoginLink);
 
     // TODO types
     const tokenData = {
