@@ -5,10 +5,9 @@ import { Defaults, JOI_SETTINGS, WEBSITE_URL, API_URL, DOMAIN_NAME, Emails } fro
 import { envVars } from '../../env';
 import { sendEmail } from '../../utils/sendEmail';
 import { Time, generatePlutomiId } from '../../utils';
-import { ObjectId } from 'mongodb';
 import { User } from '../../@types/entities/user';
 import { IndexableType } from '../../@types/indexableProperties';
-import { AllEntities, AllEntityNames } from '../../@types/entities/allEntityNames';
+import { AllEntityNames } from '../../@types/entities/allEntityNames';
 import { Email } from '../../@types/email';
 import { LoginLink } from '../../@types/entities/loginLink';
 // TODO add types
@@ -190,23 +189,30 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     const loginLinkId = generatePlutomiId({ date: now, entity: AllEntityNames.LoginLink });
     const newLoginLink: LoginLink = {
       _id: loginLinkId, // ! TODO nested user property with target.id
-      itemId: loginLinkId,
       createdAt: now,
       updatedAt: now,
-      userId,
-      target: [],
+      entityType: AllEntityNames.LoginLink,
+      expiresAt: linkExpiry.toISOString(),
+      totals: {},
+      target: [
+        { id: AllEntityNames.LoginLink, type: IndexableType.Entity },
+        { id: loginLinkId, type: IndexableType.Id },
+        { id: user.org, type: IndexableType.LoginLink },
+        { id: user.workspace, type: IndexableType.LoginLink },
+        { id: user._id, type: IndexableType.LoginLink },
+      ],
     };
-    req.items.
+
     await req.items.insertOne(newLoginLink);
 
     // TODO types
     const tokenData = {
       userId,
-      loginLinkId: newLoginLink.id,
+      loginLinkId: newLoginLink._id,
     };
 
     token = await jwt.sign(tokenData, envVars.LOGIN_LINKS_PASSWORD, {
-      expiresIn: Time().add(10, 'minutes').unix() - Time().unix(),
+      expiresIn: Time().add(10, 'minutes').unix() - Time().unix(), // ! TODO?!?!?
     });
 
     // TODO enums
@@ -220,7 +226,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     await sendEmail({
-      to: userEmail,
+      to: email,
       from: {
         header: 'Plutomi',
         email: Emails.Login,

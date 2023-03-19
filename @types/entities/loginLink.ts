@@ -18,5 +18,6 @@ type LoginLinkTargetArray = [
 
 export type LoginLink = BaseEntity<AllEntityNames.LoginLink> & {
   totals: LoginLinkTotals;
+  expiresAt: string;
   target: LoginLinkTargetArray;
 };
