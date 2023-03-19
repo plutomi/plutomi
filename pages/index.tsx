@@ -9,7 +9,7 @@ import { LoginHomepage } from '../components/LoginHomepage';
 import { AlreadyLoggedIn } from '../components/AlreadyLoggedIn';
 import { UseCaseList } from '../components/UseCaseList';
 import { Time } from '../utils';
-import { env } from '../env';
+import { envVars } from '../env';
 
 interface Commit {
   url: string;
@@ -30,7 +30,8 @@ export default function Main({ commits }: HomepageProps) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
     <>
-      <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
+      <h1>PLUTOMI IS UNDER MAINTENANCE :D</h1>
+      {/* <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Hero />
         {!user || isUserError ? (
           <LoginHomepage
@@ -88,63 +89,63 @@ export default function Main({ commits }: HomepageProps) {
           ))}
         </ul>
       </div>
-      <ContactUs />
+      <ContactUs /> */}
     </>
   );
 }
 
-export async function getStaticProps() {
-  const commitsFromEachBranch = 25;
-  const allCommits = []; // TODO enable
-  const { data } = await axios.get(
-    `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`,
-  );
+// export async function getStaticProps() {
+//   const commitsFromEachBranch = 25;
+//   const allCommits = []; // TODO enable
+//   const { data } = await axios.get(
+//     `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`,
+//   );
 
-  await Promise.all(
-    data.map(async (branch) => {
-      try {
-        const { data } = await axios.get(
-          `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
-          {
-            headers: {
-              Authorization: process.env.COMMITS_TOKEN,
-            },
-          },
-        );
+//   await Promise.all(
+//     data.map(async (branch) => {
+//       try {
+//         const { data } = await axios.get(
+//           `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
+//           {
+//             headers: {
+//               Authorization: process.env.COMMITS_TOKEN,
+//             },
+//           },
+//         );
 
-        data.map(async (commit) => {
-          if (commit.commit.author.name !== 'allcontributors[bot]') {
-            const customCommit = {
-              name: commit.commit.author.name,
-              username: commit.author.login,
-              image: commit.author.avatar_url,
-              email: commit.commit.author.email,
-              date: commit.commit.author.date,
-              message: commit.commit.message,
-              url: commit.html_url,
-            };
-            allCommits.push(customCommit);
-          }
-        });
-      } catch (error) {
-        console.error(`Error fetching commits`, error.response.data);
-        console.error(`Get Commits Token`, env.commitsToken);
-        console.error(`ENV`, env.nodeEnv);
-      }
-    }),
-  );
+//         data.map(async (commit) => {
+//           if (commit.commit.author.name !== 'allcontributors[bot]') {
+//             const customCommit = {
+//               name: commit.commit.author.name,
+//               username: commit.author.login,
+//               image: commit.author.avatar_url,
+//               email: commit.commit.author.email,
+//               date: commit.commit.author.date,
+//               message: commit.commit.message,
+//               url: commit.html_url,
+//             };
+//             allCommits.push(customCommit);
+//           }
+//         });
+//       } catch (error) {
+//         console.error(`Error fetching commits`, error.response.data);
+//         console.error(`Get Commits Token`, envVars.COMMITS_TOKEN);
+//         console.error(`ENV`, envVars.NODE_ENV);
+//       }
+//     }),
+//   );
 
-  // Sort by commit timestamp
-  const orderedCommits = _.orderBy(allCommits, (commit) => commit.date, ['desc']);
+//   // Sort by commit timestamp
+//   const orderedCommits = _.orderBy(allCommits, (commit) => commit.date, ['desc']);
 
-  // Remove duplicates
-  const commits = orderedCommits.filter(
-    (value, index, self) =>
-      index === self.findIndex((t) => t.url === value.url && t.date === value.date),
-  );
-  return {
-    props: {
-      commits,
-    },
-  };
-}
+//   // Remove duplicates
+//   const commits = orderedCommits.filter(
+//     (value, index, self) =>
+//       index === self.findIndex((t) => t.url === value.url && t.date === value.date),
+//   );
+//   return {
+//     props: {
+//       commits,
+//     },
+//   };
+// }

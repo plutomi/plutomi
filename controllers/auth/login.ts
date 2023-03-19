@@ -32,7 +32,7 @@
 
 //   try {
 //     // TODO add types for this
-//     const data = await jwt.verify(token, envVars.LOGIN_LINKS_PASSWORD);
+//     const data = await jwt.verify(token, envVars.LOGIN_LINKS_SECRET);
 
 //     console.log(`Token data`, data);
 

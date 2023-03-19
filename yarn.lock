@@ -5950,6 +5950,11 @@
   "resolved" "https://registry.npmjs.org/env-var/-/env-var-7.3.0.tgz"
   "version" "7.3.0"
 
+"envsafe@^2.0.3":
+  "integrity" "sha512-51lek8h5btjXhXUDW//Pno7HPydM1WQzltOb1/ONRKdwB2QkfAURnN4Qn0cJ5LzGvX2Km1ReR2O3K3Bqq9sBMg=="
+  "resolved" "https://registry.npmjs.org/envsafe/-/envsafe-2.0.3.tgz"
+  "version" "2.0.3"
+
 "err-code@^2.0.2":
   "integrity" "sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA=="
   "resolved" "https://registry.npmjs.org/err-code/-/err-code-2.0.3.tgz"

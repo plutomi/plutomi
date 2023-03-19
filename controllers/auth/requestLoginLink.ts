@@ -211,7 +211,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       loginLinkId: newLoginLink._id,
     };
 
-    token = await jwt.sign(tokenData, envVars.LOGIN_LINKS_PASSWORD, {
+    token = await jwt.sign(tokenData, envVars.LOGIN_LINKS_SECRET, {
       expiresIn: Time().add(10, 'minutes').unix() - Time().unix(), // ! TODO?!?!?
     });
 

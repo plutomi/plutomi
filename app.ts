@@ -96,7 +96,7 @@ app
     });
 
     server.listen(envVars.PORT, () => {
-      console.log(`Server running on http://plocalhost:${envVars.PORT}`);
+      console.log(`Server running on http://localhost:${envVars.PORT}`);
     });
   })
   .catch((error) => {

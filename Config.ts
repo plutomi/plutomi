@@ -17,11 +17,10 @@ const getWebsiteUrl = () => {
   if (IS_LIVE) return `https://${IS_PROD ? DOMAIN_NAME : STAGE_DOMAIN_NAME}`;
   return `http://localhost:${envVars.PORT}`;
 };
-export const WEBSITE_URL = getWebsiteUrl();
 
-export const API_URL = `${IS_STAGE ? STAGE_DOMAIN_NAME : DOMAIN_NAME}/api`;
+export const API_URL = `${getWebsiteUrl()}/api`;
 
-// TODO replace with next-auth
+// TODO replace with next-auth?
 const getCookieName = () => {
   if (IS_PROD) return 'plutomi-cookie';
   if (IS_STAGE) return 'stage-plutomi-cookie';
