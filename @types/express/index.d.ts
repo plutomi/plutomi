@@ -1,6 +1,6 @@
 import { MongoClient, Document } from 'mongodb';
 import { UserEntity } from '../../models';
-import { AllEntities } from '../entities';
+import { AllEntities } from '../entities/allEntityNames';
 
 declare global {
   namespace Express {

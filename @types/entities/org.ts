@@ -1,4 +1,3 @@
-import { PlutomiId } from '../../utils';
 import { IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';

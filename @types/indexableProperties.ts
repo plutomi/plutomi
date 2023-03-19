@@ -1,5 +1,5 @@
 import { PlutomiId } from '../utils';
-import { AllEntityNames } from './entities';
+import { AllEntityNames } from './entities/allEntityNames';
 
 // These are properties, aside from each entity type, that can be indexed
 export enum IndexableType {

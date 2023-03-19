@@ -8,7 +8,7 @@ import { Time, generatePlutomiId } from '../../utils';
 import { ObjectId } from 'mongodb';
 import { User } from '../../@types/entities/user';
 import { IndexableType } from '../../@types/indexableProperties';
-import { AllEntities, AllEntityNames } from '../../@types/entities';
+import { AllEntities, AllEntityNames } from '../../@types/entities/allEntityNames';
 import { Email } from '../../@types/email';
 import { LoginLink } from '../../@types/entities/loginLink';
 // TODO add types

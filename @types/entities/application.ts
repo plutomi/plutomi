@@ -1,4 +1,4 @@
-import { AllEntityNames } from '.';
+import { AllEntityNames } from './allEntityNames';
 import { PlutomiId } from '../../utils';
 import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { BaseEntity } from './baseEntity';
