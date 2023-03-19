@@ -18,11 +18,9 @@ export type OrgTotals = {
   workspaces: number;
 };
 
-type Entity = AllEntityNames.Org;
+type OrgTargetArray = IndexedTargetArray<AllEntityNames.Org>;
 
-type OrgTargetArray = IndexedTargetArray<Entity>;
-
-export type Org = BaseEntity<Entity> & {
+export type Org = BaseEntity<AllEntityNames.Org> & {
   displayName: string;
   totals: OrgTotals;
   target: OrgTargetArray;

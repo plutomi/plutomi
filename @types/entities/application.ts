@@ -8,17 +8,15 @@ type ApplicationTotals = {
   stages: number;
 };
 
-type Entity = AllEntityNames.Application;
-
 type ApplicationTargetArray = [
-  ...IndexedTargetArray<Entity>,
+  ...IndexedTargetArray<AllEntityNames.Application>,
   // Get all applications for an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Org },
   // Get all applications for a workspace
   { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Workspace },
 ];
 
-export type Application = BaseEntity<Entity> & {
+export type Application = BaseEntity<AllEntityNames.Application> & {
   name: string;
   org: string;
   workspace: string;

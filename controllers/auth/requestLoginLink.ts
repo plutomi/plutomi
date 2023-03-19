@@ -184,7 +184,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   // TODO types
 
   let loginLinkUrl: string;
-  const userId = user.id;
+  const userId = user._id;
 
   try {
     const loginLinkId = generatePlutomiId({ date: now, entity: AllEntityNames.LoginLink });

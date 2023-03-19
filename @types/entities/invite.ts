@@ -3,10 +3,8 @@ import { IndexableType, IndexedTargetArray } from '../indexableProperties';
 import { AllEntityNames } from './allEntityNames';
 import { BaseEntity } from './baseEntity';
 
-export type Entity = AllEntityNames.Invite;
-
 export type InviteTargetArray = [
-  ...IndexedTargetArray<Entity>,
+  ...IndexedTargetArray<AllEntityNames.Invite>,
   // Get all invites for a user (to accept)
   { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Invite },
   // Get all invites sent by a given user - // TODO not necessary, just filter on createdBy
@@ -17,7 +15,7 @@ export type InviteTargetArray = [
   { id: PlutomiId<AllEntityNames.Membership>; type: IndexableType.Invite },
 ];
 
-export type Invite = BaseEntity<Entity> & {
+export type Invite = BaseEntity<AllEntityNames.Invite> & {
   org: {
     id: string;
     name: string;

@@ -6,13 +6,14 @@ import { OrgTotals } from './org';
 
 type WorkspaceTotals = Omit<OrgTotals, 'workspaces'>;
 
-type Entity = AllEntityNames.Workspace;
-
 type WorkspaceTargetArray =
   // Get all workspaces for an org
-  [...IndexedTargetArray<Entity>, { id: PlutomiId<Entity>; type: IndexableType.Workspace }];
+  [
+    ...IndexedTargetArray<AllEntityNames.Workspace>,
+    { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Workspace },
+  ];
 
-export type Workspace = BaseEntity<Entity> & {
+export type Workspace = BaseEntity<AllEntityNames.Workspace> & {
   name: string;
   totals: WorkspaceTotals;
   target: WorkspaceTargetArray;

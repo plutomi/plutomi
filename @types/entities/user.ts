@@ -10,12 +10,11 @@ type UserTotals = {
   workspaces: number;
 };
 
-type Entity = AllEntityNames.User;
 type UserOrgId = PlutomiId<AllEntityNames.Org> | null;
 type UserWorkspaceId = PlutomiId<AllEntityNames.Workspace> | null;
 
 type UserTargetArray = [
-  ...IndexedTargetArray<Entity>,
+  ...IndexedTargetArray<AllEntityNames.User>,
   // Get all users in an org
   { id: UserOrgId; type: IndexableType.User },
   // Get all users in a workspace
@@ -24,7 +23,7 @@ type UserTargetArray = [
   { id: Email; type: IndexableType.Email },
 ];
 
-export type User = BaseEntity<Entity> & {
+export type User = BaseEntity<AllEntityNames.User> & {
   firstName: string;
   lastName: string;
   org: UserOrgId;

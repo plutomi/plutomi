@@ -11,10 +11,9 @@ import { BaseEntity } from './baseEntity';
  *
  * For more info, see this post: https://blitzjs.com/docs/multitenancy
  */
-type Entity = AllEntityNames.Membership;
 
 type MembershipTargetArray = [
-  ...IndexedTargetArray<Entity>,
+  ...IndexedTargetArray<AllEntityNames.Membership>,
   // Get all members of an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Membership },
   // Get all memberships for a user and with it, all the workspaces they are in
@@ -23,7 +22,7 @@ type MembershipTargetArray = [
   { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Membership },
 ];
 
-export type Membership = BaseEntity<Entity> & {
+export type Membership = BaseEntity<AllEntityNames.Membership> & {
   org: string;
   target: MembershipTargetArray;
 };

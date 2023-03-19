@@ -8,10 +8,8 @@ type StageTotals = {
   questions: number;
 };
 
-type Entity = AllEntityNames.Stage;
-
 type StageTargetArray = [
-  ...IndexedTargetArray<Entity>,
+  ...IndexedTargetArray<AllEntityNames.Stage>,
   // Get all stages in an application
   { id: PlutomiId<AllEntityNames.Application>; type: IndexableType.Stage },
   // Get all stages in an org
@@ -26,7 +24,7 @@ type StageTargetArray = [
   },
 ];
 
-export type Stage = BaseEntity<Entity> & {
+export type Stage = BaseEntity<AllEntityNames.Stage> & {
   name: string;
   org: string;
   workspace: string;

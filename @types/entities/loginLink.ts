@@ -5,10 +5,8 @@ import { BaseEntity } from './baseEntity';
 
 type LoginLinkTotals = {};
 
-type Entity = AllEntityNames.LoginLink;
-
 type LoginLinkTargetArray = [
-  ...IndexedTargetArray<Entity>,
+  ...IndexedTargetArray<AllEntityNames.LoginLink>,
   // Get all login links for an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.LoginLink },
   // Get all login links for a workspace
@@ -18,7 +16,7 @@ type LoginLinkTargetArray = [
   { id: PlutomiId<AllEntityNames.User>; type: IndexableType.LoginLink },
 ];
 
-export type LoginLink = BaseEntity<Entity> & {
+export type LoginLink = BaseEntity<AllEntityNames.LoginLink> & {
   totals: LoginLinkTotals;
   target: LoginLinkTargetArray;
 };
