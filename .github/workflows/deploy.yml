@@ -41,7 +41,7 @@ jobs:
         run: npm i && npm i aws-cdk -g
 
       - name: Print destination
-        run: echo "Deploying to stage environment"
+        run: echo "Deploying"
 
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@master
@@ -51,11 +51,14 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Fixing lambda permissions
-        run: npm run docker-fix
+        run: npm run docker-fix # TODO Is this needed?
 
       - name: Deploying to AWS...
         run: cdk deploy --all --verbose --require-approval never
         env:
+          # TODO Add to deploy
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
           HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
           ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
