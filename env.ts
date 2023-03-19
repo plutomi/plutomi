@@ -1,5 +1,6 @@
 require('dotenv').config();
 import * as e from 'env-var';
+import { DOMAIN_NAME } from './Config';
 
 const NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT = e
   .get('NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT')
@@ -15,6 +16,7 @@ const env = e.from(
     // https://github.com/evanshortiss/env-var/issues/162
     PORT: process.env.PORT,
     NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL,
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
     COMMITS_TOKEN: process.env.COMMITS_TOKEN,
     MONGO_URL: process.env.MONGO_URL,
     SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
@@ -33,16 +35,16 @@ const env = e.from(
     },
     // ! TODO enable this again, but will have a dependency loop since config has the domain while env pulls it,
     // but config depends on .env :T
-    // asDomain: (value) => {
-    //   if (
-    //     (NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ||
-    //       NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod') &&
-    //     value !== DOMAIN_NAME
-    //   ) {
-    //     throw new Error(`domain must be '${DOMAIN_NAME}' in a live environment`);
-    //   }
-    //   return value;
-    // },
+    asDomain: (value) => {
+      if (
+        (NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ||
+          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod') &&
+        value !== DOMAIN_NAME
+      ) {
+        throw new Error(`domain must be '${DOMAIN_NAME}' in a live environment`);
+      }
+      return value;
+    },
   },
 );
 

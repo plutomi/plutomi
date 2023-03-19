@@ -18,7 +18,9 @@ const getWebsiteUrl = () => {
   return `http://localhost:${envVars.PORT}`;
 };
 
-export const API_URL = `${getWebsiteUrl()}/api`;
+// Used in CORS setup on app.ts
+export const WEBSITE_URL = getWebsiteUrl();
+export const API_URL = `${WEBSITE_URL}/api`;
 
 // TODO replace with next-auth?
 const getCookieName = () => {
