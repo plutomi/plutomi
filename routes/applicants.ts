@@ -5,9 +5,9 @@ import withHasOrg from '../middleware/withHasOrg';
 
 export const applicants = Router();
 
-applicants.post('', API.Applicants.createApplicant);
+// applicants.post('', API.Applicants.createApplicant);
 
-applicants.use(withSession);
-applicants.use(withHasOrg);
+// applicants.use(withSession);
+// applicants.use(withHasOrg);
 
-applicants.get('/:applicantId', API.Applicants.getApplicantById);
+// applicants.get('/:applicantId', API.Applicants.getApplicantById);

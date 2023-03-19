@@ -47,7 +47,7 @@ app
       req.items = items;
       next();
     });
-    
+
     server.use(timeout('5s'));
     server.use(
       cors({
@@ -60,7 +60,7 @@ app
 
     // TODO
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    server.use(API.Misc.haltOnTimeout);
+    // server.use(API.Misc.haltOnTimeout);
     server.use('/api', [
       express.json(),
       helmet(),
@@ -72,11 +72,11 @@ app
     ]);
 
     // Run jest setup if locally testing
-    if (envVars.NODE_ENV === 'development' && !IS_LIVE) {
-      server.post('/jest-setup', API.Misc.jestSetup);
-    }
+    // if (envVars.NODE_ENV === 'development' && !IS_LIVE) {
+    //   server.post('/jest-setup', API.Misc.jestSetup);
+    // }
 
-    server.get('/api', API.Misc.healthCheck);
+    // server.get('/api', API.Misc.healthCheck);
 
     // Routers
     server.use('/api/openings', openings);
