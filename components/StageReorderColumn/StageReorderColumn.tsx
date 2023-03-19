@@ -10,7 +10,10 @@ import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
-import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
+import {
+  getAdjacentStagesBasedOnPosition,
+  sortStages,
+} from '../../utils/TODO-SortItemsMakeGeneric';
 import { Loader } from '../Loader';
 import { DraggableStageCard } from '../DraggableStageCard';
 import { CustomQuery } from '../../@types/customQuery';

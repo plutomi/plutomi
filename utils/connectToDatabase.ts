@@ -1,5 +1,5 @@
 import * as mongoDB from 'mongodb';
-import { AllEntities } from '../@types/entities/allEntityNames';
+import { AllEntities } from '../@types/entities/allEntities';
 import { envVars } from '../env';
 
 export const collectionName = 'items';
