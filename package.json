@@ -8,7 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "nx run-many -t=build",
     "dev": "nx run-many -t=dev",
-    "start:web": "nx run @plutomi/web:start"
+    "start:web": "nx run @plutomi/web:start",
+    "lint": "nx run-many -t=lint",
+    "lint:fix": "nx run-many -t=lint --fix"
   },
   "keywords": [
     "plutomi"
@@ -20,7 +22,10 @@
   ],
   "devDependencies": {
     "@nrwl/nx-cloud": "^15.3.2",
-    "nx": "^15.8.9",
-    "prettier": "^2.8.7"
+    "@typescript-eslint/parser": "^5.56.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "nx": "^15.8.9"
   }
 }
