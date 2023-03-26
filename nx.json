@@ -1,4 +1,9 @@
 {
+  "extends": "nx/presets/npm.json",
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "affected": {
+    "defaultBase": "master"
+  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/nx-cloud",
@@ -6,28 +11,11 @@
         "cacheableOperations": [
           "build",
           "lint",
-          "prettier"
+          "test",
+          "e2e"
         ],
-        "accessToken": "YmRkOTRjODMtMDlmNS00NDBjLWI4OGUtMzMzNjhmZDY5NTRmfHJlYWQtd3JpdGU="
+        "accessToken": "MDlkMTdlYjgtNzg3MC00Y2Q5LWFhNDEtNDdiYTRlNGU0YmUyfHJlYWQtd3JpdGU="
       }
     }
-  },
-  "targetDefaults": {
-    "cdk-deploy:dev": {
-      "dependsOn": [
-        "^cdk-deploy:dev"
-      ]
-    },
-    "dev": {
-      "dependsOn": [
-        "^dev"
-      ]
-    },
-    "build": {
-      "outputs": [
-        "{projectRoot}/packages/web/dist"
-      ]
-    }
-  },
-  "defaultBase": "main"
+  }
 }

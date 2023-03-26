@@ -1,31 +1,16 @@
 {
-  "name": "plutomi",
-  "version": "0.0.1",
+  "name": "package-based",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
   "private": true,
-  "description": "Applicant management at any scale.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "nx run-many -t=build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/plutomi/plutomi.git"
-  },
-  "keywords": [
-    "plutomi"
-  ],
-  "author": "Plutomi Inc. - Jose Valerio",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/plutomi/plutomi/issues"
-  },
-  "homepage": "https://github.com/plutomi/plutomi#readme",
-  "workspaces": [
-    "packages/web"
-  ],
   "devDependencies": {
+    "@nrwl/nx-cloud": "latest",
     "nx": "15.8.9",
-    "@nrwl/nx-cloud": "latest"
-  }
+    "prettier": "^2.6.2",
+    "typescript": "^5.0.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
