@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc index.ts --outDir dist"
+    "build": "tsc index.ts --outDir dist",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
   },
   "author": "",
   "license": "ISC"
