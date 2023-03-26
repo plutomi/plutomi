@@ -1,0 +1,12 @@
+{
+  "name": "@plutomi/shared",
+  "version": "0.0.1",
+  "description": "Shared types and utility functions across the Plutomi project",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc index.ts --outDir dist"
+  },
+  "author": "",
+  "license": "ISC"
+}

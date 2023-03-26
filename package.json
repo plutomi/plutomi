@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "npm run build && nx run @plutomi/web:dev",
-    "build": "nx run-many --target=build"
+    "build": "nx run-many --target=build",
+    "dev": "npm run build && nx run @plutomi/web:dev"
   },
   "private": true,
   "devDependencies": {
