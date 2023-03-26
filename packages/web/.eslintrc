@@ -1,5 +1,10 @@
 {
-  "extends": ["next/core-web-vitals", "../../.eslintrc"]
+  "extends": ["next/core-web-vitals", "../../.eslintrc", "airbnb"],
+  "rules": {
+    // Nextjs already imports React
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }]
+  }
 }
 
 // TODO add airbnb react here

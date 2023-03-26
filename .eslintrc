@@ -2,6 +2,7 @@
   "extends": ["airbnb-base", "prettier"],
   "ignorePatterns": ["mode_modules", "dist", ".next"],
   "rules": {
+    "quotes": [2, "single", { "avoidEscape": true }],
     "import/no-relative-packages": "error",
     "no-restricted-imports": [
       "error",
