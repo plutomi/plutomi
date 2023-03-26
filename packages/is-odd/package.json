@@ -1,0 +1,13 @@
+{
+  "name": "is-odd",
+  "version": "1.0.0",
+  "description": "Check if a number is odd",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc index.ts --outDir dist"
+  },
+  "dependencies": {
+    "is-even": "*"
+  }
+}
