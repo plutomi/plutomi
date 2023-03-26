@@ -1,4 +1,18 @@
 {
   "extends": ["airbnb-base", "prettier"],
-  "ignorePatterns": ["mode_modules", "dist"]
+  "ignorePatterns": ["mode_modules", "dist", ".next"],
+  "rules": {
+    "import/no-relative-packages": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/dist"],
+            "message": "Don't import from 'dist' directories, use the root import instead. -> @plutomi/shared instead of 'plutomi/shared/dist'"
+          }
+        ]
+      }
+    ]
+  }
 }
