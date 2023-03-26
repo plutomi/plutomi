@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc index.ts --outDir dist",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix"
+    "lint": "lint",
+    "lint:fix": "lint --fix"
   },
   "author": "",
   "license": "ISC"
