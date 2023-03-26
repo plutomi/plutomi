@@ -1,0 +1,33 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "prettier"
+        ],
+        "accessToken": "YmRkOTRjODMtMDlmNS00NDBjLWI4OGUtMzMzNjhmZDY5NTRmfHJlYWQtd3JpdGU="
+      }
+    }
+  },
+  "targetDefaults": {
+    "cdk-deploy:dev": {
+      "dependsOn": [
+        "^cdk-deploy:dev"
+      ]
+    },
+    "dev": {
+      "dependsOn": [
+        "^dev"
+      ]
+    },
+    "build": {
+      "outputs": [
+        "{projectRoot}/packages/web/dist"
+      ]
+    }
+  },
+  "defaultBase": "main"
+}

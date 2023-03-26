@@ -1,10 +1,12 @@
 {
   "name": "plutomi",
   "version": "0.0.1",
+  "private": true,
   "description": "Applicant management at any scale.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "nx run-many -t=build"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,9 @@
   "homepage": "https://github.com/plutomi/plutomi#readme",
   "workspaces": [
     "packages/web"
-  ]
+  ],
+  "devDependencies": {
+    "nx": "15.8.9",
+    "@nrwl/nx-cloud": "latest"
+  }
 }
