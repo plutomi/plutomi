@@ -1,1 +1,4 @@
-{ "extends": ["airbnb-base"], "ignorePatterns": ["mode_modules", "dist"] }
+{
+  "extends": ["airbnb-base", "prettier"],
+  "ignorePatterns": ["mode_modules", "dist"]
+}

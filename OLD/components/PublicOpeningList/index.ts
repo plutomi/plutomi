@@ -1,1 +1,1 @@
-export * from "./PublicOpeningsList"
+export * from './PublicOpeningsList';

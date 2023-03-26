@@ -1,1 +1,1 @@
-export * from "./PublicApplicationPageContent"
+export * from './PublicApplicationPageContent';

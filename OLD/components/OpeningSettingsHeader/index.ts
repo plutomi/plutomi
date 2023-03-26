@@ -1,1 +1,1 @@
-export * from './OpeningSettingsHeader'
+export * from './OpeningSettingsHeader';

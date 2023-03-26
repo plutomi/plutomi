@@ -1,1 +1,1 @@
-export * from "./InvitesPageContent"
+export * from './InvitesPageContent';

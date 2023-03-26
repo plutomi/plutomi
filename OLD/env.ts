@@ -58,10 +58,7 @@ const NEXT_PUBLIC_WEBSITE_URL = get('NEXT_PUBLIC_WEBSITE_URL')
     NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' || NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'prod',
   );
 // .asDomain();
-const COMMITS_TOKEN = get('COMMITS_TOKEN')
-  .required()
-  .example('ghp_M9nsjS3hsXush1dls')
-  .asString();
+const COMMITS_TOKEN = get('COMMITS_TOKEN').required().example('ghp_M9nsjS3hsXush1dls').asString();
 const MONGO_URL = get('MONGO_URL')
   .required()
   .example(

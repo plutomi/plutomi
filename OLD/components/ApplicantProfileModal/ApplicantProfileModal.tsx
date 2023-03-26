@@ -8,7 +8,7 @@ import useStore from '../../OLD/utils/store';
 import { useApplicantById } from '../../OLD/SWR/useApplicantById';
 import { GetApplicantByIdURL, UpdateApplicant } from '../../OLD/.vscode/adapters/Applicants';
 import { WEBSITE_URL } from '../../Config';
-import {combineClassNames} from '../../OLD/utils/combineClassNames';
+import { combineClassNames } from '../../OLD/utils/combineClassNames';
 import { ClickToCopy } from '../ClickToCopy';
 import { ClickToEditSave } from '../ClickToEditSave';
 import { ClickToEditInput } from '../ClickToEditInput';

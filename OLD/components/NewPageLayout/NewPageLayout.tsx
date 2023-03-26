@@ -35,7 +35,7 @@ export const NewPageLayout = ({
   const currentNavItem = NAVBAR_NAVIGATION.find((navItem) => navItem.name === currentNavbarItem);
 
   const { orgId } = user;
-  
+
   // Redirect on no org
   // TODO i believe this is triggering twice...
   if (currentNavItem.hiddenIfNoOrg && !orgId) {
