@@ -17,5 +17,10 @@
     "build": {
       "dependsOn": ["^build"]
     }
+  },
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": true
+    }
   }
 }

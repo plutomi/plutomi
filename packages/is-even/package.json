@@ -1,10 +1,10 @@
 {
-    "name": "is-even",
-    "version": "1.0.0",
-    "description": "Check if a number is even",
-    "main": "dist/index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsc index.ts --outDir dist"
-    }
+  "name": "is-even",
+  "version": "1.0.0",
+  "description": "Check if a number is even",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  }
 }
