@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "nx run-many -t=build",
-    "build:fresh": "nx run-many -t=build --skip-nx-cache",
-    "dev": "nx run-many -t=dev"
+    "dev": "nx run-many -t=dev",
+    "start:web": "nx run @plutomi/web:start"
   },
   "keywords": [
     "plutomi"
