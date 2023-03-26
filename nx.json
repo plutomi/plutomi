@@ -9,18 +9,16 @@
       "runner": "@nrwl/nx-cloud",
       "options": {
         "cacheableOperations": ["build", "lint", "test", "e2e"],
-        "accessToken": "MDlkMTdlYjgtNzg3MC00Y2Q5LWFhNDEtNDdiYTRlNGU0YmUyfHJlYWQtd3JpdGU="
+        "accessToken": "NGVlNGQ2Y2QtNzgwZS00ZDYyLTllNjItYTJiNGVlNDc3OWI1fHJlYWQtd3JpdGU="
       }
     }
   },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"]
-    }
-  },
-  "pluginsConfig": {
-    "@nrwl/js": {
-      "analyzeSourceFiles": true
+    },
+    "dev": {
+      "dependsOn": ["^build"]
     }
   }
 }

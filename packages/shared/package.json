@@ -1,13 +1,16 @@
 {
-  "name": "is-odd",
+  "name": "@plutomi/shared",
   "version": "1.0.0",
-  "description": "Check if a number is odd",
+  "description": "",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "is-even": "*"
+    "axios": "^1.3.4"
   }
 }
