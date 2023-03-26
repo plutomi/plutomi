@@ -1,27 +1,25 @@
 {
   "name": "plutomi",
-  "version": "0.0.0",
-  "license": "MIT",
+  "version": "0.0.1",
+  "description": "Applicant management at any scale.",
+  "main": "index.js",
   "scripts": {
-    "build": "nx run-many --target=build",
-    "dev": "npm run build && nx run @plutomi/web:dev",
-    "lint": "nx run-many --target=lint",
-    "lint:fix": "nx run-many --target=lint:fix"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "private": true,
-  "devDependencies": {
-    "@nrwl/nx-cloud": "latest",
-    "eslint": "^8.36.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "nx": "15.8.9",
-    "prettier": "^2.6.2",
-    "typescript": "^5.0.2"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plutomi/plutomi.git"
   },
+  "keywords": [
+    "plutomi"
+  ],
+  "author": "Plutomi Inc. - Jose Valerio",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/plutomi/plutomi/issues"
+  },
+  "homepage": "https://github.com/plutomi/plutomi#readme",
   "workspaces": [
-    "packages/*"
+    "packages/web"
   ]
 }

@@ -1,4 +1,0 @@
-{
-  "extends": ["eslint-config-airbnb"],
-  "ignorePatterns": [".next", "node_modules"]
-}
