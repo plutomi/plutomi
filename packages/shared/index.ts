@@ -3,6 +3,7 @@ import axios from "axios";
 export type Result = {
   name: string;
   y?: string;
+  x?: string;
 };
 
 export const api = axios.create({

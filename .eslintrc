@@ -1,8 +1,10 @@
 {
-  "extends": ["airbnb-base", "prettier"],
+  "root": true,
+  "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
   "ignorePatterns": ["mode_modules", "dist", ".next"],
   "rules": {
-    "quotes": [2, "single", { "avoidEscape": true }],
+    "no-console": "warn",
+    "quotes": [2, "double", { "avoidEscape": true }],
     "import/no-relative-packages": "error",
     "no-restricted-imports": [
       "error",
@@ -15,5 +17,10 @@
         ]
       }
     ]
+  },
+  "parserOptions": {
+    // Required for certain syntax usages
+    "ecmaVersion": "latest",
+    "project": "./tsconfig.json"
   }
 }
