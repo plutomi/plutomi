@@ -1,0 +1,14 @@
+{
+  "name": "plutomi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/plutomi/plutomi.git",
+  "author": "Jose Valerio <contact@josevalerio.com>",
+  "license": "MIT",
+  "workspaces": {
+    "packages": [
+      "web",
+      "api"
+    ]
+  }
+}

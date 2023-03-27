@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "web",
+      "path": "packages/web"
+    },
+    { "name": "aPI", "path": "packages/api" },
+    { "name": "shared", "path": "packages/shared" },
+    { "name": "infra", "path": "packages/infra" },
+    { "name": "docs", "path": "packages/docs" }
+  ]
+}
