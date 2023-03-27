@@ -2,8 +2,13 @@
   "root": true,
   "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
   "ignorePatterns": ["mode_modules", "dist", ".next"],
+  "import/resolver": {
+    "node": {
+      "moduleDirectory": ["node_modules", "./src"]
+    }
+  },
   "rules": {
-    "no-console": "warn",
+    "no-console": "error",
     "quotes": [2, "double", { "avoidEscape": true }],
     "import/no-relative-packages": "error",
     "no-restricted-imports": [
