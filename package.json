@@ -8,5 +8,12 @@
   "license": "MIT",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "devDependencies": {
+    "nx": "^15.8.9",
+    "prettier": "^2.8.7"
+  },
+  "scripts": {
+    "dev": "nx run-many -t=dev"
+  }
 }
