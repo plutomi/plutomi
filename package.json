@@ -6,10 +6,7 @@
   "repository": "https://github.com/plutomi/plutomi.git",
   "author": "Jose Valerio <contact@josevalerio.com>",
   "license": "MIT",
-  "workspaces": {
-    "packages": [
-      "web",
-      "api"
-    ]
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }
