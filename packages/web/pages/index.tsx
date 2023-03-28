@@ -14,8 +14,12 @@ export default function Main() {
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
             To enhance the long term stability of the project, I (Jose) am doing
             a major refactor. You can check the progress and all changes on
-            GitHub or DM me on Twitter if you have any questions :)
+            GitHub or DM me on Twitter or by email if you have any questions :)
           </p>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
+            jose@plutomi.com
+          </p>
+
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
             This site is current as of {today}
           </p>
