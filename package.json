@@ -2,7 +2,7 @@
   "name": "plutomi",
   "version": "1.0.0",
   "main": "index.js",
-  "private": "true",
+  "private": true,
   "repository": "https://github.com/plutomi/plutomi.git",
   "author": "Jose Valerio <contact@josevalerio.com>",
   "license": "MIT",
@@ -16,5 +16,6 @@
   "scripts": {
     "dev": "nx run-many -t=dev",
     "prettier:fix": "prettier --write ."
-  }
+  },
+  "packageManager": "yarn@3.5.0"
 }

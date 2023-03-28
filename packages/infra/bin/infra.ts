@@ -1,21 +1,11 @@
 #!/usr/bin/env node
 import "source-map-support";
 import * as cdk from "aws-cdk-lib";
+import { env } from "../env";
 import { PlutomiStack } from "../lib/plutomiStack";
-import { envVars } from "../../env";
 
 const app = new cdk.App();
-
-new AppStack(
-  app,
-  `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-PlutomiStack`,
-  {}
-);
-
-import { IStack } from "../lib/i-stack";
-
-const app = new cdk.App();
-new IStack(app, "IStack", {
+new PlutomiStack(app, `${env.DEPLOYMENT_ENVIRONMENT}-PlutomiStack`, {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
