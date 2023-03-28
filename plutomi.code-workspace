@@ -12,5 +12,8 @@
     { "name": "shared", "path": "packages/shared" },
     { "name": "infra", "path": "packages/infra" },
     { "name": "docs", "path": "packages/docs" }
-  ]
+  ],
+  "settings": {
+    "cSpell.words": ["Plutomi", "tailwindcss"]
+  }
 }

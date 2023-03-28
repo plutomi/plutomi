@@ -21,7 +21,7 @@ export default function Main() {
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <a
-              href="https://github.com/plutomi/plutomi"
+              href="https://github.com/plutomi/plutomi/pull/776"
               target="_blank"
               rel="noreferrer"
               className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm  hover:bg-gray-900 hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
