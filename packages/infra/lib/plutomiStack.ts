@@ -11,21 +11,14 @@ import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { Policy } from "aws-cdk-lib/aws-iam";
-import {
-  DOMAIN_NAME,
-  NOT_SET,
-  Policies,
-  STAGE_DOMAIN_NAME,
-  Servers,
-} from "../../Config";
 import * as waf from "aws-cdk-lib/aws-wafv2";
-import { envVars } from "../../env";
 import { InstanceClass, InstanceSize, InstanceType } from "aws-cdk-lib/aws-ec2";
+import { Construct } from "constructs";
 
-interface AppStackServiceProps extends cdk.StackProps {}
+interface PlutomiStackProps extends cdk.StackProps {}
 
 export class PlutomiStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: PlutomiStackProps) {
     super(scope, id, props);
 
     // IAM inline role - the service principal is required
