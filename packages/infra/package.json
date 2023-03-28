@@ -1,0 +1,10 @@
+{
+  "name": "@plutomi/infra",
+  "version": "0.1.0",
+  "description": "Infrastructure for Plutomi",
+  "main": "index.js",
+  "repository": "https://github.com/plutomi/plutomi",
+  "author": "Plutomi Inc.",
+  "license": "Apache2",
+  "private": false
+}
