@@ -5,13 +5,16 @@
   "private": true,
   "repository": "https://github.com/plutomi/plutomi.git",
   "author": "Jose Valerio <contact@josevalerio.com>",
-  "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
+  "license": "Apache-2.0",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "devDependencies": {
-    "nx": "^15.8.9",
-    "prettier": "^2.8.7"
+    "nx": "15.8.9",
+    "prettier": "^2.8.7",
+    "@nrwl/nx-cloud": "latest"
   },
   "scripts": {
     "dev": "nx run-many -t=dev",

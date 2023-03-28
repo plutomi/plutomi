@@ -14,6 +14,6 @@
     { "name": "docs", "path": "packages/docs" }
   ],
   "settings": {
-    "cSpell.words": ["Plutomi", "tailwindcss"]
+    "cSpell.words": ["cacheable", "Plutomi", "tailwindcss"]
   }
 }
