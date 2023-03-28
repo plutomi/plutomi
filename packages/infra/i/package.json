@@ -1,9 +1,6 @@
 {
   "name": "@plutomi/infrastructure",
   "version": "0.1.0",
-  "bin": {
-    "i": "bin/i.js"
-  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",

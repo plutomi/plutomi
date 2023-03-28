@@ -1,39 +1,50 @@
-import * as cf from 'aws-cdk-lib/aws-cloudfront';
-import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
-import * as cdk from 'aws-cdk-lib';
-import * as ecs from 'aws-cdk-lib/aws-ecs';
-import { FckNatInstanceProvider } from 'cdk-fck-nat';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as iam from 'aws-cdk-lib/aws-iam';
-import * as route53 from 'aws-cdk-lib/aws-route53';
-import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
-import { Policy } from 'aws-cdk-lib/aws-iam';
-import { DOMAIN_NAME, NOT_SET, Policies, STAGE_DOMAIN_NAME, Servers } from '../../Config';
-import * as waf from 'aws-cdk-lib/aws-wafv2';
-import { envVars } from '../../env';
-import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
+import * as cf from "aws-cdk-lib/aws-cloudfront";
+import * as ecsPatterns from "aws-cdk-lib/aws-ecs-patterns";
+import * as cdk from "aws-cdk-lib";
+import * as ecs from "aws-cdk-lib/aws-ecs";
+import { FckNatInstanceProvider } from "cdk-fck-nat";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
+import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
+import { Policy } from "aws-cdk-lib/aws-iam";
+import {
+  DOMAIN_NAME,
+  NOT_SET,
+  Policies,
+  STAGE_DOMAIN_NAME,
+  Servers,
+} from "../../Config";
+import * as waf from "aws-cdk-lib/aws-wafv2";
+import { envVars } from "../../env";
+import { InstanceClass, InstanceSize, InstanceType } from "aws-cdk-lib/aws-ec2";
 
-console.log(`ENVVVVV\n\n\n\n\n`, envVars);
 interface AppStackServiceProps extends cdk.StackProps {}
 
-export default class AppStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
+export class PlutomiStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // IAM inline role - the service principal is required
-    const taskRole = new iam.Role(this, 'plutomi-api-fargate-role', {
-      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+    const taskRole = new iam.Role(this, "plutomi-api-fargate-role", {
+      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
 
     // Allows fargate to send emails
     const sesSendEmailPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
-      actions: [Policies.SendEmail, Policies.SendRawEmail, Policies.SendTemplatedEmail],
+      actions: [
+        Policies.SendEmail,
+        Policies.SendRawEmail,
+        Policies.SendTemplatedEmail,
+      ],
       resources: [
-        `arn:aws:ses:${this.region}:${cdk.Stack.of(this).account}:identity/${DOMAIN_NAME}`,
+        `arn:aws:ses:${this.region}:${
+          cdk.Stack.of(this).account
+        }:identity/${DOMAIN_NAME}`,
       ],
     });
 
@@ -42,38 +53,42 @@ export default class AppStack extends cdk.Stack {
       `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-plutomi-api-policy`,
       {
         statements: [sesSendEmailPolicy],
-      },
+      }
     );
     taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
-      'plutomi-api-fargate-task-definition',
+      "plutomi-api-fargate-task-definition",
       {
         taskRole,
         executionRole: taskRole,
         cpu: Servers.cpu, // TODO revert back
         memoryLimitMiB: Servers.memory,
-      },
+      }
     );
 
-    const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
-      // Get the local docker image, build and deploy it
-      image: ecs.ContainerImage.fromAsset('.', {
-        // ! Must match the ARGs in the docker file!
-        buildArgs: {
-          COMMITS_TOKEN: envVars.COMMITS_TOKEN,
-          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
-          NEXT_PUBLIC_WEBSITE_URL: envVars.NEXT_PUBLIC_WEBSITE_URL,
-        },
-      }),
+    const container = taskDefinition.addContainer(
+      "plutomi-api-fargate-container",
+      {
+        // Get the local docker image, build and deploy it
+        image: ecs.ContainerImage.fromAsset(".", {
+          // ! Must match the ARGs in the docker file!
+          buildArgs: {
+            COMMITS_TOKEN: envVars.COMMITS_TOKEN,
+            NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT:
+              envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
+            NEXT_PUBLIC_WEBSITE_URL: envVars.NEXT_PUBLIC_WEBSITE_URL,
+          },
+        }),
 
-      logging: new ecs.AwsLogDriver({
-        streamPrefix: 'plutomi-api-fargate',
-      }),
-      // TODO vomit
-      environment: envVars as unknown as { [key: string]: string },
-    });
+        logging: new ecs.AwsLogDriver({
+          streamPrefix: "plutomi-api-fargate",
+        }),
+        // TODO vomit
+        environment: envVars as unknown as { [key: string]: string },
+      }
+    );
 
     container.addPortMappings({
       // TODO i think this cdk type is wrong? Says should be a number but got:
@@ -87,28 +102,32 @@ export default class AppStack extends cdk.Stack {
     });
 
     // TODO  add fck nat
-    const vpc = new ec2.Vpc(this, 'plutomi-api-fargate-vpc', {
+    const vpc = new ec2.Vpc(this, "plutomi-api-fargate-vpc", {
       maxAzs: Servers.vpc.az,
       natGateways: Servers.vpc.natGateways, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
       natGatewayProvider,
     });
 
-    const cluster = new ecs.Cluster(this, 'plutomi-api-fargate-cluster', {
+    const cluster = new ecs.Cluster(this, "plutomi-api-fargate-cluster", {
       vpc,
       containerInsights: true,
     });
 
     // Get a reference to AN EXISTING hosted zone
-    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'plutomi-hosted-zone', {
-      hostedZoneId: envVars.HOSTED_ZONE_ID,
-      zoneName: DOMAIN_NAME,
-    });
+    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(
+      this,
+      "plutomi-hosted-zone",
+      {
+        hostedZoneId: envVars.HOSTED_ZONE_ID,
+        zoneName: DOMAIN_NAME,
+      }
+    );
 
     // Retrieves the certificate that we are using for our domain
     const apiCert = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
-      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`,
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`
     );
 
     /**
@@ -117,18 +136,19 @@ export default class AppStack extends cdk.Stack {
      *
      * The fck-nat allows internet access to the tasks.
      */
-    const loadBalancedFargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(
-      this,
-      'PlutomiApi',
-      {
-        cluster,
-        certificate: apiCert,
-        taskDefinition,
-        desiredCount: Servers.count.min,
-        listenerPort: 443,
-        redirectHTTP: true,
-      },
-    );
+    const loadBalancedFargateService =
+      new ecsPatterns.ApplicationLoadBalancedFargateService(
+        this,
+        "PlutomiApi",
+        {
+          cluster,
+          certificate: apiCert,
+          taskDefinition,
+          desiredCount: Servers.count.min,
+          listenerPort: 443,
+          redirectHTTP: true,
+        }
+      );
 
     /**
      * Reduce deploy time by:
@@ -140,8 +160,8 @@ export default class AppStack extends cdk.Stack {
      */
     // Deregistration delay
     loadBalancedFargateService.targetGroup.setAttribute(
-      'deregistration_delay.timeout_seconds',
-      '10',
+      "deregistration_delay.timeout_seconds",
+      "10"
     );
     // Healthcheck thresholds
     loadBalancedFargateService.targetGroup.configureHealthCheck({
@@ -152,16 +172,17 @@ export default class AppStack extends cdk.Stack {
     });
 
     // Auto scaling
-    const scalableTarget = loadBalancedFargateService.service.autoScaleTaskCount({
-      minCapacity: Servers.count.min,
-      maxCapacity: Servers.count.max,
-    });
+    const scalableTarget =
+      loadBalancedFargateService.service.autoScaleTaskCount({
+        minCapacity: Servers.count.min,
+        maxCapacity: Servers.count.max,
+      });
 
     /**
      * Good reading on fargate 25% time :>
      * https://github.com/aws/containers-roadmap/issues/163
      */
-    scalableTarget.scaleOnCpuUtilization('CpuScaling', {
+    scalableTarget.scaleOnCpuUtilization("CpuScaling", {
       targetUtilizationPercent: Servers.targetUtilizationPct,
     });
 
@@ -172,14 +193,14 @@ export default class AppStack extends cdk.Stack {
       `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-API-WAF`,
       {
         name: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-API-WAF`,
-        description: 'Blocks IPs that make too many requests',
+        description: "Blocks IPs that make too many requests",
         defaultAction: {
           allow: {},
         },
-        scope: 'CLOUDFRONT',
+        scope: "CLOUDFRONT",
         visibilityConfig: {
           cloudWatchMetricsEnabled: true,
-          metricName: 'cloudfront-ipset-waf',
+          metricName: "cloudfront-ipset-waf",
           sampledRequestsEnabled: true,
         },
         rules: [
@@ -189,20 +210,20 @@ export default class AppStack extends cdk.Stack {
             statement: {
               rateBasedStatement: {
                 limit: Servers.rateLimit.api, // In a 5 minute period
-                aggregateKeyType: 'IP',
+                aggregateKeyType: "IP",
                 scopeDownStatement: {
                   byteMatchStatement: {
                     fieldToMatch: {
                       uriPath: {},
                     },
-                    positionalConstraint: 'CONTAINS',
+                    positionalConstraint: "CONTAINS",
                     textTransformations: [
                       {
                         priority: 0,
-                        type: 'LOWERCASE',
+                        type: "LOWERCASE",
                       },
                     ],
-                    searchString: '/api/',
+                    searchString: "/api/",
                   },
                 },
               },
@@ -226,7 +247,7 @@ export default class AppStack extends cdk.Stack {
             statement: {
               rateBasedStatement: {
                 limit: Servers.rateLimit.web, // In a 5 minute period
-                aggregateKeyType: 'IP',
+                aggregateKeyType: "IP",
               },
             },
             action: {
@@ -261,12 +282,12 @@ export default class AppStack extends cdk.Stack {
           //   },
           // },
           {
-            name: 'AWS-AWSManagedRulesAmazonIpReputationList',
+            name: "AWS-AWSManagedRulesAmazonIpReputationList",
             priority: 2,
             statement: {
               managedRuleGroupStatement: {
-                vendorName: 'AWS',
-                name: 'AWSManagedRulesAmazonIpReputationList',
+                vendorName: "AWS",
+                name: "AWSManagedRulesAmazonIpReputationList",
               },
             },
             overrideAction: {
@@ -275,7 +296,7 @@ export default class AppStack extends cdk.Stack {
             visibilityConfig: {
               sampledRequestsEnabled: false,
               cloudWatchMetricsEnabled: true,
-              metricName: 'AWS-AWSManagedRulesAmazonIpReputationList',
+              metricName: "AWS-AWSManagedRulesAmazonIpReputationList",
             },
           },
           // {
@@ -298,7 +319,7 @@ export default class AppStack extends cdk.Stack {
           //   },
           // },
         ],
-      },
+      }
     );
 
     // No caching! We're using Cloudfront for its global network and WAF
@@ -309,7 +330,7 @@ export default class AppStack extends cdk.Stack {
         defaultTtl: cdk.Duration.seconds(0),
         minTtl: cdk.Duration.seconds(0),
         maxTtl: cdk.Duration.seconds(0),
-      },
+      }
     );
 
     const distribution = new cf.Distribution(
@@ -320,10 +341,14 @@ export default class AppStack extends cdk.Stack {
         webAclId: API_WAF.attrArn,
         // TODO others?
         domainNames: [
-          envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ? STAGE_DOMAIN_NAME : DOMAIN_NAME,
+          envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "stage"
+            ? STAGE_DOMAIN_NAME
+            : DOMAIN_NAME,
         ],
         defaultBehavior: {
-          origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
+          origin: new origins.LoadBalancerV2Origin(
+            loadBalancedFargateService.loadBalancer
+          ),
 
           // Must be enabled!
           // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
@@ -334,13 +359,15 @@ export default class AppStack extends cdk.Stack {
         // additionalBehaviors: {
         // TODO add /public caching behaviors here
         // }, //
-      },
+      }
     );
 
     //  Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `APIAlias`, {
       recordName:
-        envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === 'stage' ? STAGE_DOMAIN_NAME : DOMAIN_NAME,
+        envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "stage"
+          ? STAGE_DOMAIN_NAME
+          : DOMAIN_NAME,
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });
