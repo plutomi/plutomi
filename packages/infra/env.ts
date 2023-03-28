@@ -1,16 +1,18 @@
 import { z } from "zod";
 
 const schema = z.object({
-  DEPLOYMENT_ENVIRONMENT: z.string().url(),
+  DEPLOYMENT_ENVIRONMENT: z.enum(["prod", "stage", "dev"]),
+  DOMAIN: z.string().url(),
 });
 
 const parsed = schema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error(
-    "❌ Invalid environment variables:",
-    JSON.stringify(parsed.error.format(), null, 4)
-  );
+  parsed.error.issues.forEach((issue) => {
+    console.error("\n❌ Invalid environment variable:");
+    console.error(issue);
+  });
+
   process.exit(1);
 }
 
