@@ -18,6 +18,7 @@
   },
   "scripts": {
     "dev": "nx run-many -t=dev",
+    "build": "nx run-many -t=build",
     "prettier:fix": "prettier --write ."
   },
   "packageManager": "yarn@3.5.0"

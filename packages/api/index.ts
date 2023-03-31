@@ -1,12 +1,38 @@
 import express from "express";
 import { env } from "./env";
+import next from "next";
 
-const app = express();
+const dev = env.NODE_ENV !== "production";
+const webApp = next({ dev, dir: "../packages/web" });
+const nextHandler = webApp.getRequestHandler();
 
-app.get("/", async (req, res) => {
-  res.send("Express + TypeScript Server");
-});
+webApp.prepare().then(() => {
+  const server = express();
 
-app.listen(env.PORT, () => {
-  console.log(`[server]: Server is running at http://localhost:${env.PORT}`);
+  console.log(`NODE ENV: ${env.PORT}`);
+
+  server.set("trust proxy", true);
+  server.use(express.json());
+
+  server.get("/api/health", async (req, res) => {
+    console.log("API ROUTE");
+
+    res.send("aaaaaaaaaaaa");
+    return;
+  });
+
+  // NextJS App
+  server.get("/*", (req, res) => {
+    console.log("NEXT PAGE");
+    return nextHandler(req, res);
+  });
+
+  // Listen for errors
+  server.on("error", (err) => {
+    console.error("Server error:", err);
+  });
+
+  server.listen(env.PORT, () => {
+    console.log(`[server]: Server is running at http://localhost:${env.PORT}`);
+  });
 });

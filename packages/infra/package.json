@@ -2,10 +2,9 @@
   "name": "@plutomi/infra",
   "version": "0.1.0",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"  },
+    "cdk": "cdk"
+  },
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^29.4.0",
