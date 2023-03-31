@@ -3,13 +3,14 @@ import { env } from "./env";
 import next from "next";
 
 const dev = env.NODE_ENV !== "production";
-const webApp = next({ dev, dir: "./packages/web" });
+const webApp = next({ dev, dir: "../web" });
 const nextHandler = webApp.getRequestHandler();
 
 (async () => {
   try {
     await webApp.prepare();
   } catch (error) {
+    console.error("Error preparing NextJS app:");
     console.error(error);
     process.exit(1);
   }
