@@ -56,8 +56,8 @@ export class PlutomiStack extends cdk.Stack {
       {
         taskRole,
         executionRole: taskRole,
-        cpu: Servers.cpu, // TODO revert back
-        memoryLimitMiB: Servers.memory,
+        cpu: 256, 
+        memoryLimitMiB: 512,
       }
     );
 

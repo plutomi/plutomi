@@ -5,9 +5,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk",
-    "dev": "npx ts-node index.ts"
-  },
+    "cdk": "cdk"  },
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^29.4.0",
