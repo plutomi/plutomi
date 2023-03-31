@@ -3,7 +3,7 @@ import { env } from "./env";
 import next from "next";
 
 const dev = env.NODE_ENV !== "production";
-const webApp = next({ dev, dir: "../web" });
+const webApp = next({ dev, dir: "../../packages/web" });
 const nextHandler = webApp.getRequestHandler();
 
 (async () => {
@@ -17,21 +17,17 @@ const nextHandler = webApp.getRequestHandler();
 
   const server = express();
 
-  console.log(`NODE ENV: ${env.PORT}`);
-
   server.set("trust proxy", true);
   server.use(express.json());
 
   server.get("/api/health", async (req, res) => {
-    console.log("API ROUTE");
-
     res.send("aaaaaaaaaaaa");
     return;
   });
 
   // NextJS App
   server.get("/*", (req, res) => {
-    console.log("NEXT PAGE");
+    console.log("NEXT PAGE", req.path);
     return nextHandler(req, res);
   });
 
