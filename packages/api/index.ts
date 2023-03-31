@@ -25,6 +25,9 @@ const nextHandler = webApp.getRequestHandler();
     return;
   });
 
+  server.all("/_next*", (req, res) => {
+    return nextHandler(req, res);
+  });
   // NextJS App
   server.get("/*", (req, res) => {
     console.log("NEXT PAGE", req.path);
