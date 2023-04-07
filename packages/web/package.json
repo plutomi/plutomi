@@ -4,10 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "lint": "next lint",
-    "clean": "rimraf .next",
-    "clean:nm": "rimraf node_modules",
-    "i": "yarn install"
+    "lint": "next lint"
   },
   "dependencies": {
     "autoprefixer": "^10.4.14",
