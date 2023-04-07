@@ -20,13 +20,12 @@ const nextHandler = webApp.getRequestHandler();
   server.use(express.json());
 
   server.get("/api*", async (req, res) => {
-    res.status(200).json({ message: "ok c:" });
+    res.status(200).json({ message: "Saul Goodman" });
     return;
   });
 
   // NextJS App
   server.get("/*", (req, res) => {
-    console.log("NEXT PAGE", req.path);
     return nextHandler(req, res);
   });
 
