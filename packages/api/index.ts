@@ -10,8 +10,7 @@ const nextHandler = webApp.getRequestHandler();
   try {
     await webApp.prepare();
   } catch (error) {
-    console.error("Error preparing NextJS app:");
-    console.error(error);
+    console.error("Error preparing NextJS app:", error);
     process.exit(1);
   }
 
@@ -20,14 +19,11 @@ const nextHandler = webApp.getRequestHandler();
   server.set("trust proxy", true);
   server.use(express.json());
 
-  server.get("/api/health", async (req, res) => {
-    res.send("aaaaaaaaaaaa");
+  server.get("/api*", async (req, res) => {
+    res.status(200).json({ message: "ok c:" });
     return;
   });
 
-  server.all("/_next*", (req, res) => {
-    return nextHandler(req, res);
-  });
   // NextJS App
   server.get("/*", (req, res) => {
     console.log("NEXT PAGE", req.path);
