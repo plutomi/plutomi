@@ -18,11 +18,11 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 ## Summary
 
-You can create `application` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
+You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
-In these `applications`, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `answers` or after a certain time period.
+In these applications, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `answers` or after a certain time period.
 
-An _application_ for a delivery company might look like this:
+An application for a delivery company might look like this:
 
 **New York City**
 
