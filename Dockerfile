@@ -8,22 +8,20 @@ WORKDIR /app
 COPY yarn.lock package.json ./
 COPY packages/api/package.json packages/api/package.json
 COPY packages/web/package.json packages/web/package.json
-# COPY packages/shared/package.json packages/shared/package.json TODO
+
 RUN yarn install --frozen-lockfile
 
-# RUN  yarn add nx @nrwl/nx-cloud tsc typescript@5.1.0 -D
 
 # Rebuild the source code only when needed
 FROM node:18-alpine AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+
+# Copy deps over
+COPY --from=deps /app/packages/api/node_modules packages/api/node_modules
+COPY --from=deps /app/packages/web/node_modules packages/web/node_modules 
+COPY --from=deps /app/node_modules node_modules 
+
 COPY . .
-
-
-WORKDIR /app/packages/web/pages
-RUN ls
-
-WORKDIR /app
 
 RUN yarn build
 
@@ -44,12 +42,17 @@ ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-RUN ls
 
-COPY --from=builder /app/packages/web/public ./app/packages/web/public
+# Copying dependencies from builder stage
+COPY --from=builder /app/packages/web/public packages/web/public
+COPY --from=builder /app/packages/api packages/api
+
+# Copy starting scripts
+COPY --from=builder /app/package.json /app/package.json
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing

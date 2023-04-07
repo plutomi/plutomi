@@ -1,2 +1,16 @@
 node_modules
 npm-debug.log
+OLD
+README.md
+*.code-workspace
+.gitignore
+.cache/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.env
+.env.development
+.env.test
+tests/
+__tests__/
