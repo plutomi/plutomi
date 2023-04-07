@@ -1,8 +1,4 @@
-import axios from "axios";
-
 export default function Main() {
-  const t = axios.get("/"); // ! TODO: Remove
-
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
