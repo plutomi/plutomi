@@ -1,17 +1,17 @@
 {
   "folders": [
     {
-      "name": "root",
-      "path": "."
+      "path": ".",
+      "name": "root"
     },
     {
-      "name": "web",
-      "path": "packages/web"
+      "path": "packages/api",
+      "name": "api"
     },
-    { "name": "api", "path": "packages/api" },
-    { "name": "shared", "path": "packages/shared" },
-    { "name": "infra", "path": "packages/infra" },
-    { "name": "docs", "path": "packages/docs" }
+    {
+      "path": "packages/web",
+      "name": "web"
+    }
   ],
   "settings": {
     "cSpell.words": ["cacheable", "fargate", "Plutomi", "tailwindcss"]
