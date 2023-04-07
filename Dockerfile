@@ -11,10 +11,6 @@ COPY packages/web/package.json packages/web/package.json
 
 RUN yarn install --frozen-lockfile
 
-RUN echo "TESTING DIRS\n\n\n"
-RUN ls
-
-
 # Rebuild the source code only when needed
 FROM node:18-alpine AS builder
 WORKDIR /app
@@ -22,7 +18,6 @@ WORKDIR /app
 # Copy deps over
 COPY --from=deps /app/packages/api/node_modules packages/api/node_modules
 COPY --from=deps /app/packages/web/node_modules packages/web/node_modules 
-# TODO dont know if needed
 COPY --from=deps /app/node_modules node_modules 
 
 COPY . .
@@ -33,9 +28,7 @@ RUN yarn build
 FROM node:18-alpine AS runner
 WORKDIR /app
 
-# Always prod, DEPLOYMENT_ENVIRONMENT is 'stage' || 'prod' 
 ENV NODE_ENV production
-
 
 # Setting any environment variables that Next FE needs
 # Commits token is SSR'd on the homepage TODO
@@ -51,17 +44,23 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 
-# Copying dependencies from builder stage
+# Copying public NextJS assets
 COPY --from=builder /app/packages/web/public packages/web/public
+
+# Copy API files
 COPY --from=builder /app/packages/api packages/api
 
 # Copy starting scripts
-COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/package.json package.json
+
+# Copy root node modules
+COPY --from=builder /app/node_modules node_modules
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next/static ./.next/static
+# Copy built Nextjs files
+COPY --from=builder  --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
 
 USER nextjs
 

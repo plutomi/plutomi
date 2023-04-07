@@ -1,7 +1,6 @@
 node_modules
 npm-debug.log
 OLD
-README.md
 *.code-workspace
 .gitignore
 .cache/
@@ -14,3 +13,11 @@ Thumbs.db
 .env.test
 tests/
 __tests__/
+.next
+*.md 
+LICENSE
+.github
+.prettierignore
+.prettierrc.json
+.all-contributorsrc
+.git

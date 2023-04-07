@@ -2,13 +2,15 @@ import express from "express";
 import { env } from "./env";
 import next from "next";
 import compression from "compression";
+import path from "path";
 
 const dev = env.NODE_ENV !== "production";
-const webApp = next({ dev, dir: "../../packages/web" });
+const webApp = next({ dev, dir: path.resolve(__dirname, "../../web") });
 const nextHandler = webApp.getRequestHandler();
 
 (async () => {
   try {
+    // NextJS App
     await webApp.prepare();
   } catch (error) {
     console.error("Error preparing NextJS app:", error);
@@ -16,7 +18,6 @@ const nextHandler = webApp.getRequestHandler();
   }
 
   const server = express();
-
   server.set("trust proxy", true);
   server.use(express.json());
   server.use(compression());
