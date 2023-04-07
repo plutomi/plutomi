@@ -1,6 +1,7 @@
 import express from "express";
 import { env } from "./env";
 import next from "next";
+import compression from "compression";
 
 const dev = env.NODE_ENV !== "production";
 const webApp = next({ dev, dir: "../../packages/web" });
@@ -18,6 +19,7 @@ const nextHandler = webApp.getRequestHandler();
 
   server.set("trust proxy", true);
   server.use(express.json());
+  server.use(compression());
 
   server.get("/api*", async (req, res) => {
     res.status(200).json({ message: "Saul Goodman" });

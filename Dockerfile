@@ -47,6 +47,8 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+RUN ls
+
 COPY --from=builder /app/packages/web/public ./app/packages/web/public
 
 # Automatically leverage output traces to reduce image size
