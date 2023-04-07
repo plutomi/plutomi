@@ -22,6 +22,7 @@ WORKDIR /app
 # Copy deps over
 COPY --from=deps /app/packages/api/node_modules packages/api/node_modules
 COPY --from=deps /app/packages/web/node_modules packages/web/node_modules 
+# TODO dont know if needed
 COPY --from=deps /app/node_modules node_modules 
 
 COPY . .
