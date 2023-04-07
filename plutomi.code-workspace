@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "root"
+    },
+    {
+      "path": "packages/api",
+      "name": "api"
+    },
+    {
+      "path": "packages/web",
+      "name": "web"
+    }
+  ],
+  "settings": {
+    "cSpell.words": ["cacheable", "fargate", "Plutomi", "tailwindcss", "TLDR"]
+  }
+}

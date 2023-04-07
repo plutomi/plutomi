@@ -1,0 +1,124 @@
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { useRouter } from 'next/router';
+import useStore from '../../OLD/utils/store';
+import { useOpeningInfo } from '../../OLD/SWR/useOpeningInfo';
+import { DeleteOpening, GetOpeningsInOrgURL } from '../../OLD/.vscode/adapters/Openings';
+import { Time } from '../../OLD/utils';
+import { OpeningState, WEBSITE_URL } from '../../Config';
+import { Loader } from '../Loader';
+import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
+import { CrumbProps } from '../types';
+import { findInTargetArray } from '../../OLD/utils/findInTargetArray';
+import { useAllStagesInOpening } from '../../OLD/SWR/useAllStagesInOpening';
+import { CustomQuery } from '../../@types/customQuery';
+import { IndexableProperties } from '../../@types/indexableProperties';
+
+export const OpeningSettingsHeader = () => {
+  const router = useRouter();
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
+  const openUpdateOpeningModal = useStore((state) => state.openUpdateOpeningModal);
+
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
+    openingId,
+  });
+  if (isOpeningError || isStagesError)
+    return <h1>An error ocurred retrieving info for this opening</h1>;
+
+  if (isOpeningLoading || isStagesLoading) return <Loader text="Loading opening..." />;
+
+  if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
+
+  if (isOpeningLoading) return <Loader text="Loading opening..." />;
+
+  const crumbs: CrumbProps[] = [
+    {
+      name: 'Opening Settings',
+      href: `/openings/${openingId}/settings`,
+      current: true,
+    },
+  ];
+
+  // TODO !!!! Stage order crap
+
+  // Hide applicant crumb if opening has no stages
+  if (stages.length > 0) {
+    crumbs.unshift({
+      name: 'Applicants',
+      href: `/openings/${openingId}/stages/${stages[0].id}/applicants`, // TODO should this end with /applicants?
+      current: false,
+    });
+  }
+
+  const deleteOpening = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to delete this opening? All stages inside of it will also be deleted. This action cannot be reversed!',
+      )
+    ) {
+      return;
+    }
+
+    if (!confirm('Are you sure?')) {
+      return;
+    }
+
+    try {
+      await DeleteOpening(openingId);
+      router.push(`${WEBSITE_URL}/openings`);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    // Refresh openings
+    mutate(GetOpeningsInOrgURL());
+  };
+
+  const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
+
+  return (
+    <div className="md:flex md:items-center md:justify-between ">
+      <div className=" min-w-0 flex flex-col items-start ">
+        <OpeningSettingsBreadcrumbs crumbs={crumbs} />
+      </div>
+
+      <div className="flex justify-center space-x-4 py-2 items-center">
+        <span
+          className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
+            openingState === OpeningState.Public ? 'bg-green-100' : 'bg-blue-gray-100'
+          }`}
+        >
+          <svg
+            className={`-ml-0.5 mr-1.5 h-2 w-2 ${
+              openingState === OpeningState.Public ? 'text-green-800' : 'text-blue-gray-800'
+            }`}
+            fill="currentColor"
+            viewBox="0 0 8 8"
+          >
+            <circle cx={4} cy={4} r={3} />
+          </svg>
+          {openingState === OpeningState.Public ? 'Public' : 'Private'}
+        </span>
+        <p className="text-md text-light text-center">Created {Time().to(opening?.createdAt)}</p>
+      </div>
+      <div className="space-x-4 flex items-center">
+        <button
+          type="button"
+          onClick={openUpdateOpeningModal}
+          className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-blue-500 bg-white hover:bg-blue-500 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <PencilAltIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+          Edit Opening
+        </button>
+        <button
+          type="button"
+          onClick={deleteOpening}
+          className="rounded-full hover:bg-red-500 hover:text-white border border-red-500 text-red-500 transition ease-in-out duration-200 px-2 py-2 text-md"
+        >
+          <TrashIcon className="h-6 w-6" />
+        </button>
+      </div>
+    </div>
+  );
+};
