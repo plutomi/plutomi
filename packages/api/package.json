@@ -17,13 +17,17 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "clean": "rimraf dist",
+    "clean:nm": "rimraf node_modules",
+    "i": "yarn install"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
     "@types/express": "^4.17.17",
     "@types/node": "^18.15.11",
     "dotenv": "^16.0.3",
+    "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }
 }

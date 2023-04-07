@@ -11,6 +11,9 @@ COPY packages/web/package.json packages/web/package.json
 
 RUN yarn install --frozen-lockfile
 
+RUN echo "TESTING DIRS\n\n\n"
+RUN ls
+
 
 # Rebuild the source code only when needed
 FROM node:18-alpine AS builder
