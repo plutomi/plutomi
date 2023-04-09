@@ -50,9 +50,6 @@ COPY --from=builder /app/packages/api/package.json packages/api/package.json
 # And the node modules
 COPY --from=builder /app/packages/api/node_modules packages/api/node_modules
 
-# Delete all unecessary .ts files
-# RUN rm *.ts 
-
 # Copy starting scripts
 COPY --from=builder /app/package.json package.json
 
