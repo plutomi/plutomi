@@ -2,7 +2,7 @@
   "name": "@plutomi/api",
   "version": "0.1.0",
   "description": "API Package for Plutomi.",
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": "https://github.com/plutomi/plutomi",
   "author": "Plutomi Inc.",
   "license": "Apache-2.0",
@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node index.js"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
