@@ -30,15 +30,8 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-# Setting any environment variables that Next FE needs
-# Commits token is SSR'd on the homepage TODO
-# ARG COMMITS_TOKEN 
-# ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
-# ARG NEXT_PUBLIC_WEBSITE_URL
-
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
-
+# Disable telemetry during runtime.
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -47,8 +40,15 @@ RUN adduser --system --uid 1001 nextjs
 # Copying public NextJS assets
 COPY --from=builder /app/packages/web/public packages/web/public
 
-# Copy API files
-COPY --from=builder /app/packages/api packages/api
+# Copy API files that were built
+# Modify the outDir tsconfig file in packages/api if you want to change this
+COPY --from=builder /app/packages/api/dist packages/api
+
+# Copy the package.json so that the API can be run
+COPY --from=builder /app/packages/api/package.json packages/api/package.json
+
+# And the node modules
+COPY --from=builder /app/packages/api/node_modules packages/api/node_modules
 
 # Copy starting scripts
 COPY --from=builder /app/package.json package.json

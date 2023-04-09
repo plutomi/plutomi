@@ -11,6 +11,7 @@ Thumbs.db
 .env
 .env.development
 .env.test
+*.env
 tests/
 __tests__/
 .next

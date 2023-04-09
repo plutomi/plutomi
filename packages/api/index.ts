@@ -5,7 +5,9 @@ import compression from "compression";
 import path from "path";
 
 const dev = env.NODE_ENV !== "production";
-const webApp = next({ dev, dir: path.resolve(__dirname, "../web") });
+
+const dir = path.join(__dirname, "../web");
+const webApp = next({ dev, dir });
 const nextHandler = webApp.getRequestHandler();
 
 (async () => {
