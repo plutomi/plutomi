@@ -49,6 +49,7 @@ Stages:
 - `yarn build` - Build any dependencies of the app like shared types
 - `yarn dev` - Start the app
 - `yarn pretty` - Run prettier
+- `yarn lint` - Run eslint
 
 ## Language, Tooling, & Infrastructure
 

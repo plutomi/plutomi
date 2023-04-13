@@ -2,7 +2,7 @@ export default function Main() {
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
-    year: "numeric",
+    year: "numeric"
   });
   return (
     <div className="bg-white">

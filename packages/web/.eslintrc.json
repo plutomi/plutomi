@@ -1,8 +1,31 @@
 {
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json", // adjust the path to your tsconfig.json file
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/dot-notation": "error",
+    // suppress errors for missing 'import React' in files
+    "react/react-in-jsx-scope": "off",
+    // allow jsx syntax in js files (for next.js project)
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }], //should add ".ts" if typescript project
+    "react/no-jsx-props-no-spreading": "off",
+    "@typescript-eslint/explicit-function-return-type": "off"
+  },
   "extends": [
     "next/core-web-vitals",
     "airbnb-typescript",
     "airbnb/hooks",
     "../../.eslintrc.json"
+  ],
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    "next-env.d.ts",
+    "next.config.js"
   ]
 }

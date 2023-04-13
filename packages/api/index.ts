@@ -1,8 +1,8 @@
 import express from "express";
-import { env } from "./env";
 import next from "next";
 import compression from "compression";
 import path from "path";
+import { env } from "./env";
 
 const dev = env.NODE_ENV !== "production";
 
@@ -26,13 +26,11 @@ const nextHandler = webApp.getRequestHandler();
 
   server.get("/api*", async (req, res) => {
     res.status(200).json({ message: "Saul Goodman" });
-    return;
+    
   });
 
   // NextJS App
-  server.get("/*", (req, res) => {
-    return nextHandler(req, res);
-  });
+  server.get("/*", async (req, res) => nextHandler(req, res));
 
   // Listen for errors
   server.on("error", (err) => {

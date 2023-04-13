@@ -1,3 +1,12 @@
 {
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json", // adjust the path to your tsconfig.json file
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/dot-notation": "error"
+  },
   "extends": ["../../.eslintrc.json"]
 }
