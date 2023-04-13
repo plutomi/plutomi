@@ -23,7 +23,7 @@ export class PlutomiStack extends cdk.Stack {
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, "plutomi-api-fargate-role", {
-      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com")
     });
 
     // Allows fargate to send emails
@@ -32,21 +32,21 @@ export class PlutomiStack extends cdk.Stack {
       actions: [
         Policies.SendEmail,
         Policies.SendRawEmail,
-        Policies.SendTemplatedEmail,
+        Policies.SendTemplatedEmail
       ],
       resources: [
         `arn:aws:ses:${this.region}:${
           cdk.Stack.of(this).account
-        }:identity/${DOMAIN_NAME}`,
-      ],
+        }:identity/${DOMAIN_NAME}`
+      ]
     });
 
     const policy = new Policy(
       this,
       `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-plutomi-api-policy`,
       {
-        statements: [sesSendEmailPolicy],
-      },
+        statements: [sesSendEmailPolicy]
+      }
     );
     taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles
@@ -57,8 +57,8 @@ export class PlutomiStack extends cdk.Stack {
         taskRole,
         executionRole: taskRole,
         cpu: 256,
-        memoryLimitMiB: 512,
-      },
+        memoryLimitMiB: 512
+      }
     );
 
     const container = taskDefinition.addContainer(
@@ -71,39 +71,39 @@ export class PlutomiStack extends cdk.Stack {
             COMMITS_TOKEN: envVars.COMMITS_TOKEN,
             NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT:
               envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
-            NEXT_PUBLIC_WEBSITE_URL: envVars.NEXT_PUBLIC_WEBSITE_URL,
-          },
+            NEXT_PUBLIC_WEBSITE_URL: envVars.NEXT_PUBLIC_WEBSITE_URL
+          }
         }),
 
         logging: new ecs.AwsLogDriver({
-          streamPrefix: "plutomi-api-fargate",
+          streamPrefix: "plutomi-api-fargate"
         }),
         // TODO vomit
-        environment: envVars as unknown as { [key: string]: string },
-      },
+        environment: envVars as unknown as { [key: string]: string }
+      }
     );
 
     container.addPortMappings({
       // TODO i think this cdk type is wrong? Says should be a number but got:
       // supplied properties not correct for "KeyValuePairProperty" value: 3000 should be a string.
-      containerPort: Number(envVars.PORT),
+      containerPort: Number(envVars.PORT)
     });
 
     // https://fck-nat.dev/
     const natGatewayProvider = new FckNatInstanceProvider({
-      instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO),
+      instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO)
     });
 
     // TODO  add fck nat
     const vpc = new ec2.Vpc(this, "plutomi-api-fargate-vpc", {
       maxAzs: Servers.vpc.az,
       natGateways: Servers.vpc.natGateways, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
-      natGatewayProvider,
+      natGatewayProvider
     });
 
     const cluster = new ecs.Cluster(this, "plutomi-api-fargate-cluster", {
       vpc,
-      containerInsights: true,
+      containerInsights: true
     });
 
     // Get a reference to AN EXISTING hosted zone
@@ -112,15 +112,15 @@ export class PlutomiStack extends cdk.Stack {
       "plutomi-hosted-zone",
       {
         hostedZoneId: envVars.HOSTED_ZONE_ID,
-        zoneName: DOMAIN_NAME,
-      },
+        zoneName: DOMAIN_NAME
+      }
     );
 
     // Retrieves the certificate that we are using for our domain
     const apiCert = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
-      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`,
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`
     );
 
     /**
@@ -139,8 +139,8 @@ export class PlutomiStack extends cdk.Stack {
           taskDefinition,
           desiredCount: Servers.count.min,
           listenerPort: 443,
-          redirectHTTP: true,
-        },
+          redirectHTTP: true
+        }
       );
 
     /**
@@ -154,21 +154,21 @@ export class PlutomiStack extends cdk.Stack {
     // Deregistration delay
     loadBalancedFargateService.targetGroup.setAttribute(
       "deregistration_delay.timeout_seconds",
-      "10",
+      "10"
     );
     // Healthcheck thresholds
     loadBalancedFargateService.targetGroup.configureHealthCheck({
       interval: cdk.Duration.seconds(5),
       healthyThresholdCount: 2,
       unhealthyThresholdCount: 2,
-      timeout: cdk.Duration.seconds(4),
+      timeout: cdk.Duration.seconds(4)
     });
 
     // Auto scaling
     const scalableTarget =
       loadBalancedFargateService.service.autoScaleTaskCount({
         minCapacity: Servers.count.min,
-        maxCapacity: Servers.count.max,
+        maxCapacity: Servers.count.max
       });
 
     /**
@@ -176,7 +176,7 @@ export class PlutomiStack extends cdk.Stack {
      * https://github.com/aws/containers-roadmap/issues/163
      */
     scalableTarget.scaleOnCpuUtilization("CpuScaling", {
-      targetUtilizationPercent: Servers.targetUtilizationPct,
+      targetUtilizationPercent: Servers.targetUtilizationPct
     });
 
     // Create the WAF & its rules
@@ -188,13 +188,13 @@ export class PlutomiStack extends cdk.Stack {
         name: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-API-WAF`,
         description: "Blocks IPs that make too many requests",
         defaultAction: {
-          allow: {},
+          allow: {}
         },
         scope: "CLOUDFRONT",
         visibilityConfig: {
           cloudWatchMetricsEnabled: true,
           metricName: "cloudfront-ipset-waf",
-          sampledRequestsEnabled: true,
+          sampledRequestsEnabled: true
         },
         rules: [
           {
@@ -207,32 +207,32 @@ export class PlutomiStack extends cdk.Stack {
                 scopeDownStatement: {
                   byteMatchStatement: {
                     fieldToMatch: {
-                      uriPath: {},
+                      uriPath: {}
                     },
                     positionalConstraint: "CONTAINS",
                     textTransformations: [
                       {
                         priority: 0,
-                        type: "LOWERCASE",
-                      },
+                        type: "LOWERCASE"
+                      }
                     ],
-                    searchString: "/api/",
-                  },
-                },
-              },
+                    searchString: "/api/"
+                  }
+                }
+              }
             },
             action: {
               block: {
                 customResponse: {
-                  responseCode: 429,
-                },
-              },
+                  responseCode: 429
+                }
+              }
             },
             visibilityConfig: {
               sampledRequestsEnabled: true,
               cloudWatchMetricsEnabled: true,
-              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-API-BLOCKED-IPs`,
-            },
+              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-API-BLOCKED-IPs`
+            }
           },
           {
             name: `too-many-web-requests-rule`,
@@ -240,21 +240,21 @@ export class PlutomiStack extends cdk.Stack {
             statement: {
               rateBasedStatement: {
                 limit: Servers.rateLimit.web, // In a 5 minute period
-                aggregateKeyType: "IP",
-              },
+                aggregateKeyType: "IP"
+              }
             },
             action: {
               block: {
                 customResponse: {
-                  responseCode: 429,
-                },
-              },
+                  responseCode: 429
+                }
+              }
             },
             visibilityConfig: {
               sampledRequestsEnabled: true,
               cloudWatchMetricsEnabled: true,
-              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-GENERAL-BLOCKED-IPs`,
-            },
+              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-GENERAL-BLOCKED-IPs`
+            }
           },
           // { // TODO this is blocking postman requests :/
           //   name: "AWS-AWSManagedRulesBotControlRuleSet",
@@ -280,18 +280,18 @@ export class PlutomiStack extends cdk.Stack {
             statement: {
               managedRuleGroupStatement: {
                 vendorName: "AWS",
-                name: "AWSManagedRulesAmazonIpReputationList",
-              },
+                name: "AWSManagedRulesAmazonIpReputationList"
+              }
             },
             overrideAction: {
-              none: {},
+              none: {}
             },
             visibilityConfig: {
               sampledRequestsEnabled: false,
               cloudWatchMetricsEnabled: true,
-              metricName: "AWS-AWSManagedRulesAmazonIpReputationList",
-            },
-          },
+              metricName: "AWS-AWSManagedRulesAmazonIpReputationList"
+            }
+          }
           // {
           // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
           //   name: "AWS-AWSManagedRulesCommonRuleSet",
@@ -311,8 +311,8 @@ export class PlutomiStack extends cdk.Stack {
           //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
           //   },
           // },
-        ],
-      },
+        ]
+      }
     );
 
     // No caching! We're using Cloudfront for its global network and WAF
@@ -322,8 +322,8 @@ export class PlutomiStack extends cdk.Stack {
       {
         defaultTtl: cdk.Duration.seconds(0),
         minTtl: cdk.Duration.seconds(0),
-        maxTtl: cdk.Duration.seconds(0),
-      },
+        maxTtl: cdk.Duration.seconds(0)
+      }
     );
 
     const distribution = new cf.Distribution(
@@ -336,23 +336,23 @@ export class PlutomiStack extends cdk.Stack {
         domainNames: [
           envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "stage"
             ? STAGE_DOMAIN_NAME
-            : DOMAIN_NAME,
+            : DOMAIN_NAME
         ],
         defaultBehavior: {
           origin: new origins.LoadBalancerV2Origin(
-            loadBalancedFargateService.loadBalancer,
+            loadBalancedFargateService.loadBalancer
           ),
 
           // Must be enabled!
           // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
           originRequestPolicy: cf.OriginRequestPolicy.ALL_VIEWER,
           cachePolicy,
-          allowedMethods: cf.AllowedMethods.ALLOW_ALL,
-        },
+          allowedMethods: cf.AllowedMethods.ALLOW_ALL
+        }
         // additionalBehaviors: {
         // TODO add /public caching behaviors here
         // }, //
-      },
+      }
     );
 
     //  Creates an A record that points our API domain to Cloudfront
@@ -362,7 +362,7 @@ export class PlutomiStack extends cdk.Stack {
           ? STAGE_DOMAIN_NAME
           : DOMAIN_NAME,
       zone: hostedZone,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
     });
   }
 }

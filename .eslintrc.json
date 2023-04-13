@@ -19,7 +19,11 @@
     "quotes": [2, "double", { "avoidEscape": true }],
     "comma-dangle": ["error", "never"],
     "no-console": "error",
-    "react/jsx-props-no-spreading": "off"
+    "react/jsx-props-no-spreading": "off",
+    "max-params": ["error", 3],
+    "prefer-destructuring": ["error", { "object": true, "array": false }],
+    "no-implicit-globals": ["error", { "lexicalBindings": true }],
+    "no-lonely-if": "error"
   },
   "ignorePatterns": ["node_modules/", "dist/", "build/", "coverage/", "OLD/"]
 }
