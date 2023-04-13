@@ -1,8 +1,11 @@
+/*  eslint  no-console 0 */
+/*  eslint @typescript-eslint/no-misused-promises 0 */
+
 import express from "express";
 import next from "next";
 import compression from "compression";
 import path from "path";
-import { env } from "./env";
+import env from "./env";
 
 const dev = env.NODE_ENV !== "production";
 
@@ -26,7 +29,6 @@ const nextHandler = webApp.getRequestHandler();
 
   server.get("/api*", async (req, res) => {
     res.status(200).json({ message: "Saul Goodman" });
-    
   });
 
   // NextJS App

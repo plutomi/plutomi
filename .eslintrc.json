@@ -17,7 +17,9 @@
   "plugins": ["react"],
   "rules": {
     "quotes": [2, "double", { "avoidEscape": true }],
-    "comma-dangle": ["error", "never"]
+    "comma-dangle": ["error", "never"],
+    "no-console": "error",
+    "react/jsx-props-no-spreading": "off"
   },
   "ignorePatterns": ["node_modules/", "dist/", "build/", "coverage/", "OLD/"]
 }
