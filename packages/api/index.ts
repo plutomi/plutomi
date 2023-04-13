@@ -1,4 +1,5 @@
 /* eslint no-console: 0 */
+/* eslint @typescript-eslint/no-misused-promises: 0 */
 
 import express from "express";
 import next from "next";
@@ -26,12 +27,12 @@ const nextHandler = webApp.getRequestHandler();
   server.use(express.json());
   server.use(compression());
 
-  server.get("/api*", (req, res) => {
+  server.get("/api*", async (req, res) => {
     res.status(200).json({ message: "Saul Goodman" });
   });
 
   // NextJS App
-  server.get("/*", (req, res) => nextHandler(req, res));
+  server.get("/*", async (req, res) => nextHandler(req, res));
 
   // Listen for errors
   server.on("error", (err) => {
