@@ -1,5 +1,4 @@
-/*  eslint  no-console 0 */
-/*  eslint @typescript-eslint/no-misused-promises 0 */
+/* eslint no-console: 0 */
 
 import express from "express";
 import next from "next";
@@ -27,12 +26,12 @@ const nextHandler = webApp.getRequestHandler();
   server.use(express.json());
   server.use(compression());
 
-  server.get("/api*", async (req, res) => {
+  server.get("/api*", (req, res) => {
     res.status(200).json({ message: "Saul Goodman" });
   });
 
   // NextJS App
-  server.get("/*", async (req, res) => nextHandler(req, res));
+  server.get("/*", (req, res) => nextHandler(req, res));
 
   // Listen for errors
   server.on("error", (err) => {
@@ -42,4 +41,7 @@ const nextHandler = webApp.getRequestHandler();
   server.listen(env.PORT, () => {
     console.log(`[server]: Server is running at http://localhost:${env.PORT}`);
   });
-})();
+})().catch((error) => {
+  console.error("Error initializing server:", error);
+  process.exit(1);
+});
