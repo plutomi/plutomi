@@ -1,3 +1,5 @@
+/* eslint no-console: 0 */
+
 import * as dotenv from "dotenv";
 import { z } from "zod";
 
@@ -11,9 +13,9 @@ const schema = z.object({
 const parsed = schema.safeParse(process.env);
 
 if (!parsed.success) {
-  parsed.error.issues.forEach(() => {
-    // console.error("\n❌ Invalid environment variable:");
-    // console.error(issue);
+  parsed.error.issues.forEach((issue) => {
+    console.error("\n❌ Invalid environment variable:");
+    console.error(issue);
   });
 
   process.exit(1);
