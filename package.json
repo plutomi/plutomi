@@ -28,9 +28,9 @@
   "scripts": {
     "dev": "nx run-many -t=dev",
     "build": "nx run-many -t=build",
-    "pretty": "yarn prettier --write .",
     "start": "yarn workspace @plutomi/api start",
-    "prettier:fix": "prettier --write ."
+    "pretty": "yarn prettier --write .",
+    "lint": "yarn eslint . --ext .ts,.tsx,.js,.jsx"
   },
   "packageManager": "yarn@3.5.0"
 }
