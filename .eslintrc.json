@@ -5,6 +5,8 @@
   "extends": [
     "plugin:react/recommended",
     "standard-with-typescript",
+    "airbnb",
+    "airbnb-typescript/base",
     "prettier"
   ],
   "overrides": [],
@@ -16,6 +18,6 @@
   "rules": {
     "quotes": [2, "double", { "avoidEscape": true }],
     "comma-dangle": ["error", "never"]
-
-  }
+  },
+  "ignorePatterns": ["node_modules/", "dist/", "build/", "coverage/", "OLD/"]
 }

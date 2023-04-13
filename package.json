@@ -12,9 +12,11 @@
   },
   "devDependencies": {
     "@nrwl/nx-cloud": "latest",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "^34.0.1",
     "eslint-plugin-import": "^2.27.5",
@@ -30,7 +32,7 @@
     "build": "nx run-many -t=build",
     "start": "yarn workspace @plutomi/api start",
     "pretty": "yarn prettier --write .",
-    "lint": "yarn eslint . --ext .ts,.tsx,.js,.jsx"
+    "lint": "nx run-many -t=lint . --ext .ts,.tsx,.js,.jsx"
   },
   "packageManager": "yarn@3.5.0"
 }

@@ -46,7 +46,7 @@ export class PlutomiStack extends cdk.Stack {
       `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-plutomi-api-policy`,
       {
         statements: [sesSendEmailPolicy],
-      }
+      },
     );
     taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles
@@ -58,7 +58,7 @@ export class PlutomiStack extends cdk.Stack {
         executionRole: taskRole,
         cpu: 256,
         memoryLimitMiB: 512,
-      }
+      },
     );
 
     const container = taskDefinition.addContainer(
@@ -80,7 +80,7 @@ export class PlutomiStack extends cdk.Stack {
         }),
         // TODO vomit
         environment: envVars as unknown as { [key: string]: string },
-      }
+      },
     );
 
     container.addPortMappings({
@@ -113,14 +113,14 @@ export class PlutomiStack extends cdk.Stack {
       {
         hostedZoneId: envVars.HOSTED_ZONE_ID,
         zoneName: DOMAIN_NAME,
-      }
+      },
     );
 
     // Retrieves the certificate that we are using for our domain
     const apiCert = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
-      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`,
     );
 
     /**
@@ -140,7 +140,7 @@ export class PlutomiStack extends cdk.Stack {
           desiredCount: Servers.count.min,
           listenerPort: 443,
           redirectHTTP: true,
-        }
+        },
       );
 
     /**
@@ -154,7 +154,7 @@ export class PlutomiStack extends cdk.Stack {
     // Deregistration delay
     loadBalancedFargateService.targetGroup.setAttribute(
       "deregistration_delay.timeout_seconds",
-      "10"
+      "10",
     );
     // Healthcheck thresholds
     loadBalancedFargateService.targetGroup.configureHealthCheck({
@@ -312,7 +312,7 @@ export class PlutomiStack extends cdk.Stack {
           //   },
           // },
         ],
-      }
+      },
     );
 
     // No caching! We're using Cloudfront for its global network and WAF
@@ -323,7 +323,7 @@ export class PlutomiStack extends cdk.Stack {
         defaultTtl: cdk.Duration.seconds(0),
         minTtl: cdk.Duration.seconds(0),
         maxTtl: cdk.Duration.seconds(0),
-      }
+      },
     );
 
     const distribution = new cf.Distribution(
@@ -340,7 +340,7 @@ export class PlutomiStack extends cdk.Stack {
         ],
         defaultBehavior: {
           origin: new origins.LoadBalancerV2Origin(
-            loadBalancedFargateService.loadBalancer
+            loadBalancedFargateService.loadBalancer,
           ),
 
           // Must be enabled!
@@ -352,7 +352,7 @@ export class PlutomiStack extends cdk.Stack {
         // additionalBehaviors: {
         // TODO add /public caching behaviors here
         // }, //
-      }
+      },
     );
 
     //  Creates an A record that points our API domain to Cloudfront
