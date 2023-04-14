@@ -11,6 +11,10 @@
     {
       "path": "packages/web",
       "name": "web"
+    },
+    {
+      "path": "packages/infra",
+      "name": "infra"
     }
   ],
   "settings": {
