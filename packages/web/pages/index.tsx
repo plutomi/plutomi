@@ -1,4 +1,6 @@
-export const Main: React.FC = () => {
+import type { NextPage } from "next";
+
+const HomePage: NextPage = () => {
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -69,3 +71,5 @@ export const Main: React.FC = () => {
     </div>
   );
 };
+
+export default HomePage;

@@ -39,7 +39,7 @@
         ]
       }
     ],
-    "import/no-default-export": "error",
+    "import/no-default-export": "off",
     "import/prefer-default-export": "off",
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "react/function-component-definition": [
