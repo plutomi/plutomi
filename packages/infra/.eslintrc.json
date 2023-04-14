@@ -5,10 +5,7 @@
     "sourceType": "module"
   },
   "plugins": ["@typescript-eslint"],
-  "rules": {
-    "@typescript-eslint/dot-notation": "error",
-    "@typescript-eslint/explicit-function-return-type": "off"
-  },
+  "rules": {},
   "extends": ["airbnb-typescript", "../../.eslintrc.json"],
   "ignorePatterns": [
     "node_modules/",

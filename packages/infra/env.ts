@@ -1,19 +1,21 @@
-// import { z } from "zod";
+/* eslint-disable no-console */
 
-// const schema = z.object({
-//   DEPLOYMENT_ENVIRONMENT: z.enum(["prod", "stage", "dev"]),
-//   DOMAIN: z.string().url(),
-// });
+import { z } from "zod";
 
-// const parsed = schema.safeParse(process.env);
+const schema = z.object({
+  DEPLOYMENT_ENVIRONMENT: z.enum(["prod", "stage", "dev"]),
+  DOMAIN: z.string().url()
+});
 
-// if (!parsed.success) {
-//   parsed.error.issues.forEach((issue) => {
-//     console.error("\n❌ Invalid environment variable:");
-//     console.error(issue);
-//   });
+const parsed = schema.safeParse(process.env);
 
-//   process.exit(1);
-// }
+if (!parsed.success) {
+  parsed.error.issues.forEach((issue) => {
+    console.error("\n❌ Invalid environment variable:");
+    console.error(issue);
+  });
 
-// export const env = parsed.data;
+  process.exit(1);
+}
+
+export const env = parsed.data;

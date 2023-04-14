@@ -1,9 +1,9 @@
 /* eslint no-console: 0 */
 /* eslint @typescript-eslint/no-misused-promises: 0 */
 
+import compression from "compression";
 import express from "express";
 import next from "next";
-import compression from "compression";
 import path from "path";
 import { env } from "./env";
 

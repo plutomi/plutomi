@@ -5,6 +5,7 @@ import { env } from "../env";
 import { PlutomiStack } from "../lib/plutomiStack";
 
 const plutomiApp = new cdk.App();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const plutomiStack = new PlutomiStack(
   plutomiApp,
   `${env.DEPLOYMENT_ENVIRONMENT}-PlutomiStack`,
