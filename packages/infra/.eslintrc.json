@@ -9,11 +9,7 @@
     "@typescript-eslint/dot-notation": "error",
     "@typescript-eslint/explicit-function-return-type": "off"
   },
-  "extends": [
-    "next/core-web-vitals",
-    "airbnb-typescript",
-    "../../.eslintrc.json"
-  ],
+  "extends": ["airbnb-typescript", "../../.eslintrc.json"],
   "ignorePatterns": [
     "node_modules/",
     "dist/",
