@@ -1,0 +1,54 @@
+{
+  "env": {
+    "es2021": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "standard-with-typescript",
+    "airbnb",
+    "airbnb-typescript/base",
+    "prettier"
+  ],
+  "overrides": [],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "quotes": [2, "double", { "avoidEscape": true }],
+    "comma-dangle": ["error", "never"],
+    "no-console": "error",
+    "react/jsx-props-no-spreading": "off",
+    "max-params": ["error", 3],
+    "prefer-destructuring": ["error", { "object": true, "array": false }],
+    "no-implicit-globals": ["error", { "lexicalBindings": true }],
+    "no-lonely-if": "error",
+    "import/order": "error",
+    "sort-imports": "off",
+    "@typescript-eslint/dot-notation": "error",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/dist"],
+            "message": "Don't import from 'dist' directories, use the root import instead. -> @plutomi/shared instead of 'plutomi/shared/dist'"
+          }
+        ]
+      }
+    ],
+    "import/no-default-export": "off",
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ]
+  },
+  "ignorePatterns": ["node_modules/", "dist/", "build/", "coverage/", "OLD/"]
+}

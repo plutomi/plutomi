@@ -11,15 +11,33 @@
     ]
   },
   "devDependencies": {
+    "@nrwl/nx-cloud": "latest",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-standard-with-typescript": "^34.0.1",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "nx": "15.8.9",
     "prettier": "^2.8.7",
-    "@nrwl/nx-cloud": "latest"
+    "typescript": "*"
   },
   "scripts": {
     "dev": "nx run-many -t=dev",
     "build": "nx run-many -t=build",
     "start": "yarn workspace @plutomi/api start",
-    "prettier:fix": "prettier --write ."
+    "pretty": "yarn prettier --check .",
+    "pretty:fix": "yarn prettier --write .",
+    "lint": "nx run-many -t=lint --parallel",
+    "lint:fix": "nx run-many -t=lint:fix --parallel",
+    "tidy": "yarn pretty:fix && yarn lint:fix"
   },
   "packageManager": "yarn@3.5.0"
 }

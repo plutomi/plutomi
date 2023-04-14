@@ -1,3 +1,31 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "airbnb-typescript",
+    "airbnb/hooks",
+    "../../.eslintrc.json"
+  ],
+
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "sourceType": "module"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "react/no-jsx-props-no-spreading": "off",
+    "@typescript-eslint/explicit-function-return-type": "off"
+  },
+
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    "next-env.d.ts",
+    "next.config.js",
+    "tailwind.config.js",
+    "postcss.config.js"
+  ]
 }

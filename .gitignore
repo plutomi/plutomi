@@ -38,3 +38,6 @@ next-env.d.ts
 
 cdk.out
 .env*
+
+
+.yarn

@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "lint": "next lint"
+    "lint": "yarn eslint --ext .ts,.tsx .",
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "dependencies": {
     "autoprefixer": "^10.4.14",
@@ -21,7 +22,9 @@
     "@types/react": "^18.0.29",
     "@types/react-dom": "^18.0.11",
     "eslint": "^8.36.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "^13.2.4",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
     "typescript": "^5.0.2"
   }
 }

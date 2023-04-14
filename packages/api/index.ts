@@ -1,8 +1,11 @@
-import express from "express";
-import { env } from "./env";
-import next from "next";
+/* eslint no-console: 0 */
+/* eslint @typescript-eslint/no-misused-promises: 0 */
+
 import compression from "compression";
+import express from "express";
+import next from "next";
 import path from "path";
+import { env } from "./env";
 
 const dev = env.NODE_ENV !== "production";
 
@@ -26,13 +29,10 @@ const nextHandler = webApp.getRequestHandler();
 
   server.get("/api*", async (req, res) => {
     res.status(200).json({ message: "Saul Goodman" });
-    return;
   });
 
   // NextJS App
-  server.get("/*", (req, res) => {
-    return nextHandler(req, res);
-  });
+  server.get("/*", async (req, res) => nextHandler(req, res));
 
   // Listen for errors
   server.on("error", (err) => {
@@ -42,4 +42,7 @@ const nextHandler = webApp.getRequestHandler();
   server.listen(env.PORT, () => {
     console.log(`[server]: Server is running at http://localhost:${env.PORT}`);
   });
-})();
+})().catch((error) => {
+  console.error("Error initializing server:", error);
+  process.exit(1);
+});

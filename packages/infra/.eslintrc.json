@@ -1,0 +1,20 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {},
+  "extends": ["airbnb-typescript", "../../.eslintrc.json"],
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    "next-env.d.ts",
+    "next.config.js",
+    "tailwind.config.js",
+    "postcss.config.js"
+  ]
+}
