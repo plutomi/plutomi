@@ -17,7 +17,5 @@
       "name": "infra"
     }
   ],
-  "settings": {
-    "cSpell.words": ["cacheable", "fargate", "Plutomi", "tailwindcss", "TLDR"]
-  }
+  "settings": {}
 }

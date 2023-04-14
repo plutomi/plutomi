@@ -1,0 +1,27 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/build/**",
+    "**/dist/**",
+    "**/OLD/**",
+    "**/.yarn/**",
+    "**/.next/**",
+    "**/.cdk.out/**",
+    "yarn-error.log",
+    "**/tsconfig*",
+    "README.md",
+    "Dockerfile"
+  ],
+  "words": [
+    "cacheable",
+    "fargate",
+    "Plutomi",
+    "tailwindcss",
+    "TLDR",
+    "nrwl",
+    "Valerio"
+  ],
+  "overrides": []
+}
