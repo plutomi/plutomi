@@ -24,6 +24,8 @@
     "prefer-destructuring": ["error", { "object": true, "array": false }],
     "no-implicit-globals": ["error", { "lexicalBindings": true }],
     "no-lonely-if": "error",
+    "import/order": "error",
+    "sort-imports ": "error",
     "no-restricted-imports": [
       "error",
       {
