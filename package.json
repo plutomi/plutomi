@@ -33,8 +33,11 @@
     "dev": "nx run-many -t=dev",
     "build": "nx run-many -t=build",
     "start": "yarn workspace @plutomi/api start",
-    "pretty": "yarn prettier --write .",
-    "lint": "nx run-many -t=lint . --ext .ts,.tsx,.js,.jsx"
+    "pretty": "yarn prettier --check .",
+    "pretty:fix": "yarn prettier --write .",
+    "lint": "nx run-many -t=lint --parallel",
+    "lint:fix": "nx run-many -t=lint:fix --parallel",
+    "tidy": "yarn pretty:fix && yarn lint:fix"
   },
   "packageManager": "yarn@3.5.0"
 }

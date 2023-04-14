@@ -5,7 +5,7 @@ import express from "express";
 import next from "next";
 import compression from "compression";
 import path from "path";
-import env from "./env";
+import { env } from "./env";
 
 const dev = env.NODE_ENV !== "production";
 

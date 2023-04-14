@@ -1,9 +1,10 @@
-export default function Main() {
+export const Main: React.FC = () => {
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric"
   });
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
@@ -67,4 +68,4 @@ export default function Main() {
       </div>
     </div>
   );
-}
+};

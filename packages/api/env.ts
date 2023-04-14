@@ -5,6 +5,8 @@ import { z } from "zod";
 
 dotenv.config();
 
+export const x = "";
+
 const schema = z.object({
   PORT: z.coerce.number().int().positive().gte(1024).lte(65535),
   NODE_ENV: z.enum(["development", "production"])
@@ -20,6 +22,4 @@ if (!parsed.success) {
 
   process.exit(1);
 }
-const env = parsed.data;
-
-export default env;
+export const env = parsed.data;

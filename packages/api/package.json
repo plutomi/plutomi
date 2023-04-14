@@ -20,7 +20,8 @@
     "dev": "ts-node-dev --respawn --transpile-only index.ts",
     "build": "tsc",
     "start": "node index.js",
-    "lint": "yarn eslint . --ext .ts,.tsx --fix"
+    "lint": "yarn eslint --ext .ts,.tsx",
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

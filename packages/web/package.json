@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "lint": "yarn eslint . --ext .ts,.tsx --fix"
+    "lint": "yarn eslint --ext .ts,.tsx",
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "dependencies": {
     "autoprefixer": "^10.4.14",

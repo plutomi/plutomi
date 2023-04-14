@@ -23,7 +23,28 @@
     "max-params": ["error", 3],
     "prefer-destructuring": ["error", { "object": true, "array": false }],
     "no-implicit-globals": ["error", { "lexicalBindings": true }],
-    "no-lonely-if": "error"
+    "no-lonely-if": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/dist"],
+            "message": "Don't import from 'dist' directories, use the root import instead. -> @plutomi/shared instead of 'plutomi/shared/dist'"
+          }
+        ]
+      }
+    ],
+    "import/no-default-export": "error",
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ]
   },
   "ignorePatterns": ["node_modules/", "dist/", "build/", "coverage/", "OLD/"]
 }
