@@ -12,7 +12,8 @@
     "yarn-error.log",
     "**/tsconfig*",
     "README.md",
-    "Dockerfile"
+    "Dockerfile",
+    "cdk.json"
   ],
   "words": [
     "cacheable",
@@ -21,7 +22,10 @@
     "tailwindcss",
     "TLDR",
     "nrwl",
-    "Valerio"
+    "Valerio",
+    "certificatemanager",
+    "wafv2",
+    "deregistration"
   ],
   "overrides": []
 }

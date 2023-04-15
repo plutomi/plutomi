@@ -146,7 +146,7 @@
 //     /**
 //      * Reduce deploy time by:
 //      * 1. Lowering the deregistration delay from 300 seconds to 30
-//      * 2. Lower the healthcheck thresholds for a healthy instance
+//      * 2. Lower the health check thresholds for a healthy instance
 //      *
 //      * https://github.com/plutomi/plutomi/issues/406
 //      *
@@ -156,7 +156,7 @@
 //       "deregistration_delay.timeout_seconds",
 //       "10"
 //     );
-//     // Healthcheck thresholds
+//     // Health check thresholds
 //     loadBalancedFargateService.targetGroup.configureHealthCheck({
 //       interval: cdk.Duration.seconds(5),
 //       healthyThresholdCount: 2,
