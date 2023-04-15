@@ -15,7 +15,8 @@ import {
   createTaskRole,
   createTaskDefinition,
   createVpc,
-  createCluster
+  createCluster,
+  createFargateService
 } from "../utils";
 
 type PlutomiStackProps = cdk.StackProps;
@@ -92,13 +93,18 @@ export class PlutomiStack extends cdk.Stack {
     );
 
     // Retrieves the certificate that we are using for our domain
-    const apiCert = Certificate.fromCertificateArn(
+    const certificate = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
       `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`
     );
 
-
+    const fargateService = createFargateService({
+      construct: this,
+      cluster,
+      taskDefinition,
+      certificate
+    });
 
     /**
      * Reduce deploy time by:
@@ -108,25 +114,7 @@ export class PlutomiStack extends cdk.Stack {
      * https://github.com/plutomi/plutomi/issues/406
      *
      */
-    // Deregistration delay
-    loadBalancedFargateService.targetGroup.setAttribute(
-      "deregistration_delay.timeout_seconds",
-      "10"
-    );
-    // Health check thresholds
-    loadBalancedFargateService.targetGroup.configureHealthCheck({
-      interval: cdk.Duration.seconds(5),
-      healthyThresholdCount: 2,
-      unhealthyThresholdCount: 2,
-      timeout: cdk.Duration.seconds(4)
-    });
 
-    // Auto scaling
-    const scalableTarget =
-      loadBalancedFargateService.service.autoScaleTaskCount({
-        minCapacity: Servers.count.min,
-        maxCapacity: Servers.count.max
-      });
 
     /**
      * Good reading on fargate 25% time :>
