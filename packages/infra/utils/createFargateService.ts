@@ -2,7 +2,6 @@ import type { Cluster, FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
-import { createDeregistrationDelay } from "./createDeregistrationDelay";
 import { createHealthChecks } from "./createHealthChecks";
 import { createScalingPolicy } from "./createScalingPolicy";
 
@@ -33,7 +32,12 @@ export const createFargateService = ({
   );
 
   // Other Config
-  createDeregistrationDelay({ fargateService });
+  const deregistrationDelay = 5;
+  fargateService.targetGroup.setAttribute(
+    "deregistration_delay.timeout_seconds",
+    deregistrationDelay.toString()
+  );
+
   createHealthChecks({ fargateService });
   createScalingPolicy({ fargateService });
 
