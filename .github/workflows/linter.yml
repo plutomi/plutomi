@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  spellcheck:
+  linter:
     runs-on: ubuntu-latest
 
     steps:
