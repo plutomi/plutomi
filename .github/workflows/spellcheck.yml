@@ -9,8 +9,10 @@ on:
       - main
 
 jobs:
-  spellcheck:
+  prettier:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
 
     steps:
       - name: Check out repository

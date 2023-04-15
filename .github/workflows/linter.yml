@@ -11,7 +11,9 @@ on:
 jobs:
   linter:
     runs-on: ubuntu-latest
-
+    env:
+      NODE_ENV: production
+      
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
