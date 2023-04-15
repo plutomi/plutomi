@@ -1,7 +1,5 @@
 import { type StackProps, Stack } from "aws-cdk-lib";
 import type { Construct } from "constructs";
-import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
-import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import {
   createTaskRole,
   createTaskDefinition,
@@ -13,7 +11,6 @@ import {
   createDistribution
 } from "../utils";
 import { getACMCertificate } from "../utils/getAcmCertificate";
-import { allEnvVariables } from "../env";
 
 type PlutomiStackProps = StackProps;
 
@@ -34,14 +31,16 @@ export class PlutomiStack extends Stack {
       certificate
     });
 
-    const waf = createWaf({
-      stack: this
+    createWaf({
+      // ! TODO: This is attached to the ALB now, not the distribution
+      stack: this,
+      fargateService
     });
+
     createDistribution({
       stack: this,
       certificate,
       fargateService,
-      waf,
       hostedZone
     });
 

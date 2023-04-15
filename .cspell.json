@@ -27,7 +27,9 @@
     "TLDR",
     "trenchard",
     "Valerio",
-    "wafv2"
+    "wafv2",
+    "wafwebacl",
+    "webacl"
   ],
   "overrides": []
 }

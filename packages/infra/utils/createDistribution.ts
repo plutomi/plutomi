@@ -1,6 +1,5 @@
 import type { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-import type { CfnWebACL } from "aws-cdk-lib/aws-waf";
 import {
   type IHostedZone,
   ARecord,
@@ -21,7 +20,6 @@ type CreateDistributionProps = {
   stack: Stack;
   fargateService: ApplicationLoadBalancedFargateService;
   certificate: ICertificate;
-  waf: CfnWebACL;
   hostedZone: IHostedZone;
 };
 
@@ -29,7 +27,6 @@ export const createDistribution = ({
   stack,
   fargateService,
   certificate,
-  waf,
   hostedZone
 }: CreateDistributionProps): Distribution => {
   // No caching by default, this is so we can attach WAF to CF and use the CF network.
@@ -48,7 +45,7 @@ export const createDistribution = ({
     `${allEnvVariables.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
     {
       certificate,
-      webAclId: waf.attrArn,
+      // webAclId: waf.attrArn,
       domainNames: [allEnvVariables.DOMAIN],
       defaultBehavior: {
         origin: new LoadBalancerV2Origin(fargateService.loadBalancer),
