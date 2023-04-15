@@ -1,3 +1,5 @@
+export * from "./addContainerPortMappings";
+export * from "./addContainerToTaskDefinition";
 export * from "./createCluster";
 export * from "./createDeregistrationDelay";
 export * from "./createFargateService";

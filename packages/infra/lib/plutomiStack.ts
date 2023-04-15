@@ -1,13 +1,11 @@
-import * as cf from "aws-cdk-lib/aws-cloudfront";
 import { type StackProps, Stack } from "aws-cdk-lib";
 import type { Construct } from "constructs";
-
-import * as ecs from "aws-cdk-lib/aws-ecs";
+import * as cf from "aws-cdk-lib/aws-cloudfront";
+import { Duration } from "aws-cdk-lib";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import * as waf from "aws-cdk-lib/aws-wafv2";
-import { env } from "../env";
 import {
   createTaskRole,
   createTaskDefinition,
@@ -17,6 +15,8 @@ import {
   getHostedZone
 } from "../utils";
 import { getACMCertificate } from "../utils/getACMCertificate";
+import { addContainerToTaskDefinition } from "../utils/addContainerToTaskDefinition";
+import { allEnvVariables } from "../env";
 
 type PlutomiStackProps = StackProps;
 
@@ -30,6 +30,16 @@ export class PlutomiStack extends Stack {
     const cluster = createCluster({ stack: this, vpc });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = getACMCertificate({ stack: this });
+    const container = addContainerToTaskDefinition({
+      taskDefinition
+    });
+
+    const fargateService = createFargateService({
+      stack: this,
+      cluster,
+      taskDefinition,
+      certificate
+    });
 
     // // Allows fargate to send emails
     // const sesSendEmailPolicy = new iam.PolicyStatement({
@@ -54,41 +64,6 @@ export class PlutomiStack extends Stack {
     //   }
     // );
     // taskRole.attachInlinePolicy(policy);
-
-    const container = taskDefinition.addContainer(
-      "plutomi-api-fargate-container",
-      {
-        // Get the local docker image, build and deploy it
-        image: ecs.ContainerImage.fromAsset(".", {
-          // ! Must match the ARGs in the docker file!
-          buildArgs: {
-            COMMITS_TOKEN: envVars.COMMITS_TOKEN,
-            NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT:
-              envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
-            NEXT_PUBLIC_WEBSITE_URL: envVars.NEXT_PUBLIC_WEBSITE_URL
-          }
-        }),
-
-        logging: new ecs.AwsLogDriver({
-          streamPrefix: "plutomi-api-fargate"
-        }),
-        // TODO vomit
-        environment: envVars as unknown as { [key: string]: string }
-      }
-    );
-
-    container.addPortMappings({
-      // TODO i think this cdk type is wrong? Says should be a number but got:
-      // supplied properties not correct for "KeyValuePairProperty" value: 3000 should be a string.
-      containerPort: Number(envVars.PORT)
-    });
-
-    const fargateService = createFargateService({
-      stack: this,
-      cluster,
-      taskDefinition,
-      certificate
-    });
 
     // Create the WAF & its rules
     // TODO move this out
@@ -229,30 +204,23 @@ export class PlutomiStack extends Stack {
     // No caching! We're using Cloudfront for its global network and WAF
     const cachePolicy = new cf.CachePolicy(
       this,
-      `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-Cache-Policy`,
+      `${allEnvVariables.DEPLOYMENT_ENVIRONMENT}-Cache-Policy`,
       {
-        defaultTtl: cdk.Duration.seconds(0),
-        minTtl: cdk.Duration.seconds(0),
-        maxTtl: cdk.Duration.seconds(0)
+        defaultTtl: Duration.seconds(0),
+        minTtl: Duration.seconds(0),
+        maxTtl: Duration.seconds(0)
       }
     );
 
     const distribution = new cf.Distribution(
       this,
-      `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
+      `${allEnvVariables.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
       {
-        certificate: apiCert,
+        certificate,
         webAclId: API_WAF.attrArn,
-        // TODO others?
-        domainNames: [
-          envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "stage"
-            ? STAGE_DOMAIN_NAME
-            : DOMAIN_NAME
-        ],
+        domainNames: [allEnvVariables.DOMAIN],
         defaultBehavior: {
-          origin: new origins.LoadBalancerV2Origin(
-            loadBalancedFargateService.loadBalancer
-          ),
+          origin: new origins.LoadBalancerV2Origin(fargateService.loadBalancer),
 
           // Must be enabled!
           // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
