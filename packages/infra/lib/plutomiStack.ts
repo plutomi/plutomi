@@ -106,24 +106,6 @@ export class PlutomiStack extends cdk.Stack {
       certificate
     });
 
-    /**
-     * Reduce deploy time by:
-     * 1. Lowering the deregistration delay from 300 seconds to 30
-     * 2. Lower the health check thresholds for a healthy instance
-     *
-     * https://github.com/plutomi/plutomi/issues/406
-     *
-     */
-
-
-    /**
-     * Good reading on fargate 25% time :>
-     * https://github.com/aws/containers-roadmap/issues/163
-     */
-    scalableTarget.scaleOnCpuUtilization("CpuScaling", {
-      targetUtilizationPercent: Servers.targetUtilizationPct
-    });
-
     // Create the WAF & its rules
     // TODO move this out
     const API_WAF = new waf.CfnWebACL(
