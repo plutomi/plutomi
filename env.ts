@@ -1,12 +1,9 @@
-/* eslint no-console: 0 */
-
 import * as dotenv from "dotenv";
 import { z } from "zod";
 
 dotenv.config();
 
 const defaultPort = 3000;
-const defaultDomain = `localhost:${defaultPort}`;
 const desiredDomain = "plutomi.com";
 const deploymentEnvironments = ["prod", "stage", "dev"] as const;
 const nodeEnv = ["development", "production"] as const;
@@ -26,11 +23,13 @@ export const sharedEnvSchema = z
       .lte(65535)
       .default(defaultPort),
     NODE_ENV: z.enum(nodeEnv),
-    DOMAIN: z.enum([desiredDomain, defaultDomain]).default(defaultDomain),
     DEPLOYMENT_ENVIRONMENT: z.enum(deploymentEnvironments)
   })
   .transform((env) => {
-    const isLocal = env.DOMAIN.includes("localhost");
-    const BASE_URL = `http${isLocal ? "" : "s"}://${env.DOMAIN}`;
-    return { ...env, BASE_URL };
+    const isLocal = env.NODE_ENV === "development";
+    const DOMAIN = isLocal ? "localhost" : desiredDomain;
+    const BASE_URL = `http${isLocal ? "" : "s"}://${DOMAIN}`;
+    const API_URL = `${BASE_URL}/api`;
+
+    return { ...env, BASE_URL, DOMAIN, API_URL };
   });
