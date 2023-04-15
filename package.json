@@ -14,6 +14,7 @@
     "@nrwl/nx-cloud": "latest",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "cspell": "^6.31.1",
     "eslint": "^8.0.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -37,7 +38,8 @@
     "pretty:fix": "yarn prettier --write .",
     "lint": "nx run-many -t=lint --parallel",
     "lint:fix": "nx run-many -t=lint:fix --parallel",
-    "tidy": "yarn pretty:fix && yarn lint:fix"
+    "tidy": "yarn pretty:fix && yarn lint:fix",
+    "spellcheck": "yarn cspell ."
   },
   "packageManager": "yarn@3.5.0"
 }

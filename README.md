@@ -51,6 +51,7 @@ Stages:
 - `yarn pretty` & `yarn pretty:fix` - Run prettier & fix any issues
 - `yarn lint` & `yarn lint:fix` - Run the linter & fix any issues
 - `yarn tidy` - Runs prettier and fix sequentially
+- `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
 ## Language, Tooling, & Infrastructure
 
