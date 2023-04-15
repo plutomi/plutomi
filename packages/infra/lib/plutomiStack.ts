@@ -34,6 +34,18 @@ export class PlutomiStack extends Stack {
       certificate
     });
 
+    const waf = createWaf({
+      stack: this
+    });
+    createDistribution({
+      stack: this,
+      certificate,
+      fargateService,
+      waf,
+      hostedZone
+    });
+
+    // ! TODO:
     // // Allows fargate to send emails
     // const sesSendEmailPolicy = new iam.PolicyStatement({
     //   effect: iam.Effect.ALLOW,
@@ -57,22 +69,5 @@ export class PlutomiStack extends Stack {
     //   }
     // );
     // taskRole.attachInlinePolicy(policy);
-
-    const waf = createWaf({
-      stack: this
-    });
-    const cfDistribution = createDistribution({
-      stack: this,
-      certificate,
-      fargateService,
-      waf
-    });
-
-    //  Creates an A record that points our API domain to Cloudfront
-    new ARecord(this, `APIAlias`, {
-      recordName: allEnvVariables.DOMAIN,
-      zone: hostedZone,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
-    });
   }
 }
