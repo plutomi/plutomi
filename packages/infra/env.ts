@@ -19,3 +19,4 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+export type EnvironmentVariables = typeof env;

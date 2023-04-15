@@ -1,16 +1,13 @@
 import * as cf from "aws-cdk-lib/aws-cloudfront";
-import * as ecsPatterns from "aws-cdk-lib/aws-ecs-patterns";
-import { Stack, StackProps } from "aws-cdk-lib";
+import { type StackProps, Stack } from "aws-cdk-lib";
+import type { Construct } from "constructs";
+
 import * as ecs from "aws-cdk-lib/aws-ecs";
-import * as ec2 from "aws-cdk-lib/aws-ec2";
-import * as iam from "aws-cdk-lib/aws-iam";
-import * as route53 from "aws-cdk-lib/aws-route53";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import * as waf from "aws-cdk-lib/aws-wafv2";
-import type { Construct } from "constructs";
+import { env } from "../env";
 import {
   createTaskRole,
   createTaskDefinition,
