@@ -1,5 +1,3 @@
-export * from "./addContainerPortMappings";
-export * from "./addContainerToTaskDefinition";
 export * from "./createCluster";
 export * from "./createFargateService";
 export * from "./createTaskDefinition";

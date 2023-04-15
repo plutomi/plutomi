@@ -1,6 +1,11 @@
-import { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
+import {
+  AwsLogDriver,
+  ContainerImage,
+  FargateTaskDefinition
+} from "aws-cdk-lib/aws-ecs";
 import type { IRole } from "aws-cdk-lib/aws-iam";
 import type { Stack } from "aws-cdk-lib";
+import { allEnvVariables } from "../env";
 
 type CreateTaskDefinitionProps = {
   stack: Stack;
@@ -11,6 +16,7 @@ export const createTaskDefinition = ({
   stack,
   taskRole
 }: CreateTaskDefinitionProps): FargateTaskDefinition => {
+  // Create a task definition we can attach policies to
   const taskDefinition = new FargateTaskDefinition(
     stack,
     "plutomi-api-fargate-task-definition",
@@ -21,5 +27,30 @@ export const createTaskDefinition = ({
       memoryLimitMiB: 512
     }
   );
+
+  const container = taskDefinition.addContainer(
+    "plutomi-api-fargate-container",
+    {
+      image: ContainerImage.fromAsset(".", {
+        // Get the local docker image (@root), build and deploy it
+        // ! Must match the ARGs in the docker file for NextJS!
+        buildArgs: {
+          NEXT_PUBLIC_BASE_URL: allEnvVariables.BASE_URL
+        }
+      }),
+
+      logging: new AwsLogDriver({
+        streamPrefix: "plutomi-api-fargate"
+      }),
+      environment: allEnvVariables as unknown as Record<string, string>
+    }
+  );
+
+  // Add the port mapping to our containers
+  container.addPortMappings({
+    containerPort: allEnvVariables.PORT,
+    hostPort: allEnvVariables.PORT
+  });
+  
   return taskDefinition;
 };
