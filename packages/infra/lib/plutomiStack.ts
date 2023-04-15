@@ -16,7 +16,8 @@ import {
   createTaskDefinition,
   createVpc,
   createCluster,
-  createFargateService
+  createFargateService,
+  getHostedZone
 } from "../utils";
 import { getACMCertificate } from "../utils/getACMCertificate";
 
@@ -30,6 +31,8 @@ export class PlutomiStack extends Stack {
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
     const cluster = createCluster({ stack: this, vpc });
+    const hostedZone = getHostedZone({ stack: this });
+    const certificate = getACMCertificate({ stack: this });
 
     // // Allows fargate to send emails
     // const sesSendEmailPolicy = new iam.PolicyStatement({
@@ -82,19 +85,6 @@ export class PlutomiStack extends Stack {
       // supplied properties not correct for "KeyValuePairProperty" value: 3000 should be a string.
       containerPort: Number(envVars.PORT)
     });
-
-    // Get a reference to AN EXISTING hosted zone
-    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(
-      this,
-      "plutomi-hosted-zone",
-      {
-        hostedZoneId: envVars.HOSTED_ZONE_ID,
-        zoneName: DOMAIN_NAME
-      }
-    );
-
-    // Retrieves the certificate that we are using for our domain
-    const certificate = getACMCertificate({ stack: this });
 
     const fargateService = createFargateService({
       stack: this,
