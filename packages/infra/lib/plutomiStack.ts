@@ -14,8 +14,7 @@ import {
   createFargateService,
   getHostedZone
 } from "../utils";
-import { getACMCertificate } from "../utils/getACMCertificate";
-import { addContainerToTaskDefinition } from "../utils/addContainerToTaskDefinition";
+import { getACMCertificate } from "../utils/getAcmCertificate";
 import { allEnvVariables } from "../env";
 
 type PlutomiStackProps = StackProps;
@@ -30,7 +29,6 @@ export class PlutomiStack extends Stack {
     const cluster = createCluster({ stack: this, vpc });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = getACMCertificate({ stack: this });
-
     const fargateService = createFargateService({
       stack: this,
       cluster,
@@ -62,141 +60,7 @@ export class PlutomiStack extends Stack {
     // );
     // taskRole.attachInlinePolicy(policy);
 
-    // Create the WAF & its rules
-    // TODO move this out
-    const API_WAF = new waf.CfnWebACL(
-      this,
-      `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-API-WAF`,
-      {
-        name: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-API-WAF`,
-        description: "Blocks IPs that make too many requests",
-        defaultAction: {
-          allow: {}
-        },
-        scope: "CLOUDFRONT",
-        visibilityConfig: {
-          cloudWatchMetricsEnabled: true,
-          metricName: "cloudfront-ipset-waf",
-          sampledRequestsEnabled: true
-        },
-        rules: [
-          {
-            name: `too-many-api-requests-rule`,
-            priority: 0,
-            statement: {
-              rateBasedStatement: {
-                limit: Servers.rateLimit.api, // In a 5 minute period
-                aggregateKeyType: "IP",
-                scopeDownStatement: {
-                  byteMatchStatement: {
-                    fieldToMatch: {
-                      uriPath: {}
-                    },
-                    positionalConstraint: "CONTAINS",
-                    textTransformations: [
-                      {
-                        priority: 0,
-                        type: "LOWERCASE"
-                      }
-                    ],
-                    searchString: "/api/"
-                  }
-                }
-              }
-            },
-            action: {
-              block: {
-                customResponse: {
-                  responseCode: 429
-                }
-              }
-            },
-            visibilityConfig: {
-              sampledRequestsEnabled: true,
-              cloudWatchMetricsEnabled: true,
-              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-API-BLOCKED-IPs`
-            }
-          },
-          {
-            name: `too-many-web-requests-rule`,
-            priority: 1,
-            statement: {
-              rateBasedStatement: {
-                limit: Servers.rateLimit.web, // In a 5 minute period
-                aggregateKeyType: "IP"
-              }
-            },
-            action: {
-              block: {
-                customResponse: {
-                  responseCode: 429
-                }
-              }
-            },
-            visibilityConfig: {
-              sampledRequestsEnabled: true,
-              cloudWatchMetricsEnabled: true,
-              metricName: `${envVars.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-WAF-GENERAL-BLOCKED-IPs`
-            }
-          },
-          // { // TODO this is blocking postman requests :/
-          //   name: "AWS-AWSManagedRulesBotControlRuleSet",
-          //   priority: 1,
-          //   statement: {
-          //     managedRuleGroupStatement: {
-          //       vendorName: "AWS",
-          //       name: "AWSManagedRulesBotControlRuleSet",
-          //     },
-          //   },
-          //   overrideAction: {
-          //     none: {},
-          //   },
-          //   visibilityConfig: {
-          //     sampledRequestsEnabled: false,
-          //     cloudWatchMetricsEnabled: true,
-          //     metricName: "AWS-AWSManagedRulesBotControlRuleSet",
-          //   },
-          // },
-          {
-            name: "AWS-AWSManagedRulesAmazonIpReputationList",
-            priority: 2,
-            statement: {
-              managedRuleGroupStatement: {
-                vendorName: "AWS",
-                name: "AWSManagedRulesAmazonIpReputationList"
-              }
-            },
-            overrideAction: {
-              none: {}
-            },
-            visibilityConfig: {
-              sampledRequestsEnabled: false,
-              cloudWatchMetricsEnabled: true,
-              metricName: "AWS-AWSManagedRulesAmazonIpReputationList"
-            }
-          }
-          // {
-          // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
-          //   name: "AWS-AWSManagedRulesCommonRuleSet",
-          //   priority: 3,
-          //   statement: {
-          //     managedRuleGroupStatement: {
-          //       vendorName: "AWS",
-          //       name: "AWSManagedRulesCommonRuleSet",
-          //     },
-          //   },
-          //   overrideAction: {
-          //     none: {},
-          //   },
-          //   visibilityConfig: {
-          //     sampledRequestsEnabled: false,
-          //     cloudWatchMetricsEnabled: true,
-          //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
-          //   },
-          // },
-        ]
-      }
-    );
+
 
     // No caching! We're using Cloudfront for its global network and WAF
     const cachePolicy = new cf.CachePolicy(
