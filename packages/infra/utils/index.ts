@@ -1,4 +1,5 @@
 export * from "./createCluster";
+export * from "./createDistribution";
 export * from "./createFargateService";
 export * from "./createTaskDefinition";
 export * from "./createTaskRole";
