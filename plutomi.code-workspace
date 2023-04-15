@@ -17,5 +17,11 @@
       "name": "infra"
     }
   ],
-  "settings": {}
+  "settings": {
+    "eslint.workingDirectories": [
+      { "directory": "packages/api", "changeProcessCWD": true },
+      { "directory": "packages/web", "changeProcessCWD": true },
+      { "directory": "packages/infra", "changeProcessCWD": true }
+    ]
+  }
 }
