@@ -6,7 +6,6 @@ import { z } from "zod";
 dotenv.config();
 
 export const x = "";
-// Example
 const schema = z.object({
   PORT: z.coerce.number().int().positive().gte(1024).lte(65535),
   NODE_ENV: z.enum(["development", "production"])
