@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  prettier:
+  spellcheck:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: production
