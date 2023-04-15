@@ -11,9 +11,7 @@ on:
 jobs:
   linter:
     runs-on: ubuntu-latest
-    env:
-      NODE_ENV: production
-      
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -28,3 +26,5 @@ jobs:
 
       - name: Run linter
         run: yarn lint
+        env:
+          NODE_ENV: production

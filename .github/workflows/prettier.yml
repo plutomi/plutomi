@@ -11,8 +11,6 @@ on:
 jobs:
   prettier:
     runs-on: ubuntu-latest
-    env:
-      NODE_ENV: production
 
     steps:
       - name: Check out repository
@@ -28,3 +26,5 @@ jobs:
 
       - name: Run prettier
         run: yarn pretty
+        env:
+            NODE_ENV: production

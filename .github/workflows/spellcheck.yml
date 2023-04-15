@@ -11,8 +11,6 @@ on:
 jobs:
   spellcheck:
     runs-on: ubuntu-latest
-    env:
-      NODE_ENV: production
 
     steps:
       - name: Check out repository
@@ -28,3 +26,5 @@ jobs:
 
       - name: Run spellcheck
         run: yarn spellcheck
+        env:
+          NODE_ENV: production
