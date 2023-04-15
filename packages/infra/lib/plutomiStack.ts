@@ -1,6 +1,6 @@
 import * as cf from "aws-cdk-lib/aws-cloudfront";
 import * as ecsPatterns from "aws-cdk-lib/aws-ecs-patterns";
-import * as cdk from "aws-cdk-lib";
+import { Stack, StackProps } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -18,17 +18,18 @@ import {
   createCluster,
   createFargateService
 } from "../utils";
+import { getACMCertificate } from "../utils/getACMCertificate";
 
-type PlutomiStackProps = cdk.StackProps;
+type PlutomiStackProps = StackProps;
 
-export class PlutomiStack extends cdk.Stack {
+export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: PlutomiStackProps) {
     super(scope, id, props);
 
-    const vpc = createVpc({ construct: this });
-    const taskRole = createTaskRole({ construct: this });
-    const taskDefinition = createTaskDefinition({ construct: this, taskRole });
-    const cluster = createCluster({ construct: this, vpc });
+    const vpc = createVpc({ stack: this });
+    const taskRole = createTaskRole({ stack: this });
+    const taskDefinition = createTaskDefinition({ stack: this, taskRole });
+    const cluster = createCluster({ stack: this, vpc });
 
     // // Allows fargate to send emails
     // const sesSendEmailPolicy = new iam.PolicyStatement({
@@ -93,14 +94,10 @@ export class PlutomiStack extends cdk.Stack {
     );
 
     // Retrieves the certificate that we are using for our domain
-    const certificate = Certificate.fromCertificateArn(
-      this,
-      `CertificateArn`,
-      `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`
-    );
+    const certificate = getACMCertificate({ stack: this });
 
     const fargateService = createFargateService({
-      construct: this,
+      stack: this,
       cluster,
       taskDefinition,
       certificate

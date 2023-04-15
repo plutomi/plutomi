@@ -1,18 +1,18 @@
 import { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { IRole } from "aws-cdk-lib/aws-iam";
-import type { Construct } from "constructs";
+import type { Stack } from "aws-cdk-lib";
 
 type CreateTaskDefinitionProps = {
-  construct: Construct;
+  stack: Stack;
   taskRole: IRole;
 };
 
 export const createTaskDefinition = ({
-  construct,
+  stack,
   taskRole
 }: CreateTaskDefinitionProps): FargateTaskDefinition => {
   const taskDefinition = new FargateTaskDefinition(
-    construct,
+    stack,
     "plutomi-api-fargate-task-definition",
     {
       taskRole,

@@ -1,13 +1,13 @@
 import { type IRole, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import type { Construct } from "constructs";
+import type { Stack } from "aws-cdk-lib";
 
 type CreateTaskRoleProps = {
-  construct: Construct;
+  stack: Stack;
 };
 
-export const createTaskRole = ({ construct }: CreateTaskRoleProps): IRole => {
+export const createTaskRole = ({ stack }: CreateTaskRoleProps): IRole => {
   // IAM inline role - the service principal is required
-  const taskRole = new Role(construct, "plutomi-api-fargate-role", {
+  const taskRole = new Role(stack, "plutomi-api-fargate-role", {
     assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com")
   });
 
