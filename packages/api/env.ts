@@ -21,3 +21,9 @@ if (!parsed.success) {
   process.exit(1);
 }
 export const env = parsed.data;
+
+const myFunction = (x,y) => {return x+y;}
+const myArray = [1,2,3,4,5];
+myArray.map( num => {
+  return num*2;
+});
