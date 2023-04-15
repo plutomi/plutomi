@@ -2,7 +2,6 @@ import * as cf from "aws-cdk-lib/aws-cloudfront";
 import * as ecsPatterns from "aws-cdk-lib/aws-ecs-patterns";
 import * as cdk from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
-import { FckNatInstanceProvider } from "cdk-fck-nat";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as route53 from "aws-cdk-lib/aws-route53";
@@ -11,9 +10,8 @@ import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import * as waf from "aws-cdk-lib/aws-wafv2";
-import { InstanceClass, InstanceSize, InstanceType } from "aws-cdk-lib/aws-ec2";
 import type { Construct } from "constructs";
-import { createTaskRole, createTaskDefinition } from "../utils";
+import { createTaskRole, createTaskDefinition, createVpc } from "../utils";
 
 type PlutomiStackProps = cdk.StackProps;
 
@@ -21,6 +19,7 @@ export class PlutomiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: PlutomiStackProps) {
     super(scope, id, props);
 
+    const vpc = createVpc({ construct: this });
     const taskRole = createTaskRole({ construct: this });
     const taskDefinition = createTaskDefinition({ construct: this, taskRole });
     // // Allows fargate to send emails
@@ -73,18 +72,6 @@ export class PlutomiStack extends cdk.Stack {
       // TODO i think this cdk type is wrong? Says should be a number but got:
       // supplied properties not correct for "KeyValuePairProperty" value: 3000 should be a string.
       containerPort: Number(envVars.PORT)
-    });
-
-    // https://fck-nat.dev/
-    const natGatewayProvider = new FckNatInstanceProvider({
-      instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO)
-    });
-
-    // TODO  add fck nat
-    const vpc = new ec2.Vpc(this, "plutomi-api-fargate-vpc", {
-      maxAzs: Servers.vpc.az,
-      natGateways: Servers.vpc.natGateways, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
-      natGatewayProvider
     });
 
     const cluster = new ecs.Cluster(this, "plutomi-api-fargate-cluster", {
