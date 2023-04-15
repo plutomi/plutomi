@@ -2,8 +2,6 @@ export * from "./addContainerPortMappings";
 export * from "./addContainerToTaskDefinition";
 export * from "./createCluster";
 export * from "./createFargateService";
-export * from "./createHealthChecks";
-export * from "./createScalingPolicy";
 export * from "./createTaskDefinition";
 export * from "./createTaskRole";
 export * from "./createVpc";

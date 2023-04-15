@@ -30,9 +30,6 @@ export class PlutomiStack extends Stack {
     const cluster = createCluster({ stack: this, vpc });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = getACMCertificate({ stack: this });
-    const container = addContainerToTaskDefinition({
-      taskDefinition
-    });
 
     const fargateService = createFargateService({
       stack: this,
