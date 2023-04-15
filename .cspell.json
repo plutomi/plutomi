@@ -16,17 +16,18 @@
   ],
   "words": [
     "cacheable",
+    "certificatemanager",
+    "Cooldown",
+    "deregistration",
     "fargate",
+    "nrwl",
     "Plutomi",
+    "praguru",
     "tailwindcss",
     "TLDR",
-    "nrwl",
+    "trenchard",
     "Valerio",
-    "certificatemanager",
-    "wafv2",
-    "deregistration",
-    "praguru",
-    "trenchard"
+    "wafv2"
   ],
   "overrides": []
 }

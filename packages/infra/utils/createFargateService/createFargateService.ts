@@ -2,8 +2,9 @@ import type { Cluster, FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { Construct } from "constructs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
-import { createDeregistrationDelay } from "./createDeregistrationDelay";
-import { createHealthChecks } from "./createHealthChecks";
+import { createDeregistrationDelay } from "./utils/createDeregistrationDelay";
+import { createHealthChecks } from "./utils/createHealthChecks";
+import { createScalingPolicy } from "./utils/createScalingPolicy";
 
 type CreateFargateServiceProps = {
   construct: Construct;
@@ -34,12 +35,7 @@ export const createFargateService = ({
   // Other Config
   createDeregistrationDelay({ fargateService });
   createHealthChecks({ fargateService });
-    
-  // Auto scaling
-  const scalableTarget = loadBalancedFargateService.service.autoScaleTaskCount({
-    minCapacity: Servers.count.min,
-    maxCapacity: Servers.count.max
-  });
+  createScalingPolicy({ fargateService });
 
   return fargateService;
 };
