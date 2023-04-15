@@ -26,3 +26,5 @@ jobs:
 
       - name: Run spellcheck
         run: yarn spellcheck
+        env:
+          NODE_ENV: production

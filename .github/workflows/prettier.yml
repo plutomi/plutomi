@@ -26,3 +26,5 @@ jobs:
 
       - name: Run prettier
         run: yarn pretty
+        env:
+            NODE_ENV: production

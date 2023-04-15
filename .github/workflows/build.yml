@@ -1,4 +1,4 @@
-name: Linter
+name: Build
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  linter:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Run linter
-        run: yarn lint
+      - name: Run build
+        run: yarn build
         env:
-          NODE_ENV: production
+            NODE_ENV: production
