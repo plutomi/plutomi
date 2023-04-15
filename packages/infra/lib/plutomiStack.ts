@@ -11,7 +11,12 @@ import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import * as waf from "aws-cdk-lib/aws-wafv2";
 import type { Construct } from "constructs";
-import { createTaskRole, createTaskDefinition, createVpc } from "../utils";
+import {
+  createTaskRole,
+  createTaskDefinition,
+  createVpc,
+  createCluster
+} from "../utils";
 
 type PlutomiStackProps = cdk.StackProps;
 
@@ -22,6 +27,8 @@ export class PlutomiStack extends cdk.Stack {
     const vpc = createVpc({ construct: this });
     const taskRole = createTaskRole({ construct: this });
     const taskDefinition = createTaskDefinition({ construct: this, taskRole });
+    const cluster = createCluster({ construct: this, vpc });
+
     // // Allows fargate to send emails
     // const sesSendEmailPolicy = new iam.PolicyStatement({
     //   effect: iam.Effect.ALLOW,
@@ -74,11 +81,6 @@ export class PlutomiStack extends cdk.Stack {
       containerPort: Number(envVars.PORT)
     });
 
-    const cluster = new ecs.Cluster(this, "plutomi-api-fargate-cluster", {
-      vpc,
-      containerInsights: true
-    });
-
     // Get a reference to AN EXISTING hosted zone
     const hostedZone = route53.HostedZone.fromHostedZoneAttributes(
       this,
@@ -96,25 +98,7 @@ export class PlutomiStack extends cdk.Stack {
       `arn:aws:acm:${this.region}:${this.account}:certificate/${envVars.ACM_CERTIFICATE_ID}`
     );
 
-    /**
-     * Creates a load balanced fargate service.
-     * The load balancer will be in a public subnet, while the tasks will be in a private subnet and unaccessible from the internet.
-     *
-     * The fck-nat allows internet access to the tasks.
-     */
-    const loadBalancedFargateService =
-      new ecsPatterns.ApplicationLoadBalancedFargateService(
-        this,
-        "PlutomiApi",
-        {
-          cluster,
-          certificate: apiCert,
-          taskDefinition,
-          desiredCount: Servers.count.min,
-          listenerPort: 443,
-          redirectHTTP: true
-        }
-      );
+
 
     /**
      * Reduce deploy time by:
