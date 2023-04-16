@@ -29,14 +29,13 @@ export const createDistribution = ({
   certificate,
   hostedZone
 }: CreateDistributionProps): Distribution => {
-  // No caching by default, this is so we can attach WAF to CF and use the CF network.
-  const defaultCachePolicy = new CachePolicy(
-    stack,
-    `${allEnvVariables.DEPLOYMENT_ENVIRONMENT}-Cache-Policy`,
+  const loadBalancerOrigin = new LoadBalancerV2Origin(
+    fargateService.loadBalancer,
     {
-      defaultTtl: Duration.seconds(0),
-      minTtl: Duration.seconds(0),
-      maxTtl: Duration.seconds(0)
+      customHeaders: {
+        // WAF on the ALB will block requests without this header
+        "cf-custom-header": "random-value"
+      }
     }
   );
 
@@ -47,23 +46,26 @@ export const createDistribution = ({
       certificate,
       domainNames: [allEnvVariables.DOMAIN],
       defaultBehavior: {
-        origin: new LoadBalancerV2Origin(fargateService.loadBalancer, {
-          customHeaders: {
-            // WAF on the ALB will block requests without this header
-            "x-api-key": "random-key"
-          }
-        }),
-
+        origin: loadBalancerOrigin,
         // Must be enabled!
         // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
         originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-        cachePolicy: defaultCachePolicy,
+        // Disabled for /api/ routes by default, cache on an as needed basis under additional behaviors
+        cachePolicy: CachePolicy.CACHING_DISABLED,
         allowedMethods: AllowedMethods.ALLOW_ALL
-      }
+      },
 
-      // additionalBehaviors: {
-      // TODO add /public caching behaviors here
-      // }, //
+      // Cache static routes
+      additionalBehaviors: {
+        "/_next/*": {
+          origin: loadBalancerOrigin,
+          cachePolicy: CachePolicy.CACHING_OPTIMIZED
+        },
+        "/public/*": {
+          origin: loadBalancerOrigin,
+          cachePolicy: CachePolicy.CACHING_OPTIMIZED
+        }
+      }
     }
   );
 
