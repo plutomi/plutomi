@@ -28,7 +28,7 @@ export const createWaf = ({
         scope: "REGIONAL",
         visibilityConfig: {
           cloudWatchMetricsEnabled: true,
-          metricName: "cloudfront-ipset-waf",
+          metricName: "cloudfront-no-header-waf",
           sampledRequestsEnabled: true
         },
         rules: [
@@ -39,18 +39,18 @@ export const createWaf = ({
               byteMatchStatement: {
                 fieldToMatch: {
                   singleHeader: {
-                    name: "x-api-key"
+                    name: allEnvVariables.CF_HEADER_KEY
                   }
                 },
                 positionalConstraint: "EXACTLY",
                 textTransformations: [],
-                searchString: "test-header-value"
+                searchString: allEnvVariables.CF_HEADER_VALUE
               }
             },
             action: {
               block: {
                 customResponse: {
-                  responseCode: 429
+                  responseCode: 401
                 }
               }
             },

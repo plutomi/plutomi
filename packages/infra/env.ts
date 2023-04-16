@@ -24,7 +24,10 @@ const allEnvVariablesSchema = z
       .lte(65535)
       .default(defaultPort),
     NODE_ENV: z.enum(nodeEnv).default("development"),
-    DEPLOYMENT_ENVIRONMENT: z.enum(deploymentEnvironments)
+    DEPLOYMENT_ENVIRONMENT: z.enum(deploymentEnvironments),
+    // WAF Will block requests that don't include this header
+    CF_HEADER_KEY: z.literal("cf-custom-header").default("cf-custom-header"),
+    CF_HEADER_VALUE: z.string()
   })
   .transform((env) => {
     const isLocal = env.NODE_ENV === "development";

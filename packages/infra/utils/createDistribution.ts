@@ -12,7 +12,7 @@ import {
   Distribution,
   OriginRequestPolicy
 } from "aws-cdk-lib/aws-cloudfront";
-import { type Stack, Duration } from "aws-cdk-lib";
+import { type Stack } from "aws-cdk-lib";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { allEnvVariables } from "../env";
 
@@ -34,7 +34,7 @@ export const createDistribution = ({
     {
       customHeaders: {
         // WAF on the ALB will block requests without this header
-        "cf-custom-header": "random-value"
+        [allEnvVariables.CF_HEADER_KEY]: allEnvVariables.CF_HEADER_VALUE
       }
     }
   );
