@@ -18,21 +18,49 @@ export const createWaf = ({
     stack,
     `${deploymentEnvironment}-plutomi-waf`,
     {
-      // ! TODO: Update diagram to include WAF
+      // ! TODO: Update diagram to include WAF at ALB
       existingLoadBalancerObj: fargateService.loadBalancer,
       webaclProps: {
         defaultAction: {
           allow: {}
         },
 
-        scope: "CLOUDFRONT",
-        // scope: "CLOUDFRONT",
+        scope: "REGIONAL",
         visibilityConfig: {
           cloudWatchMetricsEnabled: true,
           metricName: "cloudfront-ipset-waf",
           sampledRequestsEnabled: true
         },
         rules: [
+          {
+            name: "BlockIfNoHeader",
+            priority: 0,
+            statement: {
+              byteMatchStatement: {
+                fieldToMatch: {
+                  singleHeader: {
+                    name: "x-api-key"
+                  }
+                },
+                positionalConstraint: "EXACTLY",
+                textTransformations: [],
+                searchString: "test-header-value"
+              }
+            },
+            action: {
+              block: {
+                customResponse: {
+                  responseCode: 429
+                }
+              }
+            },
+            visibilityConfig: {
+              sampledRequestsEnabled: true,
+              cloudWatchMetricsEnabled: true,
+              metricName: `${deploymentEnvironment}-WAF-API-BLOCKED-IPs`
+            }
+          },
+
           {
             name: "too-many-api-requests-rule",
             priority: 0,
