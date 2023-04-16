@@ -63,7 +63,7 @@ export const createWaf = ({
 
           {
             name: "too-many-api-requests-rule",
-            priority: 0,
+            priority: 1,
             statement: {
               rateBasedStatement: {
                 limit: 200, // In a 5 minute period
@@ -102,7 +102,7 @@ export const createWaf = ({
           {
             name: "too-many-graphql-requests-rule",
             // Note: This was blocking postman at one point
-            priority: 1,
+            priority: 2,
             statement: {
               managedRuleGroupStatement: {
                 vendorName: "AWS",
@@ -121,7 +121,7 @@ export const createWaf = ({
 
           {
             name: "AWS-AWSManagedRulesAmazonIpReputationList",
-            priority: 2,
+            priority: 3,
             statement: {
               managedRuleGroupStatement: {
                 vendorName: "AWS",
@@ -140,7 +140,7 @@ export const createWaf = ({
           {
             // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
             name: "AWS-AWSManagedRulesCommonRuleSet",
-            priority: 3,
+            priority: 4,
             statement: {
               managedRuleGroupStatement: {
                 vendorName: "AWS",

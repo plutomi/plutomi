@@ -45,10 +45,14 @@ export const createDistribution = ({
     `${allEnvVariables.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
     {
       certificate,
-      // webAclId: waf.attrArn,
       domainNames: [allEnvVariables.DOMAIN],
       defaultBehavior: {
-        origin: new LoadBalancerV2Origin(fargateService.loadBalancer),
+        origin: new LoadBalancerV2Origin(fargateService.loadBalancer, {
+          customHeaders: {
+            // WAF on the ALB will block requests without this header
+            "x-api-key": "random-key"
+          }
+        }),
 
         // Must be enabled!
         // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
@@ -56,12 +60,11 @@ export const createDistribution = ({
         cachePolicy: defaultCachePolicy,
         allowedMethods: AllowedMethods.ALLOW_ALL
       }
+
       // additionalBehaviors: {
       // TODO add /public caching behaviors here
       // }, //
     }
-
-    //  Creates an A record that points our API domain to Cloudfront
   );
 
   // eslint-disable-next-line no-new
