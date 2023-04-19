@@ -34,7 +34,7 @@ export const createDistribution = ({
     {
       customHeaders: {
         // WAF on the ALB will block requests without this header
-        [allEnvVariables.CF_HEADER_KEY]: allEnvVariables.CF_HEADER_VALUE
+        [allEnvVariables.CF_HEADER_KEY ]: allEnvVariables.CF_HEADER_VALUE
       }
     }
   );
