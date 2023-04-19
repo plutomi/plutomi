@@ -1,7 +1,3 @@
-import { allEnvVariablesSchema } from "@plutomi/infra";
+import { allEnvVariables } from "@plutomi/infra";
 
-export const apiEnvSchema = allEnvVariablesSchema.pick({
-  PORT: true,
-  NODE_ENV: true
-  // Add any other environment variables needed for API
-});
+export const apiEnvSchema = allEnvVariables

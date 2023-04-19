@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
-import { z } from "zod";
+import * as z from "zod";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 const defaultPort = 3000;
 const desiredDomain = "plutomi.com";
+const localHost = "localhost";
 const deploymentEnvironments = ["prod", "stage"] as const;
 const nodeEnv = ["development", "production"] as const;
 
@@ -14,9 +15,8 @@ const nodeEnv = ["development", "production"] as const;
  * The reason we do this is so that we can have a single source of truth for all env vars, and that
  * place is in infra package when things get built / deployed. Locally, we can use .env files.
  *
- * This schema is imported into other packages, and they .pick() the variables they need.
  */
-export const allEnvVariablesSchema = z
+const envSchema = z
   .object({
     PORT: z.coerce
       .number()
@@ -27,25 +27,25 @@ export const allEnvVariablesSchema = z
       .default(defaultPort),
     NODE_ENV: z.enum(nodeEnv).default("development"),
     DEPLOYMENT_ENVIRONMENT: z.enum(deploymentEnvironments),
+    DOMAIN: z.enum([localHost, desiredDomain]).default(localHost),
+    BASE_URL: z.string().url().default(`http://${localHost}:${defaultPort}`),
+    API_URL: z.string().url().default(`http://${localHost}:${defaultPort}/api`),
     // WAF Will block requests that don't include this header
     CF_HEADER_KEY: z.literal("cf-custom-header").default("cf-custom-header"),
     CF_HEADER_VALUE: z.string()
   })
-  .transform((env) => {
-    const isLocal = env.NODE_ENV === "development";
-    const isStage = env.DEPLOYMENT_ENVIRONMENT === "stage";
-    let DOMAIN = isLocal ? "localhost" : desiredDomain;
-    if (isStage) {
-      DOMAIN = `stage.${DOMAIN}`;
+  .refine((data) => {
+    const { DOMAIN, BASE_URL } = data;
+    if (!BASE_URL.includes(DOMAIN)) {
+      return {
+        message: "BASE_URL must include DOMAIN"
+      };
     }
 
-    const BASE_URL = `http${isLocal ? "" : "s"}://${DOMAIN}`;
-    const API_URL = `${BASE_URL}/api`;
-
-    return { ...env, BASE_URL, DOMAIN, API_URL };
+    return data;
   });
 
-const parsed = allEnvVariablesSchema.safeParse(process.env);
+const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
   parsed.error.issues.forEach((issue) => {
@@ -58,3 +58,5 @@ if (!parsed.success) {
 
 // Actual variables used in the infra package and passed on to others when deploying.
 export const allEnvVariables = parsed.data;
+
+// This schema is imported into other packages, and they .pick() the variables they need.
