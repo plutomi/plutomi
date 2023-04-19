@@ -10,7 +10,7 @@ import {
   createWaf,
   createDistribution
 } from "../utils";
-import { getACMCertificate } from "../utils/getACMCertificate";
+import { getACMCertificate } from "../utils/getAcmCertificate";
 
 type PlutomiStackProps = StackProps;
 
