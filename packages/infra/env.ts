@@ -54,4 +54,8 @@ if (!parsed.success) {
   process.exit(1);
 }
 
-export const allEnvVariables = parsed.data;
+// Actual variables used in the infra package and passed on to others when deploying.
+export const infraEnvVariables = parsed.data;
+
+// Schema used across other packages, you would .pick the ones that are needed in each package's env.ts
+export { parsed as allEnvVariablesSchema };
