@@ -63,6 +63,18 @@ Stages:
 <!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
+## Environment variables
+
+In the `infra` package, there is a `env.ts` file which has **ALL** of the environment variables for the app. When running locally, each package reads from their local `.env` file and parses it with `zod`. We then `.pick()` the variables that we need from the main schema that is exported from the `infra` package.
+
+When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention when needed.
+
+To add an environment variable:
+
+1. Add it to the `env.ts` file in the **infra** package
+2. Add it to the `env.ts` file in the specific package it is being used and `pick()` it so zod parses it.
+3. Add it to the `.env` file in that package so that it gets loaded
+
 ## Language, Tooling, & Infrastructure
 
 Typescript all the things. Infrastructure is managed by CDK aside from the DB.
