@@ -31,8 +31,8 @@ export const envSchema = z.object({
   BASE_URL: z.string().url().default(`http://${localHost}:${defaultPort}`),
   API_URL: z.string().url().default(`http://${localHost}:${defaultPort}/api`),
   // WAF Will block requests that don't include this header
-  CF_HEADER_KEY: z.literal("cf-custom-header").default("cf-custom-header"),
-  CF_HEADER_VALUE: z.string()
+  CF_HEADER_KEY: z.literal("cf-custom-header").optional(),
+  CF_HEADER_VALUE: z.string().optional()
 });
 
 // Extra validation
@@ -51,6 +51,13 @@ envSchema
       data.DEPLOYMENT_ENVIRONMENT !== "dev" && data.DOMAIN !== desiredDomain,
     {
       message: "DOMAIN must be set to the desiredDomain in prod and stage"
+    }
+  )
+  .refine(
+    (data) =>
+      data.CF_HEADER_KEY === undefined && data.DEPLOYMENT_ENVIRONMENT !== "dev",
+    {
+      message: "CF_HEADER_KEY and CF_HEADER_VALUE must be set in prod and stage"
     }
   );
 
