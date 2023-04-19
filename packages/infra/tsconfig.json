@@ -19,7 +19,10 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types"],
+    "outDir": "./dist" /* Specify an output folder for all emitted files. */
   },
+  // We only want to build the env file that is used by other packages
+  "include": ["env.ts", "index.ts"],
   "exclude": ["node_modules", "cdk.out"]
 }

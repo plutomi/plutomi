@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 import "source-map-support";
 import * as cdk from "aws-cdk-lib";
-import { env } from "../env";
+import { allEnvVariables } from "../env";
 import { PlutomiStack } from "../lib/plutomiStack";
 
 const plutomiApp = new cdk.App();
-const plutomiStack = new PlutomiStack(
+
+// eslint-disable-next-line no-new
+new PlutomiStack(
   plutomiApp,
-  `${env.DEPLOYMENT_ENVIRONMENT}-PlutomiStack`,
+  `${allEnvVariables.DEPLOYMENT_ENVIRONMENT}-PlutomiStack`,
   {
     /* If you don't specify 'env', this stack will be environment-agnostic.
      * Account/Region-dependent features and context lookups will not work,
