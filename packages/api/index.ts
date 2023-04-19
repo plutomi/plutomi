@@ -5,6 +5,7 @@ import compression from "compression";
 import express from "express";
 import next from "next";
 import path from "path";
+import cors from "cors";
 import { env } from "./env";
 
 const dev = env.NODE_ENV !== "production";
@@ -26,6 +27,7 @@ const nextHandler = webApp.getRequestHandler();
   server.set("trust proxy", true);
   server.use(express.json());
   server.use(compression());
+  server.use(cors());
 
   server.get("/api*", async (req, res) => {
     res.status(200).json({ message: "Saul Goodman" });

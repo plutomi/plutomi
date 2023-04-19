@@ -23,6 +23,6 @@
     "outDir": "./dist" /* Specify an output folder for all emitted files. */
   },
   // We only want to build the env file that is used by other packages
-  "include": ["env.ts", "index.ts"],
+  "include": ["./**/*.ts"],
   "exclude": ["node_modules", "cdk.out"]
 }
