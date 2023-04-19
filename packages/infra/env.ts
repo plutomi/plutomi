@@ -17,7 +17,7 @@ const nodeEnv = ["development", "production"] as const;
  *
  *  This schema is imported into other packages, and they .pick() the variables they need.
  */
-const envSchema = z.object({
+export const envSchema = z.object({
   PORT: z.coerce
     .number()
     .int()
