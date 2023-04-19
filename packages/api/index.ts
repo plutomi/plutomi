@@ -40,7 +40,7 @@ const nextHandler = webApp.getRequestHandler();
   });
 
   server.listen(env.PORT, () => {
-    console.log(`[server]: Server is running at http://localhost:${env.PORT}`);
+    console.log(`[server]: Server is running at ${env.BASE_URL}`);
   });
 })().catch((error) => {
   console.error("Error initializing server:", error);
