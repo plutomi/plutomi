@@ -13,8 +13,10 @@ const nodeEnv = ["development", "production"] as const;
  * All environment variables in the app. Each package then picks the ones it needs.
  * The reason we do this is so that we can have a single source of truth for all env vars, and that
  * place is in infra package when things get built / deployed. Locally, we can use .env files.
+ *
+ * This schema is imported into other packages, and they .pick() the variables they need.
  */
-const allEnvVariablesSchema = z
+export const allEnvVariablesSchema = z
   .object({
     PORT: z.coerce
       .number()
@@ -55,7 +57,4 @@ if (!parsed.success) {
 }
 
 // Actual variables used in the infra package and passed on to others when deploying.
-export const infraEnvVariables = parsed.data;
-
-// Schema used across other packages, you would .pick the ones that are needed in each package's env.ts
-export { parsed as allEnvVariablesSchema };
+export const allEnvVariables = parsed.data;
