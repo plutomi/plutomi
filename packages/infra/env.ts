@@ -54,6 +54,38 @@ envSchema
     {
       message: "DOMAIN must be set to the desiredDomain in prod and stage"
     }
+  )
+  .refine(
+    (data) =>
+      data.DEPLOYMENT_ENVIRONMENT === "dev" &&
+      !data.BASE_URL.split(":")[1].includes(String(data.PORT)),
+    {
+      message: "BASE_URL must include the PORT in dev"
+    }
+  )
+
+  .refine(
+    (data) =>
+      data.DEPLOYMENT_ENVIRONMENT === "dev" &&
+      !data.API_URL.split(":")[1].includes(String(data.PORT)),
+    {
+      message: "API_URL must include the PORT in dev"
+    }
+  )
+  .refine(
+    (data) =>
+      data.DEPLOYMENT_ENVIRONMENT !== "dev" && data.CF_HEADER_KEY === undefined,
+    {
+      message: "CF_HEADER_KEY must be set in prod and stage"
+    }
+  )
+  .refine(
+    (data) =>
+      data.DEPLOYMENT_ENVIRONMENT !== "dev" &&
+      data.CF_HEADER_VALUE === undefined,
+    {
+      message: "CF_HEADER_VALUE must be set in prod and stage"
+    }
   );
 
 const parsed = envSchema.safeParse(process.env);
