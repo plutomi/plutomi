@@ -19,8 +19,7 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "typeRoots": ["./node_modules/@types"],
-    "outDir": "./dist" /* Specify an output folder for all emitted files. */
+    "typeRoots": ["./node_modules/@types"]
   },
   // We only want to build the env file that is used by other packages
   "include": ["./**/*.ts"],

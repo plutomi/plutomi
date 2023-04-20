@@ -4,7 +4,6 @@
   "scripts": {
     "test": "jest",
     "cdk": "cdk",
-    "build": "tsc",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
