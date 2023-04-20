@@ -5,7 +5,7 @@ import {
 } from "aws-cdk-lib/aws-ecs";
 import type { IRole } from "aws-cdk-lib/aws-iam";
 import type { Stack } from "aws-cdk-lib";
-import { allEnvVariables } from "../env";
+import { env } from "../env";
 
 type CreateTaskDefinitionProps = {
   stack: Stack;
@@ -35,22 +35,22 @@ export const createTaskDefinition = ({
         // Get the local docker image (@root), build and deploy it
         // ! Must match the ARGs in the docker file for NextJS!
         buildArgs: {
-          NEXT_PUBLIC_BASE_URL: allEnvVariables.BASE_URL
+          NEXT_PUBLIC_BASE_URL: env.BASE_URL
         }
       }),
 
       logging: new AwsLogDriver({
         streamPrefix: "plutomi-api-fargate"
       }),
-      environment: allEnvVariables as unknown as Record<string, string>
+      environment: env as unknown as Record<string, string>
     }
   );
 
   // Add the port mapping to our containers
   container.addPortMappings({
-    containerPort: allEnvVariables.PORT,
-    hostPort: allEnvVariables.PORT
+    containerPort: env.PORT,
+    hostPort: env.PORT
   });
-  
+
   return taskDefinition;
 };

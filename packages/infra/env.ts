@@ -17,7 +17,7 @@ const nodeEnv = ["development", "production"] as const;
  *
  *  This schema is imported into other packages, and they .pick() the variables they need.
  */
-export const envSchema = z.object({
+const envSchema = z.object({
   PORT: z.coerce
     .number()
     .int()
@@ -100,4 +100,4 @@ if (!parsed.success) {
 }
 
 // Actual variables used in the infra package and passed on to others when deploying
-export const allEnvVariables = parsed.data;
+export const env = parsed.data;

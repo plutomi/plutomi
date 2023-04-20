@@ -1,7 +1,7 @@
 import type { Stack } from "aws-cdk-lib";
 import type { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { WafwebaclToAlb } from "@aws-solutions-constructs/aws-wafwebacl-alb";
-import { allEnvVariables } from "../env";
+import { env } from "../env";
 
 type CreateWafProps = {
   stack: Stack;
@@ -12,7 +12,7 @@ export const createWaf = ({
   stack,
   fargateService
 }: CreateWafProps): WafwebaclToAlb => {
-  const deploymentEnvironment = allEnvVariables.DEPLOYMENT_ENVIRONMENT;
+  const deploymentEnvironment = env.DEPLOYMENT_ENVIRONMENT;
 
   const waf = new WafwebaclToAlb(
     stack,
@@ -39,12 +39,12 @@ export const createWaf = ({
               byteMatchStatement: {
                 fieldToMatch: {
                   singleHeader: {
-                    name: allEnvVariables.CF_HEADER_KEY
+                    name: env.CF_HEADER_KEY
                   }
                 },
                 positionalConstraint: "EXACTLY",
                 textTransformations: [],
-                searchString: allEnvVariables.CF_HEADER_VALUE
+                searchString: env.CF_HEADER_VALUE
               }
             },
             action: {

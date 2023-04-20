@@ -14,7 +14,7 @@ import {
 } from "aws-cdk-lib/aws-cloudfront";
 import { type Stack } from "aws-cdk-lib";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
-import { allEnvVariables } from "../env";
+import { env } from "../env";
 
 type CreateDistributionProps = {
   stack: Stack;
@@ -34,17 +34,17 @@ export const createDistribution = ({
     {
       customHeaders: {
         // WAF on the ALB will block requests without this header
-        [allEnvVariables.CF_HEADER_KEY ]: allEnvVariables.CF_HEADER_VALUE
+        [env.CF_HEADER_KEY]: env.CF_HEADER_VALUE
       }
     }
   );
 
   const distribution = new Distribution(
     stack,
-    `${allEnvVariables.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
+    `${env.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
     {
       certificate,
-      domainNames: [allEnvVariables.DOMAIN],
+      domainNames: [env.DOMAIN],
       defaultBehavior: {
         origin: loadBalancerOrigin,
         // Must be enabled!
@@ -71,7 +71,7 @@ export const createDistribution = ({
 
   // eslint-disable-next-line no-new
   new ARecord(stack, "APIAlias", {
-    recordName: allEnvVariables.DOMAIN,
+    recordName: env.DOMAIN,
     zone: hostedZone,
     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
   });
