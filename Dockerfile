@@ -8,7 +8,6 @@ WORKDIR /app
 COPY yarn.lock package.json ./
 COPY packages/api/package.json packages/api/package.json
 COPY packages/web/package.json packages/web/package.json
-COPY packages/infra/package.json packages/infra/package.json
 
 RUN yarn install --frozen-lockfile
 
@@ -19,7 +18,6 @@ WORKDIR /app
 # Copy deps over
 COPY --from=deps /app/packages/api/node_modules packages/api/node_modules
 COPY --from=deps /app/packages/web/node_modules packages/web/node_modules 
-COPY --from=deps /app/packages/infra/node_modules packages/infra/node_modules
 COPY --from=deps /app/node_modules node_modules 
 
 COPY . .
