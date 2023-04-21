@@ -1,21 +1,18 @@
 /* eslint-disable no-console */
-import type { ZodSchema } from "zod";
-import { allEnvVariablesSchema } from "./env";
+import type { ZodTypeAny, z } from "zod";
 
-type ParseEnvProps = {
+type ParseEnvProps<T> = {
   /**
-   * The schema to use for parsing the environment variables.
-   * Defaults to {@link allEnvVariablesSchema}.
-   *
+   * The schema to use for  parsing the environment variables.   *
    */
-  envSchema?: ZodSchema<any>;
+  envSchema: T;
   label: string;
 };
 
-export const parseEnv = ({
-  envSchema = allEnvVariablesSchema,
+export const parseEnv = <T extends ZodTypeAny>({
+  envSchema,
   label
-}: ParseEnvProps) => {
+}: ParseEnvProps<T>): z.infer<T> => {
   const parsed = envSchema.safeParse(process.env);
 
   if (!parsed.success) {

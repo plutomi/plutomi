@@ -1,3 +1,6 @@
-import { parseEnv } from "@plutomi/env";
+import { allEnvVariablesSchema, parseEnv } from "@plutomi/env";
 
-export const env = parseEnv({ label: "INFRA" });
+export const env = parseEnv({
+  envSchema: allEnvVariablesSchema,
+  label: "INFRA"
+});

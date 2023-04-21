@@ -14,7 +14,7 @@ import {
 } from "aws-cdk-lib/aws-cloudfront";
 import { type Stack } from "aws-cdk-lib";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
-import { env } from "@plutomi/env";
+import { env } from "../env";
 
 type CreateDistributionProps = {
   stack: Stack;
