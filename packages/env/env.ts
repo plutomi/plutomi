@@ -9,7 +9,7 @@ const localHost = "localhost";
  * All environment variables in the app. Each package then picks the ones it needs.
  * The reason we do this is so that we can have a single source of truth for all env vars schemas.
  */
-const allEnvVariablesSchema = z.object({
+export const allEnvVariablesSchema = z.object({
   PORT: z.coerce
     .number()
     .int()
@@ -32,18 +32,3 @@ const allEnvVariablesSchema = z.object({
     .string()
     .min(50, "Value must be at least 50 characters long")
 });
-
-export const apiEnvSchema = allEnvVariablesSchema.pick({
-  PORT: true,
-  NODE_ENV: true,
-  DOMAIN: true,
-  NEXT_PUBLIC_BASE_URL: true
-});
-
-export const webEnvSchema = allEnvVariablesSchema.pick({
-  DOMAIN: true,
-  NEXT_PUBLIC_BASE_URL: true
-});
-
-// When deploying with CDK, we need all the env vars
-export const infraEnvSchema = allEnvVariablesSchema;
