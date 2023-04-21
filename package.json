@@ -39,7 +39,8 @@
     "lint": "nx run-many -t=lint --parallel",
     "lint:fix": "nx run-many -t=lint:fix --parallel",
     "tidy": "yarn pretty:fix && yarn lint:fix",
-    "spellcheck": "yarn cspell ."
+    "spellcheck": "yarn cspell .",
+    "deploy:dev": "yarn workspace @plutomi/infra deploy:dev"
   },
   "packageManager": "yarn@3.5.0"
 }

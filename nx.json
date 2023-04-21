@@ -20,6 +20,9 @@
     },
     "dev": {
       "dependsOn": ["^build"]
+    },
+    "deploy": {
+      "dependsOn": ["^build"]
     }
   },
   "defaultBase": "main"

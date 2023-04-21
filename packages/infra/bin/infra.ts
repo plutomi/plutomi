@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import "source-map-support";
 import * as cdk from "aws-cdk-lib";
-import { env } from "@plutomi/env";
+import { env } from "../env";
 import { PlutomiStack } from "../lib/plutomiStack";
 
 const plutomiApp = new cdk.App();
