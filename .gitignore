@@ -26,11 +26,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Ignore files that start with .env
-.env*
 
-# Do not ignore .env.sample
-!/.env.sample
+
+# Ignore files that start with .env except sample
+.env*
+!.env.sample
 
 # vercel
 .vercel
