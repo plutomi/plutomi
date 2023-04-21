@@ -66,6 +66,7 @@ Stages:
 
 ## Environment variables
 
+TODO check the env sample for guidance.
 In the `infra` package, there is a `env.ts` file which has **ALL** of the environment variables for the app. When running locally, each package reads from their local `.env` file and parses it with `zod`. We then `.pick()` the variables that we need from the main schema that is exported from the `infra` package.
 
 When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention when needed.
