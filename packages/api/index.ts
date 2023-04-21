@@ -34,7 +34,7 @@ const nextHandler = webApp.getRequestHandler();
   });
 
   // NextJS App
-  server.get("/*", async (req, res) => nextHandler(req, res));
+  server.all("*", async (req, res) => nextHandler(req, res));
 
   // Listen for errors
   server.on("error", (err) => {
