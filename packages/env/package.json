@@ -1,0 +1,26 @@
+{
+  "name": "@plutomi/env",
+  "version": "0.1.0",
+  "description": "ENV Package for Plutomi.",
+  "main": "index.js",
+  "repository": "https://github.com/plutomi/plutomi",
+  "author": "Plutomi Inc.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "zod": "^3.21.4"
+  },
+  "scripts": {
+    "dev": "ts-node-dev  --exit-child --respawn --transpile-only index.ts",
+    "build": "tsc",
+    "start": "node index.js",
+    "lint": "yarn eslint --ext .ts,.tsx .",
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "rimraf": "^4.4.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.4"
+  }
+}

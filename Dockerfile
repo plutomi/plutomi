@@ -8,6 +8,8 @@ WORKDIR /app
 COPY yarn.lock package.json ./
 COPY packages/api/package.json packages/api/package.json
 COPY packages/web/package.json packages/web/package.json
+COPY packages/env/package.json packages/env/package.json
+
 
 RUN yarn install --frozen-lockfile
 
@@ -18,6 +20,7 @@ WORKDIR /app
 # Copy deps over
 COPY --from=deps /app/packages/api/node_modules packages/api/node_modules
 COPY --from=deps /app/packages/web/node_modules packages/web/node_modules 
+COPY --from=deps /app/packages/env/node_modules packages/env/node_modules
 COPY --from=deps /app/node_modules node_modules 
 
 COPY . .
@@ -37,30 +40,30 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 
-# Copying public NextJS assets
-COPY --from=builder /app/packages/web/public packages/web/public
 
 # Copy API files that were built
 # Modify the outDir tsconfig file in packages/api if you want to change this
 COPY --from=builder /app/packages/api/dist packages/api
-
-# Copy the package.json so that the API can be run
 COPY --from=builder /app/packages/api/package.json packages/api/package.json
-
-# And the node modules
 COPY --from=builder /app/packages/api/node_modules packages/api/node_modules
 
-# Copy starting scripts
-COPY --from=builder /app/package.json package.json
 
-# Copy root node modules
+# Copy the ENV package
+COPY --from=builder /app/packages/env/dist packages/env
+COPY --from=builder /app/packages/env/package.json packages/env/package.json
+COPY --from=builder /app/packages/env/node_modules packages/env/node_modules
+
+
+# Copy the root files 
+COPY --from=builder /app/package.json package.json
 COPY --from=builder /app/node_modules node_modules
 
-# Automatically leverage output traces to reduce image size
+# Automatically leverage output traces to reduce image size # TODO
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next/standalone ./
-# Copy built Nextjs files
+# Copy built Nextjs files, these will be cached by cloudfront
 COPY --from=builder  --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
+COPY --from=builder /app/packages/web/public packages/web/public
 
 USER nextjs
 
