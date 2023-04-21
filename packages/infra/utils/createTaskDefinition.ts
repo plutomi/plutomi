@@ -35,7 +35,7 @@ export const createTaskDefinition = ({
         // Get the local docker image (@root), build and deploy it
         // ! Must match the ARGs in the docker file for NextJS!
         buildArgs: {
-          NEXT_PUBLIC_BASE_URL: env.BASE_URL
+          NEXT_PUBLIC_BASE_URL: env.NEXT_PUBLIC_BASE_URL
         }
       }),
 

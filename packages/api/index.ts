@@ -42,7 +42,8 @@ const nextHandler = webApp.getRequestHandler();
   });
 
   server.listen(env.PORT, () => {
-    console.log(`[server]: Server is running at ${env.BASE_URL}`);
+    console.log("ALL ENV VARIABLES IN API", env);
+    console.log(`[server]: Server is running at ${env.NEXT_PUBLIC_BASE_URL}`);
   });
 })().catch((error) => {
   console.error("Error initializing server:", error);
