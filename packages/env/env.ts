@@ -12,6 +12,7 @@ export const allEnvVariablesSchema = z.object({
   NODE_ENV: z.nativeEnum(NodeEnvironment),
   DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
   DOMAIN: z.string(), // Used by infra to setup DNS stuff
+  // ! For NextJS, make sure to add to packages/web/env.ts as well as the Dockerfile
   NEXT_PUBLIC_BASE_URL: z.string().url(), // Used by API and web
   // WAF Will block requests that don't include this header
   CF_HEADER_KEY: z.string(),

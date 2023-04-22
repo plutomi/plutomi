@@ -29,7 +29,7 @@ COPY --from=deps /app/node_modules node_modules
 
 COPY . .
 
-# ENV NX_DAEMON=false
+ARG NEXT_PUBLIC_WEBSITE_URL
 
 ## TODO Replace this
 RUN yarn build
