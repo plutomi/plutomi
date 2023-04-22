@@ -48,7 +48,7 @@ export const createTaskDefinition = ({
 
   // Add the port mapping to our containers
   container.addPortMappings({
-    containerPort: env.PORT
+    containerPort: Number(env.PORT)
   });
 
   return taskDefinition;

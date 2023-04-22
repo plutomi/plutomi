@@ -10,14 +10,5 @@ export const getHostedZone = ({ stack }: GetHostedZoneProps): IHostedZone => {
     domainName: "plutomi.com"
   });
 
-  // ! TODO:
-  // We were using:
-  //   HostedZone.fromHostedZoneAttributes(this, "plutomi-hosted-zone", {
-  //     hostedZoneId: envVars.HOSTED_ZONE_ID,
-  //     zoneName: DOMAIN_NAME
-  //   });
-
-  // before
-
   return hostedZone;
 };

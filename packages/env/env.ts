@@ -7,7 +7,14 @@ import { DeploymentEnvironment, NodeEnvironment } from "./consts";
  * The reason we do this is so that we can have a single source of truth for all env vars schemas.
  */
 export const allEnvVariablesSchema = z.object({
-  PORT: z.coerce.number().int().positive().gte(1024).lte(65535),
+  PORT: z.coerce
+    .number()
+    .int()
+    .positive()
+    .gte(1024)
+    .lte(65535)
+    // CDK Requires this to be a string in the task definition port mappings because of reasons
+    .transform((val) => val.toString()),
   NODE_ENV: z.nativeEnum(NodeEnvironment),
   DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
   DOMAIN: z.string(), // Used by infra to setup DNS stuff

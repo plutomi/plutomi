@@ -69,8 +69,7 @@ export const createDistribution = ({
     }
   );
 
-  // eslint-disable-next-line no-new
-  new ARecord(stack, "APIAlias", {
+  void new ARecord(stack, "APIAlias", {
     recordName: env.DOMAIN,
     zone: hostedZone,
     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
