@@ -1,20 +1,14 @@
 /* eslint-disable no-console */
 import * as z from "zod";
 import { DeploymentEnvironment, NodeEnvironment } from "./consts";
+import { awsRegionSchema, portSchema } from "./customSchemas";
 
 /**
  * All environment variables in the app. Each package then picks the ones it needs.
  * The reason we do this is so that we can have a single source of truth for all env vars schemas.
  */
 export const allEnvVariablesSchema = z.object({
-  PORT: z.coerce
-    .number()
-    .int()
-    .positive()
-    .gte(1024)
-    .lte(65535)
-    // CDK Requires this to be a string in the task definition port mappings because of reasons
-    .transform((val) => val.toString()),
+  PORT: portSchema,
   NODE_ENV: z.nativeEnum(NodeEnvironment),
   DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
   DOMAIN: z.string(), // Used by infra to setup DNS stuff
@@ -23,5 +17,7 @@ export const allEnvVariablesSchema = z.object({
   CF_HEADER_KEY: z.string(),
   CF_HEADER_VALUE: z
     .string()
-    .min(50, "Value must be at least 50 characters long")
+    .min(50, "Value must be at least 50 characters long"),
+  AWS_ACCOUNT_ID: z.string(),
+  AWS_REGION: awsRegionSchema
 });
