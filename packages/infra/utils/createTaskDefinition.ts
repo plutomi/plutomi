@@ -5,7 +5,7 @@ import {
 } from "aws-cdk-lib/aws-ecs";
 import type { IRole } from "aws-cdk-lib/aws-iam";
 import type { Stack } from "aws-cdk-lib";
-import { env } from "@plutomi/env";
+import { env } from "../env";
 
 type CreateTaskDefinitionProps = {
   stack: Stack;
@@ -31,7 +31,7 @@ export const createTaskDefinition = ({
   const container = taskDefinition.addContainer(
     "plutomi-api-fargate-container",
     {
-      image: ContainerImage.fromAsset(".", {
+      image: ContainerImage.fromAsset("../../", {
         // Get the local docker image (@root), build and deploy it
         // ! Must match the ARGs in the docker file for NextJS!
         buildArgs: {

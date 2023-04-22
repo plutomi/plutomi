@@ -1,7 +1,7 @@
 import type { Stack } from "aws-cdk-lib";
 import type { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { WafwebaclToAlb } from "@aws-solutions-constructs/aws-wafwebacl-alb";
-import { env } from "@plutomi/env";
+import { env } from "../env";
 
 type CreateWafProps = {
   stack: Stack;
