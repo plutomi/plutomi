@@ -23,6 +23,9 @@ type CreateDistributionProps = {
   hostedZone: IHostedZone;
 };
 
+// ! TODO: Remove - don't want a conflict with maintenance page, create a separate PR
+const temporaryDomain = `temporary.${env.DOMAIN}`;
+
 export const createDistribution = ({
   stack,
   fargateService,
@@ -44,7 +47,7 @@ export const createDistribution = ({
     `${env.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
     {
       certificate,
-      domainNames: [env.DOMAIN],
+      domainNames: [temporaryDomain],
       defaultBehavior: {
         origin: loadBalancerOrigin,
         // Must be enabled!
@@ -70,7 +73,7 @@ export const createDistribution = ({
   );
 
   void new ARecord(stack, "APIAlias", {
-    recordName: env.DOMAIN,
+    recordName: temporaryDomain,
     zone: hostedZone,
     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
   });
