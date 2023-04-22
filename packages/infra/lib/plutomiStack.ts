@@ -7,7 +7,6 @@ import {
   createCluster,
   createFargateService,
   getHostedZone,
-  createWaf,
   createDistribution
 } from "../utils";
 import { getACMCertificate } from "../utils/getAcmCertificate";
@@ -29,12 +28,6 @@ export class PlutomiStack extends Stack {
       cluster,
       taskDefinition,
       certificate
-    });
-
-    createWaf({
-      // ! TODO: This is attached to the ALB now, not the distribution
-      stack: this,
-      fargateService
     });
 
     createDistribution({
