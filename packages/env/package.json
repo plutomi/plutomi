@@ -2,7 +2,6 @@
   "name": "@plutomi/env",
   "version": "0.1.0",
   "description": "ENV Package for Plutomi.",
-  "main": "index.js",
   "repository": "https://github.com/plutomi/plutomi",
   "author": "Plutomi Inc.",
   "license": "Apache-2.0",
