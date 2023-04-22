@@ -39,7 +39,7 @@ export const createFargateService = ({
 
   // Health Checks
   fargateService.targetGroup.configureHealthCheck({
-    interval: Duration.seconds(5),
+    interval: Duration.seconds(10),
     healthyThresholdCount: 2,
     unhealthyThresholdCount: 2,
     timeout: Duration.seconds(5),
