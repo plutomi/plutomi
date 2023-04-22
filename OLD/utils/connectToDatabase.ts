@@ -1,6 +1,5 @@
 import * as mongoDB from 'mongodb';
 import { AllEntities } from '../../@types/entities/allEntities';
-import { envVars } from '../../packages/infra/env';
 
 export const collectionName = 'items';
 export const databaseName = 'plutomi';

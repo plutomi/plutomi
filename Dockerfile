@@ -2,7 +2,11 @@
 FROM node:18-alpine AS deps
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat 
+
+# These are needed due to a dependency in NX needing it -> node-gyp-build
+RUN apk add --no-cache python3 make g++
+
 WORKDIR /app
 
 COPY yarn.lock package.json ./
@@ -25,7 +29,11 @@ COPY --from=deps /app/node_modules node_modules
 
 COPY . .
 
+# ENV NX_DAEMON=false
+
+## TODO Replace this
 RUN yarn build
+
 
 # Production image, copy all the files and run next
 FROM node:18-alpine AS runner

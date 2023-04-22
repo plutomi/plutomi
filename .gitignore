@@ -41,9 +41,11 @@ next-env.d.ts
 
 # Infra package
 cdk.out
+cdk.*
 
 # Local yarn files
 .yarn
 
 # Built directories
 dist/
+
