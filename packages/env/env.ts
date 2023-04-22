@@ -19,5 +19,6 @@ export const allEnvVariablesSchema = z.object({
     .string()
     .min(50, "Value must be at least 50 characters long"),
   AWS_ACCOUNT_ID: z.string(),
-  AWS_REGION: awsRegionSchema
+  AWS_REGION: awsRegionSchema,
+  ACM_CERTIFICATE_ID: z.string().uuid()
 });

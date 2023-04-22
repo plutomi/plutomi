@@ -3,6 +3,7 @@ import {
   Certificate
 } from "aws-cdk-lib/aws-certificatemanager";
 import type { Stack } from "aws-cdk-lib";
+import { env } from "../env";
 
 type GetACMCertificateProps = {
   stack: Stack;
@@ -11,12 +12,10 @@ type GetACMCertificateProps = {
 export const getACMCertificate = ({
   stack
 }: GetACMCertificateProps): ICertificate => {
-  const { region, account } = stack;
-
   const certificate = Certificate.fromCertificateArn(
     stack,
     "PlutomiCertificate",
-    `arn:aws:acm:${region}:${account}:certificate/ACM_CERTIFICATE_ID_TODO`
+    `arn:aws:acm:${env.AWS_REGION}:${env.AWS_ACCOUNT_ID}:certificate/${env.ACM_CERTIFICATE_ID}`
   );
   return certificate;
 };
