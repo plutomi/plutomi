@@ -41,7 +41,7 @@ next-env.d.ts
 
 # Infra package
 cdk.out
-cdk.*
+cdk.context.json
 
 # Local yarn files
 .yarn
