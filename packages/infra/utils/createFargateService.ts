@@ -1,4 +1,4 @@
-import type { Cluster, FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
+import type { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
@@ -6,7 +6,6 @@ import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patte
 
 type CreateFargateServiceProps = {
   stack: Stack;
-  cluster: Cluster;
   taskDefinition: FargateTaskDefinition;
   certificate: ICertificate;
   vpc: Vpc;
@@ -14,7 +13,6 @@ type CreateFargateServiceProps = {
 
 export const createFargateService = ({
   stack,
-  cluster,
   taskDefinition,
   certificate,
   vpc
@@ -23,13 +21,9 @@ export const createFargateService = ({
     stack,
     "PlutomiService",
     {
-      cluster,
+      vpc,
       certificate,
-      taskDefinition,
-      desiredCount: 1,
-      listenerPort: 443,
-      redirectHTTP: true,
-      vpc
+      taskDefinition
     }
   );
 
