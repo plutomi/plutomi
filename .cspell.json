@@ -21,6 +21,9 @@
     "Cooldown",
     "deregistration",
     "fargate",
+    "heroicons",
+    "joswayski",
+    "mazupicua",
     "nrwl",
     "Plutomi",
     "praguru",
@@ -30,9 +33,7 @@
     "Valerio",
     "wafv2",
     "wafwebacl",
-    "webacl",
-    "joswayski",
-    "mazupicua"
+    "webacl"
   ],
   "overrides": []
 }
