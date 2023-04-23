@@ -16,7 +16,7 @@ export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: PlutomiStackProps) {
     super(scope, id, props);
 
-    const vpc = createVpc({ stack: this });
+    const { vpc, natGatewayProvider } = createVpc({ stack: this });
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
     const hostedZone = getHostedZone({ stack: this });
@@ -25,7 +25,8 @@ export class PlutomiStack extends Stack {
       stack: this,
       taskDefinition,
       certificate,
-      vpc
+      vpc,
+      natGatewayProvider
     });
 
     createDistribution({
