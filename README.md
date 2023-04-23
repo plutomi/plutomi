@@ -43,7 +43,7 @@ Stages:
 
 - Node 18
 - Install [Docker](https://docs.docker.com/get-docker/)
-- Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `npm install -g aws-cdk`
+- Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global aws-cdk`
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
 - Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
@@ -66,24 +66,23 @@ Stages:
 
 ## Environment variables
 
-TODO check the env sample for guidance.
-In the `infra` package, there is a `env.ts` file which has **ALL** of the environment variables for the app. When running locally, each package reads from their local `.env` file and parses it with `zod`. We then `.pick()` the variables that we need from the main schema that is exported from the `infra` package.
+> Check the .env.sample in each package for guidance
 
-When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention when needed.
+In **packages/env**, there is an `env.ts` file which has **ALL** of the environment variables for the app. When running locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` where we `.pick()` the variables that we need from the main schema.
+
+When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention where needed.
 
 To add an environment variable:
 
-1. Add it to the `env.ts` file in the **infra** package
-2. Add it to the `env.ts` file in the specific package it is being used and `pick()` it so zod parses it.
-3. Add it to the `.env` file in that package so that it gets loaded
+1. Add it to the `env.ts` file in the **packages/env**
+2. `pick()` the environment variable in the specific package it is being used in so it gets parsed by zod
+3. Add it to the `.env` file so you can test the app locally
 
 ## Language, Tooling, & Infrastructure
 
-Typescript all the things. Infrastructure is managed by CDK aside from the DB.
-
-The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
-
 > Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
+
+Typescript all the things. Infrastructure is managed by CDK aside from the DB. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
 
 #### MongoDB
 
