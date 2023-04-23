@@ -6,3 +6,4 @@ dist
 OLD*
 .github
 .yarn
+cdk.out*
