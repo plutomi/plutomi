@@ -41,9 +41,9 @@ Stages:
 
 ## Prerequisites
 
-- Node 18
-- Install [Docker](https://docs.docker.com/get-docker/)
-- Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global aws-cdk`
+- [Node 18](https://nodejs.org/en/download)
+- [Docker](https://docs.docker.com/get-docker/)
+- Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global add aws-cdk`
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
 - Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
@@ -74,7 +74,7 @@ When deploying, the `infra` package has all of the environment variables and pas
 
 To add an environment variable:
 
-1. Add it to the `env.ts` file in the **packages/env**
+1. Add it to the `env.ts` file in **packages/env**
 2. `pick()` the environment variable in the specific package it is being used in so it gets parsed by zod
 3. Add it to the `.env` file so you can test the app locally
 
