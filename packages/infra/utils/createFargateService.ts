@@ -35,7 +35,9 @@ export const createFargateService = ({
         // Ensure private subnets are used for tasks
         subnets: vpc.privateSubnets
       },
-      desiredCount: 1
+      desiredCount: 1,
+      serviceName: "plutomi-app",
+      loadBalancerName: "plutomi-load-balancer"
     }
   );
 
