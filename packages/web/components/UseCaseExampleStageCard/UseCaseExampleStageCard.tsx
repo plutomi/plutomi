@@ -1,7 +1,6 @@
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 
 export type UseCaseExampleStageCardProps = {
-  id: string | number;
   stageTitle: string;
   totalApplicants: number;
 };
