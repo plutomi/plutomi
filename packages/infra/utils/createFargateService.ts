@@ -1,6 +1,7 @@
 import type { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-import type { Vpc } from "aws-cdk-lib/aws-ec2";
+import type { FckNatInstanceProvider } from "cdk-fck-nat";
+import { Port, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 
@@ -9,13 +10,15 @@ type CreateFargateServiceProps = {
   taskDefinition: FargateTaskDefinition;
   certificate: ICertificate;
   vpc: Vpc;
+  natGatewayProvider: FckNatInstanceProvider;
 };
 
 export const createFargateService = ({
   stack,
   taskDefinition,
   certificate,
-  vpc
+  vpc,
+  natGatewayProvider
 }: CreateFargateServiceProps): ApplicationLoadBalancedFargateService => {
   const fargateService = new ApplicationLoadBalancedFargateService(
     stack,
@@ -23,7 +26,15 @@ export const createFargateService = ({
     {
       vpc,
       certificate,
-      taskDefinition
+      taskDefinition,
+      // The load balancer will have a public IP
+      // assignPublicIp: true, // ! TODO: Remove this
+      // But our containers will not, they have to get accessed through the load balancer
+      // And all outbound connections go through the NAT gateway
+      taskSubnets: {
+        subnets: vpc.privateSubnets
+      },
+      desiredCount: 1
     }
   );
 
@@ -62,7 +73,12 @@ export const createFargateService = ({
     scaleOutCooldown: Duration.seconds(60)
   });
 
-  fargateService.node.addDependency(vpc);
+  // TODO: Remove one of these
+  // Allows our servers to connect to the nat gateways
+  fargateService.service.connections.securityGroups.forEach((sg) => {
+    natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(443));
+    natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(80));
+  });
 
   return fargateService;
 };
