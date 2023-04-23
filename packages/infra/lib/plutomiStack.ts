@@ -27,7 +27,8 @@ export class PlutomiStack extends Stack {
       stack: this,
       cluster,
       taskDefinition,
-      certificate
+      certificate,
+      vpc
     });
 
     createDistribution({

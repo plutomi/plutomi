@@ -1,5 +1,6 @@
 import type { Cluster, FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
+import type { Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 
@@ -8,13 +9,15 @@ type CreateFargateServiceProps = {
   cluster: Cluster;
   taskDefinition: FargateTaskDefinition;
   certificate: ICertificate;
+  vpc: Vpc;
 };
 
 export const createFargateService = ({
   stack,
   cluster,
   taskDefinition,
-  certificate
+  certificate,
+  vpc
 }: CreateFargateServiceProps): ApplicationLoadBalancedFargateService => {
   const fargateService = new ApplicationLoadBalancedFargateService(
     stack,
@@ -63,6 +66,8 @@ export const createFargateService = ({
     scaleInCooldown: Duration.seconds(60),
     scaleOutCooldown: Duration.seconds(60)
   });
+
+  fargateService.node.addDependency(vpc);
 
   return fargateService;
 };

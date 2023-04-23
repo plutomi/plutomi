@@ -12,5 +12,7 @@ export const createCluster = ({ stack, vpc }: CreateClusterProps): Cluster => {
     vpc
   });
 
+  cluster.node.addDependency(vpc);
+
   return cluster;
 };

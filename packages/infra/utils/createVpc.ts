@@ -20,7 +20,7 @@ export const createVpc = ({ stack }: CreateVPCProps): Vpc => {
     maxAzs: 3,
     // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
     // We are using fck-nat-gateway instead https://fck-nat.dev/deploying/
-    natGateways: 0,
+    natGateways: 3,
     natGatewayProvider
   });
 
