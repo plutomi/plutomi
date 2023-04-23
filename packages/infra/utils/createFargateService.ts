@@ -27,11 +27,12 @@ export const createFargateService = ({
       vpc,
       certificate,
       taskDefinition,
-      // The load balancer will have a public IP
-      // assignPublicIp: true, // ! TODO: Remove this
-      // But our containers will not, they have to get accessed through the load balancer
-      // And all outbound connections go through the NAT gateway
+      // The load balancer will be public, but our tasks will not.
+      // Outbound traffic for the tasks will be provided by the NAT Gateway
+      assignPublicIp: false,
+      publicLoadBalancer: true,
       taskSubnets: {
+        // Ensure private subnets are used for tasks
         subnets: vpc.privateSubnets
       },
       desiredCount: 1
