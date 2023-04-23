@@ -28,7 +28,8 @@ export const createFargateService = ({
       taskDefinition,
       desiredCount: 1,
       listenerPort: 443,
-      redirectHTTP: true
+      redirectHTTP: true,
+      vpc
     }
   );
 
