@@ -32,7 +32,6 @@ COPY . .
 
 ARG NEXT_PUBLIC_WEBSITE_URL
 
-## TODO Replace this
 RUN yarn build
 
 

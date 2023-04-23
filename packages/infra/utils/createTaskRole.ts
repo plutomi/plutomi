@@ -6,7 +6,6 @@ type CreateTaskRoleProps = {
 };
 
 export const createTaskRole = ({ stack }: CreateTaskRoleProps): IRole => {
-  // IAM inline role - the service principal is required
   const taskRole = new Role(stack, "plutomi-api-fargate-role", {
     assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com")
   });

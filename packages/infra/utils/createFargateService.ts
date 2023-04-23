@@ -65,13 +65,8 @@ export const createFargateService = ({
   });
 
   scaling.scaleOnRequestCount("plutomi-request-scaling", {
-    requestsPerTarget: 100,
+    requestsPerTarget: 50,
     targetGroup: fargateService.targetGroup,
-    scaleInCooldown: Duration.seconds(60),
-    scaleOutCooldown: Duration.seconds(60)
-  });
-  scaling.scaleOnCpuUtilization("CpuScaling", {
-    targetUtilizationPercent: 50,
     scaleInCooldown: Duration.seconds(60),
     scaleOutCooldown: Duration.seconds(60)
   });
@@ -79,7 +74,7 @@ export const createFargateService = ({
   // TODO: Remove one of these
   // Allows our servers to connect to the nat gateways
   fargateService.service.connections.securityGroups.forEach((sg) => {
-    natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(443));
+    // natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(443));
     natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(80));
   });
 

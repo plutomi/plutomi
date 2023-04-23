@@ -2,6 +2,7 @@ import { allEnvVariablesSchema, parseEnv } from "@plutomi/env";
 import * as dotenv from "dotenv";
 
 dotenv.config();
+
 export const env = parseEnv({
   envSchema: allEnvVariablesSchema.pick({
     PORT: true,

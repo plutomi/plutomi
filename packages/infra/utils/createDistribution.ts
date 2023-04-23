@@ -33,7 +33,7 @@ export const createDistribution = ({
     fargateService.loadBalancer,
     {
       customHeaders: {
-        // WAF on the ALB will block requests without this header
+        // In the future, WAF on the ALB will block requests without this header
         [env.CF_HEADER_KEY]: env.CF_HEADER_VALUE
       }
     }

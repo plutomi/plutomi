@@ -5,7 +5,8 @@ import { awsRegionSchema, portSchema } from "./customSchemas";
 
 /**
  * All environment variables in the app. Each package then picks the ones it needs.
- * The reason we do this is so that we can have a single source of truth for all env vars schemas.
+ * The reason we do this is so that we can have a single source of truth for all env var schemas, and when deploying, this is the first
+ * point of entry for the app. This way, we can validate all env vars before we do anything else.
  */
 export const allEnvVariablesSchema = z.object({
   PORT: portSchema,

@@ -21,16 +21,6 @@
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"]
   },
-  // We only want to build the env file that is used by other packages
   "include": ["./**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "cdk.out",
-    "dist",
-    "test",
-    "test/**/*",
-    "test/**/*.*",
-    "test/**/.*",
-    "test/**/.*.*"
-  ]
+  "exclude": ["node_modules", "cdk.out", "dist", "test"]
 }

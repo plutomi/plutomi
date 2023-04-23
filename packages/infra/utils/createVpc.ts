@@ -21,7 +21,7 @@ export const createVpc = ({ stack }: CreateVPCProps): CreateVPCResult => {
     instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO)
   });
 
-  // ! TODO: Set natGateways and AZs equal
+  // ! TODO: Set natGateways and AZs equal to reduce cross-az costs
   const vpc = new Vpc(stack, "plutomi-api-fargate-vpc", {
     vpcName: "plutomi-vpc",
     maxAzs: 3,
