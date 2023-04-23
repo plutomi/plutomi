@@ -53,21 +53,17 @@ export const createDistribution = ({
         // Disabled for /api/ routes by default, cache on an as needed basis under additional behaviors
         cachePolicy: CachePolicy.CACHING_DISABLED,
         allowedMethods: AllowedMethods.ALLOW_ALL
-      },
-
-      // Cache static routes
-      additionalBehaviors: {
-        "/_next/*": {
-          origin: loadBalancerOrigin,
-          cachePolicy: CachePolicy.CACHING_OPTIMIZED
-        },
-        "/public/*": {
-          origin: loadBalancerOrigin,
-          cachePolicy: CachePolicy.CACHING_OPTIMIZED
-        }
       }
     }
   );
+
+  // NextJS Cacheable Routes
+  ["/_next/*", "/public/*"].forEach((path) => {
+    distribution.addBehavior(path, loadBalancerOrigin, {
+      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
+      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER
+    });
+  });
 
   void new ARecord(stack, "APIAlias", {
     recordName: env.DOMAIN,
