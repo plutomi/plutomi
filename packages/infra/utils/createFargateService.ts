@@ -71,11 +71,11 @@ export const createFargateService = ({
     scaleOutCooldown: Duration.seconds(60)
   });
 
-  // TODO: Remove one of these
   // Allows our servers to connect to the nat gateways
   fargateService.service.connections.securityGroups.forEach((sg) => {
-    // natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(443));
-    natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(80));
+    [443].forEach((port) => {
+      natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(port));
+    });
   });
 
   return fargateService;
