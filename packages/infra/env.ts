@@ -1,21 +1,9 @@
-/* eslint-disable no-console */
+import * as dotenv from "dotenv";
+import { allEnvVariablesSchema, parseEnv } from "@plutomi/env";
 
-import { z } from "zod";
+dotenv.config();
 
-const schema = z.object({
-  DEPLOYMENT_ENVIRONMENT: z.enum(["prod", "stage", "dev"]),
-  DOMAIN: z.string().url()
+export const env = parseEnv({
+  envSchema: allEnvVariablesSchema,
+  label: "INFRA"
 });
-
-const parsed = schema.safeParse(process.env);
-
-if (!parsed.success) {
-  parsed.error.issues.forEach((issue) => {
-    console.error("\n❌ Invalid environment variable:");
-    console.error(issue);
-  });
-
-  process.exit(1);
-}
-
-export const env = parsed.data;

@@ -11,21 +11,28 @@
     "**/.cdk.out/**",
     "yarn-error.log",
     "**/tsconfig*",
-    "README.md",
     "Dockerfile",
     "cdk.json"
   ],
   "words": [
     "cacheable",
+    "certificatemanager",
+    "consts",
+    "Cooldown",
+    "deregistration",
     "fargate",
+    "nrwl",
     "Plutomi",
+    "praguru",
     "tailwindcss",
     "TLDR",
-    "nrwl",
+    "trenchard",
     "Valerio",
-    "certificatemanager",
     "wafv2",
-    "deregistration"
+    "wafwebacl",
+    "webacl",
+    "joswayski",
+    "mazupicua"
   ],
   "overrides": []
 }

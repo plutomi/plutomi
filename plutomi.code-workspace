@@ -15,13 +15,23 @@
     {
       "path": "packages/infra",
       "name": "infra"
+    },
+    {
+      "path": "packages/env",
+      "name": "env"
     }
   ],
   "settings": {
     "eslint.workingDirectories": [
       { "directory": "packages/api", "changeProcessCWD": true },
       { "directory": "packages/web", "changeProcessCWD": true },
-      { "directory": "packages/infra", "changeProcessCWD": true }
-    ]
+      { "directory": "packages/infra", "changeProcessCWD": true },
+      { "directory": "packages/env", "changeProcessCWD": true }
+    ],
+    "search.exclude": {
+      "**/node_modules": true,
+      "cdk.out": true,
+      "**/dist": true
+    }
   }
 }

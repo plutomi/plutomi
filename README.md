@@ -41,8 +41,9 @@ Stages:
 
 ## Prerequisites
 
-- Node 18
-- Install [Docker](https://docs.docker.com/get-docker/)
+- [Node 18](https://nodejs.org/en/download)
+- [Docker](https://docs.docker.com/get-docker/)
+- Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global add aws-cdk`
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
 - Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
@@ -51,20 +52,37 @@ Stages:
 
 - `yarn` - Install deps.
   - We are using a Monorepo so shared deps will be at the `root` while workspace specific deps will be installed in the appropriate workspace. Yarn workspaces paired with [nx](https://nx.dev/) is a killer combo
-- `yarn build` - Build any dependencies of the app like shared types
+- `yarn build` - Build the app, the correct ordering is set in the `nx.json` file for dependencies across packages like shared types
+
 - `yarn dev` - Start the app
+
 - `yarn pretty` & `yarn pretty:fix` - Run prettier & fix any issues
+
 - `yarn lint` & `yarn lint:fix` - Run the linter & fix any issues
+
 - `yarn tidy` - Runs prettier and fix sequentially
+<!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
+
+## Environment variables
+
+> Check the .env.sample in each package for guidance
+
+In **packages/env**, there is an `env.ts` file which has **ALL** of the environment variables for the app. When running locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` where we `.pick()` the variables that we need from the main schema.
+
+When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention where needed.
+
+To add an environment variable:
+
+1. Add it to the `env.ts` file in **packages/env**
+2. `pick()` the environment variable in the specific package it is being used in so it gets parsed by zod
+3. Add it to the `.env` file so you can test the app locally
 
 ## Language, Tooling, & Infrastructure
 
-Typescript all the things. Infrastructure is managed by CDK aside from the DB.
-
-The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
-
 > Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
+
+Typescript all the things. Infrastructure is managed by CDK aside from the DB. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
 
 #### MongoDB
 
@@ -74,15 +92,13 @@ We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to Dyn
 
 Open an issue! Or [DM me on Twitter](https://twitter.com/notjoswayski) or email jose@plutomi.com
 
-## Contributing
-
-To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
-
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
 
-## Contributors ✨
+## Contributing & Contributors ✨
+
+To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 

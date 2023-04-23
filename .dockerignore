@@ -22,3 +22,7 @@ LICENSE
 .prettierrc.json
 .all-contributorsrc
 .git
+
+
+# https://github.com/aws/aws-cdk/issues/3899#issuecomment-580394612
+packages/infra*

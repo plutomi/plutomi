@@ -26,8 +26,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
+
+
+# Ignore files that start with .env except sample
+.env*
+!.env.sample
 
 # vercel
 .vercel
@@ -36,8 +39,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Infra package
 cdk.out
-.env*
+cdk.context.json
 
-
+# Local yarn files
 .yarn
+
+# Built directories
+dist/
+
+.next*
