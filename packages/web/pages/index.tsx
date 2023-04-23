@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import { nanoid } from "nanoid";
 import axios from "axios";
+import { EnvelopeIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Hero } from "../components/Hero";
 import { UseCaseList } from "../components/UseCaseList";
 import { Notified } from "../components/Notified";
@@ -65,7 +65,7 @@ const Main = ({ commits }: HomepageProps) => {
                           {commit.name} - {commit.username}
                         </p>
                         <p className="mt-2 flex items-center text-lg text-gray-500">
-                          <MailIcon
+                          <EnvelopeIcon
                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                             aria-hidden="true"
                           />
@@ -187,7 +187,7 @@ const Main = ({ commits }: HomepageProps) => {
 
 export async function getStaticProps() {
   const commitsFromEachBranch = 8;
-  const allCommits: Object[] = []; // TODO enable
+  const allCommits: Array<Record<string, string>> = []; // TODO enable
 
   const { data } = await axios.get(
     `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
@@ -198,7 +198,7 @@ export async function getStaticProps() {
     }
   );
 
-  // @ts-ignore
+  // @ts-expect-error
   data.map(async (commit) => {
     const isBot = commit.commit.author.name === "allcontributors[bot]";
 
@@ -217,19 +217,19 @@ export async function getStaticProps() {
   });
 
   // Sort by commit timestamp
-  // @ts-ignore
+  // @ts-expect-error
   const orderedCommits = _.orderBy(
     allCommits,
     (commit: Object) => commit.date,
     ["desc"]
   );
 
-  // @ts-ignore
+  // @ts-expect-error
   const commits = orderedCommits.filter(
-    // @ts-ignore
+    // @ts-expect-error
     (value, index, self) =>
       index ===
-      // @ts-ignore
+      // @ts-expect-error
       self.findIndex((t) => t.url === value.url && t.date === value.date)
   );
 
