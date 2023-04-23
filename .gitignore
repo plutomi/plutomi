@@ -49,3 +49,4 @@ cdk.context.json
 # Built directories
 dist/
 
+.next*
