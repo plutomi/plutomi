@@ -26,9 +26,9 @@ a major refactor. You can check the progress and all changes on
 GitHub or DM me on Twitter or by email if you have any questions
 :)`;
 
-const myEmail = `jose@plutomi.com`;
+const myEmail = "jose@plutomi.com";
 
- const  Main({ commits }: HomepageProps)  => {
+const Main = ({ commits }: HomepageProps) => {
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -183,7 +183,7 @@ const myEmail = `jose@plutomi.com`;
       </div>
     </div>
   );
-}
+};
 
 export async function getStaticProps() {
   const commitsFromEachBranch = 8;
@@ -198,7 +198,7 @@ export async function getStaticProps() {
     }
   );
 
-        // @ts-ignore
+  // @ts-ignore
   data.map(async (commit) => {
     const isBot = commit.commit.author.name === "allcontributors[bot]";
 
@@ -217,17 +217,18 @@ export async function getStaticProps() {
   });
 
   // Sort by commit timestamp
-        // @ts-ignore
-  const orderedCommits = _.orderBy(allCommits, (commit: Object) => commit.date, [
-    "desc"
-  ]);
+  // @ts-ignore
+  const orderedCommits = _.orderBy(
+    allCommits,
+    (commit: Object) => commit.date,
+    ["desc"]
+  );
 
   // @ts-ignore
   const commits = orderedCommits.filter(
-      // @ts-ignore
-      (value, index, self) =>
+    // @ts-ignore
+    (value, index, self) =>
       index ===
-
       // @ts-ignore
       self.findIndex((t) => t.url === value.url && t.date === value.date)
   );
@@ -239,5 +240,4 @@ export async function getStaticProps() {
   };
 }
 
-
-export default Main
+export default Main;
