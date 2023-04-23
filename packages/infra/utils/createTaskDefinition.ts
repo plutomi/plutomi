@@ -28,27 +28,24 @@ export const createTaskDefinition = ({
     }
   );
 
-  const container = taskDefinition.addContainer(
-    "plutomi-api-fargate-container",
-    {
-      image: ContainerImage.fromAsset("../../", {
-        // Get the local docker image (@root), build and deploy it
-        // ! Must match the ARGs in the docker file for NextJS!
-        buildArgs: {
-          NEXT_PUBLIC_BASE_URL: env.NEXT_PUBLIC_BASE_URL
-        }
-      }),
+  taskDefinition.addContainer("plutomi-api-fargate-container", {
+    portMappings: [
+      {
+        containerPort: Number(env.PORT)
+      }
+    ],
+    image: ContainerImage.fromAsset("../../", {
+      // Get the local docker image (@root), build and deploy it
+      // ! Must match the ARGs in the docker file for NextJS!
+      buildArgs: {
+        NEXT_PUBLIC_BASE_URL: env.NEXT_PUBLIC_BASE_URL
+      }
+    }),
 
-      logging: new AwsLogDriver({
-        streamPrefix: "plutomi-api-fargate"
-      }),
-      environment: env as unknown as Record<string, string>
-    }
-  );
-
-  // Add the port mapping to our containers
-  container.addPortMappings({
-    containerPort: Number(env.PORT)
+    logging: new AwsLogDriver({
+      streamPrefix: "plutomi-api-fargate"
+    }),
+    environment: env as unknown as Record<string, string>
   });
 
   return taskDefinition;
