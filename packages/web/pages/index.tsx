@@ -44,7 +44,7 @@ const Main = ({ commits }: HomepageProps) => {
 
       <div className="flex-wrap md:flex  justify-center space-x-2">
         <ul className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
-          {commits.map((commit) => (
+          {/* {commits.map((commit) => (
             <li
               key={nanoid(15)}
               className="transition ease-in-out duration-200 hover:bg-blue-gray-50"
@@ -98,7 +98,7 @@ const Main = ({ commits }: HomepageProps) => {
                 </div>
               </a>
             </li>
-          ))}
+          ))} */}
         </ul>
       </div>
 
@@ -185,59 +185,59 @@ const Main = ({ commits }: HomepageProps) => {
   );
 };
 
-export async function getStaticProps() {
-  const commitsFromEachBranch = 8;
-  const allCommits: Array<Record<string, string>> = []; // TODO enable
+// export async function getStaticProps() {
+//   const commitsFromEachBranch = 8;
+//   const allCommits: Array<Record<string, string>> = []; // TODO enable
 
-  const { data } = await axios.get(
-    `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
-    {
-      // headers: {
-      //   Authorization: `token ${process.env.COMMITS_TOKEN}`,
-      // },
-    }
-  );
+//   const { data } = await axios.get(
+//     `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
+//     {
+//       // headers: {
+//       //   Authorization: `token ${process.env.COMMITS_TOKEN}`,
+//       // },
+//     }
+//   );
 
-  // @ts-expect-error
-  data.map(async (commit) => {
-    const isBot = commit.commit.author.name === "allcontributors[bot]";
+//   // @ts-expect-error
+//   data.map(async (commit) => {
+//     const isBot = commit.commit.author.name === "allcontributors[bot]";
 
-    if (!isBot) {
-      const customCommit = {
-        name: commit.commit.author.name,
-        username: commit.author.login,
-        image: commit.author.avatar_url,
-        email: commit.commit.author.email,
-        date: commit.commit.author.date,
-        message: commit.commit.message,
-        url: commit.html_url
-      };
-      allCommits.push(customCommit);
-    }
-  });
+//     if (!isBot) {
+//       const customCommit = {
+//         name: commit.commit.author.name,
+//         username: commit.author.login,
+//         image: commit.author.avatar_url,
+//         email: commit.commit.author.email,
+//         date: commit.commit.author.date,
+//         message: commit.commit.message,
+//         url: commit.html_url
+//       };
+//       allCommits.push(customCommit);
+//     }
+//   });
 
-  // Sort by commit timestamp
-  // @ts-expect-error
-  const orderedCommits = _.orderBy(
-    allCommits,
-    (commit: Object) => commit.date,
-    ["desc"]
-  );
+//   // Sort by commit timestamp
+//   // @ts-expect-error
+//   const orderedCommits = _.orderBy(
+//     allCommits,
+//     (commit: Object) => commit.date,
+//     ["desc"]
+//   );
 
-  // @ts-expect-error
-  const commits = orderedCommits.filter(
-    // @ts-expect-error
-    (value, index, self) =>
-      index ===
-      // @ts-expect-error
-      self.findIndex((t) => t.url === value.url && t.date === value.date)
-  );
+//   // @ts-expect-error
+//   const commits = orderedCommits.filter(
+//     // @ts-expect-error
+//     (value, index, self) =>
+//       index ===
+//       // @ts-expect-error
+//       self.findIndex((t) => t.url === value.url && t.date === value.date)
+//   );
 
-  return {
-    props: {
-      commits
-    }
-  };
-}
+//   return {
+//     props: {
+//       commits
+//     }
+//   };
+// }
 
 export default Main;

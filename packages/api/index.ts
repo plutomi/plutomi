@@ -1,12 +1,11 @@
 /* eslint no-console: 0 */
-/* eslint @typescript-eslint/no-misused-promises: 0 */
-
 import compression from "compression";
 import express from "express";
 import next from "next";
 import path from "path";
 import cors from "cors";
 import { env } from "./env";
+import API from "./controllers";
 
 const dev = env.NODE_ENV !== "production";
 
@@ -29,9 +28,8 @@ const nextHandler = webApp.getRequestHandler();
   server.use(compression());
   server.use(cors());
 
-  server.get("/api*", async (req, res) => {
-    res.status(200).json({ message: "Saul Goodman" });
-  });
+  // All routes are handled here
+  server.use("/api*", API);
 
   // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));

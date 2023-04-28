@@ -17,6 +17,7 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
+    "no-floating-promises": "error",
     "quotes": [2, "double", { "avoidEscape": true }],
     "comma-dangle": ["error", "never"],
     "no-console": "error",
@@ -27,6 +28,8 @@
     "no-lonely-if": "error",
     "import/order": "error",
     "sort-imports": "off",
+    "prefer-template": "error",
+    "curly": "error",
     "@typescript-eslint/dot-notation": "error",
     "@typescript-eslint/explicit-function-return-type": "off",
     "no-restricted-imports": [
