@@ -1,13 +1,6 @@
-import { allEnvVariablesSchema, parseEnv } from "@plutomi/env";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import { parseEnv } from "@plutomi/env";
+import { SchemaEnvironment } from "@plutomi/env/consts/SchemaEnvironment";
 
 export const env = parseEnv({
-  envSchema: allEnvVariablesSchema.pick({
-    PORT: true,
-    NODE_ENV: true,
-    NEXT_PUBLIC_BASE_URL: true
-  }),
-  label: "API"
+  schemaEnvironment: SchemaEnvironment.API
 });
