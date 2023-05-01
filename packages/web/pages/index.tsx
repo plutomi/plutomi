@@ -5,6 +5,7 @@ import { EnvelopeIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Hero } from "../components/Hero";
 import { UseCaseList } from "../components/UseCaseList";
 import { Notified } from "../components/Notified";
+import { env } from "../env";
 
 type Commit = {
   url: string;
@@ -28,6 +29,8 @@ GitHub or DM me on Twitter or by email if you have any questions
 
 const myEmail = "jose@plutomi.com";
 
+console.log("aaa", JSON.stringify(env));
+
 const Main = ({ commits }: HomepageProps) => {
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
@@ -38,6 +41,7 @@ const Main = ({ commits }: HomepageProps) => {
   const siteIsCurrent = `This site is current as of ${today}`;
   return (
     <div className="bg-white">
+      {/* <h1>TESTTESTTEST {JSON.stringify(process.env.NEXT_PUBLIC_TEST)}</h1> */}
       <Hero />
       <Notified />
       <UseCaseList />

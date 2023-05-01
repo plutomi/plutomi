@@ -1,6 +1,11 @@
-import { parseEnv } from "@plutomi/env";
-import { SchemaEnvironment } from "@plutomi/env/consts/SchemaEnvironment";
+import * as dotenv from "dotenv";
+import { apiEnvSchema, parseEnv, SchemaEnvironment } from "@plutomi/env";
+
+dotenv.config();
 
 export const env = parseEnv({
+  envSchema: apiEnvSchema,
   schemaEnvironment: SchemaEnvironment.API
 });
+
+console.log(`IN ENV API`, env);
