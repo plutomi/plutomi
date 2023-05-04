@@ -121,12 +121,6 @@ To add an environment variable:
 
 Typescript all the things. Infrastructure is managed by CDK aside from the DB. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
 
-## Language, Tooling, & Infrastructure
-
-> Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
-
-Typescript all the things. Infrastructure is managed by CDK aside from the DB. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
-
 #### MongoDB
 
 We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in.
