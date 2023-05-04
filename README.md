@@ -60,7 +60,7 @@ Stages:
 
 - `yarn lint` & `yarn lint:fix` - Run the linter & fix any issues
 
-- `yarn tidy` - Runs prettier and fix sequentially
+- `yarn tidy` - Runs `pretty:fix` and `lint:fix` sequentially
 <!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
@@ -68,15 +68,52 @@ Stages:
 
 > Check the .env.sample in each package for guidance
 
-In **packages/env**, there is an `env.ts` file which has **ALL** of the environment variables for the app. When running locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` where we `.pick()` the variables that we need from the main schema.
+In **packages/env**, there is an `env.ts` file which has **ALL** of the environment variables for the app as well as the schema for each package. We `pick` the environment variables needed in each package to create a schema:
+
+```typescript
+export const allEnvVariablesSchema = z.object({
+  PORT: portSchema,
+  NODE_ENV: z.nativeEnum(NodeEnvironment),
+  DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
+  DOMAIN: z.string(),
+  NEXT_PUBLIC_BASE_URL: z.string().url()
+});
+
+export const webEnvSchema = allEnvVariablesSchema.pick({
+  NEXT_PUBLIC_BASE_URL: true,
+  DOMAIN: true
+});
+
+export const apiEnvSchema = allEnvVariablesSchema.pick({
+  PORT: true,
+  NODE_ENV: true,
+  NEXT_PUBLIC_BASE_URL: true
+});
+```
+
+When running locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` like this:
+
+```typescript
+import { webEnvSchema, parseEnv, SchemaEnvironment } from "@plutomi/env";
+
+export const env = parseEnv({
+  envSchema: webEnvSchema,
+  // Used for error logging which environment has invalid variables
+  schemaEnvironment: SchemaEnvironment.WEB
+});
+```
+
+You can then get type safe environment variables in each package:
+
+![type-safe-env](images/type-safety-env.png)
 
 When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention where needed.
 
 To add an environment variable:
 
 1. Add it to the `env.ts` file in **packages/env**
-2. `pick()` the environment variable in the specific package it is being used in so it gets parsed by zod
-3. Add it to the `.env` file so you can test the app locally
+2. `pick()` the environment variable for the specific schema it is being used in so it gets parsed by zod
+3. Add it to the `.env` file for that package so you can test the app locally
 
 ## Language, Tooling, & Infrastructure
 
@@ -86,7 +123,7 @@ Typescript all the things. Infrastructure is managed by CDK aside from the DB. T
 
 #### MongoDB
 
-We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in.
+We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
 
 ## Questions?
 
