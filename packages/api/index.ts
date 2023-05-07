@@ -1,5 +1,5 @@
 /* eslint no-console: 0 */
-import compression from "compression";
+// import compression from "compression"; // TODO: Add compression back in
 import express from "express";
 import next from "next";
 import path from "path";
@@ -25,13 +25,13 @@ const nextHandler = webApp.getRequestHandler();
   const server = express();
   server.set("trust proxy", true);
   server.use(express.json());
-  server.use(compression());
+  // server.use(compression());
   server.use(cors());
 
   // All routes are handled here
-  server.use("/api*", API);
+  server.use("/api", API);
 
-  // NextJS App
+  // // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));
 
   server.on("error", (err) => {

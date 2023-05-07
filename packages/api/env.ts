@@ -8,4 +8,3 @@ export const env = parseEnv({
   schemaEnvironment: SchemaEnvironment.API
 });
 
-console.log(`IN ENV API`, env);
