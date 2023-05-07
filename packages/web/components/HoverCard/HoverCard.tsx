@@ -1,4 +1,6 @@
 import { Button, Card, Space, Typography } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
 // TODO: Add eslint rule to disallow these imports
 // import Paragraph from "antd/es/skeleton/Paragraph";
@@ -6,14 +8,23 @@ import { Button, Card, Space, Typography } from "antd";
 const { Text, Paragraph } = Typography;
 
 export const HoverCard: React.FC = () => {
-  const x = "";
-  return (
+  const [visible, setVisible] = useState(true);
+
+  const handleClose = () => {
+    setVisible(false);
+  };
+
+  return visible ? (
     <Card
       title="Hi there!"
-      extra={<Button>Close</Button>}
-      style={{ width: 500 }}
+      extra={
+        <Button type="text" danger onClick={handleClose}>
+          Close
+        </Button>
+      }
       headStyle={{ textAlign: "start" }}
       bodyStyle={{ textAlign: "start" }}
+      style={{ width: 500}}
     >
       <Paragraph>
         To enhance the long term stability of the site, I (Jose) am doing a
@@ -23,5 +34,5 @@ export const HoverCard: React.FC = () => {
       <Space />
       <Text>jose@plutomi.com</Text>
     </Card>
-  );
+  ) : null;
 };
