@@ -60,7 +60,7 @@ Stages:
 
 - `yarn lint` & `yarn lint:fix` - Run the linter & fix any issues
 
-- `yarn tidy` - Runs prettier and fix sequentially
+- `yarn tidy` - Runs `pretty:fix` and `lint:fix` sequentially
 <!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
@@ -105,7 +105,7 @@ export const env = parseEnv({
 
 You can then get type safe environment variables in each package:
 
-[!image](todo image here)
+![type-safe-env](images/type-safety-env.png)
 
 When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention where needed.
 
@@ -123,7 +123,7 @@ Typescript all the things. Infrastructure is managed by CDK aside from the DB. T
 
 #### MongoDB
 
-We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This might change in the future.
+We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
 
 ## Questions?
 
