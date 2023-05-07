@@ -7,9 +7,12 @@
 // import { Notified } from "../components/Notified";
 // import { useState } from "react";
 
-import { NextPage } from "next";
+import { Space, Layout, Col, Row, Typography } from "antd";
+import type { NextPage } from "next";
 import { useState } from "react";
 
+const { Title, Text } = Typography;
+const { Content, Header, Footer } = Layout;
 // //
 // interface Commit {
 //   url: string;
@@ -214,7 +217,36 @@ import { useState } from "react";
 
 const Home: NextPage = () => {
   const [commits, setCommits] = useState([]);
-  return <h1>Hi there</h1>;
+  return (
+    <Col
+      span={24}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        border: "2px solid blue",
+        height: "full"
+      }}
+    >
+      <Col
+        span={16}
+        style={{
+          border: "2px solid red",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          textAlign: "center"
+        }}
+      >
+        <Title level={1} style={{ fontSize: "5rem" }}>
+          Applicant management at any scale
+        </Title>
+        <Text style={{ fontSize: "2rem" }}>
+          Plutomi streamlines your entire application process with automated
+          workflows
+        </Text>
+      </Col>
+    </Col>
+  );
 };
 
 export default Home;
