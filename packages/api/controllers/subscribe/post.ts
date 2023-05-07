@@ -1,5 +1,5 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
-import type { Request, RequestHandler } from "express";
+import type { RequestHandler } from "express";
 import { z } from "zod";
 import { zParse } from "../../utils";
 
