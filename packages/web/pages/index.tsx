@@ -9,7 +9,7 @@
 
 import { HoverCard } from "@/components/HoverCard";
 import { PageContainer } from "@/components/PageContainer";
-import { Space, Layout, Col, Row, Typography, Grid } from "antd";
+import { Space, Layout, Col, Row, Typography, Grid, Breakpoint } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import type { NextPage } from "next";
 import { useState } from "react";
@@ -219,6 +219,15 @@ const { useBreakpoint } = Grid;
 //   };
 // }
 
+const titleSize: Partial<Record<Breakpoint, `${number}rem`>> = {
+  xs: "1.5rem",
+  sm: "2rem",
+  md: "2.5rem",
+  lg: "3rem",
+  xl: "3.5rem",
+  xxl: "4rem"
+};
+
 const Home: NextPage = () => {
   const [commits, setCommits] = useState([]);
   const screens = useBreakpoint();
@@ -226,7 +235,13 @@ const Home: NextPage = () => {
   return (
     <PageContainer>
       <Row justify={"center"}>
-        <Title level={1} style={{ fontWeight: "bold", textAlign: "center" }}>
+        <Title
+          level={1}
+          style={{
+            fontWeight: "bold",
+            textAlign: "center"
+          }}
+        >
           Applicant management at any scale
         </Title>
       </Row>

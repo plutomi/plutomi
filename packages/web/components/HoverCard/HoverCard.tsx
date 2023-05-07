@@ -2,6 +2,7 @@ import { Button, Card, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import type { SizeType } from "antd/es/config-provider/SizeContext";
 import { ExternalLink } from "../ExternalLink/ExternalLink";
+import { GithubOutlined, TwitterOutlined } from "@ant-design/icons";
 
 const { Text, Paragraph } = Typography;
 const buttonSize: SizeType = "large";
@@ -42,11 +43,13 @@ export const HoverCard: React.FC = () => {
         style={{ paddingTop: "20px" }}
       >
         <ExternalLink href={plutomiGithub}>
-          <Button size={buttonSize}>Plutomi on GitHub</Button>
+          <Button size={buttonSize}>Plutomi on <GithubOutlined style={{ color: "#333"}} /></Button>
         </ExternalLink>
 
         <ExternalLink href={joseTwitter}>
-          <Button size={buttonSize}>Jose on Twitter</Button>
+          <Button size={buttonSize}>
+            Jose on <TwitterOutlined style={{ color: "#00acee" }} />
+          </Button>
         </ExternalLink>
       </Row>
     </Card>
