@@ -36,7 +36,11 @@ export const HoverCard: React.FC = () => {
           jose@plutomi.com
         </Text>
       </Row>
-      <Row justify="space-around" style={{ paddingTop: "20px" }}>
+      <Row
+        gutter={[0, 10]}
+        justify="space-around"
+        style={{ paddingTop: "20px" }}
+      >
         <ExternalLink href={plutomiGithub}>
           <Button size={buttonSize}>Plutomi on GitHub</Button>
         </ExternalLink>
