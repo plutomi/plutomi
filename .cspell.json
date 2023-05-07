@@ -15,6 +15,7 @@
     "cdk.json"
   ],
   "words": [
+    "antd",
     "cacheable",
     "certificatemanager",
     "consts",
