@@ -7,7 +7,8 @@
 // import { Notified } from "../components/Notified";
 // import { useState } from "react";
 
-import { Space, Layout, Col, Row, Typography } from "antd";
+import { HoverCard } from "@/components/HoverCard";
+import { Space, Layout, Col, Row, Typography, Card } from "antd";
 import type { NextPage } from "next";
 import { useState } from "react";
 
@@ -228,7 +229,9 @@ const Home: NextPage = () => {
       }}
     >
       <Col
-        span={16}
+        xs={24}
+        md={18}
+        lg={14}
         style={{
           border: "2px solid red",
           display: "flex",
@@ -244,6 +247,8 @@ const Home: NextPage = () => {
           Plutomi streamlines your entire application process with automated
           workflows
         </Text>
+
+        <HoverCard />
       </Col>
     </Col>
   );
