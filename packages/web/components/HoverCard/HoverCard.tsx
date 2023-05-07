@@ -1,11 +1,12 @@
-import { Button, Card, Space, Typography } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { Button, Card, Row, Col, Space, Typography } from "antd";
 import { useState } from "react";
-
-// TODO: Add eslint rule to disallow these imports
-// import Paragraph from "antd/es/skeleton/Paragraph";
+import type { SizeType } from "antd/es/config-provider/SizeContext";
+import { ExternalLink } from "../ExternalLink/ExternalLink";
 
 const { Text, Paragraph } = Typography;
+const buttonSize: SizeType = "large";
+const plutomiGithub = "https://github.com/plutomi/plutomi";
+const joseTwitter = "https://twitter.com/notjoswayski";
 
 export const HoverCard: React.FC = () => {
   const [visible, setVisible] = useState(true);
@@ -24,7 +25,7 @@ export const HoverCard: React.FC = () => {
       }
       headStyle={{ textAlign: "start" }}
       bodyStyle={{ textAlign: "start" }}
-      style={{ width: 500}}
+      style={{ width: 500 }}
     >
       <Paragraph>
         To enhance the long term stability of the site, I (Jose) am doing a
@@ -33,6 +34,15 @@ export const HoverCard: React.FC = () => {
       </Paragraph>
       <Space />
       <Text>jose@plutomi.com</Text>
+      <Row justify="space-around" style={{ paddingTop: "20px" }}>
+        <ExternalLink href={plutomiGithub}>
+          <Button size={buttonSize}>Plutomi on GitHub</Button>
+        </ExternalLink>
+
+        <ExternalLink href={joseTwitter}>
+          <Button size={buttonSize}>Jose on Twitter</Button>
+        </ExternalLink>
+      </Row>
     </Card>
   ) : null;
 };
