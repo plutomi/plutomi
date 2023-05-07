@@ -8,12 +8,11 @@
 // import { useState } from "react";
 
 import { HoverCard } from "@/components/HoverCard";
-import { Space, Layout, Col, Row, Typography, Card } from "antd";
+import { Space, Layout, Col, Row, Typography } from "antd";
 import type { NextPage } from "next";
 import { useState } from "react";
 
 const { Title, Text } = Typography;
-const { Content, Header, Footer } = Layout;
 // //
 // interface Commit {
 //   url: string;
@@ -219,38 +218,31 @@ const { Content, Header, Footer } = Layout;
 const Home: NextPage = () => {
   const [commits, setCommits] = useState([]);
   return (
-    <Col
-      span={24}
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        border: "2px solid blue",
-        height: "full"
-      }}
-    >
+    <Row justify="center">
       <Col
         xs={24}
+        sm={20}
         md={18}
-        lg={14}
-        style={{
-          border: "2px solid red",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          textAlign: "center"
-        }}
+        lg={18}
+        xl={16}
+        style={{ border: "2px solid red" }}
       >
-        <Title level={1} style={{ fontSize: "5rem" }}>
-          Applicant management at any scale
-        </Title>
-        <Text style={{ fontSize: "2rem" }}>
-          Plutomi streamlines your entire application process with automated
-          workflows
-        </Text>
+        <Row justify="center">
+          <Title level={1} style={{ fontSize: "4rem", textAlign: "center" }}>
+            Applicant management at any scale
+          </Title>
 
-        <HoverCard />
+          <Text style={{ fontSize: "1.8rem", textAlign: "center" }}>
+            Plutomi streamlines your entire application process with automated
+            workflows
+          </Text>
+
+          <Row style={{ paddingTop: "2rem" }}>
+            <HoverCard />
+          </Row>
+        </Row>
       </Col>
-    </Col>
+    </Row>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Button, Card, Row, Col, Space, Typography } from "antd";
+import { Button, Card, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import type { SizeType } from "antd/es/config-provider/SizeContext";
 import { ExternalLink } from "../ExternalLink/ExternalLink";
@@ -23,9 +23,7 @@ export const HoverCard: React.FC = () => {
           Close
         </Button>
       }
-      headStyle={{ textAlign: "start" }}
-      bodyStyle={{ textAlign: "start" }}
-      style={{ width: 500 }}
+      style={{ width: 500, textAlign: "start" }}
     >
       <Paragraph>
         To enhance the long term stability of the site, I (Jose) am doing a
@@ -33,7 +31,11 @@ export const HoverCard: React.FC = () => {
         DM me on Twitter or by email if you have any questions :)
       </Paragraph>
       <Space />
-      <Text>jose@plutomi.com</Text>
+      <Row justify="center">
+        <Text strong copyable>
+          jose@plutomi.com
+        </Text>
+      </Row>
       <Row justify="space-around" style={{ paddingTop: "20px" }}>
         <ExternalLink href={plutomiGithub}>
           <Button size={buttonSize}>Plutomi on GitHub</Button>
