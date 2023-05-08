@@ -65,17 +65,17 @@ export const HoverCard: React.FC = () => {
 
         <Row justify="space-between">
           <Col span={20}>
-            <Space direction="vertical" size={8}>
-              <Input placeholder="example@mail.com" />
-              <Text type="secondary">
-                We won&apos;t spam, we don&apos;t even have the ability to send
-                emails yet! :)
-              </Text>
-            </Space>
+            <Input placeholder="example@mail.com" />
           </Col>
           <Col>
             <Button type="primary">Submit</Button>
           </Col>
+        </Row>
+        <Row>
+          <Text type="secondary">
+            We won&apos;t spam, we don&apos;t even have the ability to send
+            emails yet! :)
+          </Text>
         </Row>
 
         <Divider />
