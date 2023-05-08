@@ -40,6 +40,7 @@ const onFinish = (values: any) => {
 
 export const HoverCard: React.FC = () => {
   const screens = useBreakpoint();
+  const [inputStatus, setInputStatus] = useState<"default" | "error">("default");
 
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
@@ -50,6 +51,15 @@ export const HoverCard: React.FC = () => {
   const siteIsCurrent = `This site is current as of ${today}`;
 
   const borderSize = 0;
+
+  const checkPrice = (_: any, value: { number: number }) => {
+    console.log(`in validator`, value);
+    if (Number(value) > 0) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error("Price must be greater than zero!"));
+  };
+
   return (
     <Card
       title="Hi there!"
@@ -100,7 +110,9 @@ export const HoverCard: React.FC = () => {
             <Col flex={4}>
               <Form.Item
                 name={["email"]}
-                rules={[{ type: "email", required: true }]}
+                rules={[
+                  { type: "email", required: true, validator: checkPrice }
+                ]}
               >
                 <Input placeholder="example@mail.com" />
               </Form.Item>
