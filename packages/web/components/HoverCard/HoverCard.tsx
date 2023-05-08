@@ -6,7 +6,8 @@ import {
   Input,
   Row,
   Space,
-  Typography
+  Typography,
+  Grid
 } from "antd";
 import { useState } from "react";
 import { colors } from "@/utils";
@@ -20,7 +21,19 @@ const buttonSize: SizeType = "large";
 const plutomiGithub = "https://github.com/plutomi/plutomi";
 const joseTwitter = "https://twitter.com/notjoswayski";
 
+const { useBreakpoint } = Grid;
+
 export const HoverCard: React.FC = () => {
+  const screens = useBreakpoint();
+
+  const today = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  });
+
+  const siteIsCurrent = `This site is current as of ${today}`;
+
   const borderSize = 0;
   return (
     <Card
@@ -63,12 +76,15 @@ export const HoverCard: React.FC = () => {
           </Text>
         </Row>
 
-        <Row justify="space-between">
-          <Col span={20}>
+        <Row justify="center" align="middle" gutter={[0, 0]}>
+          <Col flex={6}>
             <Input placeholder="example@mail.com" />
           </Col>
-          <Col>
-            <Button type="primary">Submit</Button>
+
+          <Col flex={1}>
+            <Row justify="center">
+              <Button type="primary">Submit</Button>
+            </Row>
           </Col>
         </Row>
         <Row>
@@ -79,7 +95,14 @@ export const HoverCard: React.FC = () => {
         </Row>
 
         <Divider />
-        <Text type="secondary">This site is current as of BLAH</Text>
+        <Row justify="center">
+          <Text
+            type="secondary"
+            style={{ fontSize: ".9rem", textAlign: "center" }}
+          >
+            {siteIsCurrent}
+          </Text>
+        </Row>
       </Space>
     </Card>
   );
