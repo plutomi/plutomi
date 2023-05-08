@@ -1,57 +1,53 @@
-import { Button, Card, Row, Space, Typography } from "antd";
+import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
 import { useState } from "react";
-import type { SizeType } from "antd/es/config-provider/SizeContext";
-import { ExternalLink } from "../ExternalLink/ExternalLink";
-import { GithubOutlined, TwitterOutlined } from "@ant-design/icons";
+import { colors } from "@/utils";
 
-const { Text, Paragraph } = Typography;
+import type { SizeType } from "antd/es/config-provider/SizeContext";
+import { GithubOutlined, TwitterOutlined } from "@ant-design/icons";
+import { ExternalLink } from "../ExternalLink/ExternalLink";
+
+const { Text, Paragraph, Title } = Typography;
 const buttonSize: SizeType = "large";
 const plutomiGithub = "https://github.com/plutomi/plutomi";
 const joseTwitter = "https://twitter.com/notjoswayski";
 
 export const HoverCard: React.FC = () => {
-  const [visible, setVisible] = useState(true);
-
-  const handleClose = () => {
-    setVisible(false);
-  };
-
-  return visible ? (
+  const borderSize = 0;
+  return (
     <Card
       title="Hi there!"
-      extra={
-        <Button type="text" danger onClick={handleClose}>
-          Close
-        </Button>
-      }
-      style={{ width: 500, textAlign: "start" }}
+      bordered={false}
+      style={{ width: 600, textAlign: "start" }}
     >
-      <Paragraph>
-        To enhance the long term stability of the site, I (Jose) am doing a
-        major refactor. You can check the progress and all changes on GitHub or
-        DM me on Twitter or by email if you have any questions :)
-      </Paragraph>
-      <Space />
-      <Row justify="center">
-        <Text strong copyable>
-          jose@plutomi.com
-        </Text>
-      </Row>
-      <Row
-        gutter={[0, 10]}
-        justify="space-around"
-        style={{ paddingTop: "20px" }}
-      >
-        <ExternalLink href={plutomiGithub}>
-          <Button size={buttonSize}>Plutomi on <GithubOutlined style={{ color: "#333"}} /></Button>
-        </ExternalLink>
+      <Space size={6} direction="vertical">
+        <Row justify="center" style={{ border: `${borderSize}px solid red` }}>
+          <Paragraph>
+            To enhance the long term stability of the site, I (Jose) am doing a
+            major refactor. You can check the progress and all changes on GitHub
+            or DM me on Twitter or by email if you have any questions :)
+          </Paragraph>
+        </Row>
 
-        <ExternalLink href={joseTwitter}>
-          <Button size={buttonSize}>
-            Jose on <TwitterOutlined style={{ color: "#00acee" }} />
+        <Row justify="center" style={{ border: `${borderSize}px solid blue` }}>
+          <Text strong copyable style={{ alignSelf: "center" }}>
+            jose@plutomi.com
+          </Text>
+        </Row>
+
+        <Row
+          justify="space-around"
+          style={{ paddingTop: "1rem", border: `${borderSize}px solid orange` }}
+        >
+          <Button size={buttonSize} type="link" href={plutomiGithub}>
+            Plutomi on <GithubOutlined style={{ color: colors.github }} />
           </Button>
-        </ExternalLink>
-      </Row>
+
+          <Button size={buttonSize} type="link" href={joseTwitter}>
+            Jose on <TwitterOutlined style={{ color: colors.twitter }} />
+          </Button>
+        </Row>
+        <Divider />
+      </Space>
     </Card>
-  ) : null;
+  );
 };

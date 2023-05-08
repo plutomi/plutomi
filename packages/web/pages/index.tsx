@@ -9,6 +9,7 @@
 
 import { HoverCard } from "@/components/HoverCard";
 import { PageContainer } from "@/components/PageContainer";
+import { WaitList } from "@/components/WaitList";
 import { Space, Layout, Col, Row, Typography, Grid, Breakpoint } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import type { NextPage } from "next";
@@ -219,22 +220,12 @@ const { useBreakpoint } = Grid;
 //   };
 // }
 
-const titleSize: Partial<Record<Breakpoint, `${number}rem`>> = {
-  xs: "1.5rem",
-  sm: "2rem",
-  md: "2.5rem",
-  lg: "3rem",
-  xl: "3.5rem",
-  xxl: "4rem"
-};
-
 const Home: NextPage = () => {
   const [commits, setCommits] = useState([]);
-  const screens = useBreakpoint();
-  screens.lg;
+
   return (
     <PageContainer>
-      <Row justify={"center"}>
+      <Row justify="center">
         <Title
           level={1}
           style={{
@@ -245,7 +236,7 @@ const Home: NextPage = () => {
           Applicant management at any scale
         </Title>
       </Row>
-      <Row justify={"center"}>
+      <Row justify="center">
         <Text style={{ fontSize: "1.8rem", textAlign: "center" }}>
           Plutomi streamlines your entire application process with automated
           workflows

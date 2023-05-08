@@ -6,5 +6,8 @@ export const colors = {
   info: "#2d8cef",
   bgBase: "#ffffff",
   textBase: "#141415",
-  primary: "#1e4aa2"
+  primary: "#1e4aa2",
+  github: "#333",
+  twitter: "#00acee",
+  background: "#f7f8fc"
 };
