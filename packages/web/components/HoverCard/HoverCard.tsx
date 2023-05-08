@@ -7,7 +7,8 @@ import {
   Row,
   Space,
   Typography,
-  Grid
+  Grid,
+  Form
 } from "antd";
 import { useState } from "react";
 import { colors } from "@/utils";
@@ -22,6 +23,20 @@ const plutomiGithub = "https://github.com/plutomi/plutomi";
 const joseTwitter = "https://twitter.com/notjoswayski";
 
 const { useBreakpoint } = Grid;
+
+/* eslint-disable no-template-curly-in-string */
+
+const validateMessages = {
+  types: {
+    email: "That email doesn't look right..."
+  },
+  required: "Email is required"
+};
+/* eslint-enable no-template-curly-in-string */
+
+const onFinish = (values: any) => {
+  console.log(values);
+};
 
 export const HoverCard: React.FC = () => {
   const screens = useBreakpoint();
@@ -76,17 +91,30 @@ export const HoverCard: React.FC = () => {
           </Text>
         </Row>
 
-        <Row justify="center" align="middle" gutter={[0, 0]}>
-          <Col flex={6}>
-            <Input placeholder="example@mail.com" />
-          </Col>
+        <Form
+          name="email-subscribe"
+          onFinish={onFinish}
+          validateMessages={validateMessages}
+        >
+          <Row justify="space-between" align="middle" gutter={[0, 0]}>
+            <Col flex={4}>
+              <Form.Item
+                name={["email"]}
+                rules={[{ type: "email", required: true }]}
+              >
+                <Input placeholder="example@mail.com" />
+              </Form.Item>
+            </Col>
+            <Form.Item>
+              <Col flex={1}>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Col>
+            </Form.Item>
+          </Row>
+        </Form>
 
-          <Col flex={1}>
-            <Row justify="center">
-              <Button type="primary">Submit</Button>
-            </Row>
-          </Col>
-        </Row>
         <Row>
           <Text type="secondary">
             We won&apos;t spam, we don&apos;t even have the ability to send
