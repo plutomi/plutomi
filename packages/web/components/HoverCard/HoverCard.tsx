@@ -1,4 +1,13 @@
-import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Divider,
+  Input,
+  Row,
+  Space,
+  Typography
+} from "antd";
 import { useState } from "react";
 import { colors } from "@/utils";
 
@@ -47,6 +56,30 @@ export const HoverCard: React.FC = () => {
           </Button>
         </Row>
         <Divider />
+        <Row>
+          <Text>
+            If you would like to be notified when we launch, we can send you an
+            email!
+          </Text>
+        </Row>
+
+        <Row justify="space-between">
+          <Col span={20}>
+            <Space direction="vertical" size={8}>
+              <Input placeholder="example@mail.com" />
+              <Text type="secondary">
+                We won&apos;t spam, we don&apos;t even have the ability to send
+                emails yet! :)
+              </Text>
+            </Space>
+          </Col>
+          <Col>
+            <Button type="primary">Submit</Button>
+          </Col>
+        </Row>
+
+        <Divider />
+        <Text type="secondary">This site is current as of BLAH</Text>
       </Space>
     </Card>
   );

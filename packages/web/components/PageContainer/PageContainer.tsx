@@ -7,13 +7,13 @@ const { Header, Footer, Sider, Content } = Layout;
 const headerStyle: React.CSSProperties = {
   // textAlign: "center",
   // color: "#fff",
-
   backgroundColor: colors.background
 };
 
 const contentStyle: React.CSSProperties = {
   // textAlign: "center",
   backgroundColor: colors.background
+  // border: "2px solid purple"
 
   // color: "#fff",
   // backgroundColor: "#108ee9"
@@ -28,7 +28,7 @@ const contentStyle: React.CSSProperties = {
 
 const footerStyle: React.CSSProperties = {
   backgroundColor: colors.background
-
+  // border: "2px solid gold"
   // textAlign: "center",
   // color: "#fff",
   // backgroundColor: "#7dbcea"
@@ -39,9 +39,13 @@ type PageContainerProps = {
 };
 
 export const PageContainer: React.FC<PageContainerProps> = ({ children }) => (
-  <Layout style={{ paddingLeft: 0, margin: 0 }}>
-    <Header style={headerStyle}>Header</Header>
+  <Layout
+    style={{
+      minHeight: "100vh"
+    }}
+  >
+    <Header style={headerStyle} />
     <Content style={contentStyle}>{children}</Content>
-    <Footer style={footerStyle}>Footer</Footer>
+    <Footer style={footerStyle} />
   </Layout>
 );

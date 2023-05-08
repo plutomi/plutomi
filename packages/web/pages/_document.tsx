@@ -1,9 +1,21 @@
+import { colors } from "@/utils";
 import { Html, Head, Main, NextScript } from "next/document";
+import React from "react";
+
+const sharedStyle: React.CSSProperties = {
+  height: "100%",
+  backgroundColor: colors.background
+};
 
 const Document = () => (
-  <Html lang="en">
+  <Html lang="en" style={{ ...sharedStyle }}>
     <Head />
-    <body style={{ margin: 0 }}>
+    <body
+      style={{
+        ...sharedStyle,
+        margin: 0
+      }}
+    >
       <Main />
       <NextScript />
     </body>

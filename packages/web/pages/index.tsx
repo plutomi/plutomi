@@ -242,7 +242,6 @@ const Home: NextPage = () => {
           workflows
         </Text>
       </Row>
-
       <Row justify="center" style={{ paddingTop: "2rem" }}>
         <HoverCard />
       </Row>
