@@ -4,6 +4,7 @@ import React from "react";
 
 const sharedStyle: React.CSSProperties = {
   height: "100%",
+  width: "100%",
   backgroundColor: colors.background
 };
 

@@ -1,3 +1,4 @@
+import { WaitListCard } from "@/components/WaitistCard";
 import {
   Title,
   Text,
@@ -43,7 +44,7 @@ const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
 
     [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(58),
+      fontSize: rem(46),
       textAlign: "left"
     }
   },
@@ -127,6 +128,8 @@ const Home: NextPage = () => {
             Plutomi streamlines your application process with automated
             workflows
           </Text>
+
+          <WaitListCard />
         </Container>
 
         <div className={classes.controls}>
