@@ -1,229 +1,141 @@
-// import _ from "lodash";
-// import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
-// import { nanoid } from "nanoid";
-// import { Hero } from "../components/Hero";
-// import { UseCaseList } from "../components/UseCaseList";
-// import axios from "axios";
-// import { Notified } from "../components/Notified";
-// import { useState } from "react";
+import {
+  Title,
+  Text,
+  Container,
+  Button,
+  Overlay,
+  createStyles,
+  rem
+} from "@mantine/core";
+import { NextPage } from "next";
 
-import { HoverCard } from "@/components/HoverCard";
-import { PageContainer } from "@/components/PageContainer";
-import { WaitList } from "@/components/WaitList";
-import { Space, Layout, Col, Row, Typography, Grid, Breakpoint } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
-import type { NextPage } from "next";
-import { useState } from "react";
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    position: "relative",
+    paddingTop: rem(180),
+    paddingBottom: rem(130),
+    backgroundImage:
+      "url(https://www.nasa.gov/sites/default/files/thumbnails/image/nh-apluto-wide-9-17-15-final_0.png)",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
 
-const { Title, Text } = Typography;
-const { useBreakpoint } = Grid;
+    [theme.fn.smallerThan("xs")]: {
+      paddingTop: rem(80),
+      paddingBottom: rem(50)
+    }
+  },
 
-// //
-// interface Commit {
-//   url: string;
-//   username: string;
-//   name: string;
-//   image: string;
-//   date: Date;
-//   email: string;
-//   message: string;
-// }
+  inner: {
+    position: "relative",
+    zIndex: 1
+  },
 
-// interface HomepageProps {
-//   commits: Commit[];
-// }
+  title: {
+    fontWeight: 800,
+    fontSize: rem(70),
+    letterSpacing: rem(-1),
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+    color: theme.white,
+    marginBottom: theme.spacing.xs,
+    textAlign: "center",
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
 
-// //
-// const enhancementText = `To enhance the long term stability of the site, I (Jose) am doing
-// a major refactor. You can check the progress and all changes on
-// GitHub or DM me on Twitter or by email if you have any questions
-// :)`;
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(58),
+      textAlign: "left"
+    }
+  },
 
-// const myEmail = `jose@plutomi.com`;
-// //
-// export default function Main({ commits }: HomepageProps) {
-//   const [visible, setVisible] = useState(true);
-//   const today = new Date().toLocaleDateString("en-US", {
-//     month: "long",
-//     day: "numeric",
-//     year: "numeric"
-//   });
+  highlight: {
+    color: theme.colors[theme.primaryColor][4]
+  },
 
-//   const siteIsCurrent = `This site is current as of ${today}`;
-//   return (
-//     <div className="bg-white">
-//       <Hero />
-//       <Notified />
-//       <UseCaseList />
+  description: {
+    color: theme.colors.gray[0],
+    textAlign: "center",
+    fontSize: rem(28),
 
-//       <div className="flex-wrap md:flex  justify-center space-x-2">
-//         <ul className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
-//           {/* {commits.map((commit) => (
-//             <li
-//               key={nanoid(15)}
-//               className="transition ease-in-out duration-200 hover:bg-blue-gray-50"
-//             >
-//               <a href={commit.url} className="block hover:bg-gray-50">
-//                 <div className="flex items-center px-4 py-4 sm:px-6">
-//                   <div className="min-w-0 flex-1 flex items-center">
-//                     <div className="flex-shrink-0">
-//                       <img
-//                         className="h-16 w-16 rounded-full"
-//                         src={commit.image}
-//                         alt=""
-//                       />
-//                     </div>
-//                     <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
-//                       <div className="">
-//                         <p className="text-lg font-medium text-indigo-600 truncate">
-//                           {commit.name} - {commit.username}
-//                         </p>
-//                         <p className="mt-2 flex items-center text-lg text-gray-500">
-//                           <MailIcon
-//                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-//                             aria-hidden="true"
-//                           />
-//                           <span className="truncate">{commit.email}</span>
-//                         </p>
-//                       </div>
-//                       <div className="py-2 overflow-auto">
-//                         <div>
-//                           <p className="text-lg text-gray-900">
-//                             Committed{" "}
-//                             {new Date(commit.date).toLocaleDateString("en-US", {
-//                               month: "long",
-//                               day: "numeric",
-//                               year: "numeric",
-//                             })}
-//                           </p>
-//                           <p className="mt-2 flex items-center text-lg text-gray-500 whitespace-pre-line">
-//                             {commit.message}
-//                           </p>
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </div>
-//                   <div>
-//                     <ChevronRightIcon
-//                       className="h-5 w-5 text-gray-400"
-//                       aria-hidden="true"
-//                     />
-//                   </div>
-//                 </div>
-//               </a>
-//             </li>
-//           ))} */}
-//         </ul>
-//       </div>
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: theme.fontSizes.md,
+      textAlign: "left"
+    }
+  },
 
-//       <div
-//         className={` fixed inset-x-0 bottom-0  drop-shadow-2xl ${
-//           visible ? "visible" : "invisible"
-//         }`}
-//       >
-//         <div className="mx-auto relative border-b border-gray-200 bg-white px-4 py-5 sm:px-6 max-w-xl">
-//           <div className="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
-//             <div className="ml-4 mt-2">
-//               <h3 className="text-2xl font-semibold leading-6 text-gray-900">
-//                 Hi there!
-//               </h3>
-//             </div>
-//             <div className="ml-4 mt-2 flex-shrink-0 pointer-events-auto ">
-//               <button
-//                 type="button"
-//                 onClick={() => setVisible(false)}
-//                 className="relative inline-flex items-center rounded-md bg-white border border-gray-900 px-3 py-2 text-sm font-semibold text-gray-900  shadow-sm hover:bg-gray-700  hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-//               >
-//                 Close
-//               </button>
-//             </div>
-//           </div>
-//           <div className="py-4">
-//             <div className="space-y-4 text-lg leading-6 text-gray-900">
-//               <p className="">{enhancementText}</p>
-//               <p>{myEmail}</p>
-//               <p>{siteIsCurrent}</p>
-//             </div>
+  controls: {
+    marginTop: `calc(${theme.spacing.xl} * 1.5)`,
+    display: "flex",
+    justifyContent: "center",
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
 
-//             <div className="mt-10 flex items-center justify-center gap-x-6">
-//               <a
-//                 href="https://github.com/plutomi/plutomi"
-//                 target="_blank"
-//                 rel="noreferrer"
-//                 className="rounded-md bg-white border border-gray-500  px-3.5 py-2.5 text-md lg:text-sm font-semibold text-gray-900 shadow-sm  hover:bg-gray-900 hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-//               >
-//                 Plutomi on GitHub
-//               </a>
-//               <a
-//                 href="https://twitter.com/notjoswayski"
-//                 target="_blank"
-//                 rel="noreferrer"
-//                 className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-100 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-//               >
-//                 Jose on Twitter
-//               </a>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-//
+    [theme.fn.smallerThan("xs")]: {
+      flexDirection: "column"
+    }
+  },
 
-// export async function getStaticProps() {
-//   const commitsFromEachBranch = 8;
-//   const allCommits = []; // TODO enable
+  control: {
+    height: rem(42),
+    fontSize: theme.fontSizes.md,
 
-//   const { data } = await axios.get(
-//     `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
-//     {
-//       // headers: {
-//       //   Authorization: `token ${process.env.COMMITS_TOKEN}`,
-//       // },
-//     }
-//   );
+    "&:not(:first-of-type)": {
+      marginLeft: theme.spacing.md
+    },
 
-//   data.map(async (commit) => {
-//     const isBot = commit.commit.author.name === "allcontributors[bot]";
+    [theme.fn.smallerThan("xs")]: {
+      "&:not(:first-of-type)": {
+        marginTop: theme.spacing.md,
+        marginLeft: 0
+      }
+    }
+  },
 
-//     if (!isBot) {
-//       const customCommit = {
-//         name: commit.commit.author.name,
-//         username: commit.author.login,
-//         image: commit.author.avatar_url,
-//         email: commit.commit.author.email,
-//         date: commit.commit.author.date,
-//         message: commit.commit.message,
-//         url: commit.html_url,
-//       };
-//       allCommits.push(customCommit);
-//     }
-//   });
+  secondaryControl: {
+    color: theme.white,
+    backgroundColor: "rgba(255, 255, 255, .4)",
 
-//   // Sort by commit timestamp
-//   const orderedCommits = _.orderBy(allCommits, (commit) => commit.date, [
-//     "desc",
-//   ]);
-
-//   // Remove duplicates
-//   const commits = orderedCommits.filter(
-//     (value, index, self) =>
-//       index ===
-//       self.findIndex((t) => t.url === value.url && t.date === value.date)
-//   );
-
-//   return {
-//     props: {
-//       commits,
-//     },
-//   };
-// }
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, .45) !important"
+    }
+  }
+}));
 
 const Home: NextPage = () => {
-  const [commits, setCommits] = useState([]);
+  const { classes, cx } = useStyles();
 
-  return <h1>HOME</h1>;
+  return (
+    <div className={classes.wrapper}>
+      <Overlay color="#000" opacity={0.65} zIndex={1} />
+
+      <div className={classes.inner}>
+        <Title className={classes.title}>
+          Applicant management at{" "}
+          <Text component="span" inherit className={classes.highlight}>
+            any scale
+          </Text>
+        </Title>
+
+        <Container size={900}>
+          <Text size="lg" className={classes.description}>
+            Plutomi streamlines your application process with automated
+            workflows
+          </Text>
+        </Container>
+
+        <div className={classes.controls}>
+          <Button className={classes.control} variant="white" size="lg">
+            Get started
+          </Button>
+          <Button
+            className={cx(classes.control, classes.secondaryControl)}
+            size="lg"
+          >
+            Live demo
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Home;
