@@ -5,20 +5,10 @@ import {
   Button,
   Overlay,
   createStyles,
-  rem,
-  Card,
-  TextInput,
-  Flex
+  rem
 } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
+import { NextPage } from "next";
 import { BsGithub, BsTwitter } from "react-icons/bs";
-import z from "zod";
-
-type WaitListCardProps = {};
-
-const schema = z.object({
-  email: z.string().email({ message: "Invalid email" })
-});
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -111,71 +101,36 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-export const WaitListCard: React.FC = () => {
+const LandingHero: React.FC = () => {
   const { classes, cx } = useStyles();
 
-  const form = useForm({
-    initialValues: {
-      email: ""
-    },
-    validate: zodResolver(schema)
-  });
-
-  type FormData = z.infer<typeof schema>;
-
-  const handleFormSubmit = (values: FormData) => {
-    alert(values);
-  };
   return (
-    <Container size={"sm"}>
-      <Card shadow="sm" padding="md" mt={"lg"} radius="md" withBorder>
-        <Text weight={500} size={"lg"}>
-          Hi there!
-        </Text>
+    <div className={classes.wrapper}>
+      <Overlay color="#000" opacity={0.65} zIndex={1} />
 
-        <Text size="md">Plutomi is currently</Text>
-
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <TextInput
-            placeholder="example@mail.com"
-            {...form.getInputProps("email")}
-          />
-        </form>
-
-        <Flex
-          gap="xl"
-          justify="center"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          <Button
-            component="a"
-            href="https://github.com/plutomi/plutomi"
-            rel="noopener noreferrer"
-            target="_blank"
-            variant="default"
-            radius="md"
-            // leftIcon={<CgExternal size="0.9rem" />}
-            rightIcon={<BsGithub size="1.1rem" color="#333" />}
+      <div className={classes.inner}>
+        <Title className={classes.title}>
+          Applicant management at{" "}
+          <Text
+            component="span"
+            inherit
+            className={classes.highlight}
+            variant="gradient"
+            gradient={{ from: "indigo", to: "cyan", deg: 45 }}
           >
-            Plutomi on GitHub
-          </Button>
+            any scale
+          </Text>
+        </Title>
 
-          <Button
-            component="a"
-            href="https://twitter.com/joswayski"
-            rel="noopener noreferrer"
-            target="_blank"
-            variant="default"
-            radius="md"
-            // leftIcon={<CgExternal size="0.9rem" />}
-            rightIcon={<BsTwitter size="1.1rem" color={"#00acee"} />}
-          >
-            Jose on GitHub
-          </Button>
-        </Flex>
-      </Card>
-    </Container>
+        <Container size={900}>
+          <Text size="lg" className={classes.description}>
+            Plutomi streamlines your application process with automated
+            workflows
+          </Text>
+        </Container>
+      </div>
+    </div>
   );
 };
+
+export default LandingHero;
