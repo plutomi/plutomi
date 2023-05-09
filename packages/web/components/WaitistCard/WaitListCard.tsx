@@ -149,7 +149,7 @@ export const WaitListCard: React.FC = () => {
         <Space h="sm" />
 
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <Group>
+          <Group align="start">
             <TextInput
               placeholder="example@mail.com"
               {...form.getInputProps("email")}
