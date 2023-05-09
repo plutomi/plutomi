@@ -8,7 +8,8 @@ import {
   rem,
   Card,
   TextInput,
-  Flex
+  Flex,
+  Space
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { BsGithub, BsTwitter } from "react-icons/bs";
@@ -17,7 +18,7 @@ import z from "zod";
 type WaitListCardProps = {};
 
 const schema = z.object({
-  email: z.string().email({ message: "Invalid email" })
+  email: z.string().email({ message: "Hmm.. that email doesn't look right!" })
 });
 
 const useStyles = createStyles((theme) => ({
@@ -129,11 +130,22 @@ export const WaitListCard: React.FC = () => {
   return (
     <Container size={"sm"}>
       <Card shadow="sm" padding="md" mt={"lg"} radius="md" withBorder>
-        <Text weight={500} size={"lg"}>
+        <Text weight={500} size={36}>
           Hi there!
         </Text>
 
-        <Text size="md">Plutomi is currently</Text>
+        <Text>
+          To enhance the long term stability of the site, I (Jose) am doing a
+          major refactor. You can check the progress and all changes on GitHub
+          or DM me on Twitter or by email if you have any questions 😎
+        </Text>
+        <Space h="md" />
+
+        <Text>
+          If you&apos;re interested in being notified when Plutomi is ready for
+          use, please join our wait list!
+        </Text>
+        <Space h="sm" />
 
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           <TextInput
@@ -141,6 +153,13 @@ export const WaitListCard: React.FC = () => {
             {...form.getInputProps("email")}
           />
         </form>
+
+        <Text c="dimmed">
+          We won&apos;t spam you - we don&apos;t even have the ability to send
+          emails yet! 😅
+        </Text>
+
+        <Space h="lg" />
 
         <Flex
           gap="xl"
