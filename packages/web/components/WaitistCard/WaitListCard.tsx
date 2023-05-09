@@ -9,7 +9,8 @@ import {
   Card,
   TextInput,
   Flex,
-  Space
+  Space,
+  Group
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { BsGithub, BsTwitter } from "react-icons/bs";
@@ -18,7 +19,7 @@ import z from "zod";
 type WaitListCardProps = {};
 
 const schema = z.object({
-  email: z.string().email({ message: "Hmm.. that email doesn't look right!" })
+  email: z.string().email({ message: "Invalid email" })
 });
 
 const useStyles = createStyles((theme) => ({
@@ -148,10 +149,16 @@ export const WaitListCard: React.FC = () => {
         <Space h="sm" />
 
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <TextInput
-            placeholder="example@mail.com"
-            {...form.getInputProps("email")}
-          />
+          <Group>
+            <TextInput
+              placeholder="example@mail.com"
+              {...form.getInputProps("email")}
+              style={{ flexGrow: 1 }}
+            />
+            <Button color="indigo" radius="md" style={{ flexShrink: 1 }}>
+              Submit
+            </Button>
+          </Group>
         </form>
 
         <Text c="dimmed">
