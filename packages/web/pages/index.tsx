@@ -8,6 +8,7 @@ import {
   rem
 } from "@mantine/core";
 import { NextPage } from "next";
+import { BsGithub } from "react-icons/bs";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -110,7 +111,13 @@ const Home: NextPage = () => {
       <div className={classes.inner}>
         <Title className={classes.title}>
           Applicant management at{" "}
-          <Text component="span" inherit className={classes.highlight}>
+          <Text
+            component="span"
+            inherit
+            className={classes.highlight}
+            variant="gradient"
+            gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+          >
             any scale
           </Text>
         </Title>
@@ -123,14 +130,15 @@ const Home: NextPage = () => {
         </Container>
 
         <div className={classes.controls}>
-          <Button className={classes.control} variant="white" size="lg">
-            Get started
-          </Button>
           <Button
-            className={cx(classes.control, classes.secondaryControl)}
-            size="lg"
+            component="a"
+            href="https://github.com/plutomi/plutomi"
+            variant="default"
+            radius="md"
+            // leftIcon={<CgExternal size="0.9rem" />}
+            rightIcon={<BsGithub size="1.1rem" />}
           >
-            Live demo
+            View on GitHub
           </Button>
         </div>
       </div>
