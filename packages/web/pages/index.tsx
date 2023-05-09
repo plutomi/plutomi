@@ -223,30 +223,7 @@ const { useBreakpoint } = Grid;
 const Home: NextPage = () => {
   const [commits, setCommits] = useState([]);
 
-  return (
-    <PageContainer>
-      <Row justify="center">
-        <Title
-          level={1}
-          style={{
-            fontWeight: "bold",
-            textAlign: "center"
-          }}
-        >
-          Applicant management at any scale
-        </Title>
-      </Row>
-      <Row justify="center">
-        <Text style={{ fontSize: "1.8rem", textAlign: "center" }}>
-          Plutomi streamlines your entire application process with automated
-          workflows
-        </Text>
-      </Row>
-      <Row justify="center" style={{ paddingTop: "2rem" }}>
-        <HoverCard />
-      </Row>
-    </PageContainer>
-  );
+  return <h1>HOME</h1>;
 };
 
 export default Home;
