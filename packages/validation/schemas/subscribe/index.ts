@@ -1,1 +1,1 @@
-export * from "./subscribe";
+export * as beans from "./subscribe";

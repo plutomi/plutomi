@@ -17,12 +17,14 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import axios from "axios";
-import { Schemas } from "@plutomi/validation";
+// import { Schema } from "@plutomi/validation";
+import { Schema } from "@plutomi/validation";
 import toast, { Toaster } from "react-hot-toast";
 import { useClipboard } from "@mantine/hooks";
 import { IconCopy, IconCheck, IconAlertCircle } from "@tabler/icons-react";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { UserX } from "@plutomi/validation/schemas/subscribe/subscribe";
 
 type WaitListCardProps = {};
 
@@ -66,10 +68,10 @@ export const WaitListCard: React.FC = () => {
     initialValues: {
       email: ""
     },
-    validate: zodResolver(Schemas.Subscribe.UISchema)
+    validate: zodResolver(Schema.beans.UISchema)
   });
 
-  const handleFormSubmit = async (values: Schemas) => {
+  const handleFormSubmit = async (values: Schema.beans.UIValues) => {
     setIsSubmitting(true);
     try {
       await axios.post("/api/subscribe", { ...values, email: "as" });
@@ -152,7 +154,7 @@ export const WaitListCard: React.FC = () => {
         ) : (
           <>
             <form
-              onSubmit={form.onSubmit((values) => handleFormSubmit(values))}
+              onSubmit={form.onSubmit((values) => void handleFormSubmit(values))}
             >
               <div className={classes.controls}>
                 <TextInput
