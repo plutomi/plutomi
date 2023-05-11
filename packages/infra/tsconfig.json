@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noErrorTruncation": true,
+    // "noErrorTruncation": true,
     "target": "ESNext",
     "module": "commonjs",
     "lib": ["ESNext"],
