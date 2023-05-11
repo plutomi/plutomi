@@ -85,32 +85,25 @@ const useStyles = createStyles((theme) => ({
   },
 
   controls: {
-    marginTop: `calc(${theme.spacing.xl} * 1.5)`,
     display: "flex",
-    justifyContent: "center",
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md,
-
-    [theme.fn.smallerThan("xs")]: {
-      flexDirection: "column"
-    }
+    marginTop: theme.spacing.xl
   },
 
-  control: {
-    height: rem(42),
-    fontSize: theme.fontSizes.md,
+  // control: {
+  //   height: rem(42),
+  //   fontSize: theme.fontSizes.md,
 
-    "&:not(:first-of-type)": {
-      marginLeft: theme.spacing.md
-    },
+  //   "&:not(:first-of-type)": {
+  //     marginLeft: theme.spacing.md
+  //   },
 
-    [theme.fn.smallerThan("xs")]: {
-      "&:not(:first-of-type)": {
-        marginTop: theme.spacing.md,
-        marginLeft: 0
-      }
-    }
-  },
+  //   [theme.fn.smallerThan("xs")]: {
+  //     "&:not(:first-of-type)": {
+  //       marginTop: theme.spacing.md,
+  //       marginLeft: 0
+  //     }
+  //   }
+  // },
 
   secondaryControl: {
     color: theme.white,
@@ -119,6 +112,20 @@ const useStyles = createStyles((theme) => ({
     "&:hover": {
       backgroundColor: "rgba(255, 255, 255, .45) !important"
     }
+  },
+  inputWrapper: {
+    width: "100%",
+    flex: "1"
+  },
+
+  input: {
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    borderRight: 0
+  },
+  control: {
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0
   }
 }));
 
@@ -222,24 +229,26 @@ export const WaitListCard: React.FC = () => {
             <form
               onSubmit={form.onSubmit((values) => handleFormSubmit(values))}
             >
-              <Group align="start">
+              <div className={classes.controls}>
                 <TextInput
-                  placeholder="example@mail.com"
                   {...form.getInputProps("email")}
-                  style={{ flexGrow: 1 }}
+                  placeholder="example@mail.com"
                   disabled={isSubmitting}
+                  classNames={{
+                    input: classes.input,
+                    root: classes.inputWrapper
+                  }}
                 />
                 <Button
                   color="indigo"
-                  radius="md"
-                  style={{ flexShrink: 1 }}
                   type="submit"
                   loading={isSubmitting}
                   disabled={!form.isDirty()}
+                  className={classes.control}
                 >
-                  Submit
+                  {isSubmitting ? "Joining" : "Join"}
                 </Button>
-              </Group>
+              </div>
             </form>
             <Text c="dimmed">
               We won&apos;t spam you - we don&apos;t even have the ability to
