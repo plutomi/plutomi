@@ -18,9 +18,11 @@ import { useForm, zodResolver } from "@mantine/form";
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import axios from "axios";
 import z from "zod";
+import toast, { Toaster } from "react-hot-toast";
 import { useClipboard } from "@mantine/hooks";
 import { IconCopy, IconCheck, IconAlertCircle } from "@tabler/icons-react";
 import { useState } from "react";
+import { notifications } from "@mantine/notifications";
 
 type WaitListCardProps = {};
 
@@ -123,7 +125,7 @@ const useStyles = createStyles((theme) => ({
 export const WaitListCard: React.FC = () => {
   const { classes, cx } = useStyles();
   const clipboard = useClipboard();
-  const [disabled, setDisabled] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const form = useForm({
@@ -136,18 +138,28 @@ export const WaitListCard: React.FC = () => {
   type FormData = z.infer<typeof schema>;
 
   const handleFormSubmit = async (values: FormData) => {
-    setDisabled(true);
+    setIsSubmitting(true);
     try {
       await axios.post("/api/subscribe", values);
       setSuccess(true);
     } catch (error) {
+      console.error(error);
+      notifications.show({
+        title: "Something went wrong signing you up 😢",
+        message: "We are looking into it!",
+        color: "red",
+        icon: <IconAlertCircle size={24} />
+      });
+      console.error(error);
     } finally {
-      setDisabled(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Container size={"sm"}>
+      <Toaster />
+
       <Card shadow="sm" padding="md" mt={"lg"} radius="md" withBorder>
         <Text weight={500} size={36}>
           Hi there!
@@ -215,14 +227,15 @@ export const WaitListCard: React.FC = () => {
                   placeholder="example@mail.com"
                   {...form.getInputProps("email")}
                   style={{ flexGrow: 1 }}
-                  disabled={disabled}
+                  disabled={isSubmitting}
                 />
                 <Button
                   color="indigo"
                   radius="md"
                   style={{ flexShrink: 1 }}
                   type="submit"
-                  disabled={disabled || !form.isDirty() || !form.isValid()}
+                  loading={isSubmitting}
+                  disabled={!form.isDirty()}
                 >
                   Submit
                 </Button>
