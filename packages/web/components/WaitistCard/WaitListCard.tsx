@@ -33,86 +33,11 @@ const schema = z.object({
 const myEmail = "jose@plutomi.com";
 
 const useStyles = createStyles((theme) => ({
-  wrapper: {
-    position: "relative",
-    paddingTop: rem(180),
-    paddingBottom: rem(130),
-    backgroundImage: "/pluto_new_horizons.png",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-
-    [theme.fn.smallerThan("xs")]: {
-      paddingTop: rem(80),
-      paddingBottom: rem(50)
-    }
-  },
-
-  inner: {
-    position: "relative",
-    zIndex: 1
-  },
-
-  title: {
-    fontWeight: 800,
-    fontSize: rem(70),
-    letterSpacing: rem(-1),
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md,
-    color: theme.white,
-    marginBottom: theme.spacing.xs,
-    textAlign: "center",
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(46),
-      textAlign: "left"
-    }
-  },
-
-  highlight: {
-    color: theme.colors[theme.primaryColor][4]
-  },
-
-  description: {
-    color: theme.colors.gray[0],
-    textAlign: "center",
-    fontSize: rem(28),
-
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: theme.fontSizes.md,
-      textAlign: "left"
-    }
-  },
-
   controls: {
     display: "flex",
     marginTop: theme.spacing.xl
   },
 
-  // control: {
-  //   height: rem(42),
-  //   fontSize: theme.fontSizes.md,
-
-  //   "&:not(:first-of-type)": {
-  //     marginLeft: theme.spacing.md
-  //   },
-
-  //   [theme.fn.smallerThan("xs")]: {
-  //     "&:not(:first-of-type)": {
-  //       marginTop: theme.spacing.md,
-  //       marginLeft: 0
-  //     }
-  //   }
-  // },
-
-  secondaryControl: {
-    color: theme.white,
-    backgroundColor: "rgba(255, 255, 255, .4)",
-
-    "&:hover": {
-      backgroundColor: "rgba(255, 255, 255, .45) !important"
-    }
-  },
   inputWrapper: {
     width: "100%",
     flex: "1"
@@ -125,7 +50,14 @@ const useStyles = createStyles((theme) => ({
   },
   control: {
     borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0
+    borderBottomLeftRadius: 0,
+
+    "&[data-loading]": {
+      "&::before": {
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0
+      }
+    }
   }
 }));
 
@@ -245,6 +177,7 @@ export const WaitListCard: React.FC = () => {
                   loading={isSubmitting}
                   disabled={!form.isDirty()}
                   className={classes.control}
+                  style={{ cursor: isSubmitting ? "not-allowed" : "pointer" }}
                 >
                   {isSubmitting ? "Joining" : "Join"}
                 </Button>
