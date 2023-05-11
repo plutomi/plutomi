@@ -4,6 +4,9 @@ import { Schema } from "@plutomi/validation";
 import { zParse } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
+  // Delay by 2 seconds
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const { data, errorHandled } = zParse(req, res, Schema.subscribe.APISchema);
 
   if (errorHandled) return;
