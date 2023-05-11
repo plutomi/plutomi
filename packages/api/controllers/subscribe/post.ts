@@ -1,23 +1,12 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import type { RequestHandler } from "express";
-import { z } from "zod";
+import { Schemas } from "@plutomi/validation";
 import { zParse } from "../../utils";
 
-const schema = z.object({
-  body: z.object({
-    email: z
-      .string({
-        required_error: "Email is required"
-      })
-      .email("Invalid email")
-  })
-});
-
 export const post: RequestHandler = async (req, res) => {
-  const { body } = await zParse(schema, req, res);
+  const { body } = await zParse(Schemas.Subscribe.APISchema, req, res);
   const { email } = body;
 
-  return;
   const client = new DynamoDBClient({ region: "us-east-1" });
   const command = new PutItemCommand({
     TableName: "plutomi-mvp",

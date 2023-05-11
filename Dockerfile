@@ -14,6 +14,7 @@ COPY yarn.lock package.json ./
 COPY packages/api/package.json packages/api/package.json
 COPY packages/web/package.json packages/web/package.json
 COPY packages/env/package.json packages/env/package.json
+COPY packages/validation/package.json packages/validation/package.json
 
 
 RUN yarn install --frozen-lockfile
@@ -26,6 +27,7 @@ WORKDIR /app
 COPY --from=deps /app/packages/api/node_modules packages/api/node_modules
 COPY --from=deps /app/packages/web/node_modules packages/web/node_modules 
 COPY --from=deps /app/packages/env/node_modules packages/env/node_modules
+COPY --from=deps /app/packages/validation/node_modules packages/validation/node_modules
 COPY --from=deps /app/node_modules node_modules 
 
 COPY . .

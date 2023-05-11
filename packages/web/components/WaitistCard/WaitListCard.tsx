@@ -17,7 +17,7 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import axios from "axios";
-import z from "zod";
+import { Schemas } from "@plutomi/validation";
 import toast, { Toaster } from "react-hot-toast";
 import { useClipboard } from "@mantine/hooks";
 import { IconCopy, IconCheck, IconAlertCircle } from "@tabler/icons-react";
@@ -25,10 +25,6 @@ import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 
 type WaitListCardProps = {};
-
-const schema = z.object({
-  email: z.string().email({ message: "Invalid email" })
-});
 
 const myEmail = "jose@plutomi.com";
 
@@ -70,15 +66,13 @@ export const WaitListCard: React.FC = () => {
     initialValues: {
       email: ""
     },
-    validate: zodResolver(schema)
+    validate: zodResolver(Schemas.Subscribe.UISchema)
   });
 
-  type FormData = z.infer<typeof schema>;
-
-  const handleFormSubmit = async (values: FormData) => {
+  const handleFormSubmit = async (values: Schemas) => {
     setIsSubmitting(true);
     try {
-      await axios.post("/api/subscribe", values);
+      await axios.post("/api/subscribe", { ...values, email: "as" });
       setSuccess(true);
     } catch (error) {
       console.error(error);

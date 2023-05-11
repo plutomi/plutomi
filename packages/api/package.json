@@ -9,6 +9,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.328.0",
     "@plutomi/env": "^0.1.0",
+    "@plutomi/validation": "^0.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

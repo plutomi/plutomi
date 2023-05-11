@@ -10,9 +10,7 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "dev": "ts-node-dev  --exit-child --respawn --transpile-only index.ts",
     "build": "tsc",
-    "start": "node index.js",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },

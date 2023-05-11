@@ -1,15 +1,15 @@
 {
-  "name": "@plutomi/schemas",
+  "name": "@plutomi/validation",
   "version": "0.1.0",
-  "description": "Schema Package for Plutomi.",
+  "description": "Schema Validation Package for Plutomi.",
   "repository": "https://github.com/plutomi/plutomi",
   "author": "Plutomi Inc.",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "zod": "^3.21.4"
+  },
   "scripts": {
-    "dev": "ts-node-dev  --exit-child --respawn --transpile-only index.ts",
     "build": "tsc",
-    "start": "node index.js",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
