@@ -11,7 +11,5 @@ const baseSchema = z.object({
 export const UISchema = baseSchema;
 export type UIValues = z.infer<typeof UISchema>;
 
-export const APISchema = z.object({
-  body: baseSchema
-});
+export const APISchema = baseSchema;
 export type APIValues = z.infer<typeof APISchema>;

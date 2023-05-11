@@ -5,14 +5,17 @@ import { zParse } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   // Delay by 2 seconds
-  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const { data, errorHandled } = zParse(req, res, Schema.subscribe.APISchema);
+  const { data, errorHandled } = zParse({
+    req,
+    res,
+    schema: Schema.subscribe.APISchema
+  });
 
-  if (errorHandled) return;
-
-  const { body } = data;
-  const { email } = body;
+  if (errorHandled) {
+    return;
+  }
+  const { email } = data;
 
   const client = new DynamoDBClient({ region: "us-east-1" });
   const command = new PutItemCommand({
