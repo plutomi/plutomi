@@ -24,7 +24,6 @@ import { useClipboard } from "@mantine/hooks";
 import { IconCopy, IconCheck, IconAlertCircle } from "@tabler/icons-react";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
-import { UserX } from "@plutomi/validation/schemas/subscribe/subscribe";
 
 type WaitListCardProps = {};
 
@@ -68,10 +67,11 @@ export const WaitListCard: React.FC = () => {
     initialValues: {
       email: ""
     },
-    validate: zodResolver(Schema.beans.UISchema)
+    validate: zodResolver(Schema.subscribe.UISchema)
   });
 
-  const handleFormSubmit = async (values: Schema.beans.UIValues) => {
+  const handleFormSubmit = async (values: Schema.subscribe.UIValues) => {
+    console.log("Submitting", values);
     setIsSubmitting(true);
     try {
       await axios.post("/api/subscribe", { ...values, email: "as" });
@@ -84,17 +84,16 @@ export const WaitListCard: React.FC = () => {
         color: "red",
         icon: <IconAlertCircle size={24} />
       });
-      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Container size={"sm"}>
+    <Container size="sm">
       <Toaster />
 
-      <Card shadow="sm" padding="md" mt={"lg"} radius="md" withBorder>
+      <Card shadow="sm" padding="md" mt="lg" radius="md" withBorder>
         <Text weight={500} size={36}>
           Hi there!
         </Text>
@@ -105,7 +104,7 @@ export const WaitListCard: React.FC = () => {
           or DM me on Twitter or by email if you have any questions 😎
         </Text>
 
-        <Flex justify={"center"}>
+        <Flex justify="center">
           <Tooltip
             label="Email copied!"
             offset={5}
@@ -130,7 +129,9 @@ export const WaitListCard: React.FC = () => {
                 root: { paddingRight: rem(14), height: rem(48) },
                 rightIcon: { marginLeft: rem(22) }
               }}
-              onClick={() => clipboard.copy(myEmail)}
+              onClick={() => {
+                clipboard.copy(myEmail);
+              }}
             >
               {myEmail}
             </Button>
@@ -149,12 +150,15 @@ export const WaitListCard: React.FC = () => {
             color="green"
             radius="md"
           >
-            You've been added to our wait list 🚀
+            You&apos;ve been added to our wait list 🚀
           </Alert>
         ) : (
           <>
             <form
-              onSubmit={form.onSubmit((values) => void handleFormSubmit(values))}
+              onSubmit={form.onSubmit(
+                // eslint-disable-next-line no-void
+                (values) => void handleFormSubmit(values)
+              )}
             >
               <div className={classes.controls}>
                 <TextInput

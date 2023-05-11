@@ -3,10 +3,12 @@ import type { RequestHandler } from "express";
 import { Schema } from "@plutomi/validation";
 import { zParse } from "../../utils";
 
-
-
 export const post: RequestHandler = async (req, res) => {
-  const { body } = await zParse(Schema.beans.post.APISchema, req, res);
+  const { data, errorHandled } = zParse(req, res, Schema.subscribe.APISchema);
+
+  if (errorHandled) return;
+
+  const { body } = data;
   const { email } = body;
 
   const client = new DynamoDBClient({ region: "us-east-1" });
@@ -21,10 +23,8 @@ export const post: RequestHandler = async (req, res) => {
   });
 
   try {
-    const results = await client.send(command);
-    console.log(results);
+    await client.send(command);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Something went wrong signing you up :(" });
     return;
   }
