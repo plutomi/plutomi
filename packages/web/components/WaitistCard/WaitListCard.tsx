@@ -10,11 +10,17 @@ import {
   TextInput,
   Flex,
   Space,
-  Group
+  Group,
+  Tooltip,
+  Alert
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { BsGithub, BsTwitter } from "react-icons/bs";
+import axios from "axios";
 import z from "zod";
+import { useClipboard } from "@mantine/hooks";
+import { IconCopy, IconCheck, IconAlertCircle } from "@tabler/icons-react";
+import { useState } from "react";
 
 type WaitListCardProps = {};
 
@@ -22,13 +28,14 @@ const schema = z.object({
   email: z.string().email({ message: "Invalid email" })
 });
 
+const myEmail = "jose@plutomi.com";
+
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
     paddingTop: rem(180),
     paddingBottom: rem(130),
-    backgroundImage:
-      "url(https://www.nasa.gov/sites/default/files/thumbnails/image/nh-apluto-wide-9-17-15-final_0.png)",
+    backgroundImage: "/pluto_new_horizons.png",
     backgroundSize: "cover",
     backgroundPosition: "center",
 
@@ -115,6 +122,9 @@ const useStyles = createStyles((theme) => ({
 
 export const WaitListCard: React.FC = () => {
   const { classes, cx } = useStyles();
+  const clipboard = useClipboard();
+  const [disabled, setDisabled] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -125,9 +135,17 @@ export const WaitListCard: React.FC = () => {
 
   type FormData = z.infer<typeof schema>;
 
-  const handleFormSubmit = (values: FormData) => {
-    alert(values);
+  const handleFormSubmit = async (values: FormData) => {
+    setDisabled(true);
+    try {
+      await axios.post("/api/subscribe", values);
+      setSuccess(true);
+    } catch (error) {
+    } finally {
+      setDisabled(false);
+    }
   };
+
   return (
     <Container size={"sm"}>
       <Card shadow="sm" padding="md" mt={"lg"} radius="md" withBorder>
@@ -140,31 +158,82 @@ export const WaitListCard: React.FC = () => {
           major refactor. You can check the progress and all changes on GitHub
           or DM me on Twitter or by email if you have any questions 😎
         </Text>
-        <Space h="md" />
 
+        <Flex justify={"center"}>
+          <Tooltip
+            label="Email copied!"
+            offset={5}
+            position="top"
+            radius="xl"
+            transitionProps={{ duration: 100, transition: "slide-up" }}
+            opened={clipboard.copied}
+          >
+            <Button
+              variant="subtle"
+              compact
+              rightIcon={
+                clipboard.copied ? (
+                  <IconCheck size="1.2rem" stroke={1.5} />
+                ) : (
+                  <IconCopy size="1.2rem" stroke={1.5} />
+                )
+              }
+              radius="xl"
+              size="md"
+              styles={{
+                root: { paddingRight: rem(14), height: rem(48) },
+                rightIcon: { marginLeft: rem(22) }
+              }}
+              onClick={() => clipboard.copy(myEmail)}
+            >
+              {myEmail}
+            </Button>
+          </Tooltip>
+        </Flex>
         <Text>
           If you&apos;re interested in being notified when Plutomi is ready for
           use, please join our wait list!
         </Text>
         <Space h="sm" />
 
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <Group align="start">
-            <TextInput
-              placeholder="example@mail.com"
-              {...form.getInputProps("email")}
-              style={{ flexGrow: 1 }}
-            />
-            <Button color="indigo" radius="md" style={{ flexShrink: 1 }}>
-              Submit
-            </Button>
-          </Group>
-        </form>
-
-        <Text c="dimmed">
-          We won&apos;t spam you - we don&apos;t even have the ability to send
-          emails yet! 😅
-        </Text>
+        {success ? (
+          <Alert
+            icon={<IconAlertCircle size="1rem" />}
+            title="Success!"
+            color="green"
+            radius="md"
+          >
+            You've been added to our wait list 🚀
+          </Alert>
+        ) : (
+          <>
+            <form
+              onSubmit={form.onSubmit((values) => handleFormSubmit(values))}
+            >
+              <Group align="start">
+                <TextInput
+                  placeholder="example@mail.com"
+                  {...form.getInputProps("email")}
+                  style={{ flexGrow: 1 }}
+                  disabled={disabled}
+                />
+                <Button
+                  color="indigo"
+                  radius="md"
+                  style={{ flexShrink: 1 }}
+                  type="submit"
+                  disabled={disabled || !form.isDirty() || !form.isValid()}
+                >
+                  Submit
+                </Button>
+              </Group>
+            </form>
+            <Text c="dimmed">
+              We won&apos;t spam you - we don&apos;t even have the ability to
+              send emails yet! 😅
+            </Text>{" "}
+          </>
+        )}
 
         <Space h="lg" />
 
@@ -182,7 +251,6 @@ export const WaitListCard: React.FC = () => {
             target="_blank"
             variant="default"
             radius="md"
-            // leftIcon={<CgExternal size="0.9rem" />}
             rightIcon={<BsGithub size="1.1rem" color="#333" />}
           >
             Plutomi on GitHub
@@ -195,10 +263,9 @@ export const WaitListCard: React.FC = () => {
             target="_blank"
             variant="default"
             radius="md"
-            // leftIcon={<CgExternal size="0.9rem" />}
             rightIcon={<BsTwitter size="1.1rem" color={"#00acee"} />}
           >
-            Jose on GitHub
+            Jose on Twitter
           </Button>
         </Flex>
       </Card>
