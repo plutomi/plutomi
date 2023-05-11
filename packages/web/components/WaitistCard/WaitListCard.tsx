@@ -45,8 +45,7 @@ const useStyles = createStyles((theme) => ({
 
   input: {
     borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    borderRight: 0
+    borderBottomRightRadius: 0
   },
   control: {
     borderTopLeftRadius: 0,

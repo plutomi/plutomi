@@ -9,7 +9,7 @@ const schema = z.object({
       .string({
         required_error: "Email is required"
       })
-      .email("Not a valid email")
+      .email("Invalid email")
   })
 });
 
@@ -17,8 +17,6 @@ export const post: RequestHandler = async (req, res) => {
   const { body } = await zParse(schema, req, res);
   const { email } = body;
 
-  await new Promise((resolve) => setTimeout(resolve, 20000));
-  res.status(400).json({ message: "Email already exists" });
   return;
   const client = new DynamoDBClient({ region: "us-east-1" });
   const command = new PutItemCommand({
