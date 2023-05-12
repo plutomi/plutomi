@@ -29,7 +29,7 @@ export const post: RequestHandler = async (req, res) => {
   try {
     await client.send(command);
   } catch (err) {
-    res.status(500).json({ message: "Something went wrong signing you up :(" });
+    res.status(500).json({ message: "Something went wrong signing you up" });
     return;
   }
 
