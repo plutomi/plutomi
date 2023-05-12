@@ -49,7 +49,6 @@ const useCases: UseCase[] = [
 export const UseCaseSegment: React.FC = () => {
   const { useCase, setUseCase } = useUseCaseStore();
 
-  const { classes } = useStyles();
   return (
     <Flex justify="center">
       <MediaQuery smallerThan="md" styles={{ display: "none" }}>

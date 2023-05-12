@@ -3,7 +3,13 @@ import {
   Text,
   SimpleGrid,
   UnstyledButton,
-  rem
+  rem,
+  Card,
+  Group,
+  Center,
+  Flex,
+  Stack,
+  Box
 } from "@mantine/core";
 import { IconReceipt, IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
@@ -13,6 +19,7 @@ import {
   AiOutlineFieldTime,
   AiFillDollarCircle
 } from "react-icons/ai";
+import { HiUserGroup } from "react-icons/hi";
 import {
   BsPersonXFill,
   BsPersonBoundingBox,
@@ -27,30 +34,61 @@ type UseCaseCard = {
   title: string;
   icon: React.FC<any>;
   color: string;
+  amount: number;
 };
 
 const hiringUseCase: UseCaseCard[] = [
-  { title: "Resume Upload", icon: IconFileUpload, color: "gray" },
-  { title: "Resume Review", icon: SiCodereview, color: "yellow" },
-  { title: "Interviewing", icon: FaPeopleArrows, color: "blue" },
-  { title: "Rejected", icon: AiFillCloseCircle, color: "red" },
-  { title: "Hired", icon: MdOutlineWork, color: "green" }
+  { title: "Resume Upload", icon: IconFileUpload, color: "gray", amount: 2 },
+  { title: "Resume Review", icon: SiCodereview, color: "yellow", amount: 7 },
+  { title: "Interviewing", icon: FaPeopleArrows, color: "blue", amount: 5 },
+  { title: "Rejected", icon: AiFillCloseCircle, color: "red", amount: 1 },
+  { title: "Hired", icon: MdOutlineWork, color: "green", amount: 32 }
 ];
 
 const socialServicesUseCase: UseCaseCard[] = [
-  { title: "Registration", icon: FaWpforms, color: "gray" },
-  { title: "ID Verification", icon: BsFillPersonVcardFill, color: "yellow" },
-  { title: "Income Verification", icon: AiFillDollarCircle, color: "yellow" },
-  { title: "Did Not Qualify", icon: BsPersonFillExclamation, color: "red" },
-  { title: "Funds Disbursed", icon: GiReceiveMoney, color: "green" }
+  { title: "Registration", icon: FaWpforms, color: "gray", amount: 430 },
+  {
+    title: "ID Verification",
+    icon: BsFillPersonVcardFill,
+    color: "yellow",
+    amount: 31
+  },
+  {
+    title: "Income Verification",
+    icon: AiFillDollarCircle,
+    color: "yellow",
+    amount: 63
+  },
+  {
+    title: "Did Not Qualify",
+    icon: BsPersonFillExclamation,
+    color: "red",
+    amount: 258
+  },
+  {
+    title: "Funds Disbursed",
+    icon: GiReceiveMoney,
+    color: "green",
+    amount: 216
+  }
 ];
 
 const largeScaleContractingUseCase: UseCaseCard[] = [
-  { title: "Wait List", icon: AiOutlineFieldTime, color: "gray" },
-  { title: "Setup Profile", icon: IconReceipt, color: "yellow" },
-  { title: "Background Check", icon: BsPersonBoundingBox, color: "orange" },
-  { title: "Failed Check ", icon: BsPersonXFill, color: "red" },
-  { title: "Ready to Drive", icon: FaCarSide, color: "green" }
+  {
+    title: "Wait List",
+    icon: AiOutlineFieldTime,
+    color: "gray",
+    amount: 89587
+  },
+  { title: "Setup Profile", icon: IconReceipt, color: "yellow", amount: 12615 },
+  {
+    title: "Background Check",
+    icon: BsPersonBoundingBox,
+    color: "orange",
+    amount: 948
+  },
+  { title: "Failed Check ", icon: BsPersonXFill, color: "red", amount: 27 },
+  { title: "Ready to Drive", icon: FaCarSide, color: "green", amount: 3926 }
 ];
 
 const useCases = new Map<UseCase, UseCaseCard[]>([
@@ -62,7 +100,13 @@ const useCases = new Map<UseCase, UseCaseCard[]>([
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0]
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    transition: "box-shadow 150ms ease, transform 100ms ease"
+  },
+  section: {
+    borderBottom: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`
   },
 
   title: {
@@ -72,13 +116,8 @@ const useStyles = createStyles((theme) => ({
 
   item: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
     borderRadius: theme.radius.md,
-    height: rem(90),
-    width: rem(180),
+
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     transition: "box-shadow 150ms ease, transform 100ms ease",
@@ -95,20 +134,35 @@ export const UseCaseCards: React.FC = () => {
   const { classes, theme } = useStyles();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <UnstyledButton key={item.title} className={classes.item}>
-      <item.icon color={theme.colors[item.color][5]} size="2rem" />
-      <Text fz="lg" c="dimmed" mt={7}>
-        {item.title}
-      </Text>
-    </UnstyledButton>
+    <Card className={classes.card}>
+      <Card.Section py="xs">
+        <Center>
+          <item.icon color={theme.colors[item.color][5]} size="2rem" />
+        </Center>
+        <Text fz="lg" mt={4} ta="center">
+          {item.title}
+        </Text>
+      </Card.Section>
+      <Card.Section withBorder py="1">
+        <Group spacing="xs" position="center" c="dimmed">
+          <Center>
+            <HiUserGroup />
+          </Center>
+          <Text fz="md" fw={500}>
+            {item.amount.toLocaleString()}{" "}
+          </Text>
+        </Group>
+      </Card.Section>
+    </Card>
   ));
 
   return (
     <SimpleGrid
       breakpoints={[
-        { maxWidth: "sm", cols: 1, spacing: "md" },
-        { minWidth: "md", cols: 5, spacing: "xl" }
+        { maxWidth: "sm", cols: 1, spacing: "xs" },
+        { minWidth: "lg", cols: 5, spacing: "xs" }
       ]}
+      style={{ border: "2px solid red", width: "70%" }}
     >
       {items}
     </SimpleGrid>

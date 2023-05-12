@@ -1,15 +1,15 @@
-import { Container, Stack } from "@mantine/core";
+import { Container, Flex, Stack } from "@mantine/core";
 import { UseCaseCards } from "./UseCaseCards";
 import { UseCaseSegment } from "./UseCaseSegment";
 
 export const UseCaseSection: React.FC = () => (
-  <Stack justify="center" style={{ border: "2px solid blue" }}>
-    <Container size="md" style={{ border: "2px solid red" }}>
+  <Stack justify="center">
+    <Container size="md">
       <UseCaseSegment />
     </Container>
 
-    <Container size="md">
+    <Flex justify="center">
       <UseCaseCards />
-    </Container>
+    </Flex>
   </Stack>
 );
