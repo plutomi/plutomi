@@ -23,7 +23,8 @@ import {
 import {
   BsPersonXFill,
   BsPersonBoundingBox,
-  BsFillPersonVcardFill
+  BsFillPersonVcardFill,
+  BsPersonFillExclamation
 } from "react-icons/bs";
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
@@ -47,7 +48,7 @@ const socialServicesUseCase: UseCaseCard[] = [
   { title: "Registration", icon: FaWpforms, color: "gray" },
   { title: "ID Verification", icon: BsFillPersonVcardFill, color: "yellow" },
   { title: "Income Verification", icon: AiFillDollarCircle, color: "yellow" },
-  { title: "Did Not Qualify", icon: IconReceipt, color: "red" },
+  { title: "Did Not Qualify", icon: BsPersonFillExclamation, color: "red" },
   { title: "Funds Disbursed", icon: GiReceiveMoney, color: "green" }
 ];
 
