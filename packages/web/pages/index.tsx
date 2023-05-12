@@ -1,4 +1,5 @@
 import LandingHero from "@/components/LandingHero/LandingHero";
+import { LatestCommits } from "@/components/LatestCommits";
 import { UseCaseSection } from "@/components/UseCases";
 import { WaitListCard } from "@/components/WaitistCard";
 import { Space } from "@mantine/core";
@@ -11,6 +12,7 @@ const Home: NextPage = () => (
     <UseCaseSection />
     <Space h="lg" />
     <WaitListCard />
+    <LatestCommits />
   </>
 );
 
