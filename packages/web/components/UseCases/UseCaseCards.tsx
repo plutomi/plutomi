@@ -136,7 +136,7 @@ export const UseCaseCards: React.FC = () => {
   const { classes, theme } = useStyles();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <Card className={classes.card}>
+    <Card key={item.title} className={classes.card}>
       <Card.Section py="xs">
         <Center>
           <item.icon color={theme.colors[item.color][5]} size="2rem" />
