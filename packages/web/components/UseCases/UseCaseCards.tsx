@@ -2,14 +2,10 @@ import {
   createStyles,
   Text,
   SimpleGrid,
-  UnstyledButton,
   rem,
   Card,
   Group,
-  Center,
-  Flex,
-  Stack,
-  Box
+  Center
 } from "@mantine/core";
 import { IconReceipt, IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
