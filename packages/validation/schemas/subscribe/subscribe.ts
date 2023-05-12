@@ -5,7 +5,7 @@ const baseSchema = z.object({
     .string({
       required_error: "Email is required"
     })
-    .email("Invalid email")
+    .email("That email doesn't look right...")
 });
 
 export const UISchema = baseSchema;

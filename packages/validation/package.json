@@ -6,6 +6,7 @@
   "author": "Plutomi Inc.",
   "license": "Apache-2.0",
   "dependencies": {
+    "@types/express": "^4.17.17",
     "zod": "^3.21.4"
   },
   "scripts": {

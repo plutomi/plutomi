@@ -28,6 +28,7 @@
     "no-lonely-if": "error",
     "import/order": "error",
     "sort-imports": "off",
+    "no-void": ["off"],
     "prefer-template": "error",
     "curly": ["error", "all"],
     "@typescript-eslint/dot-notation": "error",

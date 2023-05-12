@@ -2,13 +2,12 @@ import {
   Title,
   Text,
   Container,
-  Button,
   Overlay,
   createStyles,
-  rem
+  rem,
+  Highlight,
+  useMantineTheme
 } from "@mantine/core";
-import { NextPage } from "next";
-import { BsGithub, BsTwitter } from "react-icons/bs";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -102,7 +101,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const LandingHero: React.FC = () => {
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
+  const theme = useMantineTheme();
 
   return (
     <div className={classes.wrapper}>
@@ -116,7 +116,11 @@ const LandingHero: React.FC = () => {
             inherit
             className={classes.highlight}
             variant="gradient"
-            gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+            gradient={{
+              from: theme.colors.indigo[6],
+              to: theme.colors.teal[3],
+              deg: 20
+            }}
           >
             any scale
           </Text>
