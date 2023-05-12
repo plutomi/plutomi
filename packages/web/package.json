@@ -7,7 +7,6 @@
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "dependencies": {
-    "@plutomi/validation": "^0.1.0",
     "@emotion/react": "^11.11.0",
     "@heroicons/react": "^2.0.17",
     "@mantine/carousel": "^6.0.10",
@@ -23,6 +22,7 @@
     "@mantine/spotlight": "^6.0.10",
     "@mantine/tiptap": "^6.0.10",
     "@plutomi/env": "^0.1.0",
+    "@plutomi/validation": "^0.1.0",
     "@tabler/icons-react": "^2.17.0",
     "@tiptap/extension-link": "^2.0.3",
     "@tiptap/react": "^2.0.3",
@@ -36,7 +36,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.1",
-    "react-icons": "^4.8.0"
+    "react-icons": "^4.8.0",
+    "zustand": "^4.3.8"
   },
   "license": "Apache-2.0",
   "devDependencies": {

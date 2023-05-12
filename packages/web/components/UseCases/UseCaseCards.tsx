@@ -13,20 +13,17 @@ import {
   IconBuildingBank,
   IconRepeat,
   IconReceiptRefund,
-  IconReceipt,
-  IconReceiptTax,
-  IconReport,
-  IconCashBanknote,
-  IconCoin
+  IconReceipt
 } from "@tabler/icons-react";
+import { UseCase, useUseCaseStore } from "./useUseCaseStore";
 
-type UseCase = {
+type UseCaseCard = {
   title: string;
   icon: React.FC<any>;
   color: string;
 };
 
-const hiringUseCase: UseCase[] = [
+const hiringUseCase: UseCaseCard[] = [
   { title: "Resume Upload", icon: IconCreditCard, color: "gray" },
   { title: "Resume Review", icon: IconBuildingBank, color: "indigo" },
   { title: "Interviewing", icon: IconRepeat, color: "blue" },
@@ -34,7 +31,9 @@ const hiringUseCase: UseCase[] = [
   { title: "Hired", icon: IconReceipt, color: "green" }
 ];
 
-const useCases = hiringUseCase;
+const useCases = new Map<UseCase, UseCaseCard[]>([
+  ["Employee Hiring", hiringUseCase]
+]);
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -67,9 +66,10 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export const UseCaseCards: React.FC = () => {
+  const { useCase } = useUseCaseStore();
   const { classes, theme } = useStyles();
 
-  const items = useCases.map((item) => (
+  const items = (useCases.get(useCase) ?? []).map((item) => (
     <UnstyledButton key={item.title} className={classes.item}>
       <item.icon color={theme.colors[item.color][6]} size="2rem" />
       <Text size="xs" mt={7}>

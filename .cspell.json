@@ -38,7 +38,8 @@
     "Valerio",
     "wafv2",
     "wafwebacl",
-    "webacl"
+    "webacl",
+    "zustand"
   ],
   "overrides": []
 }

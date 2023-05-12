@@ -1,4 +1,5 @@
 import { createStyles, SegmentedControl, rem } from "@mantine/core";
+import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -27,18 +28,24 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-const useCases = [
+const useCases: UseCase[] = [
   "Employee Hiring",
   "Social Services",
   "Large Scale Contracting"
 ];
 
 export const UseCaseSegment: React.FC = () => {
+  const { useCase, setUseCase } = useUseCaseStore();
+
   const { classes } = useStyles();
   return (
     <SegmentedControl
       radius="xl"
-      size="md"
+      size="xl"
+      value={useCase}
+      onChange={(value: UseCase) => {
+        setUseCase(value);
+      }}
       data={useCases}
       classNames={classes}
     />
