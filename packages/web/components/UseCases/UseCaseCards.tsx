@@ -31,8 +31,26 @@ const hiringUseCase: UseCaseCard[] = [
   { title: "Hired", icon: IconReceipt, color: "green" }
 ];
 
+const socialServicesUseCase: UseCaseCard[] = [
+  { title: "Registration", icon: IconReceipt, color: "green" },
+  { title: "ID Upload", icon: IconReceipt, color: "orange" },
+  { title: "ID Verification", icon: IconReceipt, color: "indigo" },
+  { title: "Registered", icon: IconReceipt, color: "indigo" },
+  { title: "Did Not Qualify", icon: IconReceipt, color: "indigo" }
+];
+
+const largeScaleContractingUseCase: UseCaseCard[] = [
+  { title: "Wait List", icon: IconReceipt, color: "gray" },
+  { title: "Setup Profile", icon: IconReceipt, color: "orange" },
+  { title: "Background Check", icon: IconReceipt, color: "blue" },
+  { title: "Failed Check ", icon: IconReceipt, color: "red" },
+  { title: "Ready to Drive", icon: IconReceipt, color: "green" }
+];
+
 const useCases = new Map<UseCase, UseCaseCard[]>([
-  ["Employee Hiring", hiringUseCase]
+  ["Employee Hiring", hiringUseCase],
+  ["Social Services", socialServicesUseCase],
+  ["Large Scale Contracting", largeScaleContractingUseCase]
 ]);
 
 const useStyles = createStyles((theme) => ({
@@ -79,7 +97,12 @@ export const UseCaseCards: React.FC = () => {
   ));
 
   return (
-    <SimpleGrid cols={5} mt="md">
+    <SimpleGrid
+      breakpoints={[
+        { maxWidth: "sm", cols: 1, spacing: "sm" },
+        { minWidth: "md", cols: 5, spacing: "md" }
+      ]}
+    >
       {items}
     </SimpleGrid>
   );

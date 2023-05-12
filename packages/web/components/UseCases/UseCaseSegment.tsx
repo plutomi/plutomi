@@ -1,4 +1,10 @@
-import { createStyles, SegmentedControl, rem } from "@mantine/core";
+import {
+  createStyles,
+  SegmentedControl,
+  rem,
+  Flex,
+  MediaQuery
+} from "@mantine/core";
 import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 const useStyles = createStyles((theme) => ({
@@ -6,6 +12,11 @@ const useStyles = createStyles((theme) => ({
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
     boxShadow: theme.shadows.md,
+    size: "xl",
+
+    [theme.fn.smallerThan("lg")]: {
+      size: "sm"
+    },
     border: `${rem(1)} solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[1]
     }`
@@ -39,15 +50,16 @@ export const UseCaseSegment: React.FC = () => {
 
   const { classes } = useStyles();
   return (
-    <SegmentedControl
-      radius="xl"
-      size="xl"
-      value={useCase}
-      onChange={(value: UseCase) => {
-        setUseCase(value);
-      }}
-      data={useCases}
-      classNames={classes}
-    />
+    <Flex justify="center">
+      <SegmentedControl
+        radius="xl"
+        value={useCase}
+        onChange={(value: UseCase) => {
+          setUseCase(value);
+        }}
+        data={useCases}
+
+      />
+    </Flex>
   );
 };
