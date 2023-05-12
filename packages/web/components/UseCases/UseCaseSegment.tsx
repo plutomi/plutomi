@@ -52,7 +52,7 @@ export const UseCaseSegment: React.FC = () => {
   const { classes } = useStyles();
   return (
     <Flex justify="center">
-      <MediaQuery smallerThan="lg" styles={{ display: "none" }}>
+      <MediaQuery smallerThan="md" styles={{ display: "none" }}>
         <SegmentedControl
           radius="lg"
           size="xl"
@@ -63,9 +63,8 @@ export const UseCaseSegment: React.FC = () => {
           data={useCases}
         />
       </MediaQuery>
-      <MediaQuery largerThan="lg" styles={{ display: "none" }}>
+      <MediaQuery largerThan="md" styles={{ display: "none" }}>
         <SegmentedControl
-          fullWidth
           radius="lg"
           size="lg"
           orientation="vertical"
