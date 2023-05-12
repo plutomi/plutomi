@@ -19,6 +19,7 @@
     "barebones",
     "cacheable",
     "certificatemanager",
+    "Codereview",
     "consts",
     "Cooldown",
     "deregistration",
@@ -39,6 +40,7 @@
     "wafv2",
     "wafwebacl",
     "webacl",
+    "Wpforms",
     "zustand"
   ],
   "overrides": []

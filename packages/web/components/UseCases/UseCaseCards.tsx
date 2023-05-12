@@ -1,11 +1,8 @@
 import {
   createStyles,
-  Card,
   Text,
   SimpleGrid,
   UnstyledButton,
-  Anchor,
-  Group,
   rem
 } from "@mantine/core";
 import {
@@ -13,9 +10,24 @@ import {
   IconBuildingBank,
   IconRepeat,
   IconReceiptRefund,
-  IconReceipt
+  IconReceipt,
+  IconFileUpload
 } from "@tabler/icons-react";
-import { UseCase, useUseCaseStore } from "./useUseCaseStore";
+import { SiCodereview } from "react-icons/si";
+import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
+import {
+  AiFillCloseCircle,
+  AiOutlineFieldTime,
+  AiFillDollarCircle
+} from "react-icons/ai";
+import {
+  BsPersonXFill,
+  BsPersonBoundingBox,
+  BsFillPersonVcardFill
+} from "react-icons/bs";
+import { MdOutlineWork } from "react-icons/md";
+import { GiReceiveMoney } from "react-icons/gi";
+import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 type UseCaseCard = {
   title: string;
@@ -24,27 +36,27 @@ type UseCaseCard = {
 };
 
 const hiringUseCase: UseCaseCard[] = [
-  { title: "Resume Upload", icon: IconCreditCard, color: "gray" },
-  { title: "Resume Review", icon: IconBuildingBank, color: "indigo" },
-  { title: "Interviewing", icon: IconRepeat, color: "blue" },
-  { title: "Rejected", icon: IconReceiptRefund, color: "red" },
-  { title: "Hired", icon: IconReceipt, color: "green" }
+  { title: "Resume Upload", icon: IconFileUpload, color: "gray" },
+  { title: "Resume Review", icon: SiCodereview, color: "yellow" },
+  { title: "Interviewing", icon: FaPeopleArrows, color: "blue" },
+  { title: "Rejected", icon: AiFillCloseCircle, color: "red" },
+  { title: "Hired", icon: MdOutlineWork, color: "green" }
 ];
 
 const socialServicesUseCase: UseCaseCard[] = [
-  { title: "Registration", icon: IconReceipt, color: "green" },
-  { title: "ID Upload", icon: IconReceipt, color: "orange" },
-  { title: "ID Verification", icon: IconReceipt, color: "indigo" },
-  { title: "Registered", icon: IconReceipt, color: "indigo" },
-  { title: "Did Not Qualify", icon: IconReceipt, color: "indigo" }
+  { title: "Registration", icon: FaWpforms, color: "gray" },
+  { title: "ID Verification", icon: BsFillPersonVcardFill, color: "yellow" },
+  { title: "Income Verification", icon: AiFillDollarCircle, color: "yellow" },
+  { title: "Did Not Qualify", icon: IconReceipt, color: "red" },
+  { title: "Funds Disbursed", icon: GiReceiveMoney, color: "green" }
 ];
 
 const largeScaleContractingUseCase: UseCaseCard[] = [
-  { title: "Wait List", icon: IconReceipt, color: "gray" },
-  { title: "Setup Profile", icon: IconReceipt, color: "orange" },
-  { title: "Background Check", icon: IconReceipt, color: "blue" },
-  { title: "Failed Check ", icon: IconReceipt, color: "red" },
-  { title: "Ready to Drive", icon: IconReceipt, color: "green" }
+  { title: "Wait List", icon: AiOutlineFieldTime, color: "gray" },
+  { title: "Setup Profile", icon: IconReceipt, color: "yellow" },
+  { title: "Background Check", icon: BsPersonBoundingBox, color: "orange" },
+  { title: "Failed Check ", icon: BsPersonXFill, color: "red" },
+  { title: "Ready to Drive", icon: FaCarSide, color: "green" }
 ];
 
 const useCases = new Map<UseCase, UseCaseCard[]>([
@@ -89,8 +101,8 @@ export const UseCaseCards: React.FC = () => {
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
     <UnstyledButton key={item.title} className={classes.item}>
-      <item.icon color={theme.colors[item.color][6]} size="2rem" />
-      <Text size="xs" mt={7}>
+      <item.icon color={theme.colors[item.color][5]} size="2rem" />
+      <Text size="sm" mt={7}>
         {item.title}
       </Text>
     </UnstyledButton>
