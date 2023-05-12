@@ -10,7 +10,7 @@ import { handleAxiosError } from "@/utils/handleAxiosResponse";
 const useStyles = createStyles((theme) => ({
   controls: {
     display: "flex",
-    marginTop: theme.spacing.xl
+    marginTop: theme.spacing.xs
   },
 
   inputWrapper: {

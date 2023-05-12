@@ -5,7 +5,6 @@ import {
   Overlay,
   createStyles,
   rem,
-  Highlight,
   useMantineTheme
 } from "@mantine/core";
 
@@ -39,8 +38,6 @@ const useStyles = createStyles((theme) => ({
     color: theme.white,
     marginBottom: theme.spacing.xs,
     textAlign: "center",
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-
     [theme.fn.smallerThan("xs")]: {
       fontSize: rem(46),
       textAlign: "left"
