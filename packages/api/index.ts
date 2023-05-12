@@ -1,5 +1,9 @@
+/* eslint-disable import/first */
 /* eslint no-console: 0 */
 // import compression from "compression"; // TODO: Add compression back in
+import * as dotenv from "dotenv";
+
+dotenv.config();
 import express from "express";
 import next from "next";
 import path from "path";

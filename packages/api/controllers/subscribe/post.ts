@@ -1,12 +1,9 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import type { RequestHandler } from "express";
-import { Schema } from "@plutomi/validation";
-import { zParse } from "../../utils";
+import { Schema, validate } from "@plutomi/validation";
 
 export const post: RequestHandler = async (req, res) => {
-  // Delay by 2 seconds
-
-  const { data, errorHandled } = zParse({
+  const { data, errorHandled } = validate({
     req,
     res,
     schema: Schema.subscribe.APISchema
@@ -15,6 +12,7 @@ export const post: RequestHandler = async (req, res) => {
   if (errorHandled) {
     return;
   }
+
   const { email } = data;
 
   const client = new DynamoDBClient({ region: "us-east-1" });
