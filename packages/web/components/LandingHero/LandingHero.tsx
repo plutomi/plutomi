@@ -54,7 +54,7 @@ const useStyles = createStyles((theme) => ({
     fontSize: rem(28),
 
     [theme.fn.smallerThan("xs")]: {
-      fontSize: theme.fontSizes.md,
+      fontSize: theme.fontSizes.lg,
       textAlign: "left"
     }
   },
@@ -115,7 +115,7 @@ const LandingHero: React.FC = () => {
             variant="gradient"
             gradient={{
               from: theme.colors.indigo[6],
-              to: theme.colors.teal[3],
+              to: theme.colors.cyan[3],
               deg: 20
             }}
           >

@@ -126,6 +126,12 @@ const useStyles = createStyles((theme) => ({
       boxShadow: theme.shadows.md,
       transform: "scale(1.05)"
     }
+  },
+  grid: {
+    width: "80%",
+    [theme.fn.smallerThan("lg")]: {
+      width: "60%"
+    }
   }
 }));
 
@@ -162,7 +168,7 @@ export const UseCaseCards: React.FC = () => {
         { maxWidth: "sm", cols: 1, spacing: "xs" },
         { minWidth: "lg", cols: 5, spacing: "xs" }
       ]}
-      style={{ border: "2px solid red", width: "70%" }}
+      className={classes.grid}
     >
       {items}
     </SimpleGrid>
