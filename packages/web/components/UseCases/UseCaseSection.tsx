@@ -3,10 +3,13 @@ import { UseCaseCards } from "./UseCaseCards";
 import { UseCaseSegment } from "./UseCaseSegment";
 
 export const UseCaseSection: React.FC = () => (
-  <Container size="md">
-    <Stack justify="center">
+  <Stack justify="center" style={{ border: "2px solid blue" }}>
+    <Container size="md" style={{ border: "2px solid red" }}>
       <UseCaseSegment />
+    </Container>
+
+    <Container size="md">
       <UseCaseCards />
-    </Stack>
-  </Container>
+    </Container>
+  </Stack>
 );

@@ -5,14 +5,7 @@ import {
   UnstyledButton,
   rem
 } from "@mantine/core";
-import {
-  IconCreditCard,
-  IconBuildingBank,
-  IconRepeat,
-  IconReceiptRefund,
-  IconReceipt,
-  IconFileUpload
-} from "@tabler/icons-react";
+import { IconReceipt, IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
 import {
@@ -85,6 +78,7 @@ const useStyles = createStyles((theme) => ({
     textAlign: "center",
     borderRadius: theme.radius.md,
     height: rem(90),
+    width: rem(180),
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     transition: "box-shadow 150ms ease, transform 100ms ease",
@@ -103,7 +97,7 @@ export const UseCaseCards: React.FC = () => {
   const items = (useCases.get(useCase) ?? []).map((item) => (
     <UnstyledButton key={item.title} className={classes.item}>
       <item.icon color={theme.colors[item.color][5]} size="2rem" />
-      <Text size="sm" mt={7}>
+      <Text fz="lg" c="dimmed" mt={7}>
         {item.title}
       </Text>
     </UnstyledButton>
@@ -112,8 +106,8 @@ export const UseCaseCards: React.FC = () => {
   return (
     <SimpleGrid
       breakpoints={[
-        { maxWidth: "sm", cols: 1, spacing: "sm" },
-        { minWidth: "md", cols: 5, spacing: "md" }
+        { maxWidth: "sm", cols: 1, spacing: "md" },
+        { minWidth: "md", cols: 5, spacing: "xl" }
       ]}
     >
       {items}
