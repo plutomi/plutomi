@@ -114,7 +114,7 @@ export const LandingHero: React.FC = () => {
             variant="gradient"
             gradient={{
               from: theme.colors.indigo[6],
-              to: theme.colors.cyan[3],
+              to: theme.colors.indigo[4],
               deg: 20
             }}
           >

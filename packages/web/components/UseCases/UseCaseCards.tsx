@@ -34,11 +34,11 @@ type UseCaseCard = {
 };
 
 const hiringUseCase: UseCaseCard[] = [
-  { title: "Resume Upload", icon: IconFileUpload, color: "gray", amount: 2 },
-  { title: "Resume Review", icon: SiCodereview, color: "yellow", amount: 18 },
+  { title: "Resume Upload", icon: IconFileUpload, color: "gray", amount: 6 },
+  { title: "Resume Review", icon: SiCodereview, color: "yellow", amount: 24 },
   { title: "Interviewing", icon: FaPeopleArrows, color: "blue", amount: 5 },
-  { title: "Rejected", icon: AiFillCloseCircle, color: "red", amount: 1 },
-  { title: "Hired", icon: MdOutlineWork, color: "green", amount: 32 }
+  { title: "Rejected", icon: AiFillCloseCircle, color: "red", amount: 59 },
+  { title: "Hired", icon: MdOutlineWork, color: "green", amount: 2 }
 ];
 
 const socialServicesUseCase: UseCaseCard[] = [
@@ -136,7 +136,7 @@ export const UseCaseCards: React.FC = () => {
   const { classes, theme } = useStyles();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <Card key={item.title} className={classes.card} withBorder>
+    <Card key={item.title} className={classes.card} radius="md">
       <Card.Section py="xs">
         <Center>
           <item.icon color={theme.colors[item.color][5]} size="2rem" />
