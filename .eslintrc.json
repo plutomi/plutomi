@@ -41,7 +41,6 @@
             "group": ["**/dist"],
             "message": "Don't import from 'dist' directories, use the root import instead. -> @plutomi/shared instead of 'plutomi/shared/dist'"
           }
-          // TODO add a rule for import { UserX } from "@plutomi/validation/schemas/subscribe/subscribe
         ]
       }
     ],

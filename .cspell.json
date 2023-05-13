@@ -15,7 +15,6 @@
     "cdk.json"
   ],
   "words": [
-    "antd",
     "barebones",
     "cacheable",
     "certificatemanager",
@@ -31,15 +30,12 @@
     "nrwl",
     "Plutomi",
     "praguru",
-    "Sider",
     "tabler",
     "tailwindcss",
     "TLDR",
     "trenchard",
     "Valerio",
     "wafv2",
-    "wafwebacl",
-    "webacl",
     "Wpforms",
     "zustand"
   ],
