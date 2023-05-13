@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 /* eslint-disable no-console */
 
 import * as z from "zod";

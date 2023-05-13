@@ -1,4 +1,3 @@
-// TODO: add more environments
 export enum SchemaEnvironment {
   WEB = "web",
   API = "api",

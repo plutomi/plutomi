@@ -35,7 +35,7 @@ const nextHandler = webApp.getRequestHandler();
   // All routes are handled here
   server.use("/api", API);
 
-  // // NextJS App
+  // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));
 
   server.on("error", (err) => {
