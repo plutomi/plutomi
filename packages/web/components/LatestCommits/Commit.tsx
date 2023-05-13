@@ -3,22 +3,15 @@ import {
   Avatar,
   Text,
   Group,
-  Container,
   Box,
-  Stack,
-  Flex,
-  Paper,
-  Grid,
-  UnstyledButton,
   Card,
-  Anchor
+  Button
 } from "@mantine/core";
 import {
-  IconPhoneCall,
-  IconAt,
   IconMail,
   IconMessage,
-  IconChevronRight
+  IconChevronRight,
+  IconExternalLink
 } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
@@ -55,31 +48,43 @@ export const Commit: React.FC<CommitType> = ({
   date,
   email
 }) => {
+  const handleCardClick = () => {
+    window.open(url, "_blank");
+  };
+
   const { classes } = useStyles();
   return (
-    <Card
-      className={classes.card}
-      padding="sm"
-      component="a"
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <Card className={classes.card} padding="sm" onClick={handleCardClick}>
       <Group noWrap>
         <Avatar src={image} size={94} radius="md" />
 
         <Box>
-          <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
-            {String(new Date(date).toLocaleDateString())}
-          </Text>
+          <Card.Section>
+            <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
+              {String(new Date(date).toLocaleDateString())}
+            </Text>
+            <Text fz="lg" fw={500}>
+              {name} -{" "}
+              <Text
+                component="a"
+                href="https://google.com"
+                onClick={(e) => {
+                  e.stopPropagation(); // This will prevent the card's click event from firing when the link is clicked
+                }}
+              >
+                Click Me
+              </Text>
+            </Text>
+          </Card.Section>
 
-          <Text fz="lg" fw={500}>
-            {name} -{" "}
-            <Anchor href={`https://github.com/${username}`} target="_blank">
-              @{username}
-            </Anchor>
-          </Text>
-
+          {/* <a
+          href="https://google.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none" }}
+        >
+          blah
+        </a> */}
           <Group spacing={6} noWrap>
             <IconMail stroke={1.5} size="1rem" className={classes.icon} />
             <Text fz="md" c="dimmed">
@@ -94,6 +99,7 @@ export const Commit: React.FC<CommitType> = ({
             </Text>
           </Group>
         </Box>
+
         <Box style={{ marginLeft: "auto" }}>
           <IconChevronRight size="1.2rem" stroke={1.5} />
         </Box>

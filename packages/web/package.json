@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
+    "@emotion/server": "^11.11.0",
     "@heroicons/react": "^2.0.17",
     "@mantine/carousel": "^6.0.10",
     "@mantine/core": "^6.0.10",
@@ -16,6 +17,7 @@
     "@mantine/form": "^6.0.10",
     "@mantine/hooks": "^6.0.10",
     "@mantine/modals": "^6.0.10",
+    "@mantine/next": "^6.0.10",
     "@mantine/notifications": "^6.0.10",
     "@mantine/nprogress": "^6.0.10",
     "@mantine/prism": "^6.0.10",
@@ -38,6 +40,7 @@
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.8.0",
+    "stylis-plugin-rtl": "^2.1.1",
     "zustand": "^4.3.8"
   },
   "license": "Apache-2.0",

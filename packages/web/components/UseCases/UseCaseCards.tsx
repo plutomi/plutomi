@@ -99,7 +99,8 @@ const useStyles = createStyles((theme) => ({
     transition: "box-shadow 150ms ease, transform 100ms ease",
     "&:hover": {
       boxShadow: theme.shadows.md,
-      transform: "scale(1.02)"
+      transform: "scale(1.02)",
+      cursor: "pointer"
     },
 
     backgroundColor:
@@ -112,7 +113,6 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     fontWeight: 700
   },
 

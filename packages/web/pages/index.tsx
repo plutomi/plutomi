@@ -24,7 +24,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
   </>
 );
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const commitsFromEachBranch = 8;
   // const allCommits: CommitType[] = []; // TODO enable
 

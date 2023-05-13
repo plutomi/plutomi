@@ -1,5 +1,6 @@
 // Custom Colors
 export const colors = {
+  //  ! TODO: Move this to correct place in theme
   success: "#12c924",
   warning: "#ff7b00",
   error: "#ff3336",

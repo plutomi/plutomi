@@ -1,26 +1,22 @@
-import { colors } from "@/utils";
-import { Html, Head, Main, NextScript } from "next/document";
+import Document, { Head, Html, Main, NextScript } from "next/document";
 import React from "react";
+import { createGetInitialProps } from "@mantine/next";
 
-const sharedStyle: React.CSSProperties = {
-  height: "100%",
-  width: "100%",
-  backgroundColor: colors.background
-};
+const getInitialProps = createGetInitialProps();
 
-const Document = () => (
-  <Html lang="en" style={{ ...sharedStyle }}>
-    <Head />
-    <body
-      style={{
-        ...sharedStyle,
-        margin: 0
-      }}
-    >
-      <Main />
-      <NextScript />
-    </body>
-  </Html>
-);
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export default class _Document extends Document {
+  static getInitialProps = getInitialProps;
 
-export default Document;
+  render() {
+    return (
+      <Html>
+        <Head />
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}

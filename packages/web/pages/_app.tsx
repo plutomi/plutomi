@@ -1,5 +1,5 @@
 import "../styles/globals.css";
-import type { AppProps } from "next/app";
+import NextApp, { type AppContext, type AppProps } from "next/app";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Inter } from "next/font/google";
@@ -21,5 +21,12 @@ const App = ({ Component, pageProps }: AppProps) => (
     <Component {...pageProps} className={inter.className} />
   </MantineProvider>
 );
+
+App.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await NextApp.getInitialProps(appContext);
+  return {
+    ...appProps
+  };
+};
 
 export default App;
