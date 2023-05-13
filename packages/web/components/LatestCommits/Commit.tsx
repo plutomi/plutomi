@@ -5,18 +5,11 @@ import {
   Group,
   Box,
   Card,
-  Button,
-  Container,
   Anchor,
   Flex,
   MediaQuery
 } from "@mantine/core";
-import {
-  IconMail,
-  IconMessage,
-  IconChevronRight,
-  IconExternalLink
-} from "@tabler/icons-react";
+import { IconMail, IconMessage, IconChevronRight } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   icon: {

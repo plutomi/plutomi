@@ -65,6 +65,12 @@ COPY --from=builder /app/packages/env/package.json packages/env/package.json
 COPY --from=builder /app/packages/env/node_modules packages/env/node_modules
 
 
+# Copy the VALIDATION package
+COPY --from=builder /app/packages/validation/dist packages/validation
+COPY --from=builder /app/packages/validation/package.json packages/validation/package.json
+COPY --from=builder /app/packages/validation/node_modules packages/validation/node_modules
+
+
 # Copy the root files 
 COPY --from=builder /app/package.json package.json
 COPY --from=builder /app/node_modules node_modules

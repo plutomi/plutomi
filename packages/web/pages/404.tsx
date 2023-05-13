@@ -1,6 +1,5 @@
 import {
   createStyles,
-  Image,
   Container,
   Title,
   Text,
@@ -9,7 +8,7 @@ import {
   rem
 } from "@mantine/core";
 // import image from "./image.svg";
-import { NextPage } from "next";
+import type { NextPage } from "next";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -21,7 +20,6 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 900,
     fontSize: rem(34),
     marginBottom: theme.spacing.md,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
 
     [theme.fn.smallerThan("sm")]: {
       fontSize: rem(32)

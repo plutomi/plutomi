@@ -97,7 +97,7 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-const LandingHero: React.FC = () => {
+export const LandingHero: React.FC = () => {
   const { classes } = useStyles();
   const theme = useMantineTheme();
 
@@ -123,7 +123,7 @@ const LandingHero: React.FC = () => {
           </Text>
         </Title>
 
-        <Container size={900}>
+        <Container size={1000}>
           <Text size="lg" className={classes.description}>
             Plutomi streamlines your application process with automated
             workflows
@@ -133,5 +133,3 @@ const LandingHero: React.FC = () => {
     </div>
   );
 };
-
-export default LandingHero;
