@@ -47,6 +47,7 @@ export const createDistribution = ({
     domainNames: [env.DOMAIN],
     defaultBehavior: {
       origin: loadBalancerOrigin,
+
       // Must be enabled!
       // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
       originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
@@ -60,7 +61,8 @@ export const createDistribution = ({
   ["/api/*"].forEach((path) => {
     distribution.addBehavior(path, loadBalancerOrigin, {
       cachePolicy: CachePolicy.CACHING_DISABLED,
-      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER
+      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
+      allowedMethods: AllowedMethods.ALLOW_ALL
     });
   });
 
