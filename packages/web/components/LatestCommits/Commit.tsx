@@ -10,7 +10,8 @@ import {
   Paper,
   Grid,
   UnstyledButton,
-  Card
+  Card,
+  Anchor
 } from "@mantine/core";
 import {
   IconPhoneCall,
@@ -58,7 +59,7 @@ export const Commit: React.FC<CommitType> = ({
   return (
     <Card
       className={classes.card}
-      padding="xl"
+      padding="sm"
       component="a"
       href={url}
       target="_blank"
@@ -73,22 +74,28 @@ export const Commit: React.FC<CommitType> = ({
           </Text>
 
           <Text fz="lg" fw={500}>
-            {name}
+            {name} -{" "}
+            <Anchor href={`https://github.com/${username}`} target="_blank">
+              @{username}
+            </Anchor>
           </Text>
 
           <Group spacing={6} noWrap>
-            <IconAt stroke={1.5} size="1rem" className={classes.icon} />
-            <Text fz="xs" c="dimmed">
+            <IconMail stroke={1.5} size="1rem" className={classes.icon} />
+            <Text fz="md" c="dimmed">
               {email}
             </Text>
           </Group>
 
           <Group spacing={6} noWrap>
             <IconMessage stroke={1.5} size="1rem" className={classes.icon} />
-            <Text fz="xs" c="dimmed" lineClamp={1}>
+            <Text fz="md" c="dimmed" lineClamp={1}>
               {message.substring(0, 200)}
             </Text>
           </Group>
+        </Box>
+        <Box style={{ marginLeft: "auto" }}>
+          <IconChevronRight size="1.2rem" stroke={1.5} />
         </Box>
       </Group>
     </Card>
