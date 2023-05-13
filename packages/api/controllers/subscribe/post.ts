@@ -1,6 +1,7 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import type { RequestHandler } from "express";
 import { Schema, validate } from "@plutomi/validation";
+import { env } from "../../env";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -17,7 +18,7 @@ export const post: RequestHandler = async (req, res) => {
 
   const client = new DynamoDBClient({ region: "us-east-1" });
   const command = new PutItemCommand({
-    TableName: "plutomi-mvp",
+    TableName: `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-wait-list`,
     Item: {
       PK: { S: email },
       SK: { S: email },

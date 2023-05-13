@@ -13,8 +13,7 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
     paddingTop: rem(180),
     paddingBottom: rem(130),
-    backgroundImage:
-      "url(https://www.nasa.gov/sites/default/files/thumbnails/image/nh-apluto-wide-9-17-15-final_0.png)",
+    backgroundImage: "url(/pluto_new_horizons.png)",
     backgroundSize: "cover",
     backgroundPosition: "center",
 

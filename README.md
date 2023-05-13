@@ -93,7 +93,7 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
 });
 ```
 
-When running locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` like this:
+When _running_ locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` like this:
 
 ```typescript
 import { webEnvSchema, parseEnv, SchemaEnvironment } from "@plutomi/env";

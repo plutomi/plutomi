@@ -34,7 +34,8 @@ export const webEnvSchema = allEnvVariablesSchema.pick({
 export const apiEnvSchema = allEnvVariablesSchema.pick({
   PORT: true,
   NODE_ENV: true,
-  NEXT_PUBLIC_BASE_URL: true
+  NEXT_PUBLIC_BASE_URL: true,
+  DEPLOYMENT_ENVIRONMENT: true
 });
 
 // We are overriding these types because they will get validated using the schema above.
