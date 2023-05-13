@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { IconReceipt, IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
+import { DndContext } from "@dnd-kit/core";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
 import {
   AiFillCloseCircle,
@@ -59,7 +60,7 @@ const socialServicesUseCase: UseCaseCard[] = [
     title: "Did Not Qualify",
     icon: BsPersonFillExclamation,
     color: "red",
-    amount: 258
+    amount: 27
   },
   {
     title: "Funds Disbursed",
@@ -172,7 +173,7 @@ export const UseCaseCards: React.FC = () => {
       ]}
       className={classes.grid}
     >
-      {items}
+      <DndContext>{items}</DndContext>
     </SimpleGrid>
   );
 };

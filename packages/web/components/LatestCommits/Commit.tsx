@@ -67,7 +67,15 @@ export const Commit: React.FC<CommitType> = ({
           </Text>
           <Text fz="lg" fw={500}>
             {name} -{" "}
-            <Anchor fz="lg" href={`https://github.com/${username}`}>
+            <Anchor
+              fz="lg"
+              href={`https://github.com/${username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
               @{username}
             </Anchor>
           </Text>

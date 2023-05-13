@@ -15,7 +15,7 @@ type HomeProps = {
 const Home: NextPage<HomeProps> = ({ commits }) => (
   <>
     <LandingHero />
-    <Space h="lg" />
+    <Space h="sm" />
     <UseCaseSection />
     <Space h="lg" />
     <WaitListCard />
