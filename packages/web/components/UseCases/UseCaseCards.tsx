@@ -90,19 +90,20 @@ const largeScaleContractingUseCase: UseCaseCard[] = [
 
 const useCases = new Map<UseCase, UseCaseCard[]>([
   ["Employee Hiring", hiringUseCase],
-  ["Social Services", socialServicesUseCase],
-  ["Large Scale Contracting", largeScaleContractingUseCase]
+  ["Large Scale Contracting", largeScaleContractingUseCase],
+  ["Social Services", socialServicesUseCase]
 ]);
 
 const useStyles = createStyles((theme) => ({
   card: {
     boxShadow: theme.shadows.sm,
-    transition: "box-shadow 150ms ease, transform 100ms ease",
-    "&:hover": {
-      boxShadow: theme.shadows.md,
-      transform: "scale(1.02)",
-      cursor: "grab"
-    },
+
+    // transition: "box-shadow 150ms ease, transform 100ms ease",
+    // "&:hover": {
+    //   boxShadow: theme.shadows.md,
+    //   transform: "scale(1.02)",
+    //   cursor: "grab"
+    // },
 
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white
@@ -143,7 +144,7 @@ export const UseCaseCards: React.FC = () => {
   const { classes, theme } = useStyles();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <Card key={item.title} className={classes.card}>
+    <Card key={item.title} className={classes.card} withBorder>
       <Card.Section py="xs">
         <Center>
           <item.icon color={theme.colors[item.color][5]} size="2rem" />

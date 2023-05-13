@@ -3,8 +3,8 @@ import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 const useCases: UseCase[] = [
   "Employee Hiring",
-  "Social Services",
-  "Large Scale Contracting"
+  "Large Scale Contracting",
+  "Social Services"
 ];
 
 export const UseCaseSegment: React.FC = () => {

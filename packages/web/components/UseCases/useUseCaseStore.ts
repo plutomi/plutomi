@@ -2,8 +2,8 @@ import { create } from "zustand";
 
 export type UseCase =
   | "Employee Hiring"
-  | "Social Services"
-  | "Large Scale Contracting";
+  | "Large Scale Contracting"
+  | "Social Services";
 
 type UseCaseState = {
   useCase: UseCase;
