@@ -9,7 +9,8 @@ import {
   Flex,
   Paper,
   Grid,
-  UnstyledButton
+  UnstyledButton,
+  Card
 } from "@mantine/core";
 import {
   IconPhoneCall,
@@ -23,6 +24,14 @@ const useStyles = createStyles((theme) => ({
   icon: {
     color:
       theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
+  },
+  card: {
+    boxShadow: theme.shadows.sm,
+    transition: "box-shadow 150ms ease, transform 100ms ease",
+    "&:hover": {
+      boxShadow: theme.shadows.md,
+      transform: "scale(1.02)"
+    }
   }
 }));
 
@@ -47,7 +56,14 @@ export const Commit: React.FC<CommitType> = ({
 }) => {
   const { classes } = useStyles();
   return (
-    <div>
+    <Card
+      className={classes.card}
+      padding="xl"
+      component="a"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <Group noWrap>
         <Avatar src={image} size={94} radius="md" />
 
@@ -75,6 +91,6 @@ export const Commit: React.FC<CommitType> = ({
           </Group>
         </Box>
       </Group>
-    </div>
+    </Card>
   );
 };

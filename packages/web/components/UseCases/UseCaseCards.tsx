@@ -95,9 +95,15 @@ const useCases = new Map<UseCase, UseCaseCard[]>([
 
 const useStyles = createStyles((theme) => ({
   card: {
+    boxShadow: theme.shadows.sm,
+    transition: "box-shadow 150ms ease, transform 100ms ease",
+    "&:hover": {
+      boxShadow: theme.shadows.md,
+      transform: "scale(1.02)"
+    },
+
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-    transition: "box-shadow 150ms ease, transform 100ms ease"
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white
   },
   section: {
     borderBottom: `${rem(1)} solid ${
