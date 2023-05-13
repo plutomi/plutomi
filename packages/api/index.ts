@@ -39,10 +39,9 @@ const nextHandler = webApp.getRequestHandler();
   server.use(express.json());
   // server.use(compression());
   server.use(cors());
-  server.use(rateLimiter);
 
   // All routes are handled here
-  server.use("/api", API);
+  server.use("/api", rateLimiter,  API);
 
   // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));

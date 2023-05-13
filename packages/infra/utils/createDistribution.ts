@@ -50,16 +50,16 @@ export const createDistribution = ({
       // Must be enabled!
       // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
       originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-      // Disabled for /api/ routes by default, cache on an as needed basis under additional behaviors
-      cachePolicy: CachePolicy.CACHING_DISABLED,
+      // Everything is cached, except api
+      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
       allowedMethods: AllowedMethods.ALLOW_ALL
     }
   });
 
-  // NextJS Cacheable Routes
-  ["/_next/*", "/public/*"].forEach((path) => {
+  // Uncached paths
+  ["/api/*"].forEach((path) => {
     distribution.addBehavior(path, loadBalancerOrigin, {
-      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
+      cachePolicy: CachePolicy.CACHING_DISABLED,
       originRequestPolicy: OriginRequestPolicy.ALL_VIEWER
     });
   });
