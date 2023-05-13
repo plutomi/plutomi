@@ -55,5 +55,13 @@
       }
     ]
   },
-  "ignorePatterns": ["node_modules/", "dist/", "build/", "coverage/", "OLD/"]
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    "OLD/",
+    ".next",
+    "cdk.out/"
+  ]
 }
