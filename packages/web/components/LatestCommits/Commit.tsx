@@ -9,6 +9,7 @@ import {
   Flex,
   MediaQuery
 } from "@mantine/core";
+// TODO: Remove tabler icons
 import { IconMail, IconMessage, IconChevronRight } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({

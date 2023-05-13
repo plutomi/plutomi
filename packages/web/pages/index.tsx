@@ -107,7 +107,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
 
 export async function getServerSideProps() {
   const commitsFromEachBranch = 8;
-  const allCommits: CommitType[] = []; // TODO enable
+  const allCommits: CommitType[] = [];
 
   const { data } = await axios.get(
     `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,

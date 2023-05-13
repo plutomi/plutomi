@@ -9,7 +9,6 @@ import {
 } from "@mantine/core";
 import { IconReceipt, IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
-import { DndContext } from "@dnd-kit/core";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
 import {
   AiFillCloseCircle,
@@ -98,13 +97,6 @@ const useStyles = createStyles((theme) => ({
   card: {
     boxShadow: theme.shadows.sm,
 
-    // transition: "box-shadow 150ms ease, transform 100ms ease",
-    // "&:hover": {
-    //   boxShadow: theme.shadows.md,
-    //   transform: "scale(1.02)",
-    //   cursor: "grab"
-    // },
-
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white
   },
@@ -174,7 +166,7 @@ export const UseCaseCards: React.FC = () => {
       ]}
       className={classes.grid}
     >
-      <DndContext>{items}</DndContext>
+      {items}
     </SimpleGrid>
   );
 };
