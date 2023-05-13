@@ -69,6 +69,7 @@ export const UseCaseSegment: React.FC = () => {
             setUseCase(value);
           }}
           data={useCases}
+          classNames={classes}
         />
       </MediaQuery>
     </Flex>

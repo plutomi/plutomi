@@ -42,18 +42,18 @@ const hiringUseCase: UseCaseCard[] = [
 ];
 
 const socialServicesUseCase: UseCaseCard[] = [
-  { title: "Registration", icon: FaWpforms, color: "gray", amount: 430 },
+  { title: "Registration", icon: FaWpforms, color: "gray", amount: 89 },
   {
     title: "ID Verification",
     icon: BsFillPersonVcardFill,
     color: "yellow",
-    amount: 31
+    amount: 174
   },
   {
     title: "Income Verification",
     icon: AiFillDollarCircle,
     color: "yellow",
-    amount: 63
+    amount: 220
   },
   {
     title: "Did Not Qualify",
@@ -65,7 +65,7 @@ const socialServicesUseCase: UseCaseCard[] = [
     title: "Funds Disbursed",
     icon: GiReceiveMoney,
     color: "green",
-    amount: 216
+    amount: 740
   }
 ];
 
