@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { all } from "./all";
 
-export const FourOhFour = Router();
+export const fourOhFour = Router();
 
-FourOhFour.use("/", all);
+fourOhFour.use("/", all);
