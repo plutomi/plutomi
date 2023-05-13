@@ -1,1 +1,1 @@
-export * from "./UseCaseSection"
+export * from "./UseCaseSection";
