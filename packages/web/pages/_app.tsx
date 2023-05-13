@@ -12,8 +12,7 @@ const App = ({ Component, pageProps }: AppProps) => (
     withNormalizeCSS
     theme={{
       primaryColor: "indigo",
-      fontFamily: `${inter.style.fontFamily}, sans-serif`,
-      headings: { fontFamily: "Greycliff CF, sans-serif" }
+      fontFamily: `${inter.style.fontFamily}, sans-serif`
     }}
   >
     <Notifications position="top-center" />
