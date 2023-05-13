@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+
 import * as z from "zod";
 import { DeploymentEnvironment, NodeEnvironment } from "./consts";
 import { awsRegionSchema, portSchema } from "./customSchemas";
@@ -24,3 +25,30 @@ export const allEnvVariablesSchema = z.object({
   AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid()
 });
+
+export const webEnvSchema = allEnvVariablesSchema.pick({
+  NEXT_PUBLIC_BASE_URL: true
+});
+
+export const apiEnvSchema = allEnvVariablesSchema.pick({
+  PORT: true,
+  NODE_ENV: true,
+  NEXT_PUBLIC_BASE_URL: true,
+  DEPLOYMENT_ENVIRONMENT: true
+});
+
+// We are overriding these types because they will get validated using the schema above.
+// We have to "destructure" these because NextJS won't allow process.env destructuring.
+export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
+  PORT: process.env.PORT as string,
+  NODE_ENV: process.env.NODE_ENV as NodeEnvironment,
+  DEPLOYMENT_ENVIRONMENT: process.env
+    .DEPLOYMENT_ENVIRONMENT as DeploymentEnvironment,
+  DOMAIN: process.env.DOMAIN as string,
+  NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL as string,
+  CF_HEADER_KEY: process.env.CF_HEADER_KEY as string,
+  CF_HEADER_VALUE: process.env.CF_HEADER_VALUE as string,
+  AWS_ACCOUNT_ID: process.env.AWS_ACCOUNT_ID as string,
+  AWS_REGION: process.env.AWS_REGION as string,
+  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string
+};

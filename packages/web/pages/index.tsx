@@ -1,75 +1,82 @@
+import { LandingHero } from "@/components/LandingHero";
+import { LatestCommits } from "@/components/LatestCommits";
+import type { CommitType } from "@/components/LatestCommits/Commit";
+import { UseCaseSection } from "@/components/UseCases";
+import { Space } from "@mantine/core";
+import axios from "axios";
+import _ from "lodash";
 import type { NextPage } from "next";
+import { WaitListCard } from "@/components/WaitListCard";
 
-const HomePage: NextPage = () => {
-  const today = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  return (
-    <div className="bg-white">
-      <div className="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
-        <div className="relative isolate overflow-hidden bg-gray-900 px-6 py-24 text-center shadow-2xl sm:rounded-3xl sm:px-16">
-          <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Plutomi is currently undergoing maintenance :D
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
-            To enhance the long term stability of the project, I (Jose) am doing
-            a major refactor. You can check the progress and all changes on
-            GitHub or DM me on Twitter or by email if you have any questions :)
-          </p>
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
-            jose@plutomi.com
-          </p>
-
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
-            This site is current as of {today}
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <a
-              href="https://github.com/plutomi/plutomi"
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm  hover:bg-gray-900 hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Plutomi on GitHub
-            </a>
-            <a
-              href="https://twitter.com/notjoswayski"
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-100 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Jose on Twitter
-            </a>
-            {/* <a href="#" className="text-sm font-semibold leading-6 text-white">
-              Learn more <span aria-hidden="true">→</span>
-            </a> */}
-          </div>
-          <svg
-            viewBox="0 0 1024 1024"
-            className="absolute top-1/2 left-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]"
-            aria-hidden="true"
-          >
-            <circle
-              cx={512}
-              cy={512}
-              r={512}
-              fill="url(#827591b1-ce8c-4110-b064-7cb85a0b1217)"
-              fillOpacity="0.7"
-            />
-            <defs>
-              <radialGradient id="827591b1-ce8c-4110-b064-7cb85a0b1217">
-                <stop stopColor="#7775D6" />
-                <stop offset={1} stopColor="#E935C1" />
-              </radialGradient>
-            </defs>
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
+type HomeProps = {
+  commits: CommitType[];
 };
 
-export default HomePage;
+const Home: NextPage<HomeProps> = ({ commits }) => (
+  <>
+    <LandingHero />
+    <Space h="sm" />
+    <UseCaseSection />
+    <Space h="lg" />
+    <WaitListCard />
+    <Space h="lg" />
+    <LatestCommits commits={commits} />
+  </>
+);
+
+export async function getServerSideProps() {
+  const commitsFromEachBranch = 8;
+  const allCommits: CommitType[] = [];
+
+  const { data } = await axios.get(
+    `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
+    {
+      // headers: {
+      //   Authorization: `token ${process.env.COMMITS_TOKEN}`,
+      // },
+    }
+  );
+
+  data.map(
+    async (commit: {
+      commit: { author: { name: string; email: any; date: any }; message: any };
+      author: { login: any; avatar_url: any };
+      html_url: any;
+    }) => {
+      const isBot = commit.commit.author.name === "allcontributors[bot]";
+
+      if (!isBot) {
+        const customCommit = {
+          name: commit.commit.author.name,
+          username: commit.author.login,
+          image: commit.author.avatar_url,
+          email: commit.commit.author.email,
+          date: commit.commit.author.date,
+          message: commit.commit.message,
+          url: commit.html_url
+        };
+        allCommits.push(customCommit);
+      }
+    }
+  );
+
+  // Sort by commit timestamp
+  const orderedCommits = _.orderBy(allCommits, (commit) => commit.date, [
+    "desc"
+  ]);
+
+  // Remove duplicates
+  const commits = orderedCommits.filter(
+    (value, index, self) =>
+      index ===
+      self.findIndex((t) => t.url === value.url && t.date === value.date)
+  );
+
+  return {
+    props: {
+      commits
+    }
+  };
+}
+
+export default Home;

@@ -23,6 +23,9 @@ type CreateDistributionProps = {
   hostedZone: IHostedZone;
 };
 
+const aRecordAlias = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-alias`;
+const distributionName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-distribution`;
+
 export const createDistribution = ({
   stack,
   fargateService,
@@ -39,23 +42,19 @@ export const createDistribution = ({
     }
   );
 
-  const distribution = new Distribution(
-    stack,
-    `${env.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
-    {
-      certificate,
-      domainNames: [env.DOMAIN],
-      defaultBehavior: {
-        origin: loadBalancerOrigin,
-        // Must be enabled!
-        // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
-        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-        // Disabled for /api/ routes by default, cache on an as needed basis under additional behaviors
-        cachePolicy: CachePolicy.CACHING_DISABLED,
-        allowedMethods: AllowedMethods.ALLOW_ALL
-      }
+  const distribution = new Distribution(stack, distributionName, {
+    certificate,
+    domainNames: [env.DOMAIN],
+    defaultBehavior: {
+      origin: loadBalancerOrigin,
+      // Must be enabled!
+      // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
+      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
+      // Disabled for /api/ routes by default, cache on an as needed basis under additional behaviors
+      cachePolicy: CachePolicy.CACHING_DISABLED,
+      allowedMethods: AllowedMethods.ALLOW_ALL
     }
-  );
+  });
 
   // NextJS Cacheable Routes
   ["/_next/*", "/public/*"].forEach((path) => {
@@ -65,7 +64,7 @@ export const createDistribution = ({
     });
   });
 
-  void new ARecord(stack, "APIAlias", {
+  void new ARecord(stack, aRecordAlias, {
     recordName: env.DOMAIN,
     zone: hostedZone,
     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))

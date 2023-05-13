@@ -6,7 +6,8 @@ import {
   createVpc,
   createFargateService,
   getHostedZone,
-  createDistribution
+  createDistribution,
+  createDynamoTable
 } from "../utils";
 import { getACMCertificate } from "../utils/getAcmCertificate";
 
@@ -28,6 +29,8 @@ export class PlutomiStack extends Stack {
       vpc,
       natGatewayProvider
     });
+
+    createDynamoTable({ stack: this, taskRole });
 
     createDistribution({
       stack: this,

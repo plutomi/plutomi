@@ -12,23 +12,23 @@ type CreateTaskDefinitionProps = {
   taskRole: IRole;
 };
 
+const taskDefinitionName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-task-definition`;
+const containerName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-container`;
+const logStreamPrefix = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-logs`;
+
 export const createTaskDefinition = ({
   stack,
   taskRole
 }: CreateTaskDefinitionProps): FargateTaskDefinition => {
   // Create a task definition we can attach policies to
-  const taskDefinition = new FargateTaskDefinition(
-    stack,
-    "plutomi-api-fargate-task-definition",
-    {
-      taskRole,
-      executionRole: taskRole,
-      cpu: 256,
-      memoryLimitMiB: 512
-    }
-  );
+  const taskDefinition = new FargateTaskDefinition(stack, taskDefinitionName, {
+    taskRole,
+    executionRole: taskRole,
+    cpu: 256,
+    memoryLimitMiB: 512
+  });
 
-  taskDefinition.addContainer("plutomi-api-fargate-container", {
+  taskDefinition.addContainer(containerName, {
     portMappings: [
       {
         containerPort: Number(env.PORT)
@@ -43,7 +43,7 @@ export const createTaskDefinition = ({
     }),
 
     logging: new AwsLogDriver({
-      streamPrefix: "plutomi-api-fargate"
+      streamPrefix: logStreamPrefix
     }),
     environment: env as unknown as Record<string, string>
   });

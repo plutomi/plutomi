@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/* eslint-disable import/first */
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 import "source-map-support";
 import * as cdk from "aws-cdk-lib";
 import { env } from "../env";

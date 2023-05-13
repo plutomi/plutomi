@@ -19,6 +19,10 @@
     {
       "path": "packages/env",
       "name": "env"
+    },
+    {
+      "path": "packages/validation",
+      "name": "validation"
     }
   ],
   "settings": {
@@ -26,12 +30,16 @@
       { "directory": "packages/api", "changeProcessCWD": true },
       { "directory": "packages/web", "changeProcessCWD": true },
       { "directory": "packages/infra", "changeProcessCWD": true },
-      { "directory": "packages/env", "changeProcessCWD": true }
+      { "directory": "packages/env", "changeProcessCWD": true },
+      { "directory": "packages/validation", "changeProcessCWD": true }
     ],
     "search.exclude": {
       "**/node_modules": true,
       "cdk.out": true,
-      "**/dist": true
+      "**/dist": true,
+      ".next/": true,
+      "yarn-error.log": true,
+      "yarn.lock": true
     }
   }
 }

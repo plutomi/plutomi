@@ -1,12 +1,23 @@
+/* eslint-disable import/first */
 /* eslint no-console: 0 */
-/* eslint @typescript-eslint/no-misused-promises: 0 */
+// import compression from "compression"; // TODO: Add compression back in
+import * as dotenv from "dotenv";
 
-import compression from "compression";
+dotenv.config();
 import express from "express";
 import next from "next";
 import path from "path";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { env } from "./env";
+import API from "./controllers";
+
+const rateLimiter = rateLimit({
+  windowMs: 1000 * 60,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false
+});
 
 const dev = env.NODE_ENV !== "production";
 
@@ -26,12 +37,12 @@ const nextHandler = webApp.getRequestHandler();
   const server = express();
   server.set("trust proxy", true);
   server.use(express.json());
-  server.use(compression());
+  // server.use(compression());
   server.use(cors());
+  server.use(rateLimiter);
 
-  server.get("/api*", async (req, res) => {
-    res.status(200).json({ message: "Saul Goodman" });
-  });
+  // All routes are handled here
+  server.use("/api", API);
 
   // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));

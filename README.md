@@ -64,6 +64,8 @@ Stages:
 <!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
+- `yarn deploy:dev` - Deploy the app to a custom environment (i.e. `DEPLOYMENT_ENVIRONMENT`). This will use whatever variables are in `packages/infra/.env`
+
 ## Environment variables
 
 > Check the .env.sample in each package for guidance
@@ -91,7 +93,7 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
 });
 ```
 
-When running locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` like this:
+When _running_ locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` like this:
 
 ```typescript
 import { webEnvSchema, parseEnv, SchemaEnvironment } from "@plutomi/env";
@@ -115,6 +117,20 @@ To add an environment variable:
 2. `pick()` the environment variable for the specific schema it is being used in so it gets parsed by zod
 3. Add it to the `.env` file for that package so you can test the app locally
 
+### Adding a new package
+
+If you want to create a new package like `@plutomi/shared` you will need to do a few things:
+
+- In `plutomi.code-workspace`: Add the package to the `folders` array and update the `eslint.workingDirectories`
+- In `Dockerfile`: Add the relevant `COPY` commands for the package, follow the rest of the file for guidance
+- Add a folder in `packages/` with the name of the package
+- Copy over the `package.json`, `tsconfig.json` and `.eslintrc.json` from another package (preferably `@plutomi/env` as it is the most barebones)
+  1. Change the name to `@packages/shared`
+  2. Remove any dependencies that are not needed
+  3. Install the rest with `yarn`
+- If this package requires environment variables, follow the steps in the [Environment Variables](#environment-variables) section
+  > You might have to add the package to your package.json manually when importing in another package
+
 ## Language, Tooling, & Infrastructure
 
 > Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
@@ -137,7 +153,7 @@ This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLD
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks goes to these wonderful people who contributed!
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->

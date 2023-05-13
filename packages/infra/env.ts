@@ -1,9 +1,10 @@
-import * as dotenv from "dotenv";
-import { allEnvVariablesSchema, parseEnv } from "@plutomi/env";
-
-dotenv.config();
+import {
+  parseEnv,
+  SchemaEnvironment,
+  allEnvVariablesSchema
+} from "@plutomi/env";
 
 export const env = parseEnv({
   envSchema: allEnvVariablesSchema,
-  label: "INFRA"
+  schemaEnvironment: SchemaEnvironment.INFRA
 });
