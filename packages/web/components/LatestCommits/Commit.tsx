@@ -5,7 +5,9 @@ import {
   Group,
   Box,
   Card,
-  Button
+  Button,
+  Container,
+  Anchor
 } from "@mantine/core";
 import {
   IconMail,
@@ -24,7 +26,8 @@ const useStyles = createStyles((theme) => ({
     transition: "box-shadow 150ms ease, transform 100ms ease",
     "&:hover": {
       boxShadow: theme.shadows.md,
-      transform: "scale(1.02)"
+      transform: "scale(1.02)",
+      cursor: "pointer"
     }
   }
 }));
@@ -59,32 +62,16 @@ export const Commit: React.FC<CommitType> = ({
         <Avatar src={image} size={94} radius="md" />
 
         <Box>
-          <Card.Section>
-            <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
-              {String(new Date(date).toLocaleDateString())}
-            </Text>
-            <Text fz="lg" fw={500}>
-              {name} -{" "}
-              <Text
-                component="a"
-                href="https://google.com"
-                onClick={(e) => {
-                  e.stopPropagation(); // This will prevent the card's click event from firing when the link is clicked
-                }}
-              >
-                Click Me
-              </Text>
-            </Text>
-          </Card.Section>
+          <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
+            {String(new Date(date).toLocaleDateString())}
+          </Text>
+          <Text fz="lg" fw={500}>
+            {name} -{" "}
+            <Anchor fz="lg" href={`https://github.com/${username}`}>
+              @{username}
+            </Anchor>
+          </Text>
 
-          {/* <a
-          href="https://google.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ textDecoration: "none" }}
-        >
-          blah
-        </a> */}
           <Group spacing={6} noWrap>
             <IconMail stroke={1.5} size="1rem" className={classes.icon} />
             <Text fz="md" c="dimmed">

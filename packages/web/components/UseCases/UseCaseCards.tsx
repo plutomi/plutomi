@@ -35,7 +35,7 @@ type UseCaseCard = {
 
 const hiringUseCase: UseCaseCard[] = [
   { title: "Resume Upload", icon: IconFileUpload, color: "gray", amount: 2 },
-  { title: "Resume Review", icon: SiCodereview, color: "yellow", amount: 7 },
+  { title: "Resume Review", icon: SiCodereview, color: "yellow", amount: 18 },
   { title: "Interviewing", icon: FaPeopleArrows, color: "blue", amount: 5 },
   { title: "Rejected", icon: AiFillCloseCircle, color: "red", amount: 1 },
   { title: "Hired", icon: MdOutlineWork, color: "green", amount: 32 }
@@ -100,7 +100,7 @@ const useStyles = createStyles((theme) => ({
     "&:hover": {
       boxShadow: theme.shadows.md,
       transform: "scale(1.02)",
-      cursor: "pointer"
+      cursor: "grab"
     },
 
     backgroundColor:
@@ -156,7 +156,7 @@ export const UseCaseCards: React.FC = () => {
           <Center>
             <HiUserGroup />
           </Center>
-          <Text fz="md" fw={500}>
+          <Text fz="md" fw={500} py={4}>
             {item.amount.toLocaleString()}{" "}
           </Text>
         </Group>
