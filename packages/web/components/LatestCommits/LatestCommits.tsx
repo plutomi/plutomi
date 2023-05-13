@@ -6,8 +6,8 @@ type LatestCommitsProps = {
 };
 
 export const LatestCommits: React.FC<LatestCommitsProps> = ({ commits }) => (
-  <Container size="md" style={{ border: "2px solid red" }}>
-    <Stack spacing="md" style={{ border: "2px solid yellow"}}>
+  <Container size="md">
+    <Stack spacing="md">
       {(commits ?? []).map((commit) => (
         <Commit key={commit.message} {...commit} />
       ))}

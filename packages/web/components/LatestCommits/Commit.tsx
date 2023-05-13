@@ -20,18 +20,9 @@ import {
 } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
-  user: {
-    display: "block",
-    width: "100%",
-    padding: theme.spacing.md,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[8]
-          : theme.colors.gray[0]
-    }
+  icon: {
+    color:
+      theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
   }
 }));
 
@@ -56,54 +47,34 @@ export const Commit: React.FC<CommitType> = ({
 }) => {
   const { classes } = useStyles();
   return (
-    // <Container size="md" style={{ border: "2px solid red" }}>
-    //   <Avatar src={image} size={94} radius="md" />
+    <div>
+      <Group noWrap>
+        <Avatar src={image} size={94} radius="md" />
 
-    //   <Stack>
+        <Box>
+          <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
+            {String(new Date(date).toLocaleDateString())}
+          </Text>
 
-    //     </Text>
-    //   </Stack>
-    // </Container>
-    // <Stack align="flex-start" style={{ maxWidth: "lg" }}>
-    //   <Group noWrap style={{ border: "2px solid red" }} position="left">
-    //     <Stack>
-
-    //       <Group
-    //         noWrap
-    //         spacing={10}
-    //         mt={3}
-    //         style={{ border: "2px solid purple" }}
-    //       >
-    //         <IconMail stroke={1.5} size="1rem" className={classes.icon} />
-    //         <Text fz="xs" c="dimmed">
-    //           {email}
-    //         </Text>
-    //       </Group>
-
-    //     </Stack>
-    //   </Group>
-    // </Stack>
-    <UnstyledButton className={classes.user}>
-      <Group>
-        <Avatar src={image} radius="xl" />
-
-        <div style={{ flex: 1 }}>
-          <Text size="sm" weight={500}>
+          <Text fz="lg" fw={500}>
             {name}
           </Text>
 
-          <Text color="dimmed" size="xs">
-            {email}
-          </Text>
+          <Group spacing={6} noWrap>
+            <IconAt stroke={1.5} size="1rem" className={classes.icon} />
+            <Text fz="xs" c="dimmed">
+              {email}
+            </Text>
+          </Group>
 
-          <IconMessage stroke={1.5} size="1rem" />
-          <Text fz="xs" c="dimmed" truncate>
-            {message}
-          </Text>
-        </div>
-
-        <IconChevronRight size="0.9rem" stroke={1.5} />
+          <Group spacing={6} noWrap>
+            <IconMessage stroke={1.5} size="1rem" className={classes.icon} />
+            <Text fz="xs" c="dimmed" lineClamp={1}>
+              {message.substring(0, 200)}
+            </Text>
+          </Group>
+        </Box>
       </Group>
-    </UnstyledButton>
+    </div>
   );
 };
