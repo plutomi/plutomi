@@ -4,6 +4,7 @@ import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Port, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import { env } from "../env";
 
 type CreateFargateServiceProps = {
   stack: Stack;
@@ -12,6 +13,9 @@ type CreateFargateServiceProps = {
   vpc: Vpc;
   natGatewayProvider: FckNatInstanceProvider;
 };
+
+const serviceName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-service`;
+const loadBalancerName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-load-balancer`;
 
 export const createFargateService = ({
   stack,
@@ -22,7 +26,7 @@ export const createFargateService = ({
 }: CreateFargateServiceProps): ApplicationLoadBalancedFargateService => {
   const fargateService = new ApplicationLoadBalancedFargateService(
     stack,
-    "PlutomiService",
+    serviceName,
     {
       vpc,
       certificate,
@@ -36,8 +40,8 @@ export const createFargateService = ({
         subnets: vpc.privateSubnets
       },
       desiredCount: 1,
-      serviceName: "plutomi-app",
-      loadBalancerName: "plutomi-load-balancer"
+      serviceName,
+      loadBalancerName
     }
   );
 
