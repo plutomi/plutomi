@@ -2,7 +2,7 @@ import { LandingHero } from "@/components/LandingHero";
 import { LatestCommits } from "@/components/LatestCommits";
 import type { CommitType } from "@/components/LatestCommits/Commit";
 import { UseCaseSection } from "@/components/UseCases";
-import { Center, Space } from "@mantine/core";
+import { Space } from "@mantine/core";
 import axios from "axios";
 import _ from "lodash";
 import type { GetStaticProps, NextPage } from "next";
@@ -20,9 +20,6 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
     <WaitListCard />
     <Space h="lg" />
     <LatestCommits commits={commits} />
-    <Center>
-      <h1>Bye :]</h1>
-    </Center>
   </>
 );
 

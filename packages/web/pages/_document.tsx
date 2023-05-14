@@ -1,7 +1,6 @@
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import React from "react";
 import { createGetInitialProps } from "@mantine/next";
-import { createStyles, useMantineTheme } from "@mantine/core";
 
 const getInitialProps = createGetInitialProps();
 
