@@ -10,11 +10,10 @@
 4. [Prerequisites](#pre-req)
 5. [Useful Commands](#commands)
 6. [Environment Variables](#environment-variables)
-7. [Adding New Packages](#adding-new-packages)
-8. [Language, Tooling, and Infrastructure](#language-tooling-infra)
-9. [License](#license)
-10. [Contributing & Contributors](#contributing)
-11. [Questions](#questions)
+7. [Language, Tooling, and Infrastructure](#language-tooling-infra)
+8. [License](#license)
+9. [Contributing & Contributors](#contributing)
+10. [Questions](#questions)
 
 <a name="intro"></a>
 
@@ -118,7 +117,9 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
 });
 ```
 
-When _running_ locally, each package reads from their local `.env` file and parses it with `zod` in each package's respective `env.ts` like this:
+When _running locally_ , the `.env` in the `api` package is the most important. Those are the variables that are used throughout the app. When _deploying_ locally (not recommended), things change a bit and the `web` package (NextJS) uses it's own local `.env` and the API uses the `.env` in the `infra` package.
+
+To setup an `env.ts` file in each package, you can use the `parseEnv` function:
 
 ```typescript
 import { webEnvSchema, parseEnv, SchemaEnvironment } from "@plutomi/env";
@@ -133,30 +134,6 @@ export const env = parseEnv({
 You can then get type safe environment variables in each package:
 
 ![type-safe-env](images/type-safety-env.png)
-
-When deploying, the `infra` package has all of the environment variables and passes them to the container and into the NextJS app via the `NEXT_PUBLIC_` naming convention where needed.
-
-To add an environment variable:
-
-1. Add it to the `env.ts` file in **packages/env**
-2. `pick()` the environment variable for the specific schema it is being used in so it gets parsed by zod
-3. Add it to the `.env` file for that package so you can test the app locally
-
-<a name="adding-new-packages"></a>
-
-### Adding New Packages 📦
-
-If you want to create a new package like `@plutomi/shared` you will need to do a few things:
-
-- In `plutomi.code-workspace`: Add the package to the `folders` array and update the `eslint.workingDirectories`
-- In `Dockerfile`: Add the relevant `COPY` commands for the package, follow the rest of the file for guidance
-- Add a folder in `packages/` with the name of the package
-- Copy over the `package.json`, `tsconfig.json` and `.eslintrc.json` from another package (preferably `@plutomi/env` as it is the most barebones)
-  1. Change the name to `@packages/shared`
-  2. Remove any dependencies that are not needed
-  3. Install the rest with `yarn`
-- If this package requires environment variables, follow the steps in the [Environment Variables](#environment-variables) section
-  > You might have to add the package to your package.json manually when importing in another package
 
 <a name="language-tooling-infra"></a>
 
