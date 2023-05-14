@@ -13,7 +13,7 @@
 7. [Adding New Packages](#adding-new-packages)
 8. [Language, Tooling, and Infrastructure](#language-tooling-infra)
 9. [License](#license)
-10. [Contributing](#contributing)
+10. [Contributing & Contributors](#contributing)
 11. [Questions](#questions)
 
 <a name="intro"></a>
@@ -214,6 +214,8 @@ Thanks goes to these wonderful people who contributed!
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+<a name="questions"></a>
 
 ## Questions ❓
 
