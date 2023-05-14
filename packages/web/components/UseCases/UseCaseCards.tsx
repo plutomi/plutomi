@@ -24,6 +24,8 @@ import {
 } from "react-icons/bs";
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
+import { CgProfile } from "react-icons/cg";
+import { ImProfile } from "react-icons/im";
 import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 type UseCaseCard = {
@@ -76,7 +78,7 @@ const largeScaleContractingUseCase: UseCaseCard[] = [
     color: "gray",
     amount: 89587
   },
-  { title: "Setup Profile", icon: IconReceipt, color: "yellow", amount: 12615 },
+  { title: "Setup Profile", icon: ImProfile, color: "yellow", amount: 12615 },
   {
     title: "Background Check",
     icon: BsPersonBoundingBox,
