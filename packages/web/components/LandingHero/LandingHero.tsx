@@ -90,8 +90,6 @@ export const LandingHero: React.FC = () => {
 
   return (
     <div className={classes.wrapper}>
-      {/* <Overlay color="#000" opacity={0.65} zIndex={1} /> */}
-
       <div className={classes.inner}>
         <Title className={classes.title}>
           Applicant management at{" "}

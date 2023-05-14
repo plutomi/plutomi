@@ -23,6 +23,9 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
   </>
 );
 
+// Note: Pages WITHOUT getStaticProps will be server-side rendered
+// Due to getInitialProps in _app.tsx
+// https://nextjs.org/docs/messages/opt-out-auto-static-optimization
 export const getStaticProps: GetStaticProps = async () => {
   const commitsFromEachBranch = 8;
   const allCommits: CommitType[] = [];
