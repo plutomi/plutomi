@@ -18,7 +18,7 @@
 
 <a name="intro"></a>
 
-# Plutomi
+# Plutomi :shipit:
 
 ![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
 ![linter badge](https://github.com/plutomi/plutomi/actions/workflows/linter.yml/badge.svg)
