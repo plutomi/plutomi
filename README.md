@@ -2,7 +2,7 @@
 
 ---
 
-# Table of contents
+# Table of Contents
 
 1. [Intro](#intro)
 2. [Motivation](#motivation)
@@ -89,7 +89,7 @@ Stages:
 
 - `yarn deploy:dev` - Deploy the app to a custom environment (i.e. `DEPLOYMENT_ENVIRONMENT`). This will use whatever variables are in `packages/infra/.env`
 
-## Environment Variables <a name="environment-vars"></a>
+## Environment Variables <a name="environment-variables"></a>
 
 > Check the .env.sample in each package for guidance
 
