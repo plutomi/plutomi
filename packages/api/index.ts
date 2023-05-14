@@ -8,7 +8,7 @@ import express from "express";
 import next from "next";
 import path from "path";
 import cors from "cors";
-import { env } from "./env";
+import { env } from "./utils";
 import API from "./controllers";
 
 const dev = env.NODE_ENV !== "production";
@@ -38,6 +38,7 @@ const nextHandler = webApp.getRequestHandler();
   // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));
 
+  console.log("ENV VARS API", env);
   server.on("error", (err) => {
     console.error("Server error:", err);
   });
