@@ -46,7 +46,14 @@ const App = ({ Component, pageProps }: AppProps) => (
         ]
       },
       primaryColor: "brand",
-      primaryShade: 4
+      primaryShade: 4,
+      components: {
+        Anchor: {
+          defaultProps: {
+            color: "brand.4"
+          }
+        }
+      }
     }}
   >
     <Notifications position="top-center" />
