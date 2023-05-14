@@ -16,7 +16,7 @@ type HomeProps = {
 
 const title = "Plutomi - Applicant management at any scale";
 const description =
-  "Streamline your application process with automated workflows";
+  "Plutomi helps you streamline your application process with automated workflows";
 const ogImage = `${env.NEXT_PUBLIC_BASE_URL}/og-image.png`;
 
 const Home: NextPage<HomeProps> = ({ commits }) => (
