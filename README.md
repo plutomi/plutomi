@@ -2,7 +2,7 @@
 
 ---
 
-# Table of Contents
+# Table of Contents :book:
 
 1. [Intro](#intro)
 2. [Motivation](#motivation)
@@ -14,7 +14,7 @@
 8. [Language, Tooling, and Infrastructure](#language-tooling-infra)
 9. [License](#license)
 10. [Contributing](#contributing)
-11. [Questions?](#questions)
+11. [Questions](#questions)
 
 <a name="intro"></a>
 
@@ -34,13 +34,13 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 ![infra](images/infra.png)
 <a name="motivation"></a>
 
-## Motivation
+## Motivation :bulb:
 
 Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://www.linkedin.com/in/joswayski/) attempt to do just that.
 
 <a name="summary"></a>
 
-## Summary
+## Summary :tea:
 
 You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
@@ -60,7 +60,7 @@ Stages:
 
 <a name="pre-req"></a>
 
-## Prerequisites
+## Prerequisites :heavy_exclamation_mark:
 
 - [Node 18](https://nodejs.org/en/download)
 - [Docker](https://docs.docker.com/get-docker/)
@@ -71,7 +71,7 @@ Stages:
 
 <a name="commands"></a>
 
-## Useful Commands
+## Useful Commands :computer:
 
 - `yarn` - Install deps.
   - We are using a Monorepo so shared deps will be at the `root` while workspace specific deps will be installed in the appropriate workspace. Yarn workspaces paired with [nx](https://nx.dev/) is a killer combo
@@ -89,7 +89,9 @@ Stages:
 
 - `yarn deploy:dev` - Deploy the app to a custom environment (i.e. `DEPLOYMENT_ENVIRONMENT`). This will use whatever variables are in `packages/infra/.env`
 
-## Environment Variables <a name="environment-variables"></a>
+<a name="environment-variables"></a>
+
+## Environment Variables :earth_americas:
 
 > Check the .env.sample in each package for guidance
 
@@ -142,7 +144,7 @@ To add an environment variable:
 
 <a name="adding-new-packages"></a>
 
-### Adding New Packages
+### Adding New Packages 📦
 
 If you want to create a new package like `@plutomi/shared` you will need to do a few things:
 
@@ -158,7 +160,7 @@ If you want to create a new package like `@plutomi/shared` you will need to do a
 
 <a name="language-tooling-infra"></a>
 
-## Language, Tooling, & Infrastructure
+## Language, Tooling, & Infrastructure 🛠️
 
 > Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
 
@@ -184,7 +186,7 @@ We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to Dyn
 
 <a name="license"></a>
 
-## License
+## License 📃
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
 
@@ -213,6 +215,6 @@ Thanks goes to these wonderful people who contributed!
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-## Questions?
+## Questions ❓
 
 Open an issue! Or [DM me on Twitter](https://twitter.com/notjoswayski) or email jose@plutomi.com
