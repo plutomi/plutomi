@@ -1,21 +1,10 @@
-import {
-  Title,
-  Text,
-  Container,
-  Overlay,
-  createStyles,
-  rem,
-  useMantineTheme
-} from "@mantine/core";
+import { Title, Text, Container, createStyles, rem } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
-    paddingTop: rem(180),
-    paddingBottom: rem(130),
-    // backgroundImage: "url(/pluto_new_horizons.png)",
-    // backgroundSize: "cover",
-    // backgroundPosition: "center",
+    paddingTop: rem(120),
+    paddingBottom: rem(70),
 
     [theme.fn.smallerThan("xs")]: {
       paddingTop: rem(80),
@@ -98,7 +87,6 @@ const useStyles = createStyles((theme) => ({
 
 export const LandingHero: React.FC = () => {
   const { classes } = useStyles();
-  const theme = useMantineTheme();
 
   return (
     <div className={classes.wrapper}>
