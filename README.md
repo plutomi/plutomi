@@ -135,7 +135,21 @@ If you want to create a new package like `@plutomi/shared` you will need to do a
 
 > Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
 
-Typescript all the things. Infrastructure is managed by CDK aside from the DB. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
+Typescript all the things. Infrastructure is managed by CDK aside from the DB and WAF. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
+
+#### WAF
+
+There isn't good support for [official L2 constructs for AWS WAF](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_waf-readme.html) yet, so we set this up manually in the console. There are two main rules which you should apply:
+
+1. Block all requests that do not have a valid `CF_HEADER_KEY` header & value
+
+![waf-header](images/waf-header.png)
+
+- This will block all requests that hit the load balancer directly and force going through CloudFront
+
+2. IP Rate limiting for `/api/` endpoints
+
+- This is self explanatory, we don't want to get DDOS'd
 
 #### MongoDB
 
