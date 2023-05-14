@@ -10,7 +10,8 @@ import {
   AllowedMethods,
   CachePolicy,
   Distribution,
-  OriginRequestPolicy
+  OriginRequestPolicy,
+  ViewerProtocolPolicy
 } from "aws-cdk-lib/aws-cloudfront";
 import { type Stack } from "aws-cdk-lib";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
@@ -53,7 +54,8 @@ export const createDistribution = ({
       originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
       // Everything is cached, except api
       cachePolicy: CachePolicy.CACHING_OPTIMIZED,
-      allowedMethods: AllowedMethods.ALLOW_ALL
+      allowedMethods: AllowedMethods.ALLOW_ALL,
+      viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY
     }
   });
 
@@ -62,7 +64,8 @@ export const createDistribution = ({
     distribution.addBehavior(path, loadBalancerOrigin, {
       cachePolicy: CachePolicy.CACHING_DISABLED,
       originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-      allowedMethods: AllowedMethods.ALLOW_ALL
+      allowedMethods: AllowedMethods.ALLOW_ALL,
+      viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY
     });
   });
 
