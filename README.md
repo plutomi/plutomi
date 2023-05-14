@@ -2,6 +2,22 @@
 
 ---
 
+# Table of contents
+
+1. [Intro](#intro)
+2. [Motivation](#motivation)
+3. [Summary](#summary)
+4. [Prerequisites](#pre-req)
+5. [Useful Commands](#commands)
+6. [Environment Variables](#environment-variables)
+7. [Adding New Packages](#adding-new-packages)
+8. [Language, Tooling, and Infrastructure](#language-tooling-infra)
+9. [License](#license)
+10. [Contributing](#contributing)
+11. [Questions?](#questions)
+
+<a name="intro"></a>
+
 # Plutomi
 
 ![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
@@ -16,10 +32,13 @@
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![infra](images/infra.png)
+<a name="motivation"></a>
 
 ## Motivation
 
 Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://www.linkedin.com/in/joswayski/) attempt to do just that.
+
+<a name="summary"></a>
 
 ## Summary
 
@@ -39,6 +58,8 @@ Stages:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
+<a name="pre-req"></a>
+
 ## Prerequisites
 
 - [Node 18](https://nodejs.org/en/download)
@@ -47,6 +68,8 @@ Stages:
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
 - Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
+
+<a name="commands"></a>
 
 ## Useful Commands
 
@@ -66,7 +89,7 @@ Stages:
 
 - `yarn deploy:dev` - Deploy the app to a custom environment (i.e. `DEPLOYMENT_ENVIRONMENT`). This will use whatever variables are in `packages/infra/.env`
 
-## Environment variables
+## Environment Variables <a name="environment-vars"></a>
 
 > Check the .env.sample in each package for guidance
 
@@ -117,7 +140,9 @@ To add an environment variable:
 2. `pick()` the environment variable for the specific schema it is being used in so it gets parsed by zod
 3. Add it to the `.env` file for that package so you can test the app locally
 
-### Adding a new package
+<a name="adding-new-packages"></a>
+
+### Adding New Packages
 
 If you want to create a new package like `@plutomi/shared` you will need to do a few things:
 
@@ -130,6 +155,8 @@ If you want to create a new package like `@plutomi/shared` you will need to do a
   3. Install the rest with `yarn`
 - If this package requires environment variables, follow the steps in the [Environment Variables](#environment-variables) section
   > You might have to add the package to your package.json manually when importing in another package
+
+<a name="language-tooling-infra"></a>
 
 ## Language, Tooling, & Infrastructure
 
@@ -153,17 +180,15 @@ There isn't good support for [official L2 constructs for AWS WAF](https://docs.a
 
 #### MongoDB
 
-We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
+We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. MongoDB also has integrated full text search which will come in handy later on. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
 
-## Questions?
-
-Open an issue! Or [DM me on Twitter](https://twitter.com/notjoswayski) or email jose@plutomi.com
+<a name="license"></a>
 
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
 
-## Contributing & Contributors ✨
+## Contributing & Contributors ✨ <a name="contributing"></a>
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
@@ -187,3 +212,7 @@ Thanks goes to these wonderful people who contributed!
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+## Questions?
+
+Open an issue! Or [DM me on Twitter](https://twitter.com/notjoswayski) or email jose@plutomi.com
