@@ -7,13 +7,36 @@ import axios from "axios";
 import _ from "lodash";
 import type { GetStaticProps, NextPage } from "next";
 import { WaitListCard } from "@/components/WaitListCard";
+import Head from "next/head";
+import { env } from "@/utils";
 
 type HomeProps = {
   commits: CommitType[];
 };
 
+const title = "Plutomi - Applicant management at any scale";
+const description =
+  "Streamline your application process with automated workflows";
+const ogImage = `${env.NEXT_PUBLIC_BASE_URL}/og-image.png`;
+
 const Home: NextPage<HomeProps> = ({ commits }) => (
   <>
+    <Head>
+      <title>Plutomi</title>
+      <meta name="description" content={description} key="desc" />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={env.NEXT_PUBLIC_BASE_URL} />
+      <meta property="og:image" content={ogImage} />
+
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:url" content={env.NEXT_PUBLIC_BASE_URL} />
+      <meta property="twitter:title" content={title} />
+      <meta property="twitter:description" content={description} />
+      <meta property="twitter:image" content={ogImage} />
+    </Head>
     <LandingHero />
     <UseCaseSection />
     <Space h="lg" />
