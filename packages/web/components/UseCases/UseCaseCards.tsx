@@ -7,7 +7,7 @@ import {
   Group,
   Center
 } from "@mantine/core";
-import { IconReceipt, IconFileUpload } from "@tabler/icons-react";
+import { IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
 import {
@@ -24,7 +24,6 @@ import {
 } from "react-icons/bs";
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
-import { CgProfile } from "react-icons/cg";
 import { ImProfile } from "react-icons/im";
 import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
