@@ -9,11 +9,10 @@
 3. [Summary](#summary)
 4. [Prerequisites](#pre-req)
 5. [Useful Commands](#commands)
-6. [Environment Variables](#environment-variables)
-7. [Language, Tooling, and Infrastructure](#language-tooling-infra)
-8. [License](#license)
-9. [Contributing & Contributors](#contributing)
-10. [Questions](#questions)
+6. [Language, Tooling, and Infrastructure](#language-tooling-infra)
+7. [License](#license)
+8. [Contributing & Contributors](#contributing)
+9. [Questions](#questions)
 
 <a name="intro"></a>
 
@@ -88,9 +87,33 @@ Stages:
 
 - `yarn deploy:dev` - Deploy the app to a custom environment (i.e. `DEPLOYMENT_ENVIRONMENT`). This will use whatever variables are in `packages/infra/.env`
 
-<a name="environment-variables"></a>
+<a name="language-tooling-infra"></a>
 
-## Environment Variables :earth_americas:
+## Language, Tooling, & Infrastructure 🛠️
+
+> Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
+
+Typescript all the things. Infrastructure is managed by CDK aside from the DB and WAF. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
+
+#### WAF
+
+There isn't good support for [official L2 constructs for AWS WAF](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_waf-readme.html) yet, so we set this up manually in the console. There are two main rules which you should apply:
+
+1. Block all requests that do not have a valid `CF_HEADER_KEY` header & value
+
+![waf-header](images/waf-header.png)
+
+- This will block all requests that hit the load balancer directly and force going through CloudFront
+
+2. IP Rate limiting for `/api/` endpoints
+
+- This is self explanatory, we don't want to get DDOS'd
+
+#### MongoDB
+
+We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. MongoDB also has integrated full text search which will come in handy later on. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
+
+#### Environment Variables :earth_americas:
 
 > Check the .env.sample in each package for guidance
 
@@ -117,7 +140,7 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
 });
 ```
 
-When _running locally_ , the `.env` in the `api` package is the most important. Those are the variables that are used throughout the app. When _deploying_ locally (not recommended), things change a bit and the `web` package (NextJS) uses it's own local `.env` and the API uses the `.env` in the `infra` package.
+When _running locally_ , the `.env` in the `api` package is the most important. Those are the variables that are used throughout the app. When _deploying_ locally (not recommended), things change a bit and the `web` package (NextJS) uses its own local `.env` and the API uses the `.env` in the `infra` package.
 
 To setup an `env.ts` file in each package, you can use the `parseEnv` function:
 
@@ -134,32 +157,6 @@ export const env = parseEnv({
 You can then get type safe environment variables in each package:
 
 ![type-safe-env](images/type-safety-env.png)
-
-<a name="language-tooling-infra"></a>
-
-## Language, Tooling, & Infrastructure 🛠️
-
-> Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
-
-Typescript all the things. Infrastructure is managed by CDK aside from the DB and WAF. The frontend is [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
-
-#### WAF
-
-There isn't good support for [official L2 constructs for AWS WAF](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_waf-readme.html) yet, so we set this up manually in the console. There are two main rules which you should apply:
-
-1. Block all requests that do not have a valid `CF_HEADER_KEY` header & value
-
-![waf-header](images/waf-header.png)
-
-- This will block all requests that hit the load balancer directly and force going through CloudFront
-
-2. IP Rate limiting for `/api/` endpoints
-
-- This is self explanatory, we don't want to get DDOS'd
-
-#### MongoDB
-
-We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. MongoDB also has integrated full text search which will come in handy later on. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
 
 <a name="license"></a>
 
