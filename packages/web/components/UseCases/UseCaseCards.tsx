@@ -7,7 +7,7 @@ import {
   Group,
   Center
 } from "@mantine/core";
-import { IconReceipt, IconFileUpload } from "@tabler/icons-react";
+import { IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
 import {
@@ -24,6 +24,7 @@ import {
 } from "react-icons/bs";
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
+import { ImProfile } from "react-icons/im";
 import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 type UseCaseCard = {
@@ -76,7 +77,7 @@ const largeScaleContractingUseCase: UseCaseCard[] = [
     color: "gray",
     amount: 89587
   },
-  { title: "Setup Profile", icon: IconReceipt, color: "yellow", amount: 12615 },
+  { title: "Setup Profile", icon: ImProfile, color: "yellow", amount: 12615 },
   {
     title: "Background Check",
     icon: BsPersonBoundingBox,
@@ -124,7 +125,7 @@ const useStyles = createStyles((theme) => ({
     }
   },
   grid: {
-    width: "80%",
+    width: "70%",
     [theme.fn.smallerThan("lg")]: {
       width: "60%"
     }
@@ -141,7 +142,7 @@ export const UseCaseCards: React.FC = () => {
         <Center>
           <item.icon color={theme.colors[item.color][5]} size="2rem" />
         </Center>
-        <Text fz="lg" mt={4} ta="center">
+        <Text fz="lg" mt={4} ta="center" fw={400}>
           {item.title}
         </Text>
       </Card.Section>

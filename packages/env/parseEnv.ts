@@ -9,11 +9,14 @@ type ParseEnvProps<T> = {
    */
   envSchema: T;
   schemaEnvironment: SchemaEnvironment;
+  // Whether or not to throw an error if the env vars are invalid. Defaults to true.
+  shouldThrow?: boolean;
 };
 
 export const parseEnv = <T extends ZodTypeAny>({
   envSchema,
-  schemaEnvironment
+  schemaEnvironment,
+  shouldThrow = true
 }: ParseEnvProps<T>): z.infer<T> => {
   const parsed = envSchema.safeParse(processEnv);
 
@@ -25,7 +28,11 @@ export const parseEnv = <T extends ZodTypeAny>({
       console.error(errorMessage);
     });
 
-    throw new Error(errorMessage);
+    if (shouldThrow) {
+      throw new Error(errorMessage);
+    }
+
+    return {};
   }
 
   // Return the parsed data

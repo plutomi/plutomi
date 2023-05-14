@@ -11,8 +11,49 @@ const App = ({ Component, pageProps }: AppProps) => (
     withGlobalStyles
     withNormalizeCSS
     theme={{
-      primaryColor: "indigo",
-      fontFamily: `${inter.style.fontFamily}, sans-serif`
+      globalStyles: (theme) => ({
+        body: {
+          ...theme.fn.fontStyles(),
+          backgroundColor: theme.colors["cool-gray"][0]
+        }
+      }),
+
+      fontFamily: `${inter.style.fontFamily}, sans-serif`,
+      colors: {
+        brand: [
+          "#e3f2ff",
+          "#bbd4f8",
+          "#92b8ed",
+          "#699ce3",
+          "#3f7fda",
+          "#2566c0",
+          "#1a4f96",
+          "#10396d",
+          "#042244",
+          "#000b1c"
+        ],
+        "cool-gray": [
+          "#edf2f7",
+          "#cdd8e3",
+          "#adbed1",
+          "#8ba5c0",
+          "#698bb0",
+          "#517297",
+          "#405875",
+          "#2e3f52",
+          "#1b2632",
+          "#080d12"
+        ]
+      },
+      primaryColor: "brand",
+      primaryShade: 4,
+      components: {
+        Anchor: {
+          defaultProps: {
+            color: "brand.4"
+          }
+        }
+      }
     }}
   >
     <Notifications position="top-center" />

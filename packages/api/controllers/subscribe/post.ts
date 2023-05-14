@@ -1,7 +1,7 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import type { RequestHandler } from "express";
 import { Schema, validate } from "@plutomi/validation";
-import { env } from "../../env";
+import { env } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({

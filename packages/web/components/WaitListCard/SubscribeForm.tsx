@@ -82,6 +82,7 @@ export const SubscribeForm: React.FC = () => {
             {...form.getInputProps("email")}
             placeholder="example@mail.com"
             disabled={isSubmitting}
+            type="email"
             classNames={{
               input: classes.input,
               root: classes.inputWrapper

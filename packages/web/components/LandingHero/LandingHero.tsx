@@ -1,21 +1,10 @@
-import {
-  Title,
-  Text,
-  Container,
-  Overlay,
-  createStyles,
-  rem,
-  useMantineTheme
-} from "@mantine/core";
+import { Title, Text, Container, createStyles, rem } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
-    paddingTop: rem(180),
-    paddingBottom: rem(130),
-    backgroundImage: "url(/pluto_new_horizons.png)",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    paddingTop: rem(120),
+    paddingBottom: rem(70),
 
     [theme.fn.smallerThan("xs")]: {
       paddingTop: rem(80),
@@ -30,11 +19,11 @@ const useStyles = createStyles((theme) => ({
 
   title: {
     fontWeight: 800,
-    fontSize: rem(70),
+    fontSize: rem(72),
     letterSpacing: rem(-1),
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
-    color: theme.white,
+    color: theme.colors.dark[6],
     marginBottom: theme.spacing.xs,
     textAlign: "center",
     [theme.fn.smallerThan("xs")]: {
@@ -48,7 +37,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    color: theme.colors.gray[0],
+    color: theme.colors.dark[3],
     textAlign: "center",
     fontSize: rem(28),
 
@@ -98,12 +87,9 @@ const useStyles = createStyles((theme) => ({
 
 export const LandingHero: React.FC = () => {
   const { classes } = useStyles();
-  const theme = useMantineTheme();
 
   return (
     <div className={classes.wrapper}>
-      <Overlay color="#000" opacity={0.65} zIndex={1} />
-
       <div className={classes.inner}>
         <Title className={classes.title}>
           Applicant management at{" "}
@@ -113,8 +99,8 @@ export const LandingHero: React.FC = () => {
             className={classes.highlight}
             variant="gradient"
             gradient={{
-              from: theme.colors.indigo[6],
-              to: theme.colors.indigo[4],
+              from: "brand.5",
+              to: "brand.3",
               deg: 20
             }}
           >
@@ -124,8 +110,7 @@ export const LandingHero: React.FC = () => {
 
         <Container size={1000}>
           <Text size="lg" className={classes.description}>
-            Plutomi streamlines your application process with automated
-            workflows
+            Streamline your application process with automated workflows
           </Text>
         </Container>
       </div>
