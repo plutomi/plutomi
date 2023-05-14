@@ -38,7 +38,6 @@ const nextHandler = webApp.getRequestHandler();
   // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));
 
-  console.log("ENV VARS API", env);
   server.on("error", (err) => {
     console.error("Server error:", err);
   });
