@@ -13,9 +13,9 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
     paddingTop: rem(180),
     paddingBottom: rem(130),
-    backgroundImage: "url(/pluto_new_horizons.png)",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    // backgroundImage: "url(/pluto_new_horizons.png)",
+    // backgroundSize: "cover",
+    // backgroundPosition: "center",
 
     [theme.fn.smallerThan("xs")]: {
       paddingTop: rem(80),
@@ -34,7 +34,7 @@ const useStyles = createStyles((theme) => ({
     letterSpacing: rem(-1),
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
-    color: theme.white,
+    color: theme.colors.dark[6],
     marginBottom: theme.spacing.xs,
     textAlign: "center",
     [theme.fn.smallerThan("xs")]: {
@@ -48,7 +48,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    color: theme.colors.gray[0],
+    color: theme.colors.dark[3],
     textAlign: "center",
     fontSize: rem(28),
 
@@ -102,7 +102,7 @@ export const LandingHero: React.FC = () => {
 
   return (
     <div className={classes.wrapper}>
-      <Overlay color="#000" opacity={0.65} zIndex={1} />
+      {/* <Overlay color="#000" opacity={0.65} zIndex={1} /> */}
 
       <div className={classes.inner}>
         <Title className={classes.title}>
@@ -113,8 +113,8 @@ export const LandingHero: React.FC = () => {
             className={classes.highlight}
             variant="gradient"
             gradient={{
-              from: "brand.4",
-              to: "brand.2",
+              from: "brand.5",
+              to: "brand.3",
               deg: 20
             }}
           >

@@ -57,7 +57,13 @@ export const Commit: React.FC<CommitType> = ({
   return (
     <>
       <MediaQuery smallerThan="lg" styles={{ display: "none" }}>
-        <Card className={classes.card} padding="sm" onClick={handleCardClick}>
+        <Card
+          className={classes.card}
+          padding="sm"
+          onClick={handleCardClick}
+          shadow="sm"
+          radius="md"
+        >
           <Group noWrap>
             <Avatar src={image} size={94} radius="md" />
 
@@ -109,7 +115,13 @@ export const Commit: React.FC<CommitType> = ({
         </Card>
       </MediaQuery>
       <MediaQuery largerThan="lg" styles={{ display: "none" }}>
-        <Card className={classes.card} padding="sm" onClick={handleCardClick}>
+        <Card
+          className={classes.card}
+          padding="sm"
+          onClick={handleCardClick}
+          shadow="sm"
+          radius="md"
+        >
           <Group noWrap>
             <Avatar src={image} size={94} radius="md" />
 

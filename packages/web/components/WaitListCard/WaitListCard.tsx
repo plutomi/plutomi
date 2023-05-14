@@ -5,7 +5,7 @@ import { SubscribeForm } from "./SubscribeForm";
 
 export const WaitListCard: React.FC = () => (
   <Container size="md">
-    <Card padding="md" mt="lg" radius="md">
+    <Card padding="md" mt="lg" radius="md" shadow="sm">
       <Header />
       <SubscribeForm />
       <Space h="md" />

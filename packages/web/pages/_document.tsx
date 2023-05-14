@@ -1,6 +1,7 @@
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import React from "react";
 import { createGetInitialProps } from "@mantine/next";
+import { createStyles, useMantineTheme } from "@mantine/core";
 
 const getInitialProps = createGetInitialProps();
 
@@ -10,7 +11,7 @@ export default class _Document extends Document {
 
   render() {
     return (
-      <Html style={{ backgroundColor: "#F1F5F9" }}>
+      <Html style={{ backgroundColor: "cool-gray" }}>
         <Head>
           <link
             rel="apple-touch-icon"
@@ -31,7 +32,7 @@ export default class _Document extends Document {
           />
           <link rel="manifest" href="/site.webmanifest" />
         </Head>
-        <body style={{ backgroundColor: "#F1F5F9" }}>
+        <body style={{ backgroundColor: "cool-gray" }}>
           <Main />
           <NextScript />
         </body>
