@@ -14,7 +14,7 @@ import API from "./controllers";
 
 const rateLimiter = rateLimit({
   windowMs: 1000 * 60,
-  max: 100,
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false
 });
