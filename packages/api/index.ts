@@ -8,16 +8,8 @@ import express from "express";
 import next from "next";
 import path from "path";
 import cors from "cors";
-import rateLimit from "express-rate-limit";
 import { env } from "./env";
 import API from "./controllers";
-
-const rateLimiter = rateLimit({
-  windowMs: 1000 * 60,
-  max: 300,
-  standardHeaders: true,
-  legacyHeaders: false
-});
 
 const dev = env.NODE_ENV !== "production";
 
@@ -41,7 +33,7 @@ const nextHandler = webApp.getRequestHandler();
   server.use(cors());
 
   // All routes are handled here
-  server.use("/api", rateLimiter,  API);
+  server.use("/api", API);
 
   // NextJS App
   server.all("*", async (req, res) => nextHandler(req, res));
