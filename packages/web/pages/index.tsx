@@ -2,10 +2,10 @@ import { LandingHero } from "@/components/LandingHero";
 import { LatestCommits } from "@/components/LatestCommits";
 import type { CommitType } from "@/components/LatestCommits/Commit";
 import { UseCaseSection } from "@/components/UseCases";
-import { Space } from "@mantine/core";
+import { Center, Space } from "@mantine/core";
 import axios from "axios";
 import _ from "lodash";
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { WaitListCard } from "@/components/WaitListCard";
 
 type HomeProps = {
@@ -21,10 +21,13 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
     <WaitListCard />
     <Space h="lg" />
     <LatestCommits commits={commits} />
+    <Center>
+      <h1>Bye :]</h1>
+    </Center>
   </>
 );
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const commitsFromEachBranch = 8;
   const allCommits: CommitType[] = [];
 
@@ -77,6 +80,6 @@ export async function getStaticProps() {
       commits
     }
   };
-}
+};
 
 export default Home;

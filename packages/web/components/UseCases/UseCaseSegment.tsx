@@ -22,8 +22,8 @@ const useStyles = createStyles((theme) => ({
 
   indicator: {
     backgroundImage: theme.fn.gradient({
-      from: theme.colors.indigo[6],
-      to: theme.colors.indigo[4],
+      from: "brand.4",
+      to: "brand.2",
       deg: 20
     })
   },

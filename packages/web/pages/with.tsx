@@ -1,10 +1,13 @@
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 
 const With: NextPage = () => (
   <div>
-    <h1>Image Page</h1>
-    <img src="/pluto_new_horizons" alt="with" />
+    <h1>Second Page With Get Static Props - updated</h1>
   </div>
 );
+
+export const getStaticProps: GetStaticProps = async () => ({
+  props: {}
+});
 
 export default With;

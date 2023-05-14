@@ -113,8 +113,8 @@ export const LandingHero: React.FC = () => {
             className={classes.highlight}
             variant="gradient"
             gradient={{
-              from: theme.colors.indigo[6],
-              to: theme.colors.indigo[4],
+              from: "brand.4",
+              to: "brand.2",
               deg: 20
             }}
           >
