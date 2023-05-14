@@ -7,6 +7,7 @@ import {
 } from "aws-cdk-lib/aws-route53";
 import { LoadBalancerV2Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import {
+  type AddBehaviorOptions,
   AllowedMethods,
   CachePolicy,
   Distribution,
@@ -42,30 +43,30 @@ export const createDistribution = ({
       }
     }
   );
+  const defaultBehavior: AddBehaviorOptions = {
+    // Must be enabled!
+    // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
+    originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
+    // Everything is cached, except api
+    cachePolicy: CachePolicy.CACHING_OPTIMIZED,
+    allowedMethods: AllowedMethods.ALLOW_ALL,
+    viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY
+  };
 
   const distribution = new Distribution(stack, distributionName, {
     certificate,
     domainNames: [env.DOMAIN],
     defaultBehavior: {
-      origin: loadBalancerOrigin,
-
-      // Must be enabled!
-      // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
-      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-      // Everything is cached, except api
-      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
-      allowedMethods: AllowedMethods.ALLOW_ALL,
-      viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY
+      ...defaultBehavior,
+      origin: loadBalancerOrigin
     }
   });
 
-  // Uncached paths
+  // Disable caching
   ["/api/*"].forEach((path) => {
     distribution.addBehavior(path, loadBalancerOrigin, {
-      cachePolicy: CachePolicy.CACHING_DISABLED,
-      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-      allowedMethods: AllowedMethods.ALLOW_ALL,
-      viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY
+      ...defaultBehavior,
+      cachePolicy: CachePolicy.CACHING_DISABLED
     });
   });
 
