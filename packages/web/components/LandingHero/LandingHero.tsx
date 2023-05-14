@@ -19,7 +19,7 @@ const useStyles = createStyles((theme) => ({
 
   title: {
     fontWeight: 800,
-    fontSize: rem(70),
+    fontSize: rem(72),
     letterSpacing: rem(-1),
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
@@ -110,8 +110,7 @@ export const LandingHero: React.FC = () => {
 
         <Container size={1000}>
           <Text size="lg" className={classes.description}>
-            Plutomi streamlines your application process with automated
-            workflows
+            Streamline your application process with automated workflows
           </Text>
         </Container>
       </div>
