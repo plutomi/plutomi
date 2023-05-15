@@ -50,7 +50,8 @@ export const createDistribution = ({
     // Everything is cached, except api
     cachePolicy: CachePolicy.CACHING_OPTIMIZED,
     allowedMethods: AllowedMethods.ALLOW_ALL,
-    viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY
+    // Some sites remove https:// from the url, so we redirect anyway >.>
+    viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS
   };
 
   const distribution = new Distribution(stack, distributionName, {
