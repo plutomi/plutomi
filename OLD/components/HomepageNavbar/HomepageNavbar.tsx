@@ -91,7 +91,6 @@ export const HomepageNavbar = () => (
                     <span className="sr-only">Workflow</span>
                     <img
                       className="h-8 w-auto sm:h-10"
-                      src="https://tailwindui.com/img/logos/workflow-mark-bg-blue-gray-600.svg"
                       alt=""
                     />
                   </a> */}
@@ -145,7 +144,6 @@ export const HomepageNavbar = () => (
                 <div>
                   {/* <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-mark-bg-blue-gray-600.svg"
                       alt=""
                     /> */}
                 </div>
