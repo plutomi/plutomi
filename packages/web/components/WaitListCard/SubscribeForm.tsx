@@ -3,6 +3,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import axios from "axios";
 import { Schema } from "@plutomi/validation";
 import { IconAlertCircle } from "@tabler/icons-react";
+import { AiFillCheckCircle } from "react-icons/ai";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
@@ -55,7 +56,7 @@ export const SubscribeForm: React.FC = () => {
     } catch (error) {
       const message = handleAxiosError(error);
       notifications.show({
-        title: "Something went wrong signing you up 😢",
+        title: "An error ocurred 😢",
         message,
         color: "red",
         icon: <IconAlertCircle size={24} />
@@ -67,7 +68,7 @@ export const SubscribeForm: React.FC = () => {
 
   return success ? (
     <Alert
-      icon={<IconAlertCircle size="1rem" />}
+      icon={<AiFillCheckCircle size="1rem" />}
       title="Awesome!"
       color="green"
       radius="md"
