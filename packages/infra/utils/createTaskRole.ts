@@ -1,6 +1,6 @@
 import { type IRole, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import type { Stack } from "aws-cdk-lib";
-import { env } from "../env";
+import { env } from "./env";
 
 type CreateTaskRoleProps = {
   stack: Stack;

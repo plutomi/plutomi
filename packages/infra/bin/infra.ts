@@ -6,7 +6,7 @@ dotenv.config();
 
 import "source-map-support";
 import * as cdk from "aws-cdk-lib";
-import { env } from "../env";
+import { env } from "../utils/env";
 import { PlutomiStack } from "../lib/plutomiStack";
 
 const plutomiApp = new cdk.App();

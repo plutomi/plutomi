@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 
 import * as z from "zod";
-import { DeploymentEnvironment, NodeEnvironment } from "./consts";
-import { awsRegionSchema, portSchema } from "./customSchemas";
+import { DeploymentEnvironment, NodeEnvironment } from "../consts";
+import { awsRegionSchema, portSchema } from "../customSchemas";
 
 /**
  * All environment variables in the app. Each package then picks the ones it needs.

@@ -6,7 +6,7 @@ import {
 } from "aws-cdk-lib/aws-ec2";
 import { FckNatInstanceProvider } from "cdk-fck-nat";
 import type { Stack } from "aws-cdk-lib";
-import { env } from "../env";
+import { env } from "./env";
 
 type CreateVPCProps = {
   stack: Stack;

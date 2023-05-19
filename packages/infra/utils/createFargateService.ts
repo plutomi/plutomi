@@ -4,7 +4,7 @@ import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Port, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
-import { env } from "../env";
+import { env } from "./env";
 
 type CreateFargateServiceProps = {
   stack: Stack;

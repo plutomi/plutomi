@@ -5,7 +5,7 @@ import {
 } from "aws-cdk-lib/aws-ecs";
 import type { IRole } from "aws-cdk-lib/aws-iam";
 import type { Stack } from "aws-cdk-lib";
-import { env } from "../env";
+import { env } from "./env";
 
 type CreateTaskDefinitionProps = {
   stack: Stack;

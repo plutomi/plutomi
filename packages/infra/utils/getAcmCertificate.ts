@@ -3,7 +3,7 @@ import {
   Certificate
 } from "aws-cdk-lib/aws-certificatemanager";
 import type { Stack } from "aws-cdk-lib";
-import { env } from "../env";
+import { env } from "./env";
 
 type GetACMCertificateProps = {
   stack: Stack;
