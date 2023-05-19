@@ -1,6 +1,6 @@
 import ksuid from "ksuid";
-import type { AllEntityNames } from "../@types/entities";
-import type { PlutomiId } from "../@types/plutomiId";
+import type { AllEntityNames } from "../../shared/@types/entities";
+import type { PlutomiId } from "../../shared/@types/plutomiId";
 
 type GenerateIdProps<T extends AllEntityNames> = {
   date: Date;

@@ -1,4 +1,4 @@
-import type { AllEntityNames } from "./entities/allEntityNames";
+import type { AllEntityNames } from "./entities";
 import type { PlutomiId } from "./plutomiId";
 
 // These are properties, aside from each entity type, that can be indexed
@@ -8,7 +8,7 @@ export enum IndexableType {
    */
 
   // ! TODO: Please TS gods add a way to extract this from AllEntityName.
-  // I reaaaaaaaaaaaaally don't like how we have duplicate data here
+  // I really don't like how we have duplicate data here
   User = "user",
   Org = "org",
   Application = "application",
@@ -59,7 +59,7 @@ type OtherTargetArrayItems = {
  * 
  */
 export type IndexedTargetArray<T extends AllEntityNames> = [
-  // These two will always be the first two
+  // These two will always be the first two items
   { id: T; type: IndexableType.Entity },
   { id: PlutomiId<T>; type: IndexableType.Id },
   ...OtherTargetArrayItems[]

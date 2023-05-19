@@ -19,14 +19,4 @@ export type AllEntities =
   | StageQuestionItem
   | Workspace;
 
-export enum AllEntityNames {
-  Application = "application",
-  Invite = "invite",
-  Org = "org",
-  User = "user",
-  Question = "question",
-  Stage = "stage",
-  StageQuestionItem = "stageQuestionItem",
-  Workspace = "workspace",
-  Membership = "membership"
-}
+export * from "./allEntityNames";

@@ -14,6 +14,7 @@ COPY yarn.lock package.json ./
 COPY packages/api/package.json packages/api/package.json
 COPY packages/web/package.json packages/web/package.json
 COPY packages/env/package.json packages/env/package.json
+COPY packages/shared/package.json packages/shared/package.json
 COPY packages/validation/package.json packages/validation/package.json
 
 
@@ -27,6 +28,7 @@ WORKDIR /app
 COPY --from=deps /app/packages/api/node_modules packages/api/node_modules
 COPY --from=deps /app/packages/web/node_modules packages/web/node_modules 
 COPY --from=deps /app/packages/env/node_modules packages/env/node_modules
+COPY --from=deps /app/packages/shared/node_modules packages/shared/node_modules
 COPY --from=deps /app/packages/validation/node_modules packages/validation/node_modules
 COPY --from=deps /app/node_modules node_modules 
 
@@ -69,6 +71,13 @@ COPY --from=builder /app/packages/env/node_modules packages/env/node_modules
 COPY --from=builder /app/packages/validation/dist packages/validation
 COPY --from=builder /app/packages/validation/package.json packages/validation/package.json
 COPY --from=builder /app/packages/validation/node_modules packages/validation/node_modules
+
+
+# Copy the SHARED package
+COPY --from=builder /app/packages/shared/dist packages/shared
+COPY --from=builder /app/packages/shared/package.json packages/shared/package.json
+COPY --from=builder /app/packages/shared/node_modules packages/shared/node_modules
+
 
 
 # Copy the root files 

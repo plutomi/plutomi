@@ -5,7 +5,9 @@
   "repository": "https://github.com/plutomi/plutomi",
   "author": "Plutomi Inc.",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "mongodb": "^5.5.0"
+  },
   "scripts": {
     "build": "tsc",
     "lint": "yarn eslint --ext .ts,.tsx .",

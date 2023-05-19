@@ -1,5 +1,5 @@
 import * as mongoDB from "mongodb";
-import type { AllEntities } from "../../@types/entities";
+import type { AllEntities } from "../../../shared/@types/entities";
 import { env } from "../env";
 
 export const collectionName = "items";
