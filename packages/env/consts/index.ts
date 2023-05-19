@@ -1,3 +1,3 @@
-export * from "./DeploymentEnvironment";
-export * from "./NodeEnvironment";
-export * from "./SchemaEnvironment";
+export * from "./deploymentEnvironment";
+export * from "./nodeEnvironment";
+export * from "./schemaEnvironment";

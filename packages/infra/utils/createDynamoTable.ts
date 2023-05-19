@@ -1,7 +1,7 @@
 import { RemovalPolicy, type Stack } from "aws-cdk-lib";
 import { BillingMode, Table, AttributeType } from "aws-cdk-lib/aws-dynamodb";
 import type { IRole } from "aws-cdk-lib/aws-iam";
-import { env } from "../env";
+import { env } from "./env";
 
 type CreateDynamoTableProps = {
   stack: Stack;

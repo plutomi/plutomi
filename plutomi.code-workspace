@@ -19,10 +19,14 @@
     {
       "path": "packages/env",
       "name": "env"
-    },
+    }, // TODO combine these? ^ v
     {
       "path": "packages/validation",
       "name": "validation"
+    },
+    {
+      "path": "packages/shared",
+      "name": "shared"
     }
   ],
   "settings": {

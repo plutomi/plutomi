@@ -108,9 +108,10 @@ export const LandingHero: React.FC = () => {
           </Text>
         </Title>
 
-        <Container size={1000}>
+        <Container size={1100}>
           <Text size="lg" className={classes.description}>
-            Streamline your application process with automated workflows
+            Plutomi helps you streamline your application process with automated
+            workflows
           </Text>
         </Container>
       </div>
