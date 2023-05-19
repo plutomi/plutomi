@@ -7,7 +7,7 @@ import {
 } from "mongodb";
 import type { AllEntities } from "@plutomi/shared";
 import { env } from "../env";
-import { getDbName } from "./getDBName";
+import { getDbName } from "./getDbName";
 
 export const collectionName = "items";
 export const databaseName = getDbName();
