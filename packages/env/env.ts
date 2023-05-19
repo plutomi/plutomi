@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { DeploymentEnvironment, NodeEnvironment } from "./consts";
-import { awsRegionSchema, portSchema } from "./customSchemas";
+import { awsRegionSchema, mongoUrlSchema, portSchema } from "./customSchemas";
 
 /**
  * All environment variables in the app. Each package then picks the ones it needs.
@@ -24,7 +24,7 @@ export const allEnvVariablesSchema = z.object({
   AWS_ACCOUNT_ID: z.string(),
   AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid(),
-  MONGO_URL: z.string()
+  MONGO_URL: mongoUrlSchema
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
