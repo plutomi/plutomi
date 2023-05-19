@@ -4,17 +4,17 @@
 import * as dotenv from "dotenv";
 
 dotenv.config();
-import express from "express";
-import next from "next";
+import express, { type RequestHandler } from "express";
+import nextJs from "next";
 import path from "path";
 import cors from "cors";
-import { env } from "./utils";
+import { connectToDatabase, env } from "./utils";
 import API from "./controllers";
 
 const dev = env.NODE_ENV !== "production";
 
 const dir = path.join(__dirname, "../web");
-const webApp = next({ dev, dir });
+const webApp = nextJs({ dev, dir });
 const nextHandler = webApp.getRequestHandler();
 
 (async () => {
@@ -28,6 +28,21 @@ const nextHandler = webApp.getRequestHandler();
 
   const server = express();
   server.set("trust proxy", true);
+
+  try {
+    const { client, items } = await connectToDatabase();
+
+    const includeMongo: RequestHandler = (req, _res, next) => {
+      req.client = client;
+      req.items = items;
+      next();
+    };
+
+    server.use(includeMongo);
+  } catch (error) {
+    console.error("Error connecting to database:", error);
+    process.exit(1);
+  }
   server.use(express.json());
   // server.use(compression());
   server.use(cors());
