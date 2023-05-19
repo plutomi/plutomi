@@ -4,18 +4,11 @@
 import * as dotenv from "dotenv";
 
 dotenv.config();
+
 import express, { type RequestHandler } from "express";
-import nextJs from "next";
-import path from "path";
 import cors from "cors";
-import { connectToDatabase, env } from "./utils";
+import { connectToDatabase, env, nextHandler, webApp } from "./utils";
 import API from "./controllers";
-
-const dev = env.NODE_ENV !== "production";
-
-const dir = path.join(__dirname, "../web");
-const webApp = nextJs({ dev, dir });
-const nextHandler = webApp.getRequestHandler();
 
 (async () => {
   try {
