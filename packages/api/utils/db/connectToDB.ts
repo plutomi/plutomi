@@ -1,5 +1,6 @@
 import * as mongoDB from "mongodb";
 import type { AllEntities } from "../../@types/entities";
+import { env } from "../env";
 
 export const collectionName = "items";
 export const databaseName = "plutomi";
@@ -14,7 +15,7 @@ type ConnectToDatabaseResponse = {
 
 /**
  * https://youtu.be/eEENrNKxCdw?t=2721
- * #singlecollectiondesign - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
+ * Single Collection Design - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
  */
 
 export const connectToDatabase =
