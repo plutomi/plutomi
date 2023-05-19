@@ -1,16 +1,22 @@
-import * as mongoDB from "mongodb";
-import type { AllEntities } from "../../../shared/@types/entities";
+/* eslint-disable no-console */
+import {
+  MongoClient,
+  type Collection,
+  type IndexSpecification,
+  type Db
+} from "mongodb";
+import type { AllEntities } from "@plutomi/shared";
 import { env } from "../env";
 
 export const collectionName = "items";
 export const databaseName = "plutomi";
 
-let client: mongoDB.MongoClient;
-let items: mongoDB.Collection<AllEntities>;
+let client: MongoClient;
+let items: Collection<AllEntities>;
 
 type ConnectToDatabaseResponse = {
-  client: mongoDB.MongoClient;
-  items: mongoDB.Collection<AllEntities>;
+  client: MongoClient;
+  items: Collection<AllEntities>;
 };
 
 /**
@@ -20,25 +26,25 @@ type ConnectToDatabaseResponse = {
 
 export const connectToDatabase =
   async (): Promise<ConnectToDatabaseResponse> => {
-    client = new mongoDB.MongoClient(env.MONGO_URL);
+    client = new MongoClient(env.MONGO_URL);
 
     try {
       console.log("Attempting to connect to MongoDB");
       await client.connect();
     } catch (error) {
-      const errorMessage = `Error connecting to MongoDB!`;
+      const errorMessage = "Error connecting to MongoDB!";
       console.error(errorMessage, error);
       throw new Error(errorMessage);
     }
 
-    const database: mongoDB.Db = client.db(databaseName);
+    const database: Db = client.db(databaseName);
     console.log(
       `Successfully connected to database: ${database.databaseName}.`
     );
 
     items = database.collection<AllEntities>(collectionName);
 
-    console.log(`Creating necessary collections and indexes`);
+    console.log("Creating necessary collections and indexes");
 
     const allCollectionNames = await database.listCollections({}).toArray();
     const collectionExists = allCollectionNames.find(
@@ -47,18 +53,12 @@ export const connectToDatabase =
 
     // Define our two indexes
     const targetArrayIndexName = "targetArray";
-    const targetArrayIndexSpec: mongoDB.IndexSpecification = {
+    const targetArrayIndexSpec: IndexSpecification = {
       "target.id": 1,
       "target.type": 1
     };
 
-    // ! TODO this might not be needed! The target ID reference can and should(?) use the _id value
-    const itemIdIndexName = "itemId";
-    const itemIdIndexSpec: mongoDB.IndexSpecification = { itemId: 1 };
-    // TODO add a check for this
-    const itemIdIndexOptions: mongoDB.CreateIndexesOptions = { unique: true };
-
-    if (!collectionExists) {
+    if (collectionExists === undefined) {
       try {
         console.log("Creating collection", collectionName);
         await database.createCollection(collectionName);
@@ -81,14 +81,14 @@ export const connectToDatabase =
           await items.createIndex(targetArrayIndexSpec);
         } catch (error) {
           console.error(
-            `An error ocurred creating the target array index `,
+            "An error ocurred creating the target array index ",
             error
           );
         }
       }
     } catch (error) {
       console.error(
-        `An error ocurred checking if the target array index exists`,
+        "An error ocurred checking if the target array index exists",
         error
       );
     }
