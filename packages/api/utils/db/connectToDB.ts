@@ -3,7 +3,8 @@ import {
   MongoClient,
   type Collection,
   type IndexSpecification,
-  type Db
+  type Db,
+  ServerApiVersion
 } from "mongodb";
 import type { AllEntities } from "@plutomi/shared";
 import { env } from "../env";
@@ -28,21 +29,26 @@ type ConnectToDatabaseResponse = {
 
 export const connectToDatabase =
   async (): Promise<ConnectToDatabaseResponse> => {
-    client = new MongoClient(env.MONGO_URL);
+    client = new MongoClient(env.MONGO_URL, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true
+      }
+    });
 
     try {
       console.log("Attempting to connect to MongoDB");
-      await client.connect();
+      await client.db(databaseName).command({ ping: 1 });
+      console.info(`Successfully connected to database: ${databaseName}.`);
     } catch (error) {
+      console.error(error);
       const errorMessage = "Error connecting to MongoDB!";
       console.error(errorMessage, error);
       throw new Error(errorMessage);
     }
 
     const database: Db = client.db(databaseName);
-    console.info(
-      `Successfully connected to database: ${database.databaseName}.`
-    );
 
     items = database.collection<AllEntities>(collectionName);
 
@@ -80,6 +86,7 @@ export const connectToDatabase =
       if (!targetArrayIndexExists) {
         try {
           await items.createIndex(targetArrayIndexSpec);
+          // ! TODO: This is being triggered multiple times
           console.log("Created target array index", targetArrayIndexName);
         } catch (error) {
           const errorMessage = `An error ocurred creating the target array index ${collectionName}`;
@@ -92,8 +99,6 @@ export const connectToDatabase =
       console.error(errorMessage, error);
       throw new Error(errorMessage);
     }
-
-    console.log("Connected.\n");
 
     return { client, items };
   };
