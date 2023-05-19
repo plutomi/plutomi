@@ -41,7 +41,7 @@ type OtherTargetArrayItems = {
 /**
  * All entities have a target array that is used for indexing. The first two properties
  * are always the entity type and the entity id. The rest are up to the entity and
- * optimized for the most frequent usecases for that entity.
+ * optimized for the most frequent use cases for that entity.
  * @example`Stage` entity:
  *
  * [{ id: AllEntityNames.Stage type: IndexableType.Entity }, { id: PlutomiId<AllEntityNames.Stage>, type: IndexableType.Id }]
