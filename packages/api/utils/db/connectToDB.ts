@@ -20,8 +20,9 @@ type ConnectToDatabaseResponse = {
 };
 
 /**
+ * We use a single collection for all entities, and a single index for all entities.
  * https://youtu.be/eEENrNKxCdw?t=2721
- * Single Collection Design - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
+ * https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
  */
 
 export const connectToDatabase =
@@ -38,13 +39,13 @@ export const connectToDatabase =
     }
 
     const database: Db = client.db(databaseName);
-    console.log(
+    console.info(
       `Successfully connected to database: ${database.databaseName}.`
     );
 
     items = database.collection<AllEntities>(collectionName);
 
-    console.log("Creating necessary collections and indexes");
+    console.info("Creating necessary collections and indexes");
 
     const allCollectionNames = await database.listCollections({}).toArray();
     const collectionExists = allCollectionNames.find(
@@ -60,13 +61,12 @@ export const connectToDatabase =
 
     if (collectionExists === undefined) {
       try {
-        console.log("Creating collection", collectionName);
+        console.info("Creating collection", collectionName);
         await database.createCollection(collectionName);
       } catch (error) {
-        console.error(
-          `An error ocurred creating collection ${collectionName}`,
-          error
-        );
+        const errorMessage = `Error creating collection ${collectionName}`;
+        console.error(errorMessage, error);
+        throw new Error(errorMessage);
       }
     }
 
@@ -81,19 +81,18 @@ export const connectToDatabase =
           await items.createIndex(targetArrayIndexSpec);
           console.log("Created target array index", targetArrayIndexName);
         } catch (error) {
-          console.error(
-            "An error ocurred creating the target array index ",
-            error
-          );
+          const errorMessage = `An error ocurred creating the target array index ${collectionName}`;
+          console.error(errorMessage, error);
+          throw new Error(errorMessage);
         }
       }
     } catch (error) {
-      console.error(
-        "An error ocurred checking if the target array index exists",
-        error
-      );
+      const errorMessage = `An error ocurred checking if the target array index exists ${collectionName}`;
+      console.error(errorMessage, error);
+      throw new Error(errorMessage);
     }
-    console.log("Ready.\n");
+
+    console.log("Connected.\n");
 
     return { client, items };
   };
