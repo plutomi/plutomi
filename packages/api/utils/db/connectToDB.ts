@@ -79,6 +79,7 @@ export const connectToDatabase =
       if (!targetArrayIndexExists) {
         try {
           await items.createIndex(targetArrayIndexSpec);
+          console.log("Created target array index", targetArrayIndexName);
         } catch (error) {
           console.error(
             "An error ocurred creating the target array index ",

@@ -10,7 +10,7 @@ export type OrgTotals = {
   applications: number;
   users: number;
   invites: number;
-  memberships: number; // Should be identical to memberships
+  memberships: number;
   stages: number;
   webhooks: number;
   questions: number;

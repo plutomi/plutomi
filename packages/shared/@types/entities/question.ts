@@ -1,14 +1,14 @@
-import { PlutomiId } from '../../OLD/utils';
-import { IndexableType, IndexedTargetArray } from '../indexableProperties';
-import { AllEntityNames } from './allEntityNames';
-import { BaseEntity } from './baseEntity';
+import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { PlutomiId } from "../plutomiId";
+import type { AllEntityNames } from "./allEntityNames";
+import type { BaseEntity } from "./baseEntity";
 
 export type QuestionTotals = {
   stages: number;
 };
 
 export enum QuestionType {
-  Text = 'Text',
+  Text = "Text"
   // TODO: More question types
 }
 type QuestionTargetArray = [
@@ -16,7 +16,7 @@ type QuestionTargetArray = [
   // Get questions in an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Question },
   // Get questions in a workspace
-  { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Question },
+  { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Question }
 ];
 
 export type Question = BaseEntity<AllEntityNames.Question> & {

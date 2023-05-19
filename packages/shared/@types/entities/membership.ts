@@ -1,7 +1,7 @@
-import { PlutomiId } from '../../OLD/utils';
-import { IndexableType, IndexedTargetArray } from '../indexableProperties';
-import { AllEntityNames } from './allEntityNames';
-import { BaseEntity } from './baseEntity';
+import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { PlutomiId } from "../plutomiId";
+import type { AllEntityNames } from "./allEntityNames";
+import type { BaseEntity } from "./baseEntity";
 
 /**
  * Memberships are the link between users and workspaces. A user can be in many workspaces, and a workspace can have many users.
@@ -19,7 +19,7 @@ type MembershipTargetArray = [
   // Get all memberships for a user and with it, all the workspaces they are in
   { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Membership },
   // Get all memberships for a workspace and with it, all the users in that workspace
-  { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Membership },
+  { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Membership }
 ];
 
 export type Membership = BaseEntity<AllEntityNames.Membership> & {
