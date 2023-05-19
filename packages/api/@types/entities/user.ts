@@ -1,8 +1,8 @@
-import { PlutomiId } from '../../OLD/utils';
-import { Email } from '../email';
-import { IndexableType, IndexedTargetArray } from '../indexableProperties';
-import { AllEntityNames } from './allEntityNames';
-import { BaseEntity } from './baseEntity';
+import type { Email } from "../email";
+import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { PlutomiId } from "../plutomiId";
+import type { AllEntityNames } from "./allEntityNames";
+import type { BaseEntity } from "./baseEntity";
 
 type UserTotals = {
   invites: number;
@@ -20,7 +20,7 @@ type UserTargetArray = [
   // Get all users in a workspace
   { id: UserWorkspaceId; type: IndexableType.User },
   // Get a user by email
-  { id: Email; type: IndexableType.Email },
+  { id: Email; type: IndexableType.Email }
 ];
 
 export type User = BaseEntity<AllEntityNames.User> & {

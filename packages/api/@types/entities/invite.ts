@@ -1,7 +1,7 @@
-import { PlutomiId } from '../../OLD/utils';
-import { IndexableType, IndexedTargetArray } from '../indexableProperties';
-import { AllEntityNames } from './allEntityNames';
-import { BaseEntity } from './baseEntity';
+import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { PlutomiId } from "../plutomiId";
+import type { AllEntityNames } from "./allEntityNames";
+import type { BaseEntity } from "./baseEntity";
 
 export type InviteTargetArray = [
   ...IndexedTargetArray<AllEntityNames.Invite>,
@@ -12,7 +12,7 @@ export type InviteTargetArray = [
   // Get all invites for an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Invite },
   // Get invites associated for a given membership (should only ever be one)
-  { id: PlutomiId<AllEntityNames.Membership>; type: IndexableType.Invite },
+  { id: PlutomiId<AllEntityNames.Membership>; type: IndexableType.Invite }
 ];
 
 export type Invite = BaseEntity<AllEntityNames.Invite> & {

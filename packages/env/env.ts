@@ -23,7 +23,8 @@ export const allEnvVariablesSchema = z.object({
     .min(50, "Value must be at least 50 characters long"),
   AWS_ACCOUNT_ID: z.string(),
   AWS_REGION: awsRegionSchema,
-  ACM_CERTIFICATE_ID: z.string().uuid()
+  ACM_CERTIFICATE_ID: z.string().uuid(),
+  MONGO_URL: z.string()
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
@@ -34,7 +35,8 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
   PORT: true,
   NODE_ENV: true,
   NEXT_PUBLIC_BASE_URL: true,
-  DEPLOYMENT_ENVIRONMENT: true
+  DEPLOYMENT_ENVIRONMENT: true,
+  MONGO_URL: true
 });
 
 // We are overriding these types because they will get validated using the schema above.
@@ -50,5 +52,6 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   CF_HEADER_VALUE: process.env.CF_HEADER_VALUE as string,
   AWS_ACCOUNT_ID: process.env.AWS_ACCOUNT_ID as string,
   AWS_REGION: process.env.AWS_REGION as string,
-  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string
+  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string,
+  MONGO_URL: process.env.MONGO_URL as string
 };

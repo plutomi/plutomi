@@ -1,7 +1,7 @@
-import { PlutomiId } from '../../OLD/utils';
-import { IndexableType, IndexedTargetArray } from '../indexableProperties';
-import { AllEntityNames } from './allEntityNames';
-import { BaseEntity } from './baseEntity';
+import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { PlutomiId } from "../plutomiId";
+import type { AllEntityNames } from "./allEntityNames";
+import type { BaseEntity } from "./baseEntity";
 
 type StageTotals = {
   applicants: number;
@@ -21,7 +21,7 @@ type StageTargetArray = [
   {
     id: PlutomiId<AllEntityNames.Workspace>;
     type: IndexableType.Stage;
-  },
+  }
 ];
 
 export type Stage = BaseEntity<AllEntityNames.Stage> & {

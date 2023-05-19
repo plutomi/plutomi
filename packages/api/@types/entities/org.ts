@@ -1,6 +1,6 @@
-import { IndexedTargetArray } from '../indexableProperties';
-import { AllEntityNames } from './allEntityNames';
-import { BaseEntity } from './baseEntity';
+import type { IndexedTargetArray } from "../indexableProperties";
+import type { AllEntityNames } from "./allEntityNames";
+import type { BaseEntity } from "./baseEntity";
 
 /**
  * These totals are for an org, across all workspaces!
