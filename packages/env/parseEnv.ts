@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { ZodTypeAny, z } from "zod";
-import type { SchemaEnvironment } from "./consts";
+import { SchemaEnvironment } from "./consts";
 import { processEnv } from "./env";
 
 type ParseEnvProps<T> = {
@@ -18,6 +18,11 @@ export const parseEnv = <T extends ZodTypeAny>({
   schemaEnvironment,
   shouldThrow = true
 }: ParseEnvProps<T>): z.infer<T> => {
+  if (schemaEnvironment === SchemaEnvironment.INFRA && !shouldThrow) {
+    throw new Error(
+      "❌ Cannot use shouldThrow=false when parsing infra env vars. The deploy will fail."
+    );
+  }
   const parsed = envSchema.safeParse(processEnv);
 
   const errorMessage = `❌ Invalid environment variables in ${schemaEnvironment}:`;
