@@ -12,12 +12,14 @@ import {
   Stack,
   Flex,
   Box,
-  Center
+  Center,
+  UnstyledButton
 } from "@mantine/core";
 import { IconSwitchHorizontal } from "@tabler/icons-react";
 import { BsQuestionCircle } from "react-icons/bs";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { BiDollarCircle } from "react-icons/bi";
+import { MdLogout } from "react-icons/md";
 import { IoBarChart } from "react-icons/io5";
 import { AiOutlineForm, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { MdWebhook } from "react-icons/md";
@@ -140,37 +142,43 @@ const Dashboard: NextPage = () => {
       <Navbar width={{ sm: 300 }} p="md">
         <Navbar.Section grow>
           <Group className={classes.header}>
-            <Stack>
+            <Link
+              href="/dashboard"
+              style={{ textDecoration: "none", color: "black" }}
+            >
               <Title order={2}>Plutomi</Title>
-              <Text c="dimmed" size="sm">
-                Default Workspace
-              </Text>
-            </Stack>
+            </Link>
           </Group>
+
           {links}
         </Navbar.Section>
 
         <Navbar.Section className={classes.footer}>
           <Button
-            variant="default"
-            className={classes.link}
-            onClick={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-
-            <span>Change Account</span>
-          </Button>
-          <Anchor
-            href="#"
+            variant="subtle"
             onClick={(event) => {
               event.preventDefault();
             }}
+            size="lg"
+            className={classes.link}
           >
-            <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-            <span>Logout</span>
-          </Anchor>
+            <IconSwitchHorizontal className={classes.linkIcon} size="1.4rem" />
+            <Text fz="md">Change Account</Text>
+          </Button>
+
+          <Link href="/" style={{ textDecoration: "none" }} passHref>
+            <Button
+              variant="subtle"
+              // onClick={(event) => {
+              //   event.preventDefault();
+              // }}
+              size="lg"
+              className={classes.link}
+            >
+              <MdLogout className={classes.linkIcon} size="1.4rem" />
+              <Text fz="md">Logout</Text>
+            </Button>
+          </Link>
         </Navbar.Section>
       </Navbar>
 

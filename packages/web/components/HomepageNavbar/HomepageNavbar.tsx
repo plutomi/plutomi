@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const HEADER_HEIGHT = rem(60);
@@ -116,7 +117,7 @@ export const HomepageNavbar: React.FC<HeaderActionProps> = ({ links }) => {
     void router.push("/login");
   };
   return (
-    <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} >
+    <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }}>
       <Container className={classes.inner} size="xl">
         <Group>
           <Burger
@@ -131,17 +132,17 @@ export const HomepageNavbar: React.FC<HeaderActionProps> = ({ links }) => {
           {items}
         </Group>
         <Group>
-          <Button
-            variant="default"
-            radius="md"
-            size="md"
-            onClick={loginRedirect}
-          >
-            Log In
-          </Button>
-          <Button radius="md" size="md" onClick={loginRedirect}>
-            Sign Up
-          </Button>
+          <Link href="/login" passHref>
+            <Button variant="default" radius="md" size="md">
+              Log In
+            </Button>
+          </Link>
+
+          <Link href="/login" passHref>
+            <Button radius="md" size="md" onClick={loginRedirect}>
+              Sign Up
+            </Button>
+          </Link>
         </Group>
       </Container>
     </Header>
