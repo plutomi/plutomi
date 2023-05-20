@@ -1,11 +1,8 @@
 import { z } from "zod";
+import { emailSchema } from "../shared";
 
 const baseSchema = z.object({
-  email: z
-    .string({
-      required_error: "Email is required"
-    })
-    .email("That email doesn't look right...")
+  email: emailSchema
 });
 
 export const UISchema = baseSchema;

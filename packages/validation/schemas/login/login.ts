@@ -1,7 +1,9 @@
 import { LOGIN_CODE_LENGTH } from "@plutomi/shared";
 import { z } from "zod";
+import { emailSchema } from "../shared";
 
 const baseSchema = z.object({
+  email: emailSchema,
   code: z
     .string({
       required_error: "Login code is required"

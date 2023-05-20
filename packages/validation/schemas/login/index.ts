@@ -1,2 +1,2 @@
-export * as email from "./email";
+export * as email from "./login";
 export * as code from "./code";
