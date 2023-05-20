@@ -45,7 +45,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    maxWidth: rem(540),
+    maxWidth: rem(800),
     margin: "auto",
     marginTop: theme.spacing.xl,
     marginBottom: `calc(${theme.spacing.xl} * 1.5)`,
@@ -63,8 +63,8 @@ export const FiveHundred: NextPage = () => {
         <div className={classes.label}>500</div>
         <Title className={classes.title}>Something bad just happened...</Title>
         <Text size="lg" align="center" className={classes.description}>
-          Our servers could not handle your request. Don&apos;t worry, our
-          development team was already notified. Try refreshing the page.
+          Don&apos;t worry, our development team was already notified. Try going
+          back home.
         </Text>
         <Group position="center">
           <Button
