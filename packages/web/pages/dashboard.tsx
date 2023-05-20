@@ -8,7 +8,9 @@ import {
   Anchor,
   Title,
   Button,
-  Text
+  Text,
+  NavLink,
+  Stack
 } from "@mantine/core";
 import { IconSwitchHorizontal } from "@tabler/icons-react";
 import { BsQuestionCircle } from "react-icons/bs";
@@ -42,7 +44,7 @@ const useStyles = createStyles((theme) => ({
     ...theme.fn.focusStyles(),
     width: "100%",
     display: "flex",
-    fontSize: theme.fontSizes.sm,
+    fontSize: theme.fontSizes.xl,
     color:
       theme.colorScheme === "dark"
         ? theme.colors.dark[1]
@@ -51,6 +53,8 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 500,
     textAlign: "start",
     paddingLeft: theme.spacing.xs,
+    paddingTop: theme.spacing.sm,
+    paddingBottom: theme.spacing.sm,
 
     "&:hover": {
       backgroundColor:
@@ -104,11 +108,27 @@ const data = [
 
 const Dashboard: NextPage = () => {
   const { classes, cx } = useStyles();
-  const [active, setActive] = useState("Dashboard");
+  // const [active, setActive] = useState("Dashboard");
+  const [active, setActive] = useState(0);
 
-  const links = data.map((item) => (
-    <Link href={item.link} style={{ textDecoration: "none" }}>
-      <Button
+  const links = data.map((item, index) => (
+    <Link href="#" style={{ textDecoration: "none" }}>
+      <NavLink
+        className={
+          index === active ? cx(classes.link, classes.linkActive) : classes.link
+        }
+        key={item.label}
+        active={index === active}
+        label={item.label}
+        // description={item.label}
+        // rightSection={item.rightSection}
+        icon={<item.icon size="1.4rem" className={classes.linkIcon} />}
+        onClick={() => {
+          setActive(index);
+        }}
+      />
+
+      {/* <Button
         key={item.label}
         variant="subtle"
         onClick={(event) => {
@@ -125,7 +145,7 @@ const Dashboard: NextPage = () => {
         <item.icon className={classes.linkIcon} size="1.4rem" />
 
         <Text fz="md">{item.label}</Text>
-      </Button>
+      </Button> */}
     </Link>
   ));
 
