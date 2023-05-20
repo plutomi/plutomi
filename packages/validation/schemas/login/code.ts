@@ -1,11 +1,15 @@
+import { LOGIN_CODE_LENGTH } from "@plutomi/shared";
 import { z } from "zod";
 
 const baseSchema = z.object({
   code: z
     .string({
-      required_error: "Code is required"
+      required_error: "Login code is required"
     })
-    .length(6, "Code must be 5 characters")
+    .length(
+      LOGIN_CODE_LENGTH,
+      `Login code must be ${LOGIN_CODE_LENGTH} characters`
+    )
 });
 
 export const UISchema = baseSchema;
