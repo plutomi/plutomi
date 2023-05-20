@@ -1,15 +1,11 @@
-import { upperFirst } from "@mantine/hooks";
 import { useForm, zodResolver } from "@mantine/form";
 import {
-  TextInput,
   Text,
   Paper,
-  Group,
   type PaperProps,
   Button,
   Stack,
   Container,
-  Stepper,
   Flex
 } from "@mantine/core";
 import type { NextPage } from "next";
@@ -18,11 +14,17 @@ import { Schema } from "@plutomi/validation";
 import { LoginEmailForm, LoginCodeForm } from "@/components/Login";
 
 const Login: NextPage = (props: PaperProps) => {
+  const [step, setStep] = useState(1);
+
   const emailForm = useForm<Schema.Login.email.UIValues>({
-    initialValues: { email: "" }
+    initialValues: { email: "" },
+    validate: zodResolver(Schema.Login.email.UISchema)
   });
 
-  const [step, setStep] = useState(1);
+  const loginCodeForm = useForm<Schema.Login.loginCode.UIValues>({
+    initialValues: { loginCode: "" },
+    validate: zodResolver(Schema.Login.loginCode.UISchema)
+  });
 
   const nextStep = () => {
     setStep((prevStep) => prevStep + 1);
@@ -42,7 +44,11 @@ const Login: NextPage = (props: PaperProps) => {
           <Text c="dimmed">
             We&apos;ll send a login code to your email to continue.
           </Text>
-          {step === 1 ? <LoginEmailForm form={emailForm} /> : <LoginCodeForm />}
+          {step === 1 ? (
+            <LoginEmailForm form={emailForm} />
+          ) : (
+            <LoginCodeForm form={loginCodeForm} />
+          )}
           <Flex justify={step === 1 ? "end" : "space-between"}>
             {step === 1 ? null : (
               <Button radius="md" variant="default" onClick={previousStep}>
