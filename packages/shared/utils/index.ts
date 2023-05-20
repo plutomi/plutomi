@@ -1,2 +1,2 @@
-export * from "./generateLoginCode";
 export * from "./delay";
+export * from "./generateTOTPCode";

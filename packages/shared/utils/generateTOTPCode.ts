@@ -1,7 +1,7 @@
 import { customAlphabet } from "nanoid";
 import { TOTP_CODE_LENGTH } from "../consts";
 
-type GenerateLoginCodeProps = {
+type GenerateTOTPCodeProps = {
   /**
    * The length of the code to generate
    * @default {@link TOTP_CODE_LENGTH}
@@ -9,9 +9,9 @@ type GenerateLoginCodeProps = {
   length?: number;
 };
 
-export const generateLoginCode = ({
+export const generateTOTPCode = ({
   length = TOTP_CODE_LENGTH
-}: GenerateLoginCodeProps = {}): string => {
+}: GenerateTOTPCodeProps = {}): string => {
   const characters = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
   const nanoid = customAlphabet(characters, length);
 

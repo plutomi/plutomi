@@ -110,7 +110,12 @@ const Dashboard: NextPage = () => {
   const [active, setActive] = useState("Dashboard");
 
   const links = data.map((item) => (
-    <Link href="/dashboard" style={{ textDecoration: "none" }} key={item.label}>
+    <Link
+      href="/dashboard"
+      passHref
+      style={{ textDecoration: "none" }}
+      key={item.label}
+    >
       <Button
         variant="subtle"
         onClick={(event) => {
@@ -136,7 +141,11 @@ const Dashboard: NextPage = () => {
       <Navbar width={{ sm: 300 }} p="md">
         <Navbar.Section grow>
           <Group className={classes.header}>
-            <Link href="/" style={{ textDecoration: "none", color: "black" }}>
+            <Link
+              href="/"
+              passHref
+              style={{ textDecoration: "none", color: "black" }}
+            >
               <Title order={2}>Plutomi</Title>
             </Link>
           </Group>
@@ -157,7 +166,7 @@ const Dashboard: NextPage = () => {
             <Text fz="md">Change Workspace</Text>
           </Button>
 
-          <Link href="/" style={{ textDecoration: "none" }} passHref>
+          <Link href="/" passHref style={{ textDecoration: "none" }}>
             <Button
               variant="subtle"
               // onClick={(event) => {

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 type AuthContext = "login" | "signUp";
 
 /**
- * Checks if the use is logging in or signing up
+ * Checks if the user is logging in or signing up
  *
  */
 export const useAuthContext = (): AuthContext => {

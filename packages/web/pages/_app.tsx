@@ -19,10 +19,6 @@ const App = ({ Component, pageProps }: AppProps) => (
         body: {
           ...theme.fn.fontStyles(),
           backgroundColor: colors.bg
-        },
-        header: {
-          ...theme.fn.fontStyles(),
-          backgroundColor: "red"
         }
       }),
 
