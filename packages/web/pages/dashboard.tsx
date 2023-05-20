@@ -3,26 +3,19 @@ import {
   createStyles,
   Navbar,
   Group,
-  Code,
   getStylesRef,
   rem,
   Anchor,
   Title,
   Button,
-  Box,
-  Text,
-  Stack
+  Text
 } from "@mantine/core";
-import {
-  IconBellRinging,
-  IconFingerprint,
-  IconKey,
-  IconSettings,
-  Icon2fa,
-  IconDatabaseImport,
-  IconReceipt2,
-  IconSwitchHorizontal
-} from "@tabler/icons-react";
+import { IconReceipt2, IconSwitchHorizontal } from "@tabler/icons-react";
+import { BsQuestionCircle } from "react-icons/bs";
+import { TbLayoutDashboard } from "react-icons/tb";
+import { AiOutlineForm, AiOutlineUsergroupAdd } from "react-icons/ai";
+import { MdWebhook } from "react-icons/md";
+import { FiSettings } from "react-icons/fi";
 import type { NextPage } from "next";
 import Link from "next/link";
 
@@ -97,14 +90,13 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data = [
-  { link: "/dashboard", label: "Dashboard", icon: IconSwitchHorizontal },
-  { link: "", label: "Notifications", icon: IconBellRinging },
-  { link: "", label: "Billing", icon: IconReceipt2 },
-  { link: "", label: "Security", icon: IconFingerprint },
-  { link: "", label: "SSH Keys", icon: IconKey },
-  { link: "", label: "Databases", icon: IconDatabaseImport },
-  { link: "", label: "Authentication", icon: Icon2fa },
-  { link: "", label: "Other Settings", icon: IconSettings }
+  { link: "/dashboard", label: "Dashboard", icon: TbLayoutDashboard },
+  { link: "/applications", label: "Applications", icon: AiOutlineForm },
+  { link: "/questions", label: "Questions", icon: BsQuestionCircle },
+  { link: "/team", label: "Team", icon: AiOutlineUsergroupAdd },
+  { link: "/webhooks", label: "Webhooks", icon: MdWebhook },
+  { link: "/billing", label: "Billing", icon: IconReceipt2 },
+  { link: "/settings", label: "Settings", icon: FiSettings }
 ];
 
 const Dashboard: NextPage = () => {
@@ -127,7 +119,7 @@ const Dashboard: NextPage = () => {
             : classes.link
         }
       >
-        <item.icon className={classes.linkIcon} stroke={1.5} />
+        <item.icon className={classes.linkIcon} stroke="1.5" />
         <Text fz="md" style={{ textDecoration: "none" }}>
           {item.label}
         </Text>
