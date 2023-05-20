@@ -45,10 +45,10 @@ export const SubscribeForm: React.FC = () => {
     initialValues: {
       email: ""
     },
-    validate: zodResolver(Schema.subscribe.UISchema)
+    validate: zodResolver(Schema.Subscribe.UISchema)
   });
 
-  const handleFormSubmit = async (values: Schema.subscribe.UIValues) => {
+  const handleFormSubmit = async (values: Schema.Subscribe.UIValues) => {
     setIsSubmitting(true);
     try {
       await axios.post("/api/subscribe", values);

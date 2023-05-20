@@ -1,1 +1,1 @@
-export * as subscribe from "./subscribe";
+export * from "./subscribe";
