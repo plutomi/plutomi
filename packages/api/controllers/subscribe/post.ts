@@ -7,7 +7,7 @@ export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
     req,
     res,
-    schema: Schema.subscribe.APISchema
+    schema: Schema.Subscribe.APISchema
   });
 
   if (errorHandled) {
