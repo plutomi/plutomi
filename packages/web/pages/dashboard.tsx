@@ -8,8 +8,7 @@ import {
   Anchor,
   Title,
   Button,
-  Text,
-  ActionIcon
+  Text
 } from "@mantine/core";
 import { IconSwitchHorizontal } from "@tabler/icons-react";
 import { BsQuestionCircle } from "react-icons/bs";

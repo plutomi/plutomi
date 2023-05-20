@@ -9,6 +9,7 @@ import type { GetStaticProps, NextPage } from "next";
 import { WaitListCard } from "@/components/WaitListCard";
 import Head from "next/head";
 import { env } from "@/utils";
+import { HomepageNavbar } from "@/components/HomepageNavbar/HomepageNavbar";
 
 type HomeProps = {
   commits: CommitType[];
@@ -18,6 +19,14 @@ const title = "Plutomi - Applicant management at any scale";
 const description =
   "Plutomi helps you streamline your application process with automated workflows";
 const ogImage = `${env.NEXT_PUBLIC_BASE_URL}/og-image.png`;
+
+const NavLinks = [
+  // {
+  //   link: "/pricing",
+  //   label: "Pricing",
+  //   links: []
+  // }
+];
 
 const Home: NextPage<HomeProps> = ({ commits }) => (
   <>
@@ -37,6 +46,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={ogImage} />
     </Head>
+    <HomepageNavbar links={NavLinks} />
     <LandingHero />
     <UseCaseSection />
     <Space h="lg" />
