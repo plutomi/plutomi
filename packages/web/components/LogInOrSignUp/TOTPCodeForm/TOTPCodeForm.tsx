@@ -10,10 +10,8 @@ type TOTPCodeFormProps = {
 
 const placeholderText = `Example: ${generateTOTPCode()}`;
 
-// TODO Change this to a https://mantine.dev/core/pin-input/
-
-// ! TODO: Use this:
-// ! TODO: use this:
+// TODO: Change this to a https://mantine.dev/core/pin-input/
+// TODO: Use this?:
 // https://mantine.dev/core/loading-overlay/
 
 export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
