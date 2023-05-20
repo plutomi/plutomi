@@ -138,7 +138,7 @@ export const HomepageNavbar: React.FC<HeaderActionProps> = () => {
             </Button>
           </Link>
 
-          <Link href="/login" passHref>
+          <Link href="/signup" passHref>
             <Button radius="md" size="md" onClick={loginRedirect}>
               Sign Up
             </Button>
