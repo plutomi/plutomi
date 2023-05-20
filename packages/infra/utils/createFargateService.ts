@@ -75,9 +75,11 @@ export const createFargateService = ({
     scaleOutCooldown: Duration.seconds(60)
   });
 
-  // Allows our servers to connect to the nat gateways
+  /**
+   * Allows our servers to connect to the NAT gateway / internet & MongoDB.
+   */
   fargateService.service.connections.securityGroups.forEach((sg) => {
-    [443].forEach((port) => {
+    [443, 27017].forEach((port) => {
       natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(port));
     });
   });

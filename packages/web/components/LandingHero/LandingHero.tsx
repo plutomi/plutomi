@@ -18,12 +18,12 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    fontWeight: 800,
+    fontWeight: 900,
     fontSize: rem(72),
     letterSpacing: rem(-1),
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
-    color: theme.colors.dark[6],
+    color: theme.colors.dark[9],
     marginBottom: theme.spacing.xs,
     textAlign: "center",
     [theme.fn.smallerThan("xs")]: {
@@ -37,7 +37,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    color: theme.colors.dark[3],
+    color: theme.colors.dark[4],
     textAlign: "center",
     fontSize: rem(28),
 
