@@ -7,19 +7,22 @@ import {
   Stack,
   Container,
   Flex,
-  Title
+  Title,
+  Card
 } from "@mantine/core";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { delay } from "@plutomi/shared";
 import { useRouter } from "next/router";
+import { useAuthContext } from "@/hooks";
 import { LoginEmailForm } from "./EmailForm";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 
-export const LoginOrSignUpForm: React.FC = (props: PaperProps) => {
+export const LogInOrSignUpForm: React.FC = () => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const authContext = useAuthContext();
 
   const emailForm = useForm<Schema.LogInOrSignUp.email.UIValues>({
     initialValues: { email: "" },
@@ -77,7 +80,11 @@ export const LoginOrSignUpForm: React.FC = (props: PaperProps) => {
     }
 
     if (isSubmitting && step === 2) {
-      return "Logging in...";
+      if (authContext === "login") {
+        return "Logging in...";
+      }
+
+      return "Signing up...";
     }
 
     if (step === 2) {
@@ -104,7 +111,7 @@ export const LoginOrSignUpForm: React.FC = (props: PaperProps) => {
 
   return (
     <Container size="xs" my={40}>
-      <Paper radius="md" p="xl" withBorder {...props}>
+      <Card>
         <Stack>
           <Title>Welcome!</Title>
           <Text>
@@ -140,7 +147,7 @@ export const LoginOrSignUpForm: React.FC = (props: PaperProps) => {
             </Flex>
           </form>
         </Stack>
-      </Paper>
+      </Card>
     </Container>
   );
 };
