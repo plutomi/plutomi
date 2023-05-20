@@ -16,6 +16,7 @@
     "cdk.json"
   ],
   "words": [
+    "ABCDEFGHJKMNPQRSTUVWXYZ",
     "allcontributors",
     "barebones",
     "cacheable",
@@ -40,7 +41,9 @@
     "tabler",
     "tiptap",
     "TLDR",
+    "TOTP",
     "trenchard",
+    "Usergroup",
     "Valerio",
     "Vcard",
     "wafv2",

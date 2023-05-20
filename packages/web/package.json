@@ -24,6 +24,7 @@
     "@mantine/spotlight": "^6.0.10",
     "@mantine/tiptap": "^6.0.10",
     "@plutomi/env": "^0.1.0",
+    "@plutomi/shared": "^0.1.0",
     "@plutomi/validation": "^0.1.0",
     "@tabler/icons-react": "^2.17.0",
     "@tiptap/extension-link": "^2.0.3",

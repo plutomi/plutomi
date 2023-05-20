@@ -6,6 +6,10 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const colors = {
+  bg: "#fbfbfd"
+};
+
 const App = ({ Component, pageProps }: AppProps) => (
   <MantineProvider
     withGlobalStyles
@@ -14,7 +18,7 @@ const App = ({ Component, pageProps }: AppProps) => (
       globalStyles: (theme) => ({
         body: {
           ...theme.fn.fontStyles(),
-          backgroundColor: "#fbfbfd"
+          backgroundColor: colors.bg
         }
       }),
 
@@ -40,12 +44,18 @@ const App = ({ Component, pageProps }: AppProps) => (
           defaultProps: {
             color: "brand.4"
           }
+        },
+        Header: {
+          defaultProps: {
+            style: {
+              backgroundColor: colors.bg
+            }
+          }
         }
       }
     }}
   >
     <Notifications position="top-center" />
-
     <Component {...pageProps} className={inter.className} />
   </MantineProvider>
 );
