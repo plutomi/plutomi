@@ -9,7 +9,6 @@ import {
   Title,
   Button,
   Text,
-  NavLink,
   Stack
 } from "@mantine/core";
 import { IconSwitchHorizontal } from "@tabler/icons-react";
@@ -108,27 +107,11 @@ const data = [
 
 const Dashboard: NextPage = () => {
   const { classes, cx } = useStyles();
-  // const [active, setActive] = useState("Dashboard");
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState("Dashboard");
 
-  const links = data.map((item, index) => (
-    <Link href="#" style={{ textDecoration: "none" }}>
-      <NavLink
-        className={
-          index === active ? cx(classes.link, classes.linkActive) : classes.link
-        }
-        key={item.label}
-        active={index === active}
-        label={item.label}
-        // description={item.label}
-        // rightSection={item.rightSection}
-        icon={<item.icon size="1.4rem" className={classes.linkIcon} />}
-        onClick={() => {
-          setActive(index);
-        }}
-      />
-
-      {/* <Button
+  const links = data.map((item) => (
+    <Link href="/dashboard" style={{ textDecoration: "none" }}>
+      <Button
         key={item.label}
         variant="subtle"
         onClick={(event) => {
@@ -145,15 +128,20 @@ const Dashboard: NextPage = () => {
         <item.icon className={classes.linkIcon} size="1.4rem" />
 
         <Text fz="md">{item.label}</Text>
-      </Button> */}
+      </Button>
     </Link>
   ));
 
   return (
     <Navbar height={700} width={{ sm: 300 }} p="md">
       <Navbar.Section grow>
-        <Group className={classes.header} position="apart">
-          <Title order={2}>Plutomi</Title>
+        <Group>
+          <Stack className={classes.header}>
+            <Title order={2}>Plutomi</Title>
+            <Text c="dimmed" size="sm">
+              Default Workspace
+            </Text>
+          </Stack>
         </Group>
         {links}
       </Navbar.Section>

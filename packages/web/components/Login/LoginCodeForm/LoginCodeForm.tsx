@@ -9,6 +9,7 @@ type LoginCodeFormProps = {
 };
 
 const placeholderCode = generateLoginCode();
+// TODO Change this to a https://mantine.dev/core/pin-input/
 
 export const LoginCodeForm: React.FC<LoginCodeFormProps> = ({
   form,
