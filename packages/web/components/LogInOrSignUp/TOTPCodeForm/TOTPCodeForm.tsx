@@ -1,6 +1,6 @@
 import { TextInput, Text } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
-import { TOTP_CODE_LENGTH, generateLoginCode } from "@plutomi/shared";
+import { TOTP_CODE_LENGTH, generateTOTPCode } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 
 type TOTPCodeFormProps = {
@@ -8,7 +8,8 @@ type TOTPCodeFormProps = {
   isSubmitting: boolean;
 };
 
-const placeholderCode = generateLoginCode();
+const placeholderText = `Example: ${generateTOTPCode()}`;
+
 // TODO Change this to a https://mantine.dev/core/pin-input/
 
 // ! TODO: Use this:
@@ -31,7 +32,7 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
         radius="md"
         disabled={isSubmitting}
         maxLength={TOTP_CODE_LENGTH}
-        placeholder={`Example: ${placeholderCode}`}
+        placeholder={placeholderText}
         onChange={(event) => {
           form.setFieldValue(
             "totpCode",
