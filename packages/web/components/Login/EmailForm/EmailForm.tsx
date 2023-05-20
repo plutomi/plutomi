@@ -8,7 +8,6 @@ export const LoginEmailForm: React.FC = () => {
     initialValues: {
       email: ""
     },
-
     validate: zodResolver(Schema.Login.email.UISchema)
   });
 

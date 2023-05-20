@@ -15,10 +15,18 @@ import {
 import type { NextPage } from "next";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
-import { LoginEmailForm } from "@/components/Login/EmailForm";
+import { LoginEmailForm, LoginCodeForm } from "@/components/Login";
 
 const Login: NextPage = (props: PaperProps) => {
-  const [active, setActive] = useState(1);
+  const [step, setStep] = useState(1);
+
+  const nextStep = () => {
+    setStep((prevStep) => prevStep + 1);
+  };
+
+  const previousStep = () => {
+    setStep((prevStep) => prevStep - 1);
+  };
 
   return (
     <Container size="xs">
@@ -31,10 +39,16 @@ const Login: NextPage = (props: PaperProps) => {
           <Text c="dimmed">
             We&apos;ll send a login code to your email to continue.
           </Text>
-          <LoginEmailForm />
-          <Flex justify="end">
-            <Button type="submit" radius="md">
-              Continue
+          {step === 1 ? <LoginEmailForm /> : <LoginCodeForm />}
+          <Flex justify="space-between">
+            {step === 1 ? null : (
+              <Button radius="md" variant="default" onClick={previousStep}>
+                Back
+              </Button>
+            )}
+
+            <Button type="submit" radius="md" onClick={nextStep}>
+              {step === 1 ? "Next" : "Login"}
             </Button>
           </Flex>
         </Stack>

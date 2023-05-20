@@ -4,7 +4,7 @@ import { generateLoginCode } from "@plutomi/shared";
 import { Schema } from "@plutomi/validation";
 import axios from "axios";
 
-export const LoginEmailForm: React.FC = () => {
+export const LoginCodeForm: React.FC = () => {
   const form = useForm<Schema.Login.code.UIValues>({
     initialValues: {
       loginCode: ""
