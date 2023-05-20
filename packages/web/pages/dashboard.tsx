@@ -8,11 +8,14 @@ import {
   Anchor,
   Title,
   Button,
-  Text
+  Text,
+  ActionIcon
 } from "@mantine/core";
-import { IconReceipt2, IconSwitchHorizontal } from "@tabler/icons-react";
+import { IconSwitchHorizontal } from "@tabler/icons-react";
 import { BsQuestionCircle } from "react-icons/bs";
 import { TbLayoutDashboard } from "react-icons/tb";
+import { BiDollarCircle } from "react-icons/bi";
+import { IoBarChart } from "react-icons/io5";
 import { AiOutlineForm, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { MdWebhook } from "react-icons/md";
 import { FiSettings } from "react-icons/fi";
@@ -94,8 +97,9 @@ const data = [
   { link: "/applications", label: "Applications", icon: AiOutlineForm },
   { link: "/questions", label: "Questions", icon: BsQuestionCircle },
   { link: "/team", label: "Team", icon: AiOutlineUsergroupAdd },
+  { link: "/analytics", label: "Analytics", icon: IoBarChart },
   { link: "/webhooks", label: "Webhooks", icon: MdWebhook },
-  { link: "/billing", label: "Billing", icon: IconReceipt2 },
+  { link: "/billing", label: "Billing", icon: BiDollarCircle },
   { link: "/settings", label: "Settings", icon: FiSettings }
 ];
 
@@ -119,10 +123,9 @@ const Dashboard: NextPage = () => {
             : classes.link
         }
       >
-        <item.icon className={classes.linkIcon} stroke="1.5" />
-        <Text fz="md" style={{ textDecoration: "none" }}>
-          {item.label}
-        </Text>
+        <item.icon className={classes.linkIcon} size="1.4rem" />
+
+        <Text fz="md">{item.label}</Text>
       </Button>
     </Link>
   ));
