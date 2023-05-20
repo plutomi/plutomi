@@ -15,18 +15,10 @@ import {
 import type { NextPage } from "next";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
+import { LoginEmailForm } from "@/components/Login/EmailForm";
 
 const Login: NextPage = (props: PaperProps) => {
   const [active, setActive] = useState(1);
-
-  const form = useForm({
-    initialValues: {
-      email: "",
-      loginCode: ""
-    },
-
-    validate: zodResolver(Schema.Login.UISchema)
-  });
 
   return (
     <Container size="xs">
@@ -39,27 +31,12 @@ const Login: NextPage = (props: PaperProps) => {
           <Text c="dimmed">
             We&apos;ll send a login code to your email to continue.
           </Text>
-          <form onSubmit={form.onSubmit(() => {})}>
-            <Stack>
-              <TextInput
-                required
-                label="Email"
-                placeholder="jose@plutomi.com"
-                value={form.values.email}
-                onChange={(event) => {
-                  form.setFieldValue("email", event.currentTarget.value);
-                }}
-                error={form.errors.email}
-                radius="md"
-              />
-            </Stack>
-
-            <Group position="right" mt="xl">
-              <Button type="submit" radius="xl">
-                Continue
-              </Button>
-            </Group>
-          </form>
+          <LoginEmailForm />
+          <Flex justify="end">
+            <Button type="submit" radius="md">
+              Continue
+            </Button>
+          </Flex>
         </Stack>
       </Paper>
     </Container>
