@@ -39,8 +39,10 @@ const Login: NextPage = (props: PaperProps) => {
     }
   };
 
-  const nextStep = async () => {
+  const nextStep = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     const currentForm = getFormByStep();
+
     if (currentForm.validate().hasErrors) {
       return;
     }
@@ -75,8 +77,24 @@ const Login: NextPage = (props: PaperProps) => {
     if (step === 2) {
       return "Login";
     }
+
+    return "";
   };
   const buttonText = getButtonText();
+
+  const getSubheaderText = () => {
+    if (step === 1) {
+      return "We will send a login code to your email to continue.";
+    }
+
+    if (step === 2) {
+      return "Enter the code that you received.";
+    }
+
+    return "";
+  };
+
+  const subheaderText = getSubheaderText();
 
   return (
     <Container size="xs">
@@ -86,29 +104,37 @@ const Login: NextPage = (props: PaperProps) => {
             Welcome to Plutomi!
           </Text>
           <Text c="dimmed">
-            We&apos;ll send a login code to your email to continue.
+            {step === 2}
+            {subheaderText}
           </Text>
-          {step === 1 ? (
-            <LoginEmailForm form={emailForm} />
-          ) : (
-            <LoginCodeForm form={loginCodeForm} />
-          )}
-          <Flex justify={step === 1 ? "end" : "space-between"}>
-            {step === 1 ? null : (
-              <Button radius="md" variant="default" onClick={previousStep}>
-                Back
-              </Button>
+          <form>
+            {step === 1 ? (
+              <LoginEmailForm form={emailForm} isSubmitting={isSubmitting} />
+            ) : (
+              <LoginCodeForm form={loginCodeForm} isSubmitting={isSubmitting} />
             )}
+            <Flex justify={step === 1 ? "end" : "space-between"} mt="md">
+              {step === 1 ? null : (
+                <Button
+                  radius="md"
+                  variant="default"
+                  onClick={previousStep}
+                  disabled={isSubmitting}
+                >
+                  Back
+                </Button>
+              )}
 
-            <Button
-              radius="md"
-              type="submit"
-              onClick={() => void nextStep()}
-              loading={isSubmitting}
-            >
-              {buttonText}
-            </Button>
-          </Flex>
+              <Button
+                radius="md"
+                type="submit"
+                onClick={(e) => void nextStep(e)}
+                loading={isSubmitting}
+              >
+                {buttonText}
+              </Button>
+            </Flex>
+          </form>
         </Stack>
       </Paper>
     </Container>

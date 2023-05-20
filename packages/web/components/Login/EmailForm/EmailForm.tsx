@@ -4,20 +4,20 @@ import type { Schema } from "@plutomi/validation";
 
 type LoginEmailFormProps = {
   form: UseFormReturnType<Schema.Login.email.UIValues>;
+  isSubmitting: boolean;
 };
 
-export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({ form }) => (
+export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
+  form,
+  isSubmitting
+}) => (
   <TextInput
     required
     label="Email"
     type="email"
     placeholder="jose@plutomi.com"
     radius="md"
-    // value={form.values.email}
-    // onChange={(event) => {
-    //   form.setFieldValue("email", event.currentTarget.value);
-    // }}
-    // error={form.errors.email}
+    disabled={isSubmitting}
     {...form.getInputProps("email")}
   />
 );
