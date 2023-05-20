@@ -18,6 +18,10 @@ import { Schema } from "@plutomi/validation";
 import { LoginEmailForm, LoginCodeForm } from "@/components/Login";
 
 const Login: NextPage = (props: PaperProps) => {
+  const emailForm = useForm<Schema.Login.email.UIValues>({
+    initialValues: { email: "" }
+  });
+
   const [step, setStep] = useState(1);
 
   const nextStep = () => {
@@ -32,15 +36,14 @@ const Login: NextPage = (props: PaperProps) => {
     <Container size="xs">
       <Paper radius="md" p="xl" withBorder {...props}>
         <Stack>
-          {" "}
-          <Text size="lg" weight={500}>
+          <Text size="lg" weight={700}>
             Welcome to Plutomi!
           </Text>
           <Text c="dimmed">
             We&apos;ll send a login code to your email to continue.
           </Text>
-          {step === 1 ? <LoginEmailForm /> : <LoginCodeForm />}
-          <Flex justify="space-between">
+          {step === 1 ? <LoginEmailForm form={emailForm} /> : <LoginCodeForm />}
+          <Flex justify={step === 1 ? "end" : "space-between"}>
             {step === 1 ? null : (
               <Button radius="md" variant="default" onClick={previousStep}>
                 Back
