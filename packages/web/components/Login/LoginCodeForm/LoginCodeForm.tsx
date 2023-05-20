@@ -11,6 +11,10 @@ type LoginCodeFormProps = {
 const placeholderCode = generateLoginCode();
 // TODO Change this to a https://mantine.dev/core/pin-input/
 
+// ! TODO: Use this:
+// ! TODO: use this:
+// https://mantine.dev/core/loading-overlay/
+
 export const LoginCodeForm: React.FC<LoginCodeFormProps> = ({
   form,
   isSubmitting

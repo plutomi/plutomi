@@ -9,7 +9,10 @@ import {
   Title,
   Button,
   Text,
-  Stack
+  Stack,
+  Flex,
+  Box,
+  Center
 } from "@mantine/core";
 import { IconSwitchHorizontal } from "@tabler/icons-react";
 import { BsQuestionCircle } from "react-icons/bs";
@@ -133,42 +136,48 @@ const Dashboard: NextPage = () => {
   ));
 
   return (
-    <Navbar height={700} width={{ sm: 300 }} p="md">
-      <Navbar.Section grow>
-        <Group>
-          <Stack className={classes.header}>
-            <Title order={2}>Plutomi</Title>
-            <Text c="dimmed" size="sm">
-              Default Workspace
-            </Text>
-          </Stack>
-        </Group>
-        {links}
-      </Navbar.Section>
+    <Flex>
+      <Navbar width={{ sm: 300 }} p="md">
+        <Navbar.Section grow>
+          <Group className={classes.header}>
+            <Stack>
+              <Title order={2}>Plutomi</Title>
+              <Text c="dimmed" size="sm">
+                Default Workspace
+              </Text>
+            </Stack>
+          </Group>
+          {links}
+        </Navbar.Section>
 
-      <Navbar.Section className={classes.footer}>
-        <Button
-          variant="default"
-          className={classes.link}
-          onClick={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
+        <Navbar.Section className={classes.footer}>
+          <Button
+            variant="default"
+            className={classes.link}
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
 
-          <span>Change Account</span>
-        </Button>
-        <Anchor
-          href="#"
-          onClick={(event) => {
-            event.preventDefault();
-          }}
-        >
-          <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-          <span>Logout</span>
-        </Anchor>
-      </Navbar.Section>
-    </Navbar>
+            <span>Change Account</span>
+          </Button>
+          <Anchor
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+            }}
+          >
+            <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
+            <span>Logout</span>
+          </Anchor>
+        </Navbar.Section>
+      </Navbar>
+
+      <Center w="100%">
+        <Title>Under Construction 🙂</Title>
+      </Center>
+    </Flex>
   );
 };
 

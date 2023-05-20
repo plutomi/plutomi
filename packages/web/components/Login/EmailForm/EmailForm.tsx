@@ -7,6 +7,8 @@ type LoginEmailFormProps = {
   isSubmitting: boolean;
 };
 
+// ! TODO: use this:
+// https://mantine.dev/core/loading-overlay/
 export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
   form,
   isSubmitting
