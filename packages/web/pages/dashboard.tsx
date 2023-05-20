@@ -154,7 +154,7 @@ const Dashboard: NextPage = () => {
             className={classes.link}
           >
             <IconSwitchHorizontal className={classes.linkIcon} size="1.4rem" />
-            <Text fz="md">Change Account</Text>
+            <Text fz="md">Change Workspace</Text>
           </Button>
 
           <Link href="/" style={{ textDecoration: "none" }} passHref>
