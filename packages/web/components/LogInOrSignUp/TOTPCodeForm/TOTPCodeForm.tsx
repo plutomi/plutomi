@@ -1,10 +1,10 @@
 import { TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
-import { LOGIN_CODE_LENGTH, generateLoginCode } from "@plutomi/shared";
+import { TOTP_CODE_LENGTH, generateLoginCode } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 
-type LoginCodeFormProps = {
-  form: UseFormReturnType<Schema.Login.loginCode.UIValues>;
+type TOTPCodeFormProps = {
+  form: UseFormReturnType<Schema.LogInOrSignUp.totpCode.UIValues>;
   isSubmitting: boolean;
 };
 
@@ -15,7 +15,7 @@ const placeholderCode = generateLoginCode();
 // ! TODO: use this:
 // https://mantine.dev/core/loading-overlay/
 
-export const LoginCodeForm: React.FC<LoginCodeFormProps> = ({
+export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
   form,
   isSubmitting
 }) => (
@@ -26,7 +26,7 @@ export const LoginCodeForm: React.FC<LoginCodeFormProps> = ({
     type="text"
     radius="md"
     disabled={isSubmitting}
-    maxLength={LOGIN_CODE_LENGTH}
+    maxLength={TOTP_CODE_LENGTH}
     placeholder={`Example: ${placeholderCode}`}
     onChange={(event) => {
       form.setFieldValue("loginCode", event.currentTarget.value.toUpperCase());

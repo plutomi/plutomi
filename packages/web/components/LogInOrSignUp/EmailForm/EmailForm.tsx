@@ -3,7 +3,7 @@ import type { UseFormReturnType } from "@mantine/form";
 import type { Schema } from "@plutomi/validation";
 
 type LoginEmailFormProps = {
-  form: UseFormReturnType<Schema.Login.email.UIValues>;
+  form: UseFormReturnType<Schema.LogInOrSignUp.email.UIValues>;
   isSubmitting: boolean;
 };
 

@@ -9,26 +9,26 @@ import {
   Flex,
   Title
 } from "@mantine/core";
-import type { NextPage } from "next";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
-import { LoginEmailForm, LoginCodeForm } from "@/components/Login";
 import { delay } from "@plutomi/shared";
 import { useRouter } from "next/router";
+import { LoginEmailForm } from "./EmailForm";
+import { TOTPCodeForm } from "./TOTPCodeForm";
 
-const Login: NextPage = (props: PaperProps) => {
+export const LoginOrSignUpForm: React.FC = (props: PaperProps) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const emailForm = useForm<Schema.Login.email.UIValues>({
+  const emailForm = useForm<Schema.LogInOrSignUp.email.UIValues>({
     initialValues: { email: "" },
-    validate: zodResolver(Schema.Login.email.UISchema)
+    validate: zodResolver(Schema.LogInOrSignUp.email.UISchema)
   });
 
-  const loginCodeForm = useForm<Schema.Login.loginCode.UIValues>({
-    initialValues: { loginCode: "" },
-    validate: zodResolver(Schema.Login.loginCode.UISchema)
+  const totpCodeForm = useForm<Schema.LogInOrSignUp.totpCode.UIValues>({
+    initialValues: { totpCode: "" },
+    validate: zodResolver(Schema.LogInOrSignUp.totpCode.UISchema)
   });
 
   const getFormByStep = () => {
@@ -36,7 +36,7 @@ const Login: NextPage = (props: PaperProps) => {
       case 1:
         return emailForm;
       case 2:
-        return loginCodeForm;
+        return totpCodeForm;
       default:
         return emailForm;
     }
@@ -115,7 +115,7 @@ const Login: NextPage = (props: PaperProps) => {
             {step === 1 ? (
               <LoginEmailForm form={emailForm} isSubmitting={isSubmitting} />
             ) : (
-              <LoginCodeForm form={loginCodeForm} isSubmitting={isSubmitting} />
+              <TOTPCodeForm form={totpCodeForm} isSubmitting={isSubmitting} />
             )}
             <Flex justify={step === 1 ? "end" : "space-between"} mt="md">
               {step === 1 ? null : (
@@ -144,5 +144,3 @@ const Login: NextPage = (props: PaperProps) => {
     </Container>
   );
 };
-
-export default Login;
