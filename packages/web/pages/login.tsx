@@ -29,56 +29,38 @@ const Login: NextPage = (props: PaperProps) => {
   });
 
   return (
-    <Container>
-      <Paper
-        radius="md"
-        p="xl"
-        withBorder
-        {...props}
-       
-      >
-        <Group position="center">
-          <Stack>
-            <Stepper
-              active={active}
-              onStepClick={setActive}
-              orientation="vertical"
-            >
-              <Stepper.Step label="Step 1" description="Enter your email" />
-              <Stepper.Step label="Step 2" description="Verify login code" />
-            </Stepper>
-          </Stack>
-          <Stack>
-            {" "}
-            <Text size="lg" weight={500}>
-              Welcome to Plutomi!
-            </Text>
-            <Text c="dimmed">
-              We&apos;ll send a login code to your email to continue.
-            </Text>
-            <form onSubmit={form.onSubmit(() => {})}>
-              <Stack>
-                <TextInput
-                  required
-                  label="Email"
-                  placeholder="jose@plutomi.com"
-                  value={form.values.email}
-                  onChange={(event) => {
-                    form.setFieldValue("email", event.currentTarget.value);
-                  }}
-                  error={form.errors.email !== undefined && "Invalid email"}
-                  radius="md"
-                />
-              </Stack>
+    <Container size="xs">
+      <Paper radius="md" p="xl" withBorder {...props}>
+        <Stack>
+          {" "}
+          <Text size="lg" weight={500}>
+            Welcome to Plutomi!
+          </Text>
+          <Text c="dimmed">
+            We&apos;ll send a login code to your email to continue.
+          </Text>
+          <form onSubmit={form.onSubmit(() => {})}>
+            <Stack>
+              <TextInput
+                required
+                label="Email"
+                placeholder="jose@plutomi.com"
+                value={form.values.email}
+                onChange={(event) => {
+                  form.setFieldValue("email", event.currentTarget.value);
+                }}
+                error={form.errors.email}
+                radius="md"
+              />
+            </Stack>
 
-              <Group position="apart" mt="xl">
-                <Button type="submit" radius="xl">
-                  {upperFirst("Continue")}
-                </Button>
-              </Group>
-            </form>
-          </Stack>
-        </Group>
+            <Group position="right" mt="xl">
+              <Button type="submit" radius="xl">
+                Continue
+              </Button>
+            </Group>
+          </form>
+        </Stack>
       </Paper>
     </Container>
   );
