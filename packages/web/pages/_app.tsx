@@ -14,7 +14,7 @@ const App = ({ Component, pageProps }: AppProps) => (
       globalStyles: (theme) => ({
         body: {
           ...theme.fn.fontStyles(),
-          backgroundColor: theme.colors["cool-gray"][0]
+          backgroundColor: "#fbfbfd"
         }
       }),
 
@@ -31,18 +31,6 @@ const App = ({ Component, pageProps }: AppProps) => (
           "#10396d",
           "#042244",
           "#000b1c"
-        ],
-        "cool-gray": [
-          "#edf2f7",
-          "#cdd8e3",
-          "#adbed1",
-          "#8ba5c0",
-          "#698bb0",
-          "#517297",
-          "#405875",
-          "#2e3f52",
-          "#1b2632",
-          "#080d12"
         ]
       },
       primaryColor: "brand",
