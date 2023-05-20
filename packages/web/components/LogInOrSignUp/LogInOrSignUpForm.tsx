@@ -1,8 +1,6 @@
 import { useForm, zodResolver } from "@mantine/form";
 import {
   Text,
-  Paper,
-  type PaperProps,
   Button,
   Stack,
   Container,
@@ -56,7 +54,7 @@ export const LogInOrSignUpForm: React.FC = () => {
     setIsSubmitting(true);
 
     // ! TODO: Submit email here
-    await delay({ ms: 2000 });
+    await delay({ ms: 300 });
 
     if (step === 2) {
       void router.push("/dashboard");
@@ -88,7 +86,11 @@ export const LogInOrSignUpForm: React.FC = () => {
     }
 
     if (step === 2) {
-      return "Login";
+      if (authContext === "login") {
+        return "Log in";
+      }
+
+      return "Sign up";
     }
 
     return "";
@@ -97,7 +99,9 @@ export const LogInOrSignUpForm: React.FC = () => {
 
   const getSubheaderText = () => {
     if (step === 1) {
-      return "To log in, we'll send a one-time code to your email.";
+      return `To ${
+        authContext === "login" ? "log in" : "sign up"
+      }, we'll send a one-time code to your email.`;
     }
 
     if (step === 2) {
@@ -113,11 +117,8 @@ export const LogInOrSignUpForm: React.FC = () => {
     <Container size="xs" my={40}>
       <Card>
         <Stack>
-          <Title>Welcome!</Title>
-          <Text>
-            {step === 2}
-            {subheaderText}
-          </Text>
+          <Title>Welcome{authContext === "login" ? " back" : ""}!</Title>
+          <Text>{subheaderText}</Text>
           <form>
             {step === 1 ? (
               <LoginEmailForm form={emailForm} isSubmitting={isSubmitting} />

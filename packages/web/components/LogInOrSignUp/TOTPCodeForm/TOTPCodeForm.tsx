@@ -1,3 +1,4 @@
+import { useAuthContext } from "@/hooks";
 import { TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { TOTP_CODE_LENGTH, generateLoginCode } from "@plutomi/shared";
@@ -18,18 +19,22 @@ const placeholderCode = generateLoginCode();
 export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
   form,
   isSubmitting
-}) => (
-  <TextInput
-    {...form.getInputProps("loginCode")}
-    required
-    label="Login Code"
-    type="text"
-    radius="md"
-    disabled={isSubmitting}
-    maxLength={TOTP_CODE_LENGTH}
-    placeholder={`Example: ${placeholderCode}`}
-    onChange={(event) => {
-      form.setFieldValue("loginCode", event.currentTarget.value.toUpperCase());
-    }}
-  />
-);
+}) => {
+  const { onChange, ...otherProps } = form.getInputProps("totpCode");
+
+  return (
+    <TextInput
+      {...otherProps}
+      required
+      label="Code"
+      type="text"
+      radius="md"
+      disabled={isSubmitting}
+      maxLength={TOTP_CODE_LENGTH}
+      placeholder={`Example: ${placeholderCode}`}
+      onChange={(event) => {
+        form.setFieldValue("totpCode", event.currentTarget.value.toUpperCase());
+      }}
+    />
+  );
+};

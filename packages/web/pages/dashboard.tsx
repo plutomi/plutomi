@@ -5,24 +5,19 @@ import {
   Group,
   getStylesRef,
   rem,
-  Anchor,
   Title,
   Button,
   Text,
-  Stack,
   Flex,
-  Box,
-  Center,
-  UnstyledButton
+  Center
 } from "@mantine/core";
 import { IconSwitchHorizontal } from "@tabler/icons-react";
 import { BsQuestionCircle } from "react-icons/bs";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { BiDollarCircle } from "react-icons/bi";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdWebhook } from "react-icons/md";
 import { IoBarChart } from "react-icons/io5";
 import { AiOutlineForm, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { MdWebhook } from "react-icons/md";
 import { FiSettings } from "react-icons/fi";
 import type { NextPage } from "next";
 import Link from "next/link";
@@ -115,9 +110,8 @@ const Dashboard: NextPage = () => {
   const [active, setActive] = useState("Dashboard");
 
   const links = data.map((item) => (
-    <Link href="/dashboard" style={{ textDecoration: "none" }}>
+    <Link href="/dashboard" style={{ textDecoration: "none" }} key={item.label}>
       <Button
-        key={item.label}
         variant="subtle"
         onClick={(event) => {
           event.preventDefault();
@@ -142,10 +136,7 @@ const Dashboard: NextPage = () => {
       <Navbar width={{ sm: 300 }} p="md">
         <Navbar.Section grow>
           <Group className={classes.header}>
-            <Link
-              href="/dashboard"
-              style={{ textDecoration: "none", color: "black" }}
-            >
+            <Link href="/" style={{ textDecoration: "none", color: "black" }}>
               <Title order={2}>Plutomi</Title>
             </Link>
           </Group>

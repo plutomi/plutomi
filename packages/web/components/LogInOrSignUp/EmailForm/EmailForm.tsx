@@ -14,12 +14,12 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
   isSubmitting
 }) => (
   <TextInput
+    {...form.getInputProps("email")}
     required
     label="Email"
     type="email"
     placeholder="jose@plutomi.com"
     radius="md"
     disabled={isSubmitting}
-    {...form.getInputProps("email")}
   />
 );
