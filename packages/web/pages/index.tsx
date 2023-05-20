@@ -20,13 +20,13 @@ const description =
   "Plutomi helps you streamline your application process with automated workflows";
 const ogImage = `${env.NEXT_PUBLIC_BASE_URL}/og-image.png`;
 
-const NavLinks = [
-  // {
-  //   link: "/pricing",
-  //   label: "Pricing",
-  //   links: []
-  // }
-];
+// const NavLinks = [
+//   // {
+//   //   link: "/pricing",
+//   //   label: "Pricing",
+//   //   links: []
+//   // }
+// ];
 
 const Home: NextPage<HomeProps> = ({ commits }) => (
   <>
@@ -46,7 +46,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={ogImage} />
     </Head>
-    <HomepageNavbar links={NavLinks} />
+    <HomepageNavbar />
     <LandingHero />
     <UseCaseSection />
     <Space h="lg" />

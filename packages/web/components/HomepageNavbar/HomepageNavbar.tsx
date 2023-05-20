@@ -1,7 +1,7 @@
 import {
   createStyles,
-  Menu,
-  Center,
+  // Menu,
+  // Center,
   Header,
   Container,
   Group,
@@ -10,7 +10,7 @@ import {
   rem
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons-react";
+// import { IconChevronDown } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -56,62 +56,62 @@ const useStyles = createStyles((theme) => ({
 }));
 
 type HeaderActionProps = {
-  links: Array<{
-    link: string;
-    label: string;
-    links: Array<{ link: string; label: string }>;
-  }>;
+  // links: Array<{
+  //   link: string;
+  //   label: string;
+  //   links: Array<{ link: string; label: string }>;
+  // }>;
 };
 
-export const HomepageNavbar: React.FC<HeaderActionProps> = ({ links }) => {
+export const HomepageNavbar: React.FC<HeaderActionProps> = () => {
   const { classes } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const router = useRouter();
-  const items = links.map((link) => {
-    const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link}>{item.label}</Menu.Item>
-    ));
+  // const items = links.map((link) => {
+  //   const menuItems = link.links?.map((item) => (
+  //     <Menu.Item key={item.link}>{item.label}</Menu.Item>
+  //   ));
 
-    if (menuItems.length > 0) {
-      return (
-        <Menu
-          key={link.label}
-          trigger="hover"
-          transitionProps={{ exitDuration: 0 }}
-          withinPortal
-        >
-          <Menu.Target>
-            <a
-              href={link.link}
-              className={classes.link}
-              onClick={(event) => {
-                event.preventDefault();
-              }}
-            >
-              <Center>
-                <span className={classes.linkLabel}>{link.label}</span>
-                <IconChevronDown size={rem(12)} stroke={1.5} />
-              </Center>
-            </a>
-          </Menu.Target>
-          <Menu.Dropdown>{menuItems}</Menu.Dropdown>
-        </Menu>
-      );
-    }
+  //   if (menuItems.length > 0) {
+  //     return (
+  //       <Menu
+  //         key={link.label}
+  //         trigger="hover"
+  //         transitionProps={{ exitDuration: 0 }}
+  //         withinPortal
+  //       >
+  //         <Menu.Target>
+  //           <a
+  //             href={link.link}
+  //             className={classes.link}
+  //             onClick={(event) => {
+  //               event.preventDefault();
+  //             }}
+  //           >
+  //             <Center>
+  //               <span className={classes.linkLabel}>{link.label}</span>
+  //               <IconChevronDown size={rem(12)} stroke={1.5} />
+  //             </Center>
+  //           </a>
+  //         </Menu.Target>
+  //         <Menu.Dropdown>{menuItems}</Menu.Dropdown>
+  //       </Menu>
+  //     );
+  //   }
 
-    return (
-      <a
-        key={link.label}
-        href={link.link}
-        className={classes.link}
-        onClick={(event) => {
-          event.preventDefault();
-        }}
-      >
-        {link.label}
-      </a>
-    );
-  });
+  //   return (
+  //     <a
+  //       key={link.label}
+  //       href={link.link}
+  //       className={classes.link}
+  //       onClick={(event) => {
+  //         event.preventDefault();
+  //       }}
+  //     >
+  //       {link.label}
+  //     </a>
+  //   );
+  // });
 
   const loginRedirect = () => {
     void router.push("/login");
@@ -128,9 +128,9 @@ export const HomepageNavbar: React.FC<HeaderActionProps> = ({ links }) => {
           />
           {/* <MantineLogo size={28} /> */}
         </Group>
-        <Group spacing={5} className={classes.links}>
+        {/* <Group spacing={5} className={classes.links}>
           {items}
-        </Group>
+        </Group> */}
         <Group>
           <Link href="/login" passHref>
             <Button variant="default" radius="md" size="md">
