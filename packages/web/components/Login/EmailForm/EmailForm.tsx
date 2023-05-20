@@ -8,16 +8,16 @@ type LoginEmailFormProps = {
 
 export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({ form }) => (
   <TextInput
-    {...form.getInputProps("email")}
     required
     label="Email"
     type="email"
     placeholder="jose@plutomi.com"
-    value={form.values.email}
-    onChange={(event) => {
-      form.setFieldValue("email", event.currentTarget.value);
-    }}
-    error={form.errors.email}
     radius="md"
+    // value={form.values.email}
+    // onChange={(event) => {
+    //   form.setFieldValue("email", event.currentTarget.value);
+    // }}
+    // error={form.errors.email}
+    {...form.getInputProps("email")}
   />
 );

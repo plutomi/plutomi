@@ -12,9 +12,11 @@ import type { NextPage } from "next";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { LoginEmailForm, LoginCodeForm } from "@/components/Login";
+import { delay } from "@plutomi/shared";
 
 const Login: NextPage = (props: PaperProps) => {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const emailForm = useForm<Schema.Login.email.UIValues>({
     initialValues: { email: "" },
@@ -26,13 +28,55 @@ const Login: NextPage = (props: PaperProps) => {
     validate: zodResolver(Schema.Login.loginCode.UISchema)
   });
 
-  const nextStep = () => {
-    setStep((prevStep) => prevStep + 1);
+  const getFormByStep = () => {
+    switch (step) {
+      case 1:
+        return emailForm;
+      case 2:
+        return loginCodeForm;
+      default:
+        return emailForm;
+    }
+  };
+
+  const nextStep = async () => {
+    const currentForm = getFormByStep();
+    if (currentForm.validate().hasErrors) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    await delay({ ms: 2000 });
+    console.log("Submitting");
+    // ! TODO: Submit email here
+
+    setStep((currentStep) => currentStep + 1);
+    setIsSubmitting(false);
   };
 
   const previousStep = () => {
-    setStep((prevStep) => prevStep - 1);
+    setStep((currentStep) => currentStep - 1);
   };
+
+  const getButtonText = () => {
+    if (isSubmitting && step === 1) {
+      return "Sending...";
+    }
+
+    if (step === 1) {
+      return "Send";
+    }
+
+    if (isSubmitting && step === 2) {
+      return "Logging in...";
+    }
+
+    if (step === 2) {
+      return "Login";
+    }
+  };
+  const buttonText = getButtonText();
 
   return (
     <Container size="xs">
@@ -56,8 +100,13 @@ const Login: NextPage = (props: PaperProps) => {
               </Button>
             )}
 
-            <Button type="submit" radius="md" onClick={nextStep}>
-              {step === 1 ? "Next" : "Login"}
+            <Button
+              radius="md"
+              type="submit"
+              onClick={() => void nextStep()}
+              loading={isSubmitting}
+            >
+              {buttonText}
             </Button>
           </Flex>
         </Stack>
