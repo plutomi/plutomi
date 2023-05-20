@@ -42,7 +42,6 @@ export const connectToDatabase =
       await client.db(databaseName).command({ ping: 1 });
       console.info(`Successfully connected to database: ${databaseName}.`);
     } catch (error) {
-      console.error(error);
       const errorMessage = "Error connecting to MongoDB!";
       console.error(errorMessage, error);
       throw new Error(errorMessage);

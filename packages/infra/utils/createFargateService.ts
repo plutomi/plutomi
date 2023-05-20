@@ -79,9 +79,6 @@ export const createFargateService = ({
    * Allows our servers to connect to the NAT gateway / internet & MongoDB.
    */
   fargateService.service.connections.securityGroups.forEach((sg) => {
-    // Allow outbound to the NAT Gateways.
-    // sg.addEgressRule(natGatewayProvider.securityGroup, Port.tcp(443));
-    // natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(443));
     [443, 27017].forEach((port) => {
       natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(port));
     });
