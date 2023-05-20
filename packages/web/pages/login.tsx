@@ -6,17 +6,20 @@ import {
   Button,
   Stack,
   Container,
-  Flex
+  Flex,
+  Title
 } from "@mantine/core";
 import type { NextPage } from "next";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { LoginEmailForm, LoginCodeForm } from "@/components/Login";
 import { delay } from "@plutomi/shared";
+import { useRouter } from "next/router";
 
 const Login: NextPage = (props: PaperProps) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const emailForm = useForm<Schema.Login.email.UIValues>({
     initialValues: { email: "" },
@@ -49,10 +52,13 @@ const Login: NextPage = (props: PaperProps) => {
 
     setIsSubmitting(true);
 
-    await delay({ ms: 2000 });
-    console.log("Submitting");
     // ! TODO: Submit email here
+    await delay({ ms: 2000 });
 
+    if (step === 2) {
+      void router.push("/dashboard");
+      return;
+    }
     setStep((currentStep) => currentStep + 1);
     setIsSubmitting(false);
   };
@@ -84,11 +90,11 @@ const Login: NextPage = (props: PaperProps) => {
 
   const getSubheaderText = () => {
     if (step === 1) {
-      return "We will send a login code to your email to continue.";
+      return "To log in, we'll send a one-time code to your email.";
     }
 
     if (step === 2) {
-      return "Enter the code that you received.";
+      return "Enter the code that you received. It will expire in 5 minutes.";
     }
 
     return "";
@@ -97,13 +103,11 @@ const Login: NextPage = (props: PaperProps) => {
   const subheaderText = getSubheaderText();
 
   return (
-    <Container size="xs">
+    <Container size="xs" my={40}>
       <Paper radius="md" p="xl" withBorder {...props}>
         <Stack>
-          <Text size="lg" weight={700}>
-            Welcome to Plutomi!
-          </Text>
-          <Text c="dimmed">
+          <Title>Welcome!</Title>
+          <Text>
             {step === 2}
             {subheaderText}
           </Text>
