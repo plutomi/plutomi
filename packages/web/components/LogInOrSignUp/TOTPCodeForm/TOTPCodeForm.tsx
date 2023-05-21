@@ -21,26 +21,18 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
   const { onChange, ...otherProps } = form.getInputProps("totpCode");
 
   return (
-    <>
-      <TextInput
-        {...otherProps}
-        required
-        label="Code"
-        type="text"
-        radius="md"
-        disabled={isSubmitting}
-        maxLength={TOTP_CODE_LENGTH}
-        placeholder={placeholderText}
-        onChange={(event) => {
-          form.setFieldValue(
-            "totpCode",
-            event.currentTarget.value.toUpperCase()
-          );
-        }}
-      />
-      <Text c="dimmed">
-        You can put any code - this isn&apos;t set up yet :D
-      </Text>
-    </>
+    <TextInput
+      {...otherProps}
+      required
+      label="Code"
+      type="text"
+      radius="md"
+      disabled={isSubmitting}
+      maxLength={TOTP_CODE_LENGTH}
+      placeholder={placeholderText}
+      onChange={(event) => {
+        form.setFieldValue("totpCode", event.currentTarget.value.toUpperCase());
+      }}
+    />
   );
 };
