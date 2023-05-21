@@ -26,6 +26,7 @@ export * from "./allEntityNames";
 // export * from "./membership";
 // export * from "./org";
 export * from "./user";
+export * from "./totpCode";
 // export * from "./question";
 // export * from "./stage";
 // export * from "./stageQuestionItem";

@@ -1,1 +1,1 @@
-export * from "./totpCodeLength";
+export * from "./totpCodes";

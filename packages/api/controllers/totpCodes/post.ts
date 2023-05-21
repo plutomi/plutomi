@@ -1,22 +1,19 @@
 import {
   AllEntityNames,
-  type Email,
   RelatedToType,
+  generateTOTPCode,
   type User,
-  generateTOTPCode
+  type Email,
+  type TOTPCode,
+  TOTPCodeStatus,
+  MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES,
+  MAX_TOTP_CODES_IN_LOOK_BACK_TIME,
+  TOTP_CODE_EXPIRATION_TIME_IN_MINUTES
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
 import { generatePlutomiId } from "../../utils";
-import {
-  TOTPCode,
-  TOTPCodeStatus
-} from "@plutomi/shared/@types/entities/totpCode";
-
-const MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES = 5;
-const MAX_TOTP_CODES_IN_LOOK_BACK_TIME = 2;
-const TOTP_CODE_EXPIRATION_TIME_IN_MINUTES = 5;
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -52,6 +49,7 @@ export const post: RequestHandler = async (req, res) => {
 
   if (user === null) {
     const now = dayjs();
+    const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now.toDate(),
       entity: AllEntityNames.USER
@@ -63,8 +61,8 @@ export const post: RequestHandler = async (req, res) => {
       emailVerified: false,
       canReceiveEmails: true,
       email: email as Email,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
+      createdAt: nowIso,
+      updatedAt: nowIso,
       entityType: AllEntityNames.USER,
       relatedTo: [
         {
@@ -139,7 +137,7 @@ export const post: RequestHandler = async (req, res) => {
 
   try {
     const now = dayjs();
-
+    const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({
       date: now.toDate(),
       entity: AllEntityNames.TOTP_CODE
@@ -148,8 +146,8 @@ export const post: RequestHandler = async (req, res) => {
     const newTotpCode: TOTPCode = {
       _id: totpCodeId,
       code: generateTOTPCode(),
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
+      createdAt: nowIso,
+      updatedAt: nowIso,
       entityType: AllEntityNames.TOTP_CODE,
       expiresAt: now
         .add(TOTP_CODE_EXPIRATION_TIME_IN_MINUTES, "minutes")
