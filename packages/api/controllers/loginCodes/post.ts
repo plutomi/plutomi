@@ -87,6 +87,19 @@ export const post: RequestHandler = async (req, res) => {
     }
   }
 
+  try {
+
+    const recentLoginCodes = await req.items.find<LoginCode>({
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({
+        message: "An error ocurred checking for recent login codes",
+        error
+      });
+  }
+
   // 2. If user exists, check if they have request a login code in the last 5 minutes
 
   // 3. If user exists and has requested a login code in the last 5 minutes, send a 403

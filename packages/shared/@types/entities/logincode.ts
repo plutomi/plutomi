@@ -1,5 +1,6 @@
 import type { Email } from "../email";
 import type { IndexableType, RelatedToArray } from "../indexableProperties";
+import type { PlutomiId } from "../plutomiId";
 // import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
@@ -13,21 +14,17 @@ import type { BaseEntity } from "./baseEntity";
 // type UserOrgId = PlutomiId<AllEntityNames.Org> | null;
 // type UserWorkspaceId = PlutomiId<AllEntityNames.Workspace> | null;
 
-type UserRelatedToArray = [
-  ...RelatedToArray<AllEntityNames.USER>,
-  // Get a user by email
-  { id: Email; type: IndexableType.USER }
-  // // Get all users in an org
-  // { id: UserOrgId; type: IndexableType.User },
-  // // Get all users in a workspace
-  // { id: UserWorkspaceId; type: IndexableType.User },
+type LoginCodeRelatedToArray = [
+  ...RelatedToArray<AllEntityNames.LOGIN_CODE>,
+  // Get login codes for a user
+  { id: PlutomiId<AllEntityNames.USER>; type: IndexableType.LOGIN_CODE }
 ];
 
-export type User = BaseEntity<AllEntityNames.USER> & {
+export type LoginCode = BaseEntity<AllEntityNames.LOGIN_CODE> & {
   firstName: string | null;
   lastName: string | null;
   email: Email;
   emailVerified: boolean;
   canReceiveEmails: boolean;
-  relatedTo: UserRelatedToArray;
+  relatedTo: LoginCodeRelatedToArray;
 };

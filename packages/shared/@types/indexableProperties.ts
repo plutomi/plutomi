@@ -9,27 +9,28 @@ export enum IndexableType {
 
   // ! TODO: Please TS gods add a way to extract this from AllEntityName.
   // I really don't like how we have duplicate data here
-  User = "user",
-  Org = "org",
-  Application = "application",
-  Invite = "invite",
-  Question = "question",
-  Stage = "stage",
-  StageQuestionItem = "stageQuestionItem",
-  Workspace = "workspace",
-  Membership = "membership",
+  USER = "USER",
+  LOGIN_CODE = "LOGIN_CODE",
+  // Org = "org",
+  // Application = "application",
+  // Invite = "invite",
+  // Question = "question",
+  // Stage = "stage",
+  // StageQuestionItem = "stageQuestionItem",
+  // Workspace = "workspace",
+  // Membership = "membership",
   /**
    * Misc
    */
-  Entity = "entity",
-  Id = "id",
-  Email = "email",
-  ApplicationState = "applicationState",
+  ENTITY = "ENTITY",
+  ID = "ID",
+  EMAIL = "EMAIL"
+  // ApplicationState = "applicationState",
   /**
    * Generic across items that can be reordered
    */
-  NextItem = "nextItem",
-  PreviousItem = "previousItem"
+  // NextItem = "nextItem",
+  // PreviousItem = "previousItem"
 }
 
 // These can be anything
@@ -60,7 +61,7 @@ type OtherRelatedToArrayItems = {
  */
 export type RelatedToArray<T extends AllEntityNames> = [
   // These two will always be the first two items
-  { id: T; type: IndexableType.Entity },
-  { id: PlutomiId<T>; type: IndexableType.Id },
+  { id: T; type: IndexableType.ENTITY },
+  { id: PlutomiId<T>; type: IndexableType.ID },
   ...OtherRelatedToArrayItems[]
 ];
