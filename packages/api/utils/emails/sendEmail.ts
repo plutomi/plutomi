@@ -1,6 +1,5 @@
 import type { Email, PlutomiEmails } from "@plutomi/shared";
 import { SendEmailCommand } from "@aws-sdk/client-ses";
-import { render } from "@react-email/render";
 import { SES } from "../../awsClients";
 
 type SendEmailProps = {
@@ -10,17 +9,15 @@ type SendEmailProps = {
     email: Email | PlutomiEmails;
   };
   subject: string;
-  bodyJsx: JSX.Element;
+  bodyHtml: string;
 };
 
 export const sendEmail = async ({
   to,
   from,
   subject,
-  bodyJsx
+  bodyHtml
 }: SendEmailProps) => {
-  const html = render(bodyJsx);
-
   await SES.send(
     new SendEmailCommand({
       Destination: {
@@ -33,7 +30,7 @@ export const sendEmail = async ({
         },
         Body: {
           Html: {
-            Data: html
+            Data: bodyHtml
           }
         }
       }

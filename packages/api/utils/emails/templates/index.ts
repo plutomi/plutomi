@@ -1,1 +1,1 @@
-export * from "./totpCodeTemplate";
+export * from "./totpTemplate";

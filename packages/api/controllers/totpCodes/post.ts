@@ -14,7 +14,7 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import { generatePlutomiId, sendEmail } from "../../utils";
+import { EMAIL_TEMPLATES, generatePlutomiId, sendEmail } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -184,12 +184,12 @@ export const post: RequestHandler = async (req, res) => {
   try {
     await sendEmail({
       to: email as Email,
-      subject: `Your Plutomi Login Code - ${totpCode}`,
+      subject: `Your Plutomi Code - ${totpCode}`,
       from: {
         header: "Plutomi",
-        email: PlutomiEmails.JOSE
+        email: PlutomiEmails.NO_REPLY
       },
-      bodyJsx: EMAIL_TEMPLATES.TOTPCodeTemplate
+      bodyHtml: EMAIL_TEMPLATES.TOTPTemplate({ code: totpCode })
     });
   } catch (error) {
     res.status(500).json({
