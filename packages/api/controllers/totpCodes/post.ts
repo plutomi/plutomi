@@ -167,6 +167,10 @@ export const post: RequestHandler = async (req, res) => {
         {
           id: userId,
           type: RelatedToType.TOTP_CODE
+        },
+        {
+          id: email as Email,
+          type: RelatedToType.TOTP_CODE
         }
       ]
     };
