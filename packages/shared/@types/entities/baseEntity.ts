@@ -8,5 +8,4 @@ export type BaseEntity<T extends AllEntityNames> = {
   updatedAt: string;
   entityType: T;
   relatedTo: RelatedToArray<T>;
-  // totals: Record<string, number>;
 };

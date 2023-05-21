@@ -41,22 +41,21 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   if (user === null) {
-    const now = new Date().toISOString();
+    const now = new Date();
+    const nowIso = now.toISOString();
     const userId = generatePlutomiId({
-      date: new Date(),
+      date: now,
       entity: AllEntityNames.User
     });
     const userData: User = {
       _id: userId,
-      data: {
-        firstName: null,
-        lastName: null,
-        emailVerified: false,
-        canReceiveEmails: true,
-        email: email as Email
-      },
-      createdAt: now,
-      updatedAt: now,
+      firstName: null,
+      lastName: null,
+      emailVerified: false,
+      canReceiveEmails: true,
+      email: email as Email,
+      createdAt: nowIso,
+      updatedAt: nowIso,
       entityType: AllEntityNames.User,
       relatedTo: [
         {

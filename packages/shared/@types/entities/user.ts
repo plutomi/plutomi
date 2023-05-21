@@ -24,15 +24,10 @@ type UserRelatedToArray = [
 ];
 
 export type User = BaseEntity<AllEntityNames.User> & {
-  data: {
-    firstName: string | null;
-    lastName: string | null;
-    // org: UserOrgId;
-    // workspace: UserWorkspaceId;
-    email: Email;
-    emailVerified: boolean;
-    canReceiveEmails: boolean;
-    // totals: UserTotals;
-  };
+  firstName: string | null;
+  lastName: string | null;
+  email: Email;
+  emailVerified: boolean;
+  canReceiveEmails: boolean;
   relatedTo: UserRelatedToArray;
 };
