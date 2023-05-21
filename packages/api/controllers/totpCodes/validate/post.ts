@@ -22,15 +22,10 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email, totpCode } = data;
 
-  // ! TODO:
-
-  // get the most recent code only, that is not expired
-  // if its not expired, and there are others, expire all others
-
-  let mostRecentCode: TOTPCode | null = null;
+  let mostRecentCodes: TOTPCode[];
 
   try {
-    mostRecentCode = await req.items
+    mostRecentCodes = await req.items
       .find<TOTPCode>({
         relatedTo: {
           id: email,
@@ -51,15 +46,88 @@ export const post: RequestHandler = async (req, res) => {
 
   const now = dayjs();
 
+  const mostRecentCode = mostRecentCodes[0];
   if (
-    mostRecentCode === null ||
+    // Code not found
+    !mostRecentCode ||
+    // Expired by status
     mostRecentCode.status === TOTPCodeStatus.EXPIRED ||
+    // Expired by exhaustive check
     dayjs(mostRecentCode.expiresAt).isBefore(now) ||
+    // Code is invalid
     mostRecentCode.code !== totpCode
   ) {
+    // ! TODO: Increment attempts here, block email if too many attempts
     res.status(403).json({ message: "Invalid login code" });
     return;
   }
 
-  res.send(200);
+  // Get the user to set the cookie
+  let user: User | null = null;
+
+  try {
+    user = await req.items.findOne<User>({
+      relatedTo: {
+        id: email,
+        type: RelatedToType.USER
+      }
+    });
+  } catch (error) {
+    console.error(`error logging in`);
+    res
+      .status(500)
+      .json({ message: "An error ocurred logging you in!", error });
+    return;
+  }
+
+  // This shouldn't happen, but just in case
+  if (user === null) {
+    res.status(500).json({ message: "An error ocurred logging you in!" });
+    return;
+  }
+
+  res.status(200).json({ message: "Logged in successfully!" });
+
+  if (!user.emailVerified) {
+    try {
+      await req.items.updateOne(
+        {
+          relatedTo: {
+            id: email,
+            type: RelatedToType.USER
+          }
+        },
+        {
+          $set: {
+            emailVerified: true
+          }
+        }
+      );
+    } catch (error) {
+      console.error(`error ocurred updating user emailVerified`, error);
+    }
+  }
+
+  // Expire all other codes
+  try {
+    await req.items.updateMany(
+      {
+        status: { $ne: TOTPCodeStatus.EXPIRED },
+        relatedTo: {
+          id: email,
+          type: RelatedToType.TOTP_CODE
+        }
+      },
+      {
+        $set: {
+          status: TOTPCodeStatus.EXPIRED
+        }
+      }
+    );
+  } catch (error) {
+    console.error(
+      `error ocurred updating previous login codes to expired`,
+      error
+    );
+  }
 };
