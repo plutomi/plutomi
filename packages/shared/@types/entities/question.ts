@@ -1,4 +1,4 @@
-// import type { IndexableType, RelatedToArray } from "../indexableProperties";
+// import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 // import type { PlutomiId } from "../plutomiId";
 // import type { AllEntityNames } from "./allEntityNames";
 // import type { BaseEntity } from "./baseEntity";
@@ -14,9 +14,9 @@
 // type QuestionRelatedToArray = [
 //   ...RelatedToArray<AllEntityNames.Question>,
 //   // Get questions in an org
-//   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Question },
+//   { id: PlutomiId<AllEntityNames.Org>; type: RelatedToType.Question },
 //   // Get questions in a workspace
-//   { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Question }
+//   { id: PlutomiId<AllEntityNames.Workspace>; type: RelatedToType.Question }
 // ];
 
 // export type Question = BaseEntity<AllEntityNames.Question> & {

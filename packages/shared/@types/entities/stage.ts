@@ -1,4 +1,4 @@
-// import type { IndexableType, RelatedToArray } from "../indexableProperties";
+// import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 // import type { PlutomiId } from "../plutomiId";
 // import type { AllEntityNames } from "./allEntityNames";
 // import type { BaseEntity } from "./baseEntity";
@@ -11,16 +11,16 @@
 // type StageRelatedToArray = [
 //   ...RelatedToArray<AllEntityNames.Stage>,
 //   // Get all stages in an application
-//   { id: PlutomiId<AllEntityNames.Application>; type: IndexableType.Stage },
+//   { id: PlutomiId<AllEntityNames.Application>; type: RelatedToType.Stage },
 //   // Get all stages in an org
 //   {
 //     id: PlutomiId<AllEntityNames.Org>;
-//     type: IndexableType.Stage;
+//     type: RelatedToType.Stage;
 //   },
 //   // Get all stages in a workspace
 //   {
 //     id: PlutomiId<AllEntityNames.Workspace>;
-//     type: IndexableType.Stage;
+//     type: RelatedToType.Stage;
 //   }
 // ];
 

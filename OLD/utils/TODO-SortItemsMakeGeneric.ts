@@ -24,7 +24,7 @@
 //   let firstStageIndex: number;
 
 //   unsortedStagesInOpening.find((stage, idx) => {
-//     const previousStage = findInRelatedToArray(IndexableTypes.PreviousStage, stage);
+//     const previousStage = findInRelatedToArray(RelatedToTypes.PreviousStage, stage);
 
 //     if (!previousStage) {
 //       firstStage = stage;
@@ -48,7 +48,7 @@
 //   let startingStage = firstStage;
 
 //   while (!reachedTheEnd) {
-//     const newNextStageId = findInRelatedToArray(IndexableType.NextStage, startingStage);
+//     const newNextStageId = findInRelatedToArray(RelatedToType.NextStage, startingStage);
 
 //     let nextStage: StageEntity | undefined;
 

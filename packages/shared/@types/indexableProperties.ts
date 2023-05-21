@@ -2,7 +2,7 @@ import type { AllEntityNames } from "./entities";
 import type { PlutomiId } from "./plutomiId";
 
 // These are properties, aside from each entity type, that can be indexed
-export enum IndexableType {
+export enum RelatedToType {
   /**
    * All entities -
    */
@@ -36,7 +36,7 @@ export enum IndexableType {
 // These can be anything
 type OtherRelatedToArrayItems = {
   id: PlutomiId<AllEntityNames> | string | boolean | number;
-  type: IndexableType;
+  type: RelatedToType;
 };
 
 /**
@@ -45,7 +45,7 @@ type OtherRelatedToArrayItems = {
  * optimized for the most frequent use cases for that entity.
  * @example`Stage` entity:
  *
- * [{ id: AllEntityNames.Stage type: IndexableType.Entity }, { id: PlutomiId<AllEntityNames.Stage>, type: IndexableType.Id }]
+ * [{ id: AllEntityNames.Stage type: RelatedToType.Entity }, { id: PlutomiId<AllEntityNames.Stage>, type: RelatedToType.Id }]
 
  * The first item allows retrieving all stages, application wide.
  * 
@@ -61,7 +61,7 @@ type OtherRelatedToArrayItems = {
  */
 export type RelatedToArray<T extends AllEntityNames> = [
   // These two will always be the first two items
-  { id: T; type: IndexableType.ENTITY },
-  { id: PlutomiId<T>; type: IndexableType.ID },
+  { id: T; type: RelatedToType.ENTITY },
+  { id: PlutomiId<T>; type: RelatedToType.ID },
   ...OtherRelatedToArrayItems[]
 ];

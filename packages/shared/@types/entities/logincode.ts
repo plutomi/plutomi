@@ -1,5 +1,5 @@
 import type { Email } from "../email";
-import type { IndexableType, RelatedToArray } from "../indexableProperties";
+import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 // import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
@@ -17,7 +17,7 @@ import type { BaseEntity } from "./baseEntity";
 type LoginCodeRelatedToArray = [
   ...RelatedToArray<AllEntityNames.LOGIN_CODE>,
   // Get login codes for a user
-  { id: PlutomiId<AllEntityNames.USER>; type: IndexableType.LOGIN_CODE }
+  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.LOGIN_CODE }
 ];
 
 export type LoginCode = BaseEntity<AllEntityNames.LOGIN_CODE> & {

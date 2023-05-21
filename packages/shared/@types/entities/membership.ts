@@ -1,4 +1,4 @@
-// import type { IndexableType, RelatedToArray } from "../indexableProperties";
+// import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 // import type { PlutomiId } from "../plutomiId";
 // import type { AllEntityNames } from "./allEntityNames";
 // import type { BaseEntity } from "./baseEntity";
@@ -15,11 +15,11 @@
 // type MembershipRelatedToArray = [
 //   ...RelatedToArray<AllEntityNames.Membership>,
 //   // Get all members of an org
-//   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Membership },
+//   { id: PlutomiId<AllEntityNames.Org>; type: RelatedToType.Membership },
 //   // Get all memberships for a user and with it, all the workspaces they are in
-//   { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Membership },
+//   { id: PlutomiId<AllEntityNames.User>; type: RelatedToType.Membership },
 //   // Get all memberships for a workspace and with it, all the users in that workspace
-//   { id: PlutomiId<AllEntityNames.Workspace>; type: IndexableType.Membership }
+//   { id: PlutomiId<AllEntityNames.Workspace>; type: RelatedToType.Membership }
 // ];
 
 // export type Membership = BaseEntity<AllEntityNames.Membership> & {

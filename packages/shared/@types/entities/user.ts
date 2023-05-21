@@ -1,5 +1,5 @@
 import type { Email } from "../email";
-import type { IndexableType, RelatedToArray } from "../indexableProperties";
+import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 // import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
@@ -16,11 +16,11 @@ import type { BaseEntity } from "./baseEntity";
 type UserRelatedToArray = [
   ...RelatedToArray<AllEntityNames.USER>,
   // Get a user by email
-  { id: Email; type: IndexableType.USER }
+  { id: Email; type: RelatedToType.USER }
   // // Get all users in an org
-  // { id: UserOrgId; type: IndexableType.User },
+  // { id: UserOrgId; type: RelatedToType.User },
   // // Get all users in a workspace
-  // { id: UserWorkspaceId; type: IndexableType.User },
+  // { id: UserWorkspaceId; type: RelatedToType.User },
 ];
 
 export type User = BaseEntity<AllEntityNames.USER> & {

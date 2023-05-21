@@ -1,7 +1,7 @@
 import {
   AllEntityNames,
   type Email,
-  IndexableType,
+  RelatedToType,
   type User
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
@@ -28,7 +28,7 @@ export const post: RequestHandler = async (req, res) => {
     user = await req.items.findOne<User>({
       relatedTo: {
         id: email,
-        type: IndexableType.User
+        type: RelatedToType.USER
       }
     });
   } catch (error) {
@@ -45,7 +45,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now,
-      entity: AllEntityNames.User
+      entity: AllEntityNames.USER
     });
     const userData: User = {
       _id: userId,
@@ -56,19 +56,19 @@ export const post: RequestHandler = async (req, res) => {
       email: email as Email,
       createdAt: nowIso,
       updatedAt: nowIso,
-      entityType: AllEntityNames.User,
+      entityType: AllEntityNames.USER,
       relatedTo: [
         {
-          id: AllEntityNames.User,
-          type: IndexableType.Entity
+          id: AllEntityNames.USER,
+          type: RelatedToType.ENTITY
         },
         {
           id: userId,
-          type: IndexableType.Id
+          type: RelatedToType.ID
         },
         {
           id: email as Email,
-          type: IndexableType.User
+          type: RelatedToType.USER
         }
       ]
     };
