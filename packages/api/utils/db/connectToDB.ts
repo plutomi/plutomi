@@ -59,10 +59,10 @@ export const connectToDatabase =
     );
 
     // Define our two indexes
-    const targetArrayIndexName = "targetArray";
-    const targetArrayIndexSpec: IndexSpecification = {
-      "target.id": 1,
-      "target.type": 1
+    const relatedToArrayIndexName = "relatedToArray";
+    const relatedToArrayIndexSpec: IndexSpecification = {
+      "relatedTo.id": 1,
+      "relatedTo.type": 1
     };
 
     if (collectionExists === undefined) {
@@ -76,25 +76,26 @@ export const connectToDatabase =
       }
     }
 
-    // ! Create the target array index, if it doesn't exist
+    // ! TODO: Make this generic so we can use it for all indexes
+    //  Create the relatedTo index, if it doesn't exist
     try {
-      const targetArrayIndexExists = await items.indexExists(
-        targetArrayIndexName
+      const relatedToArrayIndexExists = await items.indexExists(
+        relatedToArrayIndexName
       );
 
-      if (!targetArrayIndexExists) {
+      if (!relatedToArrayIndexExists) {
         try {
-          await items.createIndex(targetArrayIndexSpec);
-          // ! TODO: This is being triggered multiple times
-          console.log("Created target array index", targetArrayIndexName);
+          await items.createIndex(relatedToArrayIndexSpec, {
+            name: relatedToArrayIndexName
+          });
         } catch (error) {
-          const errorMessage = `An error ocurred creating the target array index ${collectionName}`;
+          const errorMessage = `An error ocurred creating the target array index: '${collectionName}'`;
           console.error(errorMessage, error);
           throw new Error(errorMessage);
         }
       }
     } catch (error) {
-      const errorMessage = `An error ocurred checking if the target array index exists ${collectionName}`;
+      const errorMessage = `An error ocurred checking if the target array index exists: '${collectionName}'`;
       console.error(errorMessage, error);
       throw new Error(errorMessage);
     }

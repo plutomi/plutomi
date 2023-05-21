@@ -28,10 +28,10 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email } = data;
 
-  // Check if a user exists with that email, and if not, create them
   let user: User | null = null;
 
   try {
+    // Check if a user exists with that email, and if not, create them
     user = await req.items.findOne<User>({
       relatedTo: {
         id: email,
@@ -39,21 +39,22 @@ export const post: RequestHandler = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
-      message: "An error ocurred checking if a user exists with that email.",
+      message: "An error ocurred checking if a user exists with that email",
       error
     });
     return;
   }
 
   if (user === null) {
+    // Create the user first
     const now = dayjs();
     const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now.toDate(),
       entity: AllEntityNames.USER
     });
+
     const userData: User = {
       _id: userId,
       firstName: null,
@@ -85,7 +86,6 @@ export const post: RequestHandler = async (req, res) => {
       await req.items.insertOne(userData);
       user = userData;
     } catch (error) {
-      console.error(error);
       res.status(500).json({
         message: "An error ocurred creating your user account",
         error
@@ -117,11 +117,9 @@ export const post: RequestHandler = async (req, res) => {
         }
       )
       .toArray();
-    console.log(`RECENT`, recentTotpCodes);
   } catch (error) {
-    console.error(error);
     res.status(500).json({
-      message: "An error ocurred checking for recent login codes",
+      message: "An error ocurred checking for any recent login codes",
       error
     });
     return;
@@ -172,10 +170,9 @@ export const post: RequestHandler = async (req, res) => {
     await req.items.insertOne(newTotpCode);
 
     res.status(201).json({
-      message: "A login code has been sent to your email."
+      message: "A login code has been sent to your email"
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "An error ocurred creating your login code",
       error
