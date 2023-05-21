@@ -21,6 +21,8 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email } = data;
 
+  console.log("INCOMING EMAIL:", `'${email}'`);
+
   // Check if a user exists with that email, and if not, create them
   let user: User | null = null;
 
@@ -76,13 +78,17 @@ export const post: RequestHandler = async (req, res) => {
           type: IndexableType.User
         },
         {
-          id: email as Email,
+          id: email.toLocaleLowerCase().trim() as Email,
           type: IndexableType.Email
         }
       ]
     };
 
     try {
+      await req.items.updateOne(
+        { data: { email } },
+        { $setOnInsert: userData }
+      );
       await req.items.insertOne(userData);
       user = userData;
     } catch (error) {
