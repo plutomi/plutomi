@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { post } from "./post";
 
-export const loginCodes = Router();
+export const totpCodes = Router();
 
-
-loginCodes.post("/", post)
+totpCodes.post("/", post);

@@ -6,7 +6,13 @@ import {
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
+import dayjs from "dayjs";
 import { generatePlutomiId } from "../../utils";
+import { TOTPCode } from "@plutomi/shared/@types/entities/totpCode";
+
+const MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES = 5;
+const MAX_TOTP_CODES_IN_LOOK_BACK_TIME = 2;
+const TOTP_CODE_EXPIRATION_TIME_IN_MINUTES = 5;
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -41,10 +47,9 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   if (user === null) {
-    const now = new Date();
-    const nowIso = now.toISOString();
+    const now = dayjs();
     const userId = generatePlutomiId({
-      date: now,
+      date: now.toDate(),
       entity: AllEntityNames.USER
     });
     const userData: User = {
@@ -54,8 +59,8 @@ export const post: RequestHandler = async (req, res) => {
       emailVerified: false,
       canReceiveEmails: true,
       email: email as Email,
-      createdAt: nowIso,
-      updatedAt: nowIso,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
       entityType: AllEntityNames.USER,
       relatedTo: [
         {
@@ -87,26 +92,69 @@ export const post: RequestHandler = async (req, res) => {
     }
   }
 
-  try {
+  let recentTotpCodes: TOTPCode[] = [];
 
-    const recentLoginCodes = await req.items.find<LoginCode>({
+  try {
+    const now = dayjs();
+    const { _id: id } = user;
+    recentTotpCodes = await req.items
+      .find<TOTPCode>(
+        {
+          relatedTo: {
+            id,
+            type: RelatedToType.TOTP_CODE
+          },
+          createdAt: {
+            $gte: now
+              .subtract(MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+              .toISOString()
+          }
+        },
+        {
+          limit: MAX_TOTP_CODES_IN_LOOK_BACK_TIME
+        }
+      )
+      .toArray();
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        message: "An error ocurred checking for recent login codes",
-        error
-      });
+    res.status(500).json({
+      message: "An error ocurred checking for recent login codes",
+      error
+    });
+    return;
   }
 
-  // 2. If user exists, check if they have request a login code in the last 5 minutes
+  if (recentTotpCodes.length >= MAX_TOTP_CODES_IN_LOOK_BACK_TIME) {
+    res.status(403).json({
+      message:
+        "You have requested too many login codes recently, please try again in a bit."
+    });
+    return;
+  }
 
-  // 3. If user exists and has requested a login code in the last 5 minutes, send a 403
+  try {
+    const now = dayjs();
 
-  // 4. If user exists and has not requested a login code in the last 5 minutes, generate a login code and send it to the user's email
+    const newTotpCode: TOTPCode = {
+      _id: generatePlutomiId({
+        date: now.toDate(),
+        entity: AllEntityNames.TOTP_CODE
+      }),
+      expiresAt: now
+        .add(TOTP_CODE_EXPIRATION_TIME_IN_MINUTES, "minutes")
+        .toISOString()
+    };
 
-  // 5. If user does not exist, create a new user
+    await req.items.insertOne(newTotpCode);
 
-  // 6. Generate a login code and send it to the user's email
+    res.status(201).json({
+      message: "A login code has been sent to your email."
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error ocurred creating your login code",
+      error
+    });
+  }
 };

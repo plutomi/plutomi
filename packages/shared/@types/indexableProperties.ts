@@ -10,7 +10,7 @@ export enum RelatedToType {
   // ! TODO: Please TS gods add a way to extract this from AllEntityName.
   // I really don't like how we have duplicate data here
   USER = "USER",
-  LOGIN_CODE = "LOGIN_CODE",
+  TOTP_CODE = "TOTP_CODE",
   // Org = "org",
   // Application = "application",
   // Invite = "invite",
