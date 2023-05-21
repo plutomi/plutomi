@@ -1,5 +1,7 @@
+import { AllEntityNames, Email, IndexableType, User } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
+import { generatePlutomiId } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -15,6 +17,60 @@ export const post: RequestHandler = async (req, res) => {
   const { email } = data;
 
   // 1. Check if user exists in database
+
+  let user: User | null = null;
+
+  try {
+    const userInMongo = await req.items.findOne<User>({
+      target: {
+        id: email,
+        type: IndexableType.Email
+      }
+    });
+
+    
+    if (userInMongo === null) {
+      // ! TODO: Create user
+
+      const now = new Date().toISOString();
+      const userId = generatePlutomiId({date: new Date(), entity: AllEntityNames.User});
+      const newUser: User = {
+        _id: userId,
+        createdAt: now,
+        updatedAt: now,
+        entityType: AllEntityNames.User,
+        target: [
+            {
+                id: AllEntityNames.User,
+                type: IndexableType.Entity
+            },
+            {
+                id: userId,
+                type: IndexableType.Id,
+            },
+            {
+                id: null,
+                type: IndexableType.User,
+            },
+            {
+                id: null,
+                type: IndexableType.User,
+            },
+            {
+                id: email as Email,
+                type: IndexableType.Email,
+            }
+        ]
+      }
+
+      const createdUser = await req.items.insertOne(newUser);
+
+      createdUser.
+    res.send(response);
+  } catch (error) {
+    console.error(error);
+    res.send(error);
+  }
 
   // 2. If user exists, check if they have request a login code in the last 5 minutes
 

@@ -4,8 +4,8 @@ import type { AllEntityNames } from "./allEntityNames";
 
 export type BaseEntity<T extends AllEntityNames> = {
   _id: PlutomiId<T>;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   entityType: T;
   target: IndexedTargetArray<T>;
   totals: Record<string, number>;

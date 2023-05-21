@@ -34,7 +34,7 @@ export enum IndexableType {
 
 // These can be anything
 type OtherTargetArrayItems = {
-  id: PlutomiId<AllEntityNames> | string | boolean | number;
+  id: PlutomiId<AllEntityNames> | string | boolean | number | null;
   type: IndexableType;
 };
 
