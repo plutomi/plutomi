@@ -8,5 +8,5 @@ export type BaseEntity<T extends AllEntityNames> = {
   updatedAt: string;
   entityType: T;
   target: IndexedTargetArray<T>;
-  totals: Record<string, number>;
+  // totals: Record<string, number>;
 };

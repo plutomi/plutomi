@@ -1,4 +1,9 @@
-import { AllEntityNames, Email, IndexableType, User } from "@plutomi/shared";
+import {
+  AllEntityNames,
+  type Email,
+  IndexableType,
+  type User
+} from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import { generatePlutomiId } from "../../utils";
@@ -16,60 +21,80 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email } = data;
 
-  // 1. Check if user exists in database
-
+  // Check if a user exists with that email, and if not, create them
   let user: User | null = null;
 
   try {
-    const userInMongo = await req.items.findOne<User>({
+    user = await req.items.findOne<User>({
       target: {
         id: email,
         type: IndexableType.Email
       }
     });
-
-    
-    if (userInMongo === null) {
-      // ! TODO: Create user
-
-      const now = new Date().toISOString();
-      const userId = generatePlutomiId({date: new Date(), entity: AllEntityNames.User});
-      const newUser: User = {
-        _id: userId,
-        createdAt: now,
-        updatedAt: now,
-        entityType: AllEntityNames.User,
-        target: [
-            {
-                id: AllEntityNames.User,
-                type: IndexableType.Entity
-            },
-            {
-                id: userId,
-                type: IndexableType.Id,
-            },
-            {
-                id: null,
-                type: IndexableType.User,
-            },
-            {
-                id: null,
-                type: IndexableType.User,
-            },
-            {
-                id: email as Email,
-                type: IndexableType.Email,
-            }
-        ]
-      }
-
-      const createdUser = await req.items.insertOne(newUser);
-
-      createdUser.
-    res.send(response);
   } catch (error) {
     console.error(error);
-    res.send(error);
+    res.status(500).json({
+      message: "An error ocurred checking if a user exists with that email.",
+      error
+    });
+    return;
+  }
+
+  if (user === null) {
+    const now = new Date().toISOString();
+    const userId = generatePlutomiId({
+      date: new Date(),
+      entity: AllEntityNames.User
+    });
+    const userData: User = {
+      _id: userId,
+      data: {
+        firstName: null,
+        lastName: null,
+        emailVerified: false,
+        canReceiveEmails: true,
+        email: email as Email
+      },
+      createdAt: now,
+      updatedAt: now,
+      entityType: AllEntityNames.User,
+      target: [
+        {
+          id: AllEntityNames.User,
+          type: IndexableType.Entity
+        },
+        {
+          id: userId,
+          type: IndexableType.Id
+        },
+        {
+          id: null,
+          type: IndexableType.User
+        },
+        {
+          id: null,
+          type: IndexableType.User
+        },
+        {
+          id: email as Email,
+          type: IndexableType.Email
+        }
+      ]
+    };
+
+    try {
+      await req.items.insertOne(userData);
+      user = userData;
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: "An error ocurred creating your user account",
+        error
+      });
+      return;
+    }
+
+    //
   }
 
   // 2. If user exists, check if they have request a login code in the last 5 minutes
