@@ -1,9 +1,8 @@
 import {
   RelatedToType,
-  TOTPCode,
+  type TOTPCode,
   TOTPCodeStatus,
-  TOTP_CODE_EXPIRATION_TIME_IN_MINUTES,
-  User
+  type User
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";

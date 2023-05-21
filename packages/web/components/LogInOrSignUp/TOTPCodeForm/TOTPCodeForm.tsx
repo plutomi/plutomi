@@ -19,6 +19,7 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
   isSubmitting
 }) => {
   const { onChange, ...otherProps } = form.getInputProps("totpCode");
+  // TODO: Add focus trap
 
   return (
     <TextInput

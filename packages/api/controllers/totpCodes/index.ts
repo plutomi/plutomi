@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { post } from "./post";
-import { validate } from "./validate";
+import { verify } from "./verify";
 
 export const totpCodes = Router();
 
-totpCodes.use("/validate", validate);
+totpCodes.use("/verify", verify);
 
 totpCodes.post("/", post);

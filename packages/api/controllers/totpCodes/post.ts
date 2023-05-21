@@ -101,7 +101,7 @@ export const post: RequestHandler = async (req, res) => {
     });
     return;
   }
-  
+
   let recentTotpCodes: TOTPCode[] = [];
   const { _id: userId } = user;
 
@@ -110,6 +110,7 @@ export const post: RequestHandler = async (req, res) => {
     recentTotpCodes = await req.items
       .find<TOTPCode>(
         {
+          status: TOTPCodeStatus.ACTIVE,
           relatedTo: {
             id: userId,
             type: RelatedToType.TOTP_CODE

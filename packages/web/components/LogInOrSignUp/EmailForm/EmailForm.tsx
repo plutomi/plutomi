@@ -15,6 +15,7 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
   form,
   isSubmitting
 }) => {
+  // TODO: Add focus trap
   const authContext = useAuthContext();
   const actionText = authContext === "login" ? "logging" : "signing";
 
