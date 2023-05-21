@@ -95,6 +95,13 @@ export const post: RequestHandler = async (req, res) => {
     }
   }
 
+  if (!user.canReceiveEmails) {
+    res.status(403).json({
+      message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
+    });
+    return;
+  }
+  
   let recentTotpCodes: TOTPCode[] = [];
   const { _id: userId } = user;
 
