@@ -1,7 +1,7 @@
 import { TOTP_CODE_LENGTH } from "@plutomi/shared";
 import { z } from "zod";
 
-const baseSchema = z.object({
+export const baseSchema = z.object({
   totpCode: z
     .string({
       required_error: "Code is required"
