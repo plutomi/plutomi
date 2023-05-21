@@ -2,13 +2,17 @@ import {
   AllEntityNames,
   type Email,
   RelatedToType,
-  type User
+  type User,
+  generateTOTPCode
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
 import { generatePlutomiId } from "../../utils";
-import { TOTPCode } from "@plutomi/shared/@types/entities/totpCode";
+import {
+  TOTPCode,
+  TOTPCodeStatus
+} from "@plutomi/shared/@types/entities/totpCode";
 
 const MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES = 5;
 const MAX_TOTP_CODES_IN_LOOK_BACK_TIME = 2;
@@ -93,15 +97,15 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   let recentTotpCodes: TOTPCode[] = [];
+  const { _id: userId } = user;
 
   try {
     const now = dayjs();
-    const { _id: id } = user;
     recentTotpCodes = await req.items
       .find<TOTPCode>(
         {
           relatedTo: {
-            id,
+            id: userId,
             type: RelatedToType.TOTP_CODE
           },
           createdAt: {
@@ -115,6 +119,7 @@ export const post: RequestHandler = async (req, res) => {
         }
       )
       .toArray();
+    console.log(`RECENT`, recentTotpCodes);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -135,14 +140,35 @@ export const post: RequestHandler = async (req, res) => {
   try {
     const now = dayjs();
 
+    const totpCodeId = generatePlutomiId({
+      date: now.toDate(),
+      entity: AllEntityNames.TOTP_CODE
+    });
+
     const newTotpCode: TOTPCode = {
-      _id: generatePlutomiId({
-        date: now.toDate(),
-        entity: AllEntityNames.TOTP_CODE
-      }),
+      _id: totpCodeId,
+      code: generateTOTPCode(),
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      entityType: AllEntityNames.TOTP_CODE,
       expiresAt: now
         .add(TOTP_CODE_EXPIRATION_TIME_IN_MINUTES, "minutes")
-        .toISOString()
+        .toISOString(),
+      status: TOTPCodeStatus.ACTIVE,
+      relatedTo: [
+        {
+          id: AllEntityNames.TOTP_CODE,
+          type: RelatedToType.ENTITY
+        },
+        {
+          id: totpCodeId,
+          type: RelatedToType.ID
+        },
+        {
+          id: userId,
+          type: RelatedToType.TOTP_CODE
+        }
+      ]
     };
 
     await req.items.insertOne(newTotpCode);

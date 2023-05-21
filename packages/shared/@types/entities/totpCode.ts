@@ -9,10 +9,15 @@ type TOTPCodeRelatedToArray = [
   { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.TOTP_CODE }
 ];
 
+export enum TOTPCodeStatus {
+  ACTIVE = "ACTIVE",
+  EXPIRED = "EXPIRED"
+}
+
 export type TOTPCode = BaseEntity<AllEntityNames.TOTP_CODE> & {
   code: string;
   // ISO Timestamp
   expiresAt: string;
   relatedTo: TOTPCodeRelatedToArray;
-  status: "ACTIVE" | "EXPIRED";
+  status: TOTPCodeStatus;
 };
