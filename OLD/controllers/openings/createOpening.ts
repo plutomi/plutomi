@@ -43,7 +43,7 @@
 //     totalStages: 0,
 //     createdAt: now,
 //     updatedAt: now,
-//     target: [
+//     relatedTo: [
 //       // TODO allow creating public openings
 //       { property: IndexableProperties.OpeningState, value: OpeningState.Private },
 //     ],

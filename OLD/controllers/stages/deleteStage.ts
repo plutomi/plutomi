@@ -1,10 +1,10 @@
 // import { Request, Response } from 'express';
 // import { Filter, UpdateFilter } from 'mongodb';
 // import { IndexableProperties } from '../../@types/indexableProperties';
-// import { OrgEntity, StageEntity, StageTargetArray } from '../../models';
+// import { OrgEntity, StageEntity, StageRelatedToArray } from '../../models';
 // import { OpeningEntity } from '../../@types/entities/application';
 // import { collections, mongoClient } from '../../utils/connectToDatabase';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // export const deleteStage = async (req: Request, res: Response) => {
 //   const { user } = req;
@@ -38,8 +38,8 @@
 //     id: stageId,
 //     $and: [
 //       // ! TODO: Replace with elemmatch
-//       { target: { property: IndexableProperties.Opening, value: openingId } },
-//       { target: { property: IndexableProperties.Org, value: orgId } },
+//       { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
+//       { relatedTo: { property: IndexableProperties.Org, value: orgId } },
 //     ],
 //   };
 //   try {
@@ -57,11 +57,11 @@
 //   }
 
 //   console.log('Getting old previous stage');
-//   const oldPreviousStageId = findInTargetArray(IndexableProperties.PreviousStage, ourStage);
+//   const oldPreviousStageId = findInRelatedToArray(IndexableProperties.PreviousStage, ourStage);
 
 //   console.log('Getting old next stage');
 
-//   const oldNextStageId = findInTargetArray(IndexableProperties.NextStage, ourStage);
+//   const oldNextStageId = findInRelatedToArray(IndexableProperties.NextStage, ourStage);
 
 //   console.log('Got both');
 //   let oldPreviousStage: StageEntity;
@@ -84,8 +84,8 @@
 //           id: oldPreviousStageId,
 //           $and: [
 //             // ! TODO: Replace with elemmatch
-//             { target: { property: IndexableProperties.Opening, value: openingId } },
-//             { target: { property: IndexableProperties.Org, value: orgId } },
+//             { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
+//             { relatedTo: { property: IndexableProperties.Org, value: orgId } },
 //           ],
 //         };
 
@@ -109,7 +109,7 @@
 //           oldPreviousStageFilter,
 //           {
 //             $set: {
-//               target: oldPreviousStage.target,
+//               relatedTo: oldPreviousStage.target,
 //             },
 //           },
 //           { session },
@@ -123,8 +123,8 @@
 //           id: oldNextStageId,
 //           $and: [
 //             // ! TODO: Replace with elemmatch
-//             { target: { property: IndexableProperties.Opening, value: openingId } },
-//             { target: { property: IndexableProperties.Org, value: orgId } },
+//             { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
+//             { relatedTo: { property: IndexableProperties.Org, value: orgId } },
 //           ],
 //         };
 
@@ -145,7 +145,7 @@
 //           oldNextStageFilter,
 //           {
 //             $set: {
-//               target: oldNextStage.target,
+//               relatedTo: oldNextStage.target,
 //             },
 //           },
 //           { session },

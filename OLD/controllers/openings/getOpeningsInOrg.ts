@@ -5,7 +5,7 @@
 // import { JOI_SETTINGS } from '../../Config';
 // import { OpeningEntity } from '../../@types/entities/application';
 // import { collections } from '../../utils/connectToDatabase';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // const schema = Joi.object({
 //   params: {

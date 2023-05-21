@@ -33,7 +33,7 @@ export enum IndexableType {
 }
 
 // These can be anything
-type OtherTargetArrayItems = {
+type OtherRelatedToArrayItems = {
   id: PlutomiId<AllEntityNames> | string | boolean | number;
   type: IndexableType;
 };
@@ -58,9 +58,9 @@ type OtherTargetArrayItems = {
  * @link https://www.youtube.com/watch?v=eEENrNKxCdw&t=1263s
  * 
  */
-export type IndexedTargetArray<T extends AllEntityNames> = [
+export type RelatedToArray<T extends AllEntityNames> = [
   // These two will always be the first two items
   { id: T; type: IndexableType.Entity },
   { id: PlutomiId<T>; type: IndexableType.Id },
-  ...OtherTargetArrayItems[]
+  ...OtherRelatedToArrayItems[]
 ];

@@ -3,7 +3,7 @@
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { Defaults } from '../../Config';
 // import { InviteEntity, OrgEntity, UserEntity } from '../../models';
-// import { findInTargetArray } from '../../utils';
+// import { findInRelatedToArray } from '../../utils';
 
 // export const acceptInvite = async (req: Request, res: Response) => {
 //   const { inviteId } = req.params;
@@ -22,12 +22,12 @@
 //   const inviteFilter: Filter<InviteEntity> = {
 //     id: inviteId,
 //     $and: [ // ! TODO: Replace with elemmatch
-//       { target: { property: IndexableProperties.User, value: user.id } },
+//       { relatedTo: { property: IndexableProperties.User, value: user.id } },
 //       {
 //         // This is redundant but :)
-//         target: {
+//         relatedTo: {
 //           property: IndexableProperties.Email,
-//           value: findInTargetArray(IndexableProperties.Email, user),
+//           value: findInRelatedToArray(IndexableProperties.Email, user),
 //         },
 //       },
 //     ],

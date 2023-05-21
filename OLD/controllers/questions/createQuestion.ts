@@ -4,7 +4,7 @@
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { JOI_SETTINGS, LIMITS } from '../../Config';
 // import { OrgEntity, QuestionEntity, QuestionType } from '../../models';
-// import { findInTargetArray } from '../../utils';
+// import { findInRelatedToArray } from '../../utils';
 // import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 // // export type APICreateQuestionOptions = Pick<
@@ -47,7 +47,7 @@
 //     totalStages: 0,
 //     type: QuestionType.Text,
 //     title: GSI1SK,
-//     target: [],
+//     relatedTo: [],
 //   };
 //   let transactionResults;
 //   try {

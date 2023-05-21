@@ -1,4 +1,4 @@
-import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { IndexableType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
@@ -11,8 +11,8 @@ export enum QuestionType {
   Text = "Text"
   // TODO: More question types
 }
-type QuestionTargetArray = [
-  ...IndexedTargetArray<AllEntityNames.Question>,
+type QuestionRelatedToArray = [
+  ...RelatedToArray<AllEntityNames.Question>,
   // Get questions in an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Question },
   // Get questions in a workspace
@@ -25,5 +25,5 @@ export type Question = BaseEntity<AllEntityNames.Question> & {
   org: string;
   workspace: string;
   totals: QuestionTotals;
-  target: QuestionTargetArray;
+  relatedTo: QuestionRelatedToArray;
 };

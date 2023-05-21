@@ -1,9 +1,9 @@
 // import { Request, Response } from 'express';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // export const deleteWebhook = async (req: Request, res: Response) => {
 //   const { user } = req;
-//   // const orgId = findInTargetArray({
+//   // const orgId = findInRelatedToArray({
 //   //   entity: IdxTypes.Org,
 //   //   targetArray: user.target,
 //   // });

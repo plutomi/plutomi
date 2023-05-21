@@ -34,7 +34,7 @@
 
 //   const allStagesFilter: Filter<StageEntity> = {
 //     orgId,
-//     target: [{ property: IndexableProperties.CreatedAt, value: openingId }],
+//     relatedTo: [{ property: IndexableProperties.CreatedAt, value: openingId }],
 //     // !BUT IT IS ALLOWING ORG!!!! WHAT THE FUCK!?????????????????
 //   };
 //   try {

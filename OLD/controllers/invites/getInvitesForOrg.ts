@@ -16,7 +16,7 @@
 //   let invitesForOrg: InviteEntity[];
 //   try {
 //     const invitesFilter: Filter<InviteEntity> = {
-//       target: { property: IndexableProperties.Org, value: orgId },
+//       relatedTo: { property: IndexableProperties.Org, value: orgId },
 //     };
 //     invitesForOrg = (await collections.invites.find(invitesFilter).toArray()) as InviteEntity[];
 

@@ -6,7 +6,7 @@
 // import { collections } from '../../utils/connectToDatabase';
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { mongoClient } from '../../utils/connectToDatabase';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 // interface aa {
 //   orgId: string;
 //   displayName: string;
@@ -104,7 +104,7 @@
 //         totalUsers: 1,
 //         totalWebhooks: 0,
 //         createdBy: user.id,
-//         target: [],
+//         relatedTo: [],
 //         displayName,
 //       };
 //       await collections.orgs.insertOne(newOrg, { session });

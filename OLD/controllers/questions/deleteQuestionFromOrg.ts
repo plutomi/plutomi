@@ -1,11 +1,11 @@
 // import { Request, Response } from 'express';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // export const deleteQuestionFromOrg = async (req: Request, res: Response) => {
 //   const { user } = req;
 //   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-//   // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+//   // const orgId = findInRelatedToArray({ entity: IdxTypes.Org, targetArray: user.target });
 //   // const [success, failure] = await DB.Questions.deleteQuestionFromOrg({
 //   //   orgId: orgId,
 //   //   questionId: req.params.questionId,

@@ -26,7 +26,7 @@ export const post: RequestHandler = async (req, res) => {
 
   try {
     user = await req.items.findOne<User>({
-      target: {
+      relatedTo: {
         id: email,
         type: IndexableType.User
       }
@@ -58,7 +58,7 @@ export const post: RequestHandler = async (req, res) => {
       createdAt: now,
       updatedAt: now,
       entityType: AllEntityNames.User,
-      target: [
+      relatedTo: [
         {
           id: AllEntityNames.User,
           type: IndexableType.Entity
@@ -66,14 +66,6 @@ export const post: RequestHandler = async (req, res) => {
         {
           id: userId,
           type: IndexableType.Id
-        },
-        {
-          id: "NO_ORG",
-          type: IndexableType.User
-        },
-        {
-          id: "NO_WORKSPACE",
-          type: IndexableType.User
         },
         {
           id: email as Email,
@@ -94,8 +86,6 @@ export const post: RequestHandler = async (req, res) => {
       });
       return;
     }
-
-    let;
   }
 
   // 2. If user exists, check if they have request a login code in the last 5 minutes

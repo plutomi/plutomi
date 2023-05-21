@@ -2,7 +2,7 @@
 // import { Filter, UpdateFilter } from 'mongodb';
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { OrgEntity, UserEntity } from '../../models';
-// import { findInTargetArray } from '../../utils';
+// import { findInRelatedToArray } from '../../utils';
 // import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 // export const removeUserFromOrg = async (req: Request, res: Response) => {

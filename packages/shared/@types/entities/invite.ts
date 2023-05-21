@@ -1,10 +1,10 @@
-import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { IndexableType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
 
-export type InviteTargetArray = [
-  ...IndexedTargetArray<AllEntityNames.Invite>,
+export type InviteRelatedToArray = [
+  ...RelatedToArray<AllEntityNames.Invite>,
   // Get all invites for a user
   { id: PlutomiId<AllEntityNames.User>; type: IndexableType.Invite },
   // Get all invites for an org
@@ -33,5 +33,5 @@ export type Invite = BaseEntity<AllEntityNames.Invite> & {
     email: string;
   };
   expiresAt: Date;
-  target: InviteTargetArray;
+  relatedTo: InviteRelatedToArray;
 };

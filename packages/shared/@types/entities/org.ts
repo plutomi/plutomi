@@ -1,4 +1,4 @@
-import type { IndexedTargetArray } from "../indexableProperties";
+import type { RelatedToArray } from "../indexableProperties";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
 
@@ -17,10 +17,10 @@ export type OrgTotals = {
   workspaces: number;
 };
 
-type OrgTargetArray = IndexedTargetArray<AllEntityNames.Org>;
+type OrgRelatedToArray = RelatedToArray<AllEntityNames.Org>;
 
 export type Org = BaseEntity<AllEntityNames.Org> & {
   displayName: string;
   totals: OrgTotals;
-  target: OrgTargetArray;
+  relatedTo: OrgRelatedToArray;
 };

@@ -4,7 +4,7 @@
 // import {
 //   AllEntityNames,
 //   EntityPrefix,
-//   findInTargetArray,
+//   findInRelatedToArray,
 //   generatePlutomiId,
 //   sendEmail,
 // } from '../../utils';
@@ -31,14 +31,14 @@
 //   const { user } = req;
 //   const senderHasBothNames = user.firstName && user.lastName;
 //   const { recipientEmail, expiresInDays } = req.body;
-//   const userEmail = findInTargetArray(IndexableProperties.Email, user); // TODO update this
+//   const userEmail = findInRelatedToArray(IndexableProperties.Email, user); // TODO update this
 //   const { org: userOrgId } = user;
 
 //   if (!userOrgId) {
 //     return res.status(404).json({ message: 'You must belong to an org to invite other users' });
 //   }
 
-//   if (recipientEmail === findInTargetArray(IndexableProperties.Email, user)) {
+//   if (recipientEmail === findInRelatedToArray(IndexableProperties.Email, user)) {
 //     return res.status(403).json({ message: 'You cannot invite yourself :)' });
 //   }
 //   const orgFilter: Filter<OrgEntity> = {
@@ -63,7 +63,7 @@
 
 //   const recipientFilter: Filter<UserEntity> = {
 //     // !TODO: Not type safe!!!
-//     target: { property: IndexableProperties.Email, value: recipientEmail },
+//     relatedTo: { property: IndexableProperties.Email, value: recipientEmail },
 //   };
 
 //   try {
@@ -94,7 +94,7 @@
 //       lastName: null,
 //       emailVerified: false,
 //       canReceiveEmails: true,
-//       target: [
+//       relatedTo: [
 //         { id: AllEntityNames.User, type: IndexableProperties.Entity },
 //         { id: userId, type: IndexableProperties.Id },
 //         { id: recipientEmail, type: IndexableProperties.Email },
@@ -133,7 +133,7 @@
 //       email: userEmail,
 //     },
 //     expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
-//     target: [
+//     relatedTo: [
 //       { id: AllEntityNames.Invite, type: IndexableProperties.Entity },
 //       { id: newInviteId, type: IndexableProperties.Id },
 //       { id: recipientEmail, type: IndexableProperties.Email },
@@ -147,7 +147,7 @@
 //   // Check if the user already has a pending invite for the org they are being invited to
 //   const invitesFilter: Filter<InviteEntity> = {
 //     orgId: userOrgId,
-//     target: { property: IndexableProperties.Email, value: recipientEmail },
+//     relatedTo: { property: IndexableProperties.Email, value: recipientEmail },
 //   };
 //   const currentInvite = await req.db.findOne(invitesFilter);
 //   if (currentInvite) {

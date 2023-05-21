@@ -2,7 +2,7 @@
 // import { Filter } from 'mongodb';
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { QuestionEntity } from '../../models';
-// import { findInTargetArray } from '../../utils';
+// import { findInRelatedToArray } from '../../utils';
 // import { collections } from '../../utils/connectToDatabase';
 
 // export const getQuestion = async (req: Request, res: Response) => {

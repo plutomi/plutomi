@@ -74,7 +74,7 @@ export const createDistribution = ({
   void new ARecord(stack, aRecordAlias, {
     recordName: env.DOMAIN,
     zone: hostedZone,
-    target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
+    relatedTo: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
   });
 
   return distribution;

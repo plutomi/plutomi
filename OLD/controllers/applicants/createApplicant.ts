@@ -3,7 +3,7 @@
 // import emailValidator from 'deep-email-validator';
 // import { Defaults, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 // // import { DynamoApplicant } from '../../types/dynamo';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // // export type APICreateApplicantOptions = Required<
 // //   Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
@@ -47,7 +47,7 @@
 //   // try {
 //   //   opening = await entityManager.findOne(Opening, {
 //   //     id: openingId,
-//   //     $and: [{ target: { id: orgId, type: IdxTypes.Org } }],
+//   //     $and: [{ relatedTo: { id: orgId, type: IdxTypes.Org } }],
 //   //   });
 //   // } catch (error) {
 //   //   const message = 'Error retrieving opening info';
@@ -58,7 +58,7 @@
 //   // if (!opening) {
 //   //   return res.status(404).json({ message: 'Opening does not exist' });
 //   // }
-//   // const openingState = findInTargetArray({
+//   // const openingState = findInRelatedToArray({
 //   //   entity: IdxTypes.OpeningState,
 //   //   targetArray: opening.target,
 //   // });
@@ -72,9 +72,9 @@
 //   // try {
 //   //   firstStage = await entityManager.findOne(Stage, {
 //   //     $and: [
-//   //       { target: { id: orgId, type: IdxTypes.Org } },
-//   //       { target: { id: openingId, type: IdxTypes.Opening } },
-//   //       { target: { id: undefined, type: IdxTypes.PreviousStage } },
+//   //       { relatedTo: { id: orgId, type: IdxTypes.Org } },
+//   //       { relatedTo: { id: openingId, type: IdxTypes.Opening } },
+//   //       { relatedTo: { id: undefined, type: IdxTypes.PreviousStage } },
 //   //     ],
 //   //   });
 //   // } catch (error) {

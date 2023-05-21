@@ -1,4 +1,4 @@
-import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { IndexableType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
@@ -8,8 +8,8 @@ type StageTotals = {
   questions: number;
 };
 
-type StageTargetArray = [
-  ...IndexedTargetArray<AllEntityNames.Stage>,
+type StageRelatedToArray = [
+  ...RelatedToArray<AllEntityNames.Stage>,
   // Get all stages in an application
   { id: PlutomiId<AllEntityNames.Application>; type: IndexableType.Stage },
   // Get all stages in an org
@@ -29,5 +29,5 @@ export type Stage = BaseEntity<AllEntityNames.Stage> & {
   org: string;
   workspace: string;
   totals: StageTotals;
-  target: StageTargetArray;
+  relatedTo: StageRelatedToArray;
 };

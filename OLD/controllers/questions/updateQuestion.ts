@@ -4,7 +4,7 @@
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { JOI_SETTINGS, LIMITS } from '../../Config';
 // import { QuestionEntity, StageEntity } from '../../models';
-// import { findInTargetArray } from '../../utils';
+// import { findInRelatedToArray } from '../../utils';
 // import { collections } from '../../utils/connectToDatabase';
 
 // // export interface APIUpdateQuestionOptions

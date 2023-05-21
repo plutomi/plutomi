@@ -3,7 +3,7 @@
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { StageEntity } from '../../models';
 // import { collections } from '../../utils/connectToDatabase';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // export const getStage = async (req: Request, res: Response) => {
 //   const { user } = req;
@@ -16,7 +16,7 @@
 //     id: stageId,
 //     orgId,
 //     // TODO make this so only stage ID is required!
-//     target: { property: IndexableProperties.Opening, value: openingId },
+//     relatedTo: { property: IndexableProperties.Opening, value: openingId },
 //   };
 //   try {
 //     stage = (await collections.stages.findOne(stageFilter)) as StageEntity;

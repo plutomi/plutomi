@@ -1,5 +1,5 @@
 import type { AllEntityNames } from "./allEntityNames";
-import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { IndexableType, RelatedToArray } from "../indexableProperties";
 import type { BaseEntity } from "./baseEntity";
 import type { PlutomiId } from "../plutomiId";
 
@@ -8,8 +8,8 @@ type ApplicationTotals = {
   stages: number;
 };
 
-type ApplicationTargetArray = [
-  ...IndexedTargetArray<AllEntityNames.Application>,
+type ApplicationRelatedToArray = [
+  ...RelatedToArray<AllEntityNames.Application>,
   // Get all applications for an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Org },
   // Get all applications for a workspace
@@ -21,5 +21,5 @@ export type Application = BaseEntity<AllEntityNames.Application> & {
   org: string;
   workspace: string;
   totals: ApplicationTotals;
-  target: ApplicationTargetArray;
+  relatedTo: ApplicationRelatedToArray;
 };

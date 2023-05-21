@@ -1,4 +1,4 @@
-import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
+import type { IndexableType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
@@ -12,8 +12,8 @@ import type { BaseEntity } from "./baseEntity";
  * For more info, see this post: https://blitzjs.com/docs/multitenancy
  */
 
-type MembershipTargetArray = [
-  ...IndexedTargetArray<AllEntityNames.Membership>,
+type MembershipRelatedToArray = [
+  ...RelatedToArray<AllEntityNames.Membership>,
   // Get all members of an org
   { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Membership },
   // Get all memberships for a user and with it, all the workspaces they are in
@@ -24,5 +24,5 @@ type MembershipTargetArray = [
 
 export type Membership = BaseEntity<AllEntityNames.Membership> & {
   org: string;
-  target: MembershipTargetArray;
+  relatedTo: MembershipRelatedToArray;
 };

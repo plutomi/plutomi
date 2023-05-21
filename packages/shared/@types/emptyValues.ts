@@ -4,7 +4,7 @@
  * 
  *   const userData: User = {
       _id: userId,
-      target: [
+      relatedTo: [
         {
           id: AllEntityNames.User,
           type: IndexableType.Entity

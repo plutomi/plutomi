@@ -58,7 +58,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let user: User | undefined;
 
   const findUserFilter: Filter<User> = {
-    target: { $elemMatch: { id: email, type: IndexableType.Email } },
+    relatedTo: { $elemMatch: { id: email, type: IndexableType.Email } },
   };
 
   try {
@@ -101,7 +101,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
           memberships: 0,
           workspaces: 0,
         },
-        target: [
+        relatedTo: [
           { id: AllEntityNames.User, type: IndexableType.Entity },
           { id: newUserId, type: IndexableType.Id },
           // Org
@@ -136,7 +136,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let latestLoginLink: LoginLink;
 
   const loginLinkFilter: Filter<LoginLink> = {
-    $and: [{ target: { $elemMatch: { id: user._id, type: IndexableType.LoginLink } } }],
+    $and: [{ relatedTo: { $elemMatch: { id: user._id, type: IndexableType.LoginLink } } }],
   };
 
   if (!newUserCreated) {
@@ -194,7 +194,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       entityType: AllEntityNames.LoginLink,
       expiresAt: linkExpiry.toISOString(),
       totals: {},
-      target: [
+      relatedTo: [
         { id: AllEntityNames.LoginLink, type: IndexableType.Entity },
         { id: loginLinkId, type: IndexableType.Id },
         { id: user.org, type: IndexableType.LoginLink },
