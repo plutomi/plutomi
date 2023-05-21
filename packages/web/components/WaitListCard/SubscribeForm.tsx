@@ -51,7 +51,7 @@ export const SubscribeForm: React.FC = () => {
   const handleFormSubmit = async (values: Schema.Subscribe.UIValues) => {
     setIsSubmitting(true);
     try {
-      await axios.post("/api/subscribe", values);
+      await axios.post("/api/waitlist", values);
       setSuccess(true);
     } catch (error) {
       const message = handleAxiosError(error);
