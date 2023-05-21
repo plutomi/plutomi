@@ -1,3 +1,5 @@
+import { TOTP_CODE_EXPIRATION_TIME_IN_MINUTES } from "@plutomi/shared";
+
 type TOTPTemplateProps = {
   code: string;
 };
@@ -256,7 +258,7 @@ export const TOTPTemplate = ({ code }: TOTPTemplateProps) =>
                                   >
                                     <p style="line-height: 140%">
                                       It will expire in
-                                      <strong>5 minutes</strong>. <br /><br />If
+                                      <strong>${TOTP_CODE_EXPIRATION_TIME_IN_MINUTES} minutes</strong>. <br /><br />If
                                       you did not request this email, you can
                                       safely ignore it. For any questions, feel
                                       free to reach out to

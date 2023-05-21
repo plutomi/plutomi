@@ -179,8 +179,6 @@ export const post: RequestHandler = async (req, res) => {
     });
   }
 
-  // ! TODO: SES - Send email
-
   try {
     await sendEmail({
       to: email as Email,
