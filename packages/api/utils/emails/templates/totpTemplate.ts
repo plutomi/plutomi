@@ -264,7 +264,7 @@ export const TOTPTemplate = ({ code }: TOTPTemplateProps) =>
                                       free to reach out to
                                       <a
                                         rel="noopener"
-                                        href="mailto:jose@plutomi.com"
+                                        href="mailto:jose@plutomi.com?subject=Didn't%20request%20login%20code%20-%20${code}&body=Please%20do%20not%20send%20me%20anymore%20emails.%20Thanks!"
                                         target="_blank"
                                         >jose@plutomi.com</a
                                       >
