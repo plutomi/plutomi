@@ -1,5 +1,6 @@
 import { TextInput, Text } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
+import { PlutomiEmails } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 
 type LoginEmailFormProps = {
@@ -19,7 +20,7 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
       required
       label="Email"
       type="email"
-      placeholder="jose@plutomi.com"
+      placeholder={PlutomiEmails.JOSE}
       radius="md"
       disabled={isSubmitting}
     />

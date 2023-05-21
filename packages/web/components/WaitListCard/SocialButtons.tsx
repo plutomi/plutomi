@@ -2,9 +2,7 @@ import { BsGithub, BsTwitter } from "react-icons/bs";
 import { Flex, Tooltip, Button, rem, Stack } from "@mantine/core";
 import { useClipboard } from "@mantine/hooks";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
-
-// TODO Move to shared
-const myEmail = "jose@plutomi.com";
+import { PlutomiEmails } from "@plutomi/shared";
 
 export const SocialButtons: React.FC = () => {
   const clipboard = useClipboard();
@@ -35,10 +33,10 @@ export const SocialButtons: React.FC = () => {
             rightIcon: { marginLeft: rem(3) }
           }}
           onClick={() => {
-            clipboard.copy(myEmail);
+            clipboard.copy(PlutomiEmails.JOSE);
           }}
         >
-          {myEmail}
+          {PlutomiEmails.JOSE}
         </Button>
       </Tooltip>
       <Flex

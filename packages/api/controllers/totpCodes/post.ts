@@ -126,6 +126,7 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   if (recentTotpCodes.length >= MAX_TOTP_CODES_IN_LOOK_BACK_TIME) {
+    // ! TODO: Log attempt
     res.status(403).json({
       message:
         "You have requested too many login codes recently, please try again in a bit."
@@ -168,14 +169,16 @@ export const post: RequestHandler = async (req, res) => {
     };
 
     await req.items.insertOne(newTotpCode);
-
-    res.status(201).json({
-      message: "A login code has been sent to your email"
-    });
   } catch (error) {
     res.status(500).json({
       message: "An error ocurred creating your login code",
       error
     });
   }
+
+  // ! TODO: SES - Send email
+
+  res.status(201).json({
+    message: "A login code has been sent to your email"
+  });
 };
