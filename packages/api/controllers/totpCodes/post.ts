@@ -8,12 +8,13 @@ import {
   TOTPCodeStatus,
   MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES,
   MAX_TOTP_CODES_IN_LOOK_BACK_TIME,
-  TOTP_CODE_EXPIRATION_TIME_IN_MINUTES
+  TOTP_CODE_EXPIRATION_TIME_IN_MINUTES,
+  PlutomiEmails
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import { generatePlutomiId } from "../../utils";
+import { generatePlutomiId, sendEmail } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -134,6 +135,8 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
+  const totpCode = generateTOTPCode();
+
   try {
     const now = dayjs();
     const nowIso = now.toISOString();
@@ -144,7 +147,7 @@ export const post: RequestHandler = async (req, res) => {
 
     const newTotpCode: TOTPCode = {
       _id: totpCodeId,
-      code: generateTOTPCode(),
+      code: totpCode,
       createdAt: nowIso,
       updatedAt: nowIso,
       entityType: AllEntityNames.TOTP_CODE,
@@ -177,6 +180,23 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   // ! TODO: SES - Send email
+
+  try {
+    await sendEmail({
+      to: email as Email,
+      subject: `Your Plutomi Login Code - ${totpCode}`,
+      from: {
+        header: "Plutomi",
+        email: PlutomiEmails.JOSE
+      },
+      bodyJsx: EMAIL_TEMPLATES.TOTPCodeTemplate
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "An error ocurred sending your login code",
+      error
+    });
+  }
 
   res.status(201).json({
     message: "A login code has been sent to your email"
