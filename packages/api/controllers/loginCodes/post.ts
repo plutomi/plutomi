@@ -21,8 +21,6 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email } = data;
 
-  console.log("INCOMING EMAIL:", `'${email}'`);
-
   // Check if a user exists with that email, and if not, create them
   let user: User | null = null;
 
@@ -30,7 +28,7 @@ export const post: RequestHandler = async (req, res) => {
     user = await req.items.findOne<User>({
       target: {
         id: email,
-        type: IndexableType.Email
+        type: IndexableType.User
       }
     });
   } catch (error) {
@@ -70,25 +68,22 @@ export const post: RequestHandler = async (req, res) => {
           type: IndexableType.Id
         },
         {
-          id: null,
+          id: "NO_ORG",
           type: IndexableType.User
         },
         {
-          id: null,
+          id: "NO_WORKSPACE",
           type: IndexableType.User
         },
         {
-          id: email.toLocaleLowerCase().trim() as Email,
-          type: IndexableType.Email
+          id: email as Email,
+          type: IndexableType.User
         }
       ]
     };
 
     try {
-      await req.items.updateOne(
-        { data: { email } },
-        { $setOnInsert: userData }
-      );
+      // ! TODO: Concurrency issue when two people make the request at the same time
       await req.items.insertOne(userData);
       user = userData;
     } catch (error) {
@@ -100,7 +95,7 @@ export const post: RequestHandler = async (req, res) => {
       return;
     }
 
-    //
+    let;
   }
 
   // 2. If user exists, check if they have request a login code in the last 5 minutes

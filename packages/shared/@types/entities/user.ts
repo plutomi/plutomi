@@ -20,7 +20,7 @@ type UserTargetArray = [
   // // Get all users in a workspace
   // { id: UserWorkspaceId; type: IndexableType.User },
   // Get a user by email
-  { id: Email; type: IndexableType.Email }
+  { id: Email; type: IndexableType.User }
 ];
 
 export type User = BaseEntity<AllEntityNames.User> & {
