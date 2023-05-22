@@ -1,15 +1,15 @@
 import {
   AllEntityNames,
   RelatedToType,
-  generateTOTPCode,
+  generateTOTP,
   type User,
   type Email,
   type TOTPCode,
   TOTPCodeStatus,
-  MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES,
-  MAX_TOTP_CODES_IN_LOOK_BACK_TIME,
-  TOTP_CODE_EXPIRATION_TIME_IN_MINUTES,
-  PlutomiEmails
+  TOTP_EXPIRATION_TIME_IN_MINUTES,
+  PlutomiEmails,
+  MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
+  MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
@@ -118,12 +118,12 @@ export const post: RequestHandler = async (req, res) => {
           },
           createdAt: {
             $gte: now
-              .subtract(MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+              .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
               .toISOString()
           }
         },
         {
-          limit: MAX_TOTP_CODES_IN_LOOK_BACK_TIME
+          limit: MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME
         }
       )
       .toArray();
@@ -135,7 +135,7 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (recentTotpCodes.length >= MAX_TOTP_CODES_IN_LOOK_BACK_TIME) {
+  if (recentTotpCodes.length >= MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME) {
     // ! TODO: Log attempt
     res.status(403).json({
       message:
@@ -144,7 +144,7 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  const totpCode = generateTOTPCode();
+  const totpCode = generateTOTP();
 
   try {
     const now = dayjs();
@@ -161,7 +161,7 @@ export const post: RequestHandler = async (req, res) => {
       updatedAt: nowIso,
       entityType: AllEntityNames.TOTP,
       expiresAt: now
-        .add(TOTP_CODE_EXPIRATION_TIME_IN_MINUTES, "minutes")
+        .add(TOTP_EXPIRATION_TIME_IN_MINUTES, "minutes")
         .toISOString(),
       status: TOTPCodeStatus.ACTIVE,
       relatedTo: [

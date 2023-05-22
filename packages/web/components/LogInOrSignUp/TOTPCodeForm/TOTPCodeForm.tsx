@@ -1,14 +1,14 @@
 import { TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
-import { TOTP_CODE_LENGTH, generateTOTPCode } from "@plutomi/shared";
+import { TOTP_LENGTH, generateTOTP } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 
 type TOTPCodeFormProps = {
-  form: UseFormReturnType<Schema.LogInOrSignUp.totpCode.UIValues>;
+  form: UseFormReturnType<Schema.LogInOrSignUp.totp.UIValues>;
   isSubmitting: boolean;
 };
 
-const placeholderText = `Example: ${generateTOTPCode()}`;
+const placeholderText = `Example: ${generateTOTP()}`;
 
 // TODO: Change this to a https://mantine.dev/core/pin-input/
 // TODO: Use this?:
@@ -29,7 +29,7 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
       type="text"
       radius="md"
       disabled={isSubmitting}
-      maxLength={TOTP_CODE_LENGTH}
+      maxLength={TOTP_LENGTH}
       placeholder={placeholderText}
       onChange={(event) => {
         form.setFieldValue("totpCode", event.currentTarget.value.toUpperCase());
