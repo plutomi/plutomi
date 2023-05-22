@@ -2,6 +2,7 @@ import type { AllEntityNames } from "./entities";
 import type { PlutomiId } from "./plutomiId";
 
 // These are properties, aside from each entity type, that can be indexed
+// Make sure these are all capitalized
 export enum RelatedToType {
   /**
    * All entities -
@@ -11,7 +12,7 @@ export enum RelatedToType {
   // I really don't like how we have duplicate data here
   USER = "USER",
   WAIT_LIST_USER = "WAIT_LIST_USER",
-  TOTP_CODE = "TOTP_CODE",
+  TOTP = "TOTP",
   // Org = "org",
   // Application = "application",
   // Invite = "invite",

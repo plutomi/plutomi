@@ -114,7 +114,7 @@ export const post: RequestHandler = async (req, res) => {
           status: TOTPCodeStatus.ACTIVE,
           relatedTo: {
             id: userId,
-            type: RelatedToType.TOTP_CODE
+            type: RelatedToType.TOTP
           },
           createdAt: {
             $gte: now
@@ -151,7 +151,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({
       date: now.toDate(),
-      entity: AllEntityNames.TOTP_CODE
+      entity: AllEntityNames.TOTP
     });
 
     const newTotpCode: TOTPCode = {
@@ -159,14 +159,14 @@ export const post: RequestHandler = async (req, res) => {
       code: totpCode,
       createdAt: nowIso,
       updatedAt: nowIso,
-      entityType: AllEntityNames.TOTP_CODE,
+      entityType: AllEntityNames.TOTP,
       expiresAt: now
         .add(TOTP_CODE_EXPIRATION_TIME_IN_MINUTES, "minutes")
         .toISOString(),
       status: TOTPCodeStatus.ACTIVE,
       relatedTo: [
         {
-          id: AllEntityNames.TOTP_CODE,
+          id: AllEntityNames.TOTP,
           type: RelatedToType.ENTITY
         },
         {
@@ -175,11 +175,11 @@ export const post: RequestHandler = async (req, res) => {
         },
         {
           id: userId,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         },
         {
           id: email as Email,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         }
       ]
     };

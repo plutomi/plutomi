@@ -5,11 +5,11 @@ import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
 
 type TOTPCodeRelatedToArray = [
-  ...RelatedToArray<AllEntityNames.TOTP_CODE>,
+  ...RelatedToArray<AllEntityNames.TOTP>,
   // Get login codes for a user
-  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.TOTP_CODE },
+  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.TOTP },
   // Get login codes for an email
-  { id: Email; type: RelatedToType.TOTP_CODE }
+  { id: Email; type: RelatedToType.TOTP }
 ];
 
 export enum TOTPCodeStatus {
@@ -17,7 +17,7 @@ export enum TOTPCodeStatus {
   EXPIRED = "EXPIRED"
 }
 
-export type TOTPCode = BaseEntity<AllEntityNames.TOTP_CODE> & {
+export type TOTPCode = BaseEntity<AllEntityNames.TOTP> & {
   code: string;
   // ISO Timestamp
   expiresAt: string;

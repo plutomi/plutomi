@@ -28,7 +28,7 @@ export const post: RequestHandler = async (req, res) => {
       .find<TOTPCode>({
         relatedTo: {
           id: email,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         }
       })
       .sort({ createdAt: -1 })
@@ -117,7 +117,7 @@ export const post: RequestHandler = async (req, res) => {
         status: { $ne: TOTPCodeStatus.EXPIRED },
         relatedTo: {
           id: email,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         }
       },
       {
