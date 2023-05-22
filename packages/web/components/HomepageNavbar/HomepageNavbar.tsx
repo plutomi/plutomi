@@ -66,7 +66,6 @@ type HeaderActionProps = {
 export const HomepageNavbar: React.FC<HeaderActionProps> = () => {
   const { classes } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
-  const router = useRouter();
   // const items = links.map((link) => {
   //   const menuItems = link.links?.map((item) => (
   //     <Menu.Item key={item.link}>{item.label}</Menu.Item>
@@ -113,9 +112,6 @@ export const HomepageNavbar: React.FC<HeaderActionProps> = () => {
   //   );
   // });
 
-  const loginRedirect = () => {
-    void router.push("/login");
-  };
   return (
     <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }}>
       <Container className={classes.inner} size="xl">
@@ -139,7 +135,7 @@ export const HomepageNavbar: React.FC<HeaderActionProps> = () => {
           </Link>
 
           <Link href="/signup" passHref>
-            <Button radius="md" size="md" onClick={loginRedirect}>
+            <Button radius="md" size="md">
               Sign Up
             </Button>
           </Link>
