@@ -4,6 +4,7 @@
 // import type { Org } from "./org";
 import type { TOTPCode } from "./totpCode";
 import type { User } from "./user";
+import type { WaitListUser } from "./waitListUser";
 // import type { Question } from "./question";
 // import type { Stage } from "./stage";
 // import type { StageQuestionItem } from "./stageQuestionItem";
@@ -14,7 +15,7 @@ export type AllEntities =
   // | Invite
   // | Membership
   // | Org
-  User | TOTPCode;
+  User | TOTPCode | WaitListUser;
 // | Question
 // | Stage
 // | StageQuestionItem
