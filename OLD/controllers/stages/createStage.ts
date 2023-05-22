@@ -8,7 +8,7 @@
 // import { OpeningEntity } from '../../@types/entities/application';
 // import { generateId } from '../../utils';
 // import { collections, mongoClient } from '../../utils/connectToDatabase';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // // export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
 // //   /**
@@ -68,10 +68,10 @@
 //     $and: [
 //       // ! TODO: Replace with elemmatch
 //       {
-//         target: { property: IndexableProperties.Org, value: orgId },
+//         relatedTo: { property: IndexableProperties.Org, value: orgId },
 //       },
-//       { target: { property: IndexableProperties.Opening, value: openingId } },
-//       { target: { property: IndexableProperties.NextStage, value: null } },
+//       { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
+//       { relatedTo: { property: IndexableProperties.NextStage, value: null } },
 //     ],
 //   };
 //   try {
@@ -92,7 +92,7 @@
 //     totalQuestions: 0,
 //     totalApplicants: 0,
 //     name: GSI1SK, // TODO update this
-//     target: [
+//     relatedTo: [
 //       { property: IndexableProperties.Opening, value: openingId },
 //       {
 //         property: IndexableProperties.PreviousStage,

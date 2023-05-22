@@ -103,20 +103,6 @@ export enum LIMITS {
   MAX_CHILD_ITEM_LIMIT = 200,
 }
 
-export enum Emails {
-  Support = 'support@plutomi.com',
-  General = 'contact@plutomi.com',
-  Invest = 'ir@plutomi.com',
-  Admin = 'admin@plutomi.com',
-  Login = 'login@plutomi.com', // Login links
-  Join = 'join@plutomi.com', // Org invites
-  Jose = 'jose@plutomi.com', // Welcome messages
-  // Jest test accounts
-  Testing = 'testing@plutomi.com',
-  Testing2 = 'testing2@plutomi.com',
-  Testing3 = 'testing3@plutomi.com',
-  Testing4 = 'testing4@plutomi.com',
-}
 
 export const JOI_SETTINGS: Joi.ValidationOptions = {
   abortEarly: false,

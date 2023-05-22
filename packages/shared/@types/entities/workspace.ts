@@ -1,20 +1,20 @@
-import type { IndexableType, IndexedTargetArray } from "../indexableProperties";
-import type { PlutomiId } from "../plutomiId";
-import type { AllEntityNames } from "./allEntityNames";
-import type { BaseEntity } from "./baseEntity";
-import type { OrgTotals } from "./org";
+// import type { RelatedToType, RelatedToArray } from "../indexableProperties";
+// import type { PlutomiId } from "../plutomiId";
+// import type { AllEntityNames } from "./allEntityNames";
+// import type { BaseEntity } from "./baseEntity";
+// import type { OrgTotals } from "./org";
 
-type WorkspaceTotals = Omit<OrgTotals, "workspaces">;
+// type WorkspaceTotals = Omit<OrgTotals, "workspaces">;
 
-type WorkspaceTargetArray =
-  // Get all workspaces for an org
-  [
-    ...IndexedTargetArray<AllEntityNames.Workspace>,
-    { id: PlutomiId<AllEntityNames.Org>; type: IndexableType.Workspace }
-  ];
+// type WorkspaceRelatedToArray =
+//   // Get all workspaces for an org
+//   [
+//     ...RelatedToArray<AllEntityNames.Workspace>,
+//     { id: PlutomiId<AllEntityNames.Org>; type: RelatedToType.Workspace }
+//   ];
 
-export type Workspace = BaseEntity<AllEntityNames.Workspace> & {
-  name: string;
-  totals: WorkspaceTotals;
-  target: WorkspaceTargetArray;
-};
+// export type Workspace = BaseEntity<AllEntityNames.Workspace> & {
+//   name: string;
+//   totals: WorkspaceTotals;
+//   relatedTo: WorkspaceRelatedToArray;
+// };

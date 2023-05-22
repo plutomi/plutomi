@@ -10,11 +10,14 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
-import { delay } from "@plutomi/shared";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
-import { LoginEmailForm } from "./EmailForm";
+import axios from "axios";
+import { notifications } from "@mantine/notifications";
+import { handleAxiosError } from "@/utils/handleAxiosResponse";
+import { IconX } from "@tabler/icons-react";
 import { TOTPCodeForm } from "./TOTPCodeForm";
+import { LoginEmailForm } from "./EmailForm";
 
 export const LogInOrSignUpForm: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -53,15 +56,57 @@ export const LogInOrSignUpForm: React.FC = () => {
 
     setIsSubmitting(true);
 
-    // ! TODO: Submit email here
-    await delay({ ms: 300 });
+    if (step === 1) {
+      try {
+        await axios.post("/api/totpCodes", {
+          email: emailForm.values.email
+        });
+        setStep((currentStep) => currentStep + 1);
+      } catch (error) {
+        const message = handleAxiosError(error);
+        notifications.show({
+          withCloseButton: true,
+          title: "An error ocurred",
+          message,
+          color: "red",
+          icon: <IconX />,
+          loading: false
+        });
+        return;
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
 
     if (step === 2) {
-      void router.push("/dashboard");
-      return;
+      try {
+        await axios.post("/api/totpCodes/verify", {
+          email: emailForm.values.email,
+          totpCode: totpCodeForm.values.totpCode
+        });
+
+        notifications.show({
+          withCloseButton: true,
+          message: "Login successful!",
+          autoClose: 4000,
+          color: "green"
+        });
+        void router.push("/dashboard");
+      } catch (error) {
+        const message = handleAxiosError(error);
+        notifications.show({
+          withCloseButton: true,
+          title: "An error ocurred",
+          message,
+          color: "red",
+          icon: <IconX />,
+          loading: false
+        });
+
+        // Only disable on error incase the page switch takes a while
+        setIsSubmitting(false);
+      }
     }
-    setStep((currentStep) => currentStep + 1);
-    setIsSubmitting(false);
   };
 
   const previousStep = () => {

@@ -1,5 +1,5 @@
 // import { StageEntity } from '../models';
-// import { findInTargetArray } from './findInTargetArray';
+// import { findInRelatedToArray } from './findInRelatedToArray';
 
 // interface GetAdjacentStagesBasedOnPositionProps {
 //   position?: number;
@@ -24,7 +24,7 @@
 //   let firstStageIndex: number;
 
 //   unsortedStagesInOpening.find((stage, idx) => {
-//     const previousStage = findInTargetArray(IndexableTypes.PreviousStage, stage);
+//     const previousStage = findInRelatedToArray(RelatedToTypes.PreviousStage, stage);
 
 //     if (!previousStage) {
 //       firstStage = stage;
@@ -48,7 +48,7 @@
 //   let startingStage = firstStage;
 
 //   while (!reachedTheEnd) {
-//     const newNextStageId = findInTargetArray(IndexableType.NextStage, startingStage);
+//     const newNextStageId = findInRelatedToArray(RelatedToType.NextStage, startingStage);
 
 //     let nextStage: StageEntity | undefined;
 

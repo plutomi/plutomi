@@ -4,7 +4,7 @@
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { UserEntity } from '../../models';
 // import { collections } from '../../utils/connectToDatabase';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // export const getUsersInOrg = async (req: Request, res: Response) => {
 //   const { user } = req;
@@ -27,8 +27,8 @@
 //         firstName: user.firstName,
 //         lastName: user.lastName,
 //         createdAt: user.createdAt,
-//         email: findInTargetArray(IndexableProperties.Email, user),
-//         target: user.target,
+//         email: findInRelatedToArray(IndexableProperties.Email, user),
+//         relatedTo: user.target,
 //         orgJoinDate: user.orgJoinDate,
 //       };
 //     });

@@ -6,7 +6,7 @@ import { envVars } from '../../env';
 import { sendEmail } from '../../OLD/utils/sendEmail';
 import { Time, generatePlutomiId } from '../../OLD/utils';
 import { User } from '../../@types/entities/user';
-import { IndexableType } from '../../@types/indexableProperties';
+import { RelatedToType } from '../../@types/indexableProperties';
 import { AllEntityNames } from '../../@types/entities/allEntityNames';
 import { Email } from '../../@types/email';
 import { LoginLink } from '../../@types/entities/loginLink';
@@ -58,7 +58,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let user: User | undefined;
 
   const findUserFilter: Filter<User> = {
-    target: { $elemMatch: { id: email, type: IndexableType.Email } },
+    relatedTo: { $elemMatch: { id: email, type: RelatedToType.Email } },
   };
 
   try {
@@ -101,14 +101,14 @@ export const requestLoginLink = async (req: Request, res: Response) => {
           memberships: 0,
           workspaces: 0,
         },
-        target: [
-          { id: AllEntityNames.User, type: IndexableType.Entity },
-          { id: newUserId, type: IndexableType.Id },
+        relatedTo: [
+          { id: AllEntityNames.User, type: RelatedToType.Entity },
+          { id: newUserId, type: RelatedToType.Id },
           // Org
-          { id: null, type: IndexableType.User },
+          { id: null, type: RelatedToType.User },
           // Workspace
-          { id: null, type: IndexableType.User },
-          { id: email, type: IndexableType.Email },
+          { id: null, type: RelatedToType.User },
+          { id: email, type: RelatedToType.Email },
         ],
       };
 
@@ -136,7 +136,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let latestLoginLink: LoginLink;
 
   const loginLinkFilter: Filter<LoginLink> = {
-    $and: [{ target: { $elemMatch: { id: user._id, type: IndexableType.LoginLink } } }],
+    $and: [{ relatedTo: { $elemMatch: { id: user._id, type: RelatedToType.LoginLink } } }],
   };
 
   if (!newUserCreated) {
@@ -194,12 +194,12 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       entityType: AllEntityNames.LoginLink,
       expiresAt: linkExpiry.toISOString(),
       totals: {},
-      target: [
-        { id: AllEntityNames.LoginLink, type: IndexableType.Entity },
-        { id: loginLinkId, type: IndexableType.Id },
-        { id: user.org, type: IndexableType.LoginLink },
-        { id: user.workspace, type: IndexableType.LoginLink },
-        { id: user._id, type: IndexableType.LoginLink },
+      relatedTo: [
+        { id: AllEntityNames.LoginLink, type: RelatedToType.Entity },
+        { id: loginLinkId, type: RelatedToType.Id },
+        { id: user.org, type: RelatedToType.LoginLink },
+        { id: user.workspace, type: RelatedToType.LoginLink },
+        { id: user._id, type: RelatedToType.LoginLink },
       ],
     };
 

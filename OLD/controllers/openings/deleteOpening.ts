@@ -2,7 +2,7 @@
 // import Joi from 'joi';
 // import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 // import { Filter, UpdateFilter } from 'mongodb';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 // import { OpeningEntity } from '../../@types/entities/application';
 // import { OrgEntity } from '../../models';
 // import { IndexableProperties } from '../../@types/indexableProperties';

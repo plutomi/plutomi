@@ -10,7 +10,7 @@
 // // import { DB } from '../../models';
 // // import { Stage } from '../../entities';
 // // import { IndexedEntities } from '../../types/main';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 // import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 
 // //export interface APIUpdateStageOptions
@@ -38,7 +38,7 @@
 //     id: stageId,
 //     orgId,
 //     // TODO this should be redundant and should be removed
-//     target: { property: IndexableProperties.Opening, value: openingId },
+//     relatedTo: { property: IndexableProperties.Opening, value: openingId },
 //   };
 //   try {
 //     stage = (await collections.stages.findOne(currentStageFilter)) as StageEntity;
@@ -98,8 +98,8 @@
 //         const allStagesInOpeningFilter: Filter<StageEntity> = {
 //           $and: [
 //             // ! TODO: Replace with elemmatch
-//             { target: { property: IndexableProperties.Org, value: orgId } },
-//             { target: { property: IndexableProperties.Opening, value: openingId } },
+//             { relatedTo: { property: IndexableProperties.Org, value: orgId } },
+//             { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
 //           ],
 //         };
 
@@ -112,11 +112,11 @@
 //         const allStagesInOpening = sortStages(unsortedStages);
 //         console.log('All stages in opening sorted');
 //         /**
-//          * Whenever you see  findInTargetArray & findIndex checks, this is retrieving the pointer(s) for
+//          * Whenever you see  findInRelatedToArray & findIndex checks, this is retrieving the pointer(s) for
 //          * the doubly linked list in that stage's `target` array
 //          *
 //          * Example:
-//          * target: [
+//          * relatedTo: [
 //          * { id: "nd19723jd298", type: "NextStage"},
 //          * { id: "nd19780247g", type: "PreviousStage"}
 //          *
@@ -126,8 +126,8 @@
 //          * { id: "Org", type: "Food Delivery App LLC"}
 //          * ]
 //          */
-//         const oldPreviousStageId = findInTargetArray(IndexableProperties.PreviousStage, stage);
-//         const oldNextStageId = findInTargetArray(IndexableProperties.NextStage, stage);
+//         const oldPreviousStageId = findInRelatedToArray(IndexableProperties.PreviousStage, stage);
+//         const oldNextStageId = findInRelatedToArray(IndexableProperties.NextStage, stage);
 
 //         let oldPreviousStage: StageEntity | undefined;
 //         let oldPreviousStagesNextStageIndex: number | null;
@@ -243,8 +243,8 @@
 //           id: oldNextStageId,
 //           $and: [
 //             // ! TODO: Replace with elemmatch
-//             { target: { property: IndexableProperties.Org, value: orgId } },
-//             { target: { property: IndexableProperties.Opening, value: openingId } },
+//             { relatedTo: { property: IndexableProperties.Org, value: orgId } },
+//             { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
 //           ],
 //         };
 //         await collections.stages.updateOne(
@@ -261,8 +261,8 @@
 //           id: oldPreviousStageId,
 //           $and: [
 //             // ! TODO: Replace with elemmatch
-//             { target: { property: IndexableProperties.Org, value: orgId } },
-//             { target: { property: IndexableProperties.Opening, value: openingId } },
+//             { relatedTo: { property: IndexableProperties.Org, value: orgId } },
+//             { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
 //           ],
 //         };
 
@@ -338,8 +338,8 @@
 //             id: newNextStageId,
 //             $and: [
 //               // ! TODO: Replace with elemmatch
-//               { target: { property: IndexableProperties.Org, value: orgId } },
-//               { target: { property: IndexableProperties.Opening, value: openingId } },
+//               { relatedTo: { property: IndexableProperties.Org, value: orgId } },
+//               { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
 //             ],
 //           };
 //           await collections.stages.updateOne(
@@ -399,8 +399,8 @@
 //             id: newPreviousStageId,
 //             $and: [
 //               // ! TODO: Replace with elemmatch
-//               { target: { property: IndexableProperties.Org, value: orgId } },
-//               { target: { property: IndexableProperties.Opening, value: openingId } },
+//               { relatedTo: { property: IndexableProperties.Org, value: orgId } },
+//               { relatedTo: { property: IndexableProperties.Opening, value: openingId } },
 //             ],
 //           };
 //           // TODO update many

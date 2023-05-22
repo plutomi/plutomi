@@ -3,7 +3,7 @@
 // import { Filter, UpdateFilter } from 'mongodb';
 // import { collections, mongoClient } from '../../utils/connectToDatabase';
 // import { IndexableProperties } from '../../@types/indexableProperties';
-// import { findInTargetArray } from '../../utils';
+// import { findInRelatedToArray } from '../../utils';
 
 // export const rejectInvite = async (req: Request, res: Response) => {
 //   const { inviteId } = req.params;
@@ -12,9 +12,9 @@
 //   let invite: InviteEntity | undefined;
 //   const inviteFilter: Filter<InviteEntity> = {
 //     id: inviteId,
-//     target: {
+//     relatedTo: {
 //       property: IndexableProperties.Email,
-//       value: findInTargetArray(IndexableProperties.Email, user), // Can also get by ID
+//       value: findInRelatedToArray(IndexableProperties.Email, user), // Can also get by ID
 //     },
 //   };
 //   try {

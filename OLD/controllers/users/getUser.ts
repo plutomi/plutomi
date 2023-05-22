@@ -1,7 +1,7 @@
 // import { Request, Response } from 'express';
 // import Joi from 'joi';
 // import { JOI_SETTINGS } from '../../Config';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 
 // interface APIGetUserByIdParameters {
 //   userId?: string;
@@ -45,7 +45,7 @@
 
 //   // // TODO RBAC here
 //   // // Only allow viewing users in the same org
-//   // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+//   // const orgId = findInRelatedToArray({ entity: IdxTypes.Org, targetArray: user.target });
 //   // if (orgId !== requesteduser.org) {
 //   //   return res.status(403).json({
 //   //     message: 'You are not authorized to view this user since you are not in the same org',

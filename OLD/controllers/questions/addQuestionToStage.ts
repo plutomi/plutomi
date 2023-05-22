@@ -4,7 +4,7 @@
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { JOI_SETTINGS, LIMITS } from '../../Config';
 // import { QuestionEntity, StageEntity, StageQuestionItemEntity } from '../../models';
-// import { findInTargetArray, generateId } from '../../utils';
+// import { findInRelatedToArray, generateId } from '../../utils';
 // import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 // const schema = Joi.object({
@@ -35,7 +35,7 @@
 //   const { orgId } = user;
 //   const stageFilter: Filter<StageEntity> = {
 //     id: stageId,
-//     target: [
+//     relatedTo: [
 //       {
 //         property: IndexableProperties.Org,
 //         value: orgId,
@@ -58,7 +58,7 @@
 
 //   const questionFilter: Filter<QuestionEntity> = {
 //     id: questionId,
-//     target: [{ property: IndexableProperties.Org, value: orgId }],
+//     relatedTo: [{ property: IndexableProperties.Org, value: orgId }],
 //   };
 
 //   let question: QuestionEntity | undefined;
@@ -81,10 +81,10 @@
 //     $and: [
 //       // ! TODO: Replace with elemmatch
 //       {
-//         target: { property: IndexableProperties.Org, value: orgId },
+//         relatedTo: { property: IndexableProperties.Org, value: orgId },
 //       },
-//       { target: { property: IndexableProperties.Stage, value: stageId } },
-//       { target: { property: IndexableProperties.NextQuestion, value: null } },
+//       { relatedTo: { property: IndexableProperties.Stage, value: stageId } },
+//       { relatedTo: { property: IndexableProperties.NextQuestion, value: null } },
 //     ],
 //   };
 
@@ -105,12 +105,12 @@
 //     updatedAt: now,
 //     id: newStageQuestionItemId,
 //     orgId,
-//     target: [
+//     relatedTo: [
 //       { property: IndexableProperties.Question, value: questionId },
 //       {
 //         property: IndexableProperties.PreviousQuestion,
 //         value: currentLastStageQuestionItem
-//           ? findInTargetArray(IndexableProperties.Question, currentLastStageQuestionItem)
+//           ? findInRelatedToArray(IndexableProperties.Question, currentLastStageQuestionItem)
 //           : null,
 //       },
 //       {

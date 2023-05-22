@@ -1,11 +1,8 @@
 export enum AllEntityNames {
-  Application = "application",
-  Invite = "invite",
-  Org = "org",
-  User = "user",
-  Question = "question",
-  Stage = "stage",
-  StageQuestionItem = "stageQuestionItem",
-  Workspace = "workspace",
-  Membership = "membership"
+  /**
+   * These are all lowercase because they are used in URLs as IDs
+   */
+  USER = "user",
+  WAIT_LIST_USER = "wait_list_user",
+  TOTP_CODE = "totp_code"
 }

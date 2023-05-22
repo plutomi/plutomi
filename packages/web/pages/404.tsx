@@ -7,6 +7,7 @@ import {
   SimpleGrid,
   rem
 } from "@mantine/core";
+import { PlutomiEmails } from "@plutomi/shared";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
@@ -61,7 +62,7 @@ export const FourOhFour: NextPage = () => {
           <Text color="dimmed" size="lg">
             The Page you are trying to open does not exist. You may have
             mistyped the address, or the page has been moved to another URL. If
-            you think this is an error contact jose@plutomi.com.
+            you think this is an error contact {PlutomiEmails.JOSE}
           </Text>
           <Button
             variant="outline"

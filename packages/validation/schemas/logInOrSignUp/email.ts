@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { emailSchema } from "../shared";
 
-const baseSchema = z.object({
+export const baseSchema = z.object({
   email: emailSchema
 });
 

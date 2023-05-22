@@ -1,6 +1,6 @@
 export enum SchemaEnvironment {
-  WEB = "web",
-  API = "api",
-  INFRA = "infra"
+  WEB = "WEB",
+  API = "API",
+  INFRA = "INFRA"
   // LAMBDA = "lambda" etc
 }

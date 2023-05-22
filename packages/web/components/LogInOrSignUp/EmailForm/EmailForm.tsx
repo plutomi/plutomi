@@ -1,6 +1,8 @@
 import { TextInput, Text } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
+import { PlutomiEmails } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
+import { useAuthContext } from "@/hooks";
 
 type LoginEmailFormProps = {
   form: UseFormReturnType<Schema.LogInOrSignUp.email.UIValues>;
@@ -12,19 +14,25 @@ type LoginEmailFormProps = {
 export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
   form,
   isSubmitting
-}) => (
-  <>
-    <TextInput
-      {...form.getInputProps("email")}
-      required
-      label="Email"
-      type="email"
-      placeholder="jose@plutomi.com"
-      radius="md"
-      disabled={isSubmitting}
-    />
-    <Text c="dimmed">
-      You can put any email - this isn&apos;t set up yet :D
-    </Text>
-  </>
-);
+}) => {
+  // TODO: Add focus trap
+  const authContext = useAuthContext();
+  const actionText = authContext === "login" ? "logging" : "signing";
+
+  return (
+    <>
+      <TextInput
+        {...form.getInputProps("email")}
+        required
+        label="Email"
+        type="email"
+        placeholder={PlutomiEmails.JOSE}
+        radius="md"
+        disabled={isSubmitting}
+      />
+      <Text c="dimmed">
+        We won&apos;t send you spam. This is just for {actionText} in.
+      </Text>
+    </>
+  );
+};

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { post } from "./post";
 
-export const subscribe = Router();
+export const waitList = Router();
 
-subscribe.post("/", post);
+waitList.post("/", post);

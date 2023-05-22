@@ -1,7 +1,7 @@
 // import { Request, Response } from 'express';
 // import Joi from 'joi';
 // import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
-// import { findInTargetArray } from '../../utils/findInTargetArray';
+// import { findInRelatedToArray } from '../../utils/findInRelatedToArray';
 // import { OpeningEntity } from '../../@types/entities/application';
 // import { IndexableProperties } from '../../@types/indexableProperties';
 // import { collections } from '../../utils/connectToDatabase';
