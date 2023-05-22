@@ -48,7 +48,7 @@ export const post: RequestHandler = async (req, res) => {
   const mostRecentCode = mostRecentCodes[0];
   if (
     // Code not found
-    !mostRecentCode ||
+    mostRecentCode === undefined ||
     // Expired by status
     mostRecentCode.status === TOTPCodeStatus.EXPIRED ||
     // Expired by exhaustive check

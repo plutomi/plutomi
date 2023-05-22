@@ -10,15 +10,14 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
-import { delay } from "@plutomi/shared";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
-import { LoginEmailForm } from "./EmailForm";
-import { TOTPCodeForm } from "./TOTPCodeForm";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconX } from "@tabler/icons-react";
+import { TOTPCodeForm } from "./TOTPCodeForm";
+import { LoginEmailForm } from "./EmailForm";
 
 export const LogInOrSignUpForm: React.FC = () => {
   const [step, setStep] = useState(1);

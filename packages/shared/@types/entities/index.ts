@@ -27,6 +27,7 @@ export * from "./allEntityNames";
 // export * from "./membership";
 // export * from "./org";
 export * from "./user";
+export * from "./waitListUser";
 export * from "./totpCode";
 // export * from "./question";
 // export * from "./stage";
