@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { waitList } from "./waitlist";
+import { waitList } from "./waitList";
 import { health } from "./health";
 import { fourOhFour } from "./404";
 import { totpCodes } from "./totpCodes";
