@@ -87,6 +87,8 @@ export const LogInOrSignUpForm: React.FC = () => {
 
         notifications.show({
           withCloseButton: true,
+          // title: "Login successful!",
+          // ! TODO: Have this be dynamic depending on where they are going
           message: "Login successful!",
           autoClose: 4000,
           color: "green"
