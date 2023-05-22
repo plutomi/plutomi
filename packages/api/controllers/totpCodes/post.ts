@@ -61,6 +61,7 @@ export const post: RequestHandler = async (req, res) => {
       firstName: null,
       lastName: null,
       emailVerified: false,
+      emailVerifiedAt: null,
       canReceiveEmails: true,
       email: email as Email,
       createdAt: nowIso,

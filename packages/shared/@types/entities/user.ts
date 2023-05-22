@@ -28,6 +28,7 @@ export type User = BaseEntity<AllEntityNames.USER> & {
   lastName: string | null;
   email: Email;
   emailVerified: boolean;
+  emailVerifiedAt: string | null;
   canReceiveEmails: boolean;
   relatedTo: UserRelatedToArray;
 };

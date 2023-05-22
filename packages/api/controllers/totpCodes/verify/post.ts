@@ -87,6 +87,7 @@ export const post: RequestHandler = async (req, res) => {
 
   res.status(200).json({ message: "Logged in successfully!" });
 
+  const nowIso = now.toISOString();
   if (!user.emailVerified) {
     try {
       await req.items.updateOne(
@@ -98,7 +99,9 @@ export const post: RequestHandler = async (req, res) => {
         },
         {
           $set: {
-            emailVerified: true
+            emailVerified: true,
+            emailVerifiedAt: nowIso,
+            updatedAt: nowIso
           }
         }
       );
@@ -119,7 +122,8 @@ export const post: RequestHandler = async (req, res) => {
       },
       {
         $set: {
-          status: TOTPCodeStatus.EXPIRED
+          status: TOTPCodeStatus.EXPIRED,
+          updatedAt: nowIso
         }
       }
     );
