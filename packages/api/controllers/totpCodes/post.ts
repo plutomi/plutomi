@@ -202,14 +202,14 @@ export const post: RequestHandler = async (req, res) => {
       },
       bodyHtml: EMAIL_TEMPLATES.TOTPTemplate({ code: totpCode })
     });
+
+    res.status(201).json({
+      message: "A login code has been sent to your email"
+    });
   } catch (error) {
     res.status(500).json({
       message: "An error ocurred sending your login code",
       error
     });
   }
-
-  res.status(201).json({
-    message: "A login code has been sent to your email"
-  });
 };
