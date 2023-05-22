@@ -63,7 +63,6 @@ export const LogInOrSignUpForm: React.FC = () => {
         });
         setStep((currentStep) => currentStep + 1);
       } catch (error) {
-        console.error(error);
         const message = handleAxiosError(error);
         notifications.show({
           withCloseButton: true,
@@ -88,14 +87,12 @@ export const LogInOrSignUpForm: React.FC = () => {
 
         notifications.show({
           withCloseButton: true,
-          // title: "Success!",
           message: "Login successful!",
           autoClose: 4000,
           color: "green"
         });
         void router.push("/dashboard");
       } catch (error) {
-        console.error(error);
         const message = handleAxiosError(error);
         notifications.show({
           withCloseButton: true,
