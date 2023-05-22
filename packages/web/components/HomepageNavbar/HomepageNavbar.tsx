@@ -12,7 +12,6 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 // import { IconChevronDown } from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 const HEADER_HEIGHT = rem(60);
 
