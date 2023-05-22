@@ -1,4 +1,4 @@
-import { TextInput, Text } from "@mantine/core";
+import { TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { TOTP_CODE_LENGTH, generateTOTPCode } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
