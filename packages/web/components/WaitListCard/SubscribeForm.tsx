@@ -1,4 +1,4 @@
-import { Text, Button, createStyles, TextInput, Alert } from "@mantine/core";
+import { Button, createStyles, TextInput, Alert } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import axios from "axios";
 import { Schema } from "@plutomi/validation";
