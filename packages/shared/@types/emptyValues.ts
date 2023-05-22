@@ -1,5 +1,5 @@
 /**
- * This is needed due to the way we are indexing the 'target' array.  Here is an example user:
+ * This is needed due to the way we are indexing the 'relatedTo' array.  Here is an example user:
  * 
  * 
  *   const userData: User = {
