@@ -2,11 +2,11 @@ import { Router } from "express";
 import { health } from "./health";
 import { fourOhFour } from "./404";
 import { totp } from "./totp";
-import { waitList } from "./waitList";
+import { waitlist } from "./waitlist";
 
 const API = Router();
 
-API.use("/waitList", waitList);
+API.use("/waitlist", waitlist);
 API.use("/health", health);
 API.use("/totp", totp);
 

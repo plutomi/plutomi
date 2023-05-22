@@ -15,7 +15,6 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
   form,
   isSubmitting
 }) => {
-  // TODO: Add focus trap
   const authContext = useAuthContext();
   const actionText = authContext === "login" ? "logging" : "signing";
 
@@ -29,6 +28,7 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
         placeholder={PlutomiEmails.JOSE}
         radius="md"
         disabled={isSubmitting}
+        autoFocus
       />
       <Text c="dimmed">
         We won&apos;t send you spam. This is just for {actionText} in.

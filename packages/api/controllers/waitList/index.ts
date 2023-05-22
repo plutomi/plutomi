@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { post } from "./post";
 
-export const waitList = Router();
+export const waitlist = Router();
 
-waitList.post("/", post);
+waitlist.post("/", post);

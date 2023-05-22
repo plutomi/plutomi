@@ -58,7 +58,7 @@ export const LogInOrSignUpForm: React.FC = () => {
 
     if (step === 1) {
       try {
-        await axios.post("/api/totpCodes", {
+        await axios.post("/api/totp", {
           email: emailForm.values.email
         });
         setStep((currentStep) => currentStep + 1);
@@ -80,7 +80,7 @@ export const LogInOrSignUpForm: React.FC = () => {
 
     if (step === 2) {
       try {
-        await axios.post("/api/totpCodes/verify", {
+        await axios.post("/api/totp/verify", {
           email: emailForm.values.email,
           totpCode: totpCodeForm.values.totpCode
         });

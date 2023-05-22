@@ -19,7 +19,6 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
   isSubmitting
 }) => {
   const { onChange, ...otherProps } = form.getInputProps("totpCode");
-  // TODO: Add focus trap
 
   return (
     <TextInput
@@ -31,6 +30,7 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
       disabled={isSubmitting}
       maxLength={TOTP_LENGTH}
       placeholder={placeholderText}
+      autoFocus
       onChange={(event) => {
         form.setFieldValue("totpCode", event.currentTarget.value.toUpperCase());
       }}
