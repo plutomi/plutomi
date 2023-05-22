@@ -76,33 +76,28 @@ export const SubscribeForm: React.FC = () => {
       You&apos;ve been added to our wait list 🚀
     </Alert>
   ) : (
-    <>
-      <form onSubmit={form.onSubmit((values) => void handleFormSubmit(values))}>
-        <div className={classes.controls}>
-          <TextInput
-            {...form.getInputProps("email")}
-            placeholder="example@mail.com"
-            disabled={isSubmitting}
-            type="email"
-            classNames={{
-              input: classes.input,
-              root: classes.inputWrapper
-            }}
-          />
-          <Button
-            type="submit"
-            loading={isSubmitting}
-            disabled={!form.isDirty()}
-            className={classes.control}
-            style={{ cursor: isSubmitting ? "not-allowed" : "pointer" }}
-          >
-            {isSubmitting ? "Joining" : "Join"}
-          </Button>
-        </div>
-      </form>
-      <Text c="dimmed">
-        We won&apos;t spam you - we&apos;ll just let you know when we launch!
-      </Text>
-    </>
+    <form onSubmit={form.onSubmit((values) => void handleFormSubmit(values))}>
+      <div className={classes.controls}>
+        <TextInput
+          {...form.getInputProps("email")}
+          placeholder="example@mail.com"
+          disabled={isSubmitting}
+          type="email"
+          classNames={{
+            input: classes.input,
+            root: classes.inputWrapper
+          }}
+        />
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          disabled={!form.isDirty()}
+          className={classes.control}
+          style={{ cursor: isSubmitting ? "not-allowed" : "pointer" }}
+        >
+          {isSubmitting ? "Joining" : "Join"}
+        </Button>
+      </div>
+    </form>
   );
 };
