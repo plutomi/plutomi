@@ -25,7 +25,6 @@ export const allEnvVariablesSchema = z.object({
   AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid(),
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net")
-  // POSTMARK_API_KEY: z.string().uuid()
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
@@ -38,7 +37,6 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_BASE_URL: true,
   DEPLOYMENT_ENVIRONMENT: true,
   MONGO_URL: true
-  // POSTMARK_API_KEY: true
 });
 
 // We are overriding these types because they will get validated using the schema above.
@@ -56,5 +54,4 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   AWS_REGION: process.env.AWS_REGION as string,
   ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string,
   MONGO_URL: process.env.MONGO_URL as string
-  // POSTMARK_API_KEY: process.env.POSTMARK_API_KEY as string
 };

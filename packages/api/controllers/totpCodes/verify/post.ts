@@ -35,7 +35,7 @@ export const post: RequestHandler = async (req, res) => {
       .limit(1)
       .toArray();
   } catch (error) {
-    console.error(error);
+    // TODO: Logging
     res.status(500).json({
       message: "An error ocurred getting your most recent login code",
       error
@@ -72,7 +72,7 @@ export const post: RequestHandler = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(`error logging in`);
+    // TODO: Logging
     res
       .status(500)
       .json({ message: "An error ocurred logging you in!", error });
@@ -106,7 +106,7 @@ export const post: RequestHandler = async (req, res) => {
         }
       );
     } catch (error) {
-      console.error(`error ocurred updating user emailVerified`, error);
+      // TODO: Logging
     }
   }
 
@@ -128,9 +128,6 @@ export const post: RequestHandler = async (req, res) => {
       }
     );
   } catch (error) {
-    console.error(
-      `error ocurred updating previous login codes to expired`,
-      error
-    );
+    // TODO: Logging
   }
 };

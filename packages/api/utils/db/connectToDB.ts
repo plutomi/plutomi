@@ -89,13 +89,13 @@ export const connectToDatabase =
             name: relatedToArrayIndexName
           });
         } catch (error) {
-          const errorMessage = `An error ocurred creating the target array index: '${collectionName}'`;
+          const errorMessage = `An error ocurred creating the relatedTo array index: '${collectionName}'`;
           console.error(errorMessage, error);
           throw new Error(errorMessage);
         }
       }
     } catch (error) {
-      const errorMessage = `An error ocurred checking if the target array index exists: '${collectionName}'`;
+      const errorMessage = `An error ocurred checking if the relatedTo array index exists: '${collectionName}'`;
       console.error(errorMessage, error);
       throw new Error(errorMessage);
     }
