@@ -30,9 +30,9 @@ export const LogInOrSignUpForm: React.FC = () => {
     validate: zodResolver(Schema.LogInOrSignUp.email.UISchema)
   });
 
-  const totpCodeForm = useForm<Schema.LogInOrSignUp.totpCode.UIValues>({
+  const totpCodeForm = useForm<Schema.LogInOrSignUp.totp.UIValues>({
     initialValues: { totpCode: "" },
-    validate: zodResolver(Schema.LogInOrSignUp.totpCode.UISchema)
+    validate: zodResolver(Schema.LogInOrSignUp.totp.UISchema)
   });
 
   const getFormByStep = () => {
