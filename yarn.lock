@@ -4888,6 +4888,11 @@ eslint-plugin-n@^15.0.0:
     resolve "^1.22.1"
     semver "^7.3.8"
 
+eslint-plugin-no-template-curly-in-string-fix@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-no-template-curly-in-string-fix/-/eslint-plugin-no-template-curly-in-string-fix-1.0.4.tgz#82b706ee17cdf9a954f60749d88b8e32e8f6c038"
+  integrity sha512-IkK68K7S8dvJeGt6/w9EOx1ZaHqELsaJWJhD1KkxNQxAkCCEulkanY7nqjUI2W8etNWP3aRjwoYs/qldZwjz5g==
+
 eslint-plugin-promise@^6.0.0:
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.1.1.tgz#269a3e2772f62875661220631bd4dafcb4083816"

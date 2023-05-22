@@ -8,7 +8,8 @@
     "standard-with-typescript",
     "airbnb",
     "airbnb-typescript/base",
-    "prettier"
+    "prettier",
+    "plugin:no-template-curly-in-string-fix/recommended"
   ],
   "overrides": [],
   "parserOptions": {
