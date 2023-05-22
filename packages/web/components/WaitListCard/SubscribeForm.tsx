@@ -101,8 +101,7 @@ export const SubscribeForm: React.FC = () => {
         </div>
       </form>
       <Text c="dimmed">
-        We won&apos;t spam you - we don&apos;t even have the ability to send
-        emails yet! 😅
+        We won&apos;t spam you - we&apos;ll just let you know when we launch!
       </Text>
     </>
   );
