@@ -57,6 +57,8 @@ export const post: RequestHandler = async (req, res) => {
     mostRecentCode === undefined ||
     // Expired by status
     mostRecentCode.status === TOTPCodeStatus.EXPIRED ||
+    // Code has been used
+    mostRecentCode.status === TOTPCodeStatus.USED ||
     // Expired by exhaustive check
     dayjs(mostRecentCode.expiresAt).isBefore(now) ||
     // Code is invalid
@@ -127,11 +129,31 @@ export const post: RequestHandler = async (req, res) => {
     }
   }
 
-  // Expire all other codes
+  const { _id: usedCodeId } = mostRecentCode;
+
+  try {
+    // Mark the code that was just used as used
+    await req.items.updateOne(
+      {
+        _id: usedCodeId
+      },
+      {
+        $set: {
+          status: TOTPCodeStatus.USED,
+          updatedAt: nowIso
+        }
+      }
+    );
+  } catch (error) {
+    // ! TODO: Logging
+  }
+
+  // Expire all other active codes
   try {
     await req.items.updateMany(
       {
-        status: { $ne: TOTPCodeStatus.EXPIRED },
+        _id: { $ne: usedCodeId },
+        status: TOTPCodeStatus.ACTIVE,
         relatedTo: {
           id: email,
           type: RelatedToType.TOTP
@@ -145,6 +167,6 @@ export const post: RequestHandler = async (req, res) => {
       }
     );
   } catch (error) {
-    // TODO: Logging
+    // ! TODO: Logging
   }
 };
