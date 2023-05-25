@@ -24,7 +24,8 @@ export const allEnvVariablesSchema = z.object({
   AWS_ACCOUNT_ID: z.string(),
   AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid(),
-  MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net")
+  MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
+  SESSION_PASSWORD_1: z.string().min(100)
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
@@ -36,7 +37,8 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
   NODE_ENV: true,
   NEXT_PUBLIC_BASE_URL: true,
   DEPLOYMENT_ENVIRONMENT: true,
-  MONGO_URL: true
+  MONGO_URL: true,
+  SESSION_PASSWORD_1: true
 });
 
 // We are overriding these types because they will get validated using the schema above.
@@ -53,5 +55,6 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   AWS_ACCOUNT_ID: process.env.AWS_ACCOUNT_ID as string,
   AWS_REGION: process.env.AWS_REGION as string,
   ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string,
-  MONGO_URL: process.env.MONGO_URL as string
+  MONGO_URL: process.env.MONGO_URL as string,
+  SESSION_PASSWORD_1: process.env.SESSION_PASSWORD as string
 };
