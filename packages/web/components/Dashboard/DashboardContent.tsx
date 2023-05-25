@@ -105,7 +105,7 @@ const navData = [
   { link: "/settings", label: "Settings", icon: FiSettings }
 ];
 
-const Dashboard: NextPage = () => {
+export const DashboardContent: NextPage = () => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
 
@@ -249,5 +249,3 @@ const Dashboard: NextPage = () => {
     </AppShell>
   );
 };
-
-export default Dashboard;
