@@ -35,6 +35,7 @@ export const createSession = async ({
     _id: sessionId,
     createdAt: nowIso,
     updatedAt: nowIso,
+    // ! TODO: Schedule an event to mark this as expired
     expiresAt: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
       .toISOString(),

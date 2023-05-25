@@ -11,8 +11,7 @@ import {
   MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
   MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME,
   type Session,
-  type PlutomiId,
-  SessionStatus
+  type PlutomiId
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
@@ -23,7 +22,8 @@ import {
   getCookieJar,
   getCookieSettings,
   getSessionCookieName,
-  sendEmail
+  sendEmail,
+  sessionIsActive
 } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
@@ -123,12 +123,7 @@ export const post: RequestHandler = async (req, res) => {
         _id: sessionId as PlutomiId<AllEntityNames.SESSION>
       });
 
-      if (
-        // ! TODO: Extract this to a function
-        session !== null &&
-        dayjs().isBefore(dayjs(session.expiresAt)) &&
-        session.status === SessionStatus.ACTIVE
-      ) {
+      if (sessionIsActive({ session })) {
         res.status(302).json({
           message: "You already have an active session!"
         });
