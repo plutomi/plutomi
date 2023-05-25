@@ -1,5 +1,3 @@
-import type { DetectResult } from "node-device-detector";
-import type { Lookup } from "geoip-lite";
 import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 import type { AllEntityNames } from "./allEntityNames";
@@ -17,7 +15,8 @@ type SessionRelatedToArray = [
 
 export type Session = BaseEntity<AllEntityNames.SESSION> & {
   ip: string;
-  locationInfo: Lookup;
-  deviceInfo: DetectResult;
+  // ISO timestamp
+  expiresAt: string;
+  userAgent: string;
   relatedTo: SessionRelatedToArray;
 };

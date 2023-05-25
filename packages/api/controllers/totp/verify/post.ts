@@ -2,18 +2,11 @@ import {
   RelatedToType,
   type TOTPCode,
   TOTPCodeStatus,
-  type User,
-  AllEntityNames
+  type User
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
-import {
-  getCookieStore,
-  getCookieName,
-  getCookieSettings
-} from "../../../utils/cookies";
-import { generatePlutomiId } from "../../../utils";
 import { createSession } from "../../../utils/sessions";
 
 export const post: RequestHandler = async (req, res) => {
@@ -95,8 +88,10 @@ export const post: RequestHandler = async (req, res) => {
 
   // ! TODO: Save to DB
 
+  const { _id: userId } = user;
+
   try {
-    await createSession({ req, res });
+    await createSession({ req, res, userId });
   } catch (error) {
     res
       .status(500)

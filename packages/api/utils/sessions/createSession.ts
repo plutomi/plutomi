@@ -1,8 +1,15 @@
 import type { Request, Response } from "express";
-import { AllEntityNames, RelatedToType, Session } from "@plutomi/shared";
+import {
+  AllEntityNames,
+  type PlutomiId,
+  RelatedToType,
+  type Session
+} from "@plutomi/shared";
+import dayjs from "dayjs";
 import { getCookieSettings, getCookieStore } from "../cookies";
 import { generatePlutomiId } from "../generatePlutomiId";
 import { env } from "../env";
+import { COOKIE_MAX_AGE_IN_MS } from "../../consts";
 
 type CreateSessionProps = {
   req: Request;
@@ -24,17 +31,20 @@ export const createSession = async ({
     entity: AllEntityNames.SESSION
   });
 
-  const clientIp =
-    (req.headers["x-forwarded-for"][0] || req.socket.remoteAddress) ??
-    "unknown";
+  const forwardedFor = (req.headers["x-forwarded-for"] ?? [])[0];
+  const ip = forwardedFor ?? req.socket.remoteAddress;
+  const userAgent = req.get("User-Agent") ?? "unknown";
 
   const newSession: Session = {
     _id: sessionId,
     createdAt: nowIso,
     updatedAt: nowIso,
-    ip: clientIp,
-    locationInfo: req.locationInfo,
-    deviceInfo: req.deviceInfo,
+    expiresAt: dayjs(now)
+      .add(COOKIE_MAX_AGE_IN_MS, "milliseconds")
+      .toISOString(),
+    entityType: AllEntityNames.SESSION,
+    ip,
+    userAgent,
     relatedTo: [
       {
         id: AllEntityNames.SESSION,
