@@ -51,7 +51,7 @@ export const connectToDatabase =
 
     items = database.collection<AllEntities>(collectionName);
 
-    console.info("Creating necessary collections and indexes");
+    console.info("Creating necessary collections and indexes...");
 
     const allCollectionNames = await database.listCollections({}).toArray();
     const collectionExists = allCollectionNames.find(
@@ -100,5 +100,6 @@ export const connectToDatabase =
       throw new Error(errorMessage);
     }
 
+    console.log("Done.");
     return { client, items };
   };

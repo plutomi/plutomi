@@ -2,17 +2,18 @@ import {
   RelatedToType,
   type TOTPCode,
   TOTPCodeStatus,
-  type User
+  type User,
+  AllEntityNames
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
-import { nanoid } from "nanoid";
 import {
   getCookieStore,
   getCookieName,
   getCookieSettings
 } from "../../../utils/cookies";
+import { generatePlutomiId } from "../../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -91,8 +92,16 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
+  // ! TODO: Save to DB
   const cookieStore = getCookieStore({ req, res });
-  cookieStore.set(getCookieName(), nanoid(50), getCookieSettings());
+  cookieStore.set(
+    getCookieName(),
+    generatePlutomiId({
+      date: now.toDate(),
+      entity: AllEntityNames.SESSION
+    }),
+    getCookieSettings()
+  );
 
   res.status(200).json({ message: "Logged in successfully!" });
 

@@ -13,6 +13,7 @@ export enum RelatedToType {
   USER = "USER",
   WAIT_LIST_USER = "WAIT_LIST_USER",
   TOTP = "TOTP",
+  SESSION = "SESSION",
   // Org = "org",
   // Application = "application",
   // Invite = "invite",

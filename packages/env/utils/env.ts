@@ -25,7 +25,7 @@ export const allEnvVariablesSchema = z.object({
   AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid(),
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
-  SESSION_PASSWORD_1: z.string().min(100)
+  SESSION_PASSWORD_1: z.string()
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
@@ -56,5 +56,5 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   AWS_REGION: process.env.AWS_REGION as string,
   ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string,
   MONGO_URL: process.env.MONGO_URL as string,
-  SESSION_PASSWORD_1: process.env.SESSION_PASSWORD as string
+  SESSION_PASSWORD_1: process.env.SESSION_PASSWORD_1 as string
 };

@@ -17,10 +17,12 @@
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "geoip-lite": "^1.4.7",
     "ksuid": "^3.0.0",
     "mongodb": "^5.5.0",
-    "nanoid": "^4.0.2",
+    "nanoid": "3.3.4",
     "next": "^13.3.0",
+    "node-device-detector": "^2.0.14",
     "zod": "^3.21.4"
   },
   "scripts": {
@@ -35,6 +37,7 @@
     "@types/cookies": "^0.7.7",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
+    "@types/geoip-lite": "^1.4.1",
     "@types/node": "^18.15.11",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0",

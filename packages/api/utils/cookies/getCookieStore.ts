@@ -16,7 +16,10 @@ type GetCookieStoreProps = {
  * doesn't have good type support, so just use this whenever you need to get/set cookies.
  */
 export const getCookieStore = ({ req, res }: GetCookieStoreProps) => {
-  const cookieStore = new Cookies(req, res, { keys, secure: true });
+  const cookieStore = new Cookies(req, res, {
+    keys,
+    secure: env.NODE_ENV === "production"
+  });
 
   return cookieStore;
 };

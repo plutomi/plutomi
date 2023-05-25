@@ -5,5 +5,6 @@ export enum AllEntityNames {
   USER = "user",
   WAIT_LIST_USER = "wl_user",
   // Time-based One Time Password
-  TOTP = "totp"
+  TOTP = "totp",
+  SESSION = "session"
 }
