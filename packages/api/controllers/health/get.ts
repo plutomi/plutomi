@@ -5,7 +5,6 @@ export const get: RequestHandler = async (req, res) => {
   try {
     const result = await req.client.db(getDbName()).command({ ping: 1 });
 
-    req.cookies.get("session")
     res.status(200).json({
       message: "Saul Goodman",
       db: result
