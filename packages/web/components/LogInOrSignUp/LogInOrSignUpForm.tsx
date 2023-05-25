@@ -15,7 +15,7 @@ import { useAuthContext } from "@/hooks";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
-import { IconX } from "@tabler/icons-react";
+import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 
@@ -73,6 +73,7 @@ export const LogInOrSignUpForm: React.FC = () => {
             title: message,
             message: "Redirecting you to the dashboard...",
             autoClose: 5000,
+            icon: <IconInfoCircle />,
             color: "blue"
           });
 
@@ -107,6 +108,7 @@ export const LogInOrSignUpForm: React.FC = () => {
           // ! TODO: Have this be dynamic depending on where they are going
           message: "Login successful!",
           autoClose: 4000,
+          icon: <IconCheck />,
           color: "green"
         });
         void router.push("/dashboard");

@@ -11,7 +11,7 @@ import {
   Flex,
   Center
 } from "@mantine/core";
-import { IconSwitchHorizontal } from "@tabler/icons-react";
+import { IconInfoCircle, IconSwitchHorizontal } from "@tabler/icons-react";
 import { BsQuestionCircle } from "react-icons/bs";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { BiDollarCircle } from "react-icons/bi";
@@ -21,6 +21,10 @@ import { AiOutlineForm, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { FiSettings } from "react-icons/fi";
 import type { NextPage } from "next";
 import Link from "next/link";
+import { handleAxiosError } from "@/utils/handleAxiosResponse";
+import { notifications } from "@mantine/notifications";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -94,7 +98,7 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-const data = [
+const navData = [
   { link: "/dashboard", label: "Dashboard", icon: TbLayoutDashboard },
   { link: "/applications", label: "Applications", icon: AiOutlineForm },
   { link: "/questions", label: "Questions", icon: BsQuestionCircle },
@@ -107,9 +111,33 @@ const data = [
 
 const Dashboard: NextPage = () => {
   const { classes, cx } = useStyles();
+  const router = useRouter();
   const [active, setActive] = useState("Dashboard");
 
-  const links = data.map((item) => (
+  const handleLogout = async () => {
+    try {
+      const { data } = await axios.get("/api/logout");
+
+      void router.push("/");
+
+      notifications.show({
+        message: data.message,
+        color: "blue",
+        autoClose: 5000,
+        icon: <IconInfoCircle />
+      });
+    } catch (error) {
+      const message = handleAxiosError(error);
+      notifications.show({
+        title: "An error ocurred logging you out",
+        message,
+        color: "red",
+        autoClose: 5000
+      });
+    }
+  };
+
+  const links = navData.map((item) => (
     <Link
       href="/dashboard"
       passHref
@@ -154,31 +182,22 @@ const Dashboard: NextPage = () => {
         </Navbar.Section>
 
         <Navbar.Section className={classes.footer}>
-          <Button
-            variant="subtle"
-            onClick={(event) => {
-              event.preventDefault();
-            }}
-            size="lg"
-            className={classes.link}
-          >
+          <Button variant="subtle" size="lg" className={classes.link}>
             <IconSwitchHorizontal className={classes.linkIcon} size="1.4rem" />
             <Text fz="md">Change Workspace</Text>
           </Button>
 
-          <Link href="/" passHref style={{ textDecoration: "none" }}>
-            <Button
-              variant="subtle"
-              // onClick={(event) => {
-              //   event.preventDefault();
-              // }}
-              size="lg"
-              className={classes.link}
-            >
-              <MdLogout className={classes.linkIcon} size="1.4rem" />
-              <Text fz="md">Logout</Text>
-            </Button>
-          </Link>
+          <Button
+            variant="subtle"
+            onClick={() => {
+              void handleLogout();
+            }}
+            size="lg"
+            className={classes.link}
+          >
+            <MdLogout className={classes.linkIcon} size="1.4rem" />
+            <Text fz="md">Logout</Text>
+          </Button>
         </Navbar.Section>
       </Navbar>
 
