@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import Cookies from "cookies";
-import { env } from "./env";
+import { env } from "../env";
 
 const keys = [env.SESSION_PASSWORD_1];
 

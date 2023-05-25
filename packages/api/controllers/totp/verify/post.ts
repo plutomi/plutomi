@@ -7,6 +7,12 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
+import { nanoid } from "nanoid";
+import {
+  getCookieStore,
+  getCookieName,
+  getCookieSettings
+} from "../../../utils/cookies";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -84,6 +90,9 @@ export const post: RequestHandler = async (req, res) => {
     res.status(500).json({ message: "An error ocurred logging you in!" });
     return;
   }
+
+  const cookieStore = getCookieStore({ req, res });
+  cookieStore.set(getCookieName(), nanoid(50), getCookieSettings());
 
   res.status(200).json({ message: "Logged in successfully!" });
 
