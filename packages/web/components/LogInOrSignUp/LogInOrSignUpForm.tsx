@@ -130,6 +130,8 @@ export const LogInOrSignUpForm: React.FC = () => {
   };
 
   const previousStep = () => {
+    // Reset code form if they go back
+    totpCodeForm.reset();
     setStep((currentStep) => currentStep - 1);
   };
 
