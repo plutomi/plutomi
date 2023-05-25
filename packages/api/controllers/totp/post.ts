@@ -9,12 +9,21 @@ import {
   TOTP_EXPIRATION_TIME_IN_MINUTES,
   PlutomiEmails,
   MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
-  MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME
+  MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME,
+  type Session,
+  type PlutomiId
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import { EMAIL_TEMPLATES, generatePlutomiId, sendEmail } from "../../utils";
+import {
+  EMAIL_TEMPLATES,
+  generatePlutomiId,
+  getCookieJar,
+  getCookieSettings,
+  getSessionCookieName,
+  sendEmail
+} from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -101,6 +110,34 @@ export const post: RequestHandler = async (req, res) => {
       message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
     });
     return;
+  }
+
+  const cookieJar = getCookieJar({ req, res });
+  const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
+
+  if (sessionId !== undefined) {
+    // If a user already has a session, and it is valid, redirect them to dashboard
+    try {
+      const session = await req.items.findOne<Session>({
+        _id: sessionId as PlutomiId<AllEntityNames.SESSION>
+      });
+
+      if (session !== null && dayjs().isBefore(dayjs(session.expiresAt))) {
+        res.status(302).json({
+          message: "You already have an active session!"
+        });
+        return;
+      }
+
+      // Delete the previous cookie, they will get a new one with a new login
+      cookieJar.set(getSessionCookieName(), undefined, getCookieSettings());
+    } catch (error) {
+      res.status(500).json({
+        message: "An error ocurred creating a session for you",
+        error
+      });
+      return;
+    }
   }
 
   let recentTotpCodes: TOTPCode[] = [];

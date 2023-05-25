@@ -61,9 +61,25 @@ export const LogInOrSignUpForm: React.FC = () => {
         await axios.post("/api/totp", {
           email: emailForm.values.email
         });
+
         setStep((currentStep) => currentStep + 1);
-      } catch (error) {
+      } catch (error: any) {
         const message = handleAxiosError(error);
+
+        if (error.response.status === 302) {
+          // User already has a session, redirect them to the dashboard
+          notifications.show({
+            withCloseButton: true,
+            title: message,
+            message: "Redirecting you to the dashboard...",
+            autoClose: 5000,
+            color: "blue"
+          });
+
+          void router.push("/dashboard");
+          return;
+        }
+
         notifications.show({
           withCloseButton: true,
           title: "An error ocurred",
@@ -80,16 +96,10 @@ export const LogInOrSignUpForm: React.FC = () => {
 
     if (step === 2) {
       try {
-        await axios.post(
-          "/api/totp/verify",
-          {
-            email: emailForm.values.email,
-            totpCode: totpCodeForm.values.totpCode
-          },
-          {
-            withCredentials: true
-          }
-        );
+        await axios.post("/api/totp/verify", {
+          email: emailForm.values.email,
+          totpCode: totpCodeForm.values.totpCode
+        });
 
         notifications.show({
           withCloseButton: true,
