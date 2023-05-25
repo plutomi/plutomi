@@ -7,7 +7,14 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
+import Cookies from "cookies";
 import { createSession } from "../../../utils/sessions";
+import {
+  env,
+  getCookieKeys,
+  getCookieSettings,
+  getSessionCookieName
+} from "../../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -86,20 +93,37 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  // ! TODO: Save to DB
-
   const { _id: userId } = user;
 
   try {
-    await createSession({ req, res, userId });
+    // Response is handled in here
+    const sessionId = await createSession({ req, userId });
+
+    // Set the session cookie
+    const cookieJar = new Cookies(req, res, {
+      keys: getCookieKeys(),
+      secure: env.NODE_ENV === "production"
+    });
+
+    const cname = getSessionCookieName();
+    const csetting = getCookieSettings();
+
+    console.log(`Cookie name`, cname);
+    console.log(`Cookie setting`, csetting);
+    console.log(`sessionid`, sessionId);
+
+    const x = cookieJar.set(cname, sessionId, csetting);
+
+    const newc = x.get(cname);
+
+    console.log(`XXXX`, newc);
+    res.status(200).json({ message: "Logged in successfully!" });
   } catch (error) {
     res
       .status(500)
       .json({ message: "An error ocurred creating your session", error });
     return;
   }
-
-  res.status(200).json({ message: "Logged in successfully!" });
 
   const nowIso = now.toISOString();
   if (!user.emailVerified) {

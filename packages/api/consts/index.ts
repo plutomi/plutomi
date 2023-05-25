@@ -1,1 +1,1 @@
-export * from "./cookieMaxAge";
+export * from "./maxSessionAge";

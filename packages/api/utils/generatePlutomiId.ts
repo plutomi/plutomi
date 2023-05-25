@@ -15,6 +15,7 @@ export const generatePlutomiId = <T extends AllEntityNames>({
 
   if (entity === AllEntityNames.SESSION) {
     // Do not include a timestamp in the session id
+    // TODO Custom alphabet no _ or -
     id = nanoid(50);
   }
   return `${entity}_${id}`;

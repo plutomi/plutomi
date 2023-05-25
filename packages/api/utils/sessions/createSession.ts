@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request } from "express";
 import {
   AllEntityNames,
   type PlutomiId,
@@ -6,23 +6,18 @@ import {
   type Session
 } from "@plutomi/shared";
 import dayjs from "dayjs";
-import { getCookieSettings, getCookieStore } from "../cookies";
 import { generatePlutomiId } from "../generatePlutomiId";
-import { env } from "../env";
-import { COOKIE_MAX_AGE_IN_MS } from "../../consts";
+import { MAX_SESSION_AGE_IN_MS } from "../../consts";
 
 type CreateSessionProps = {
   req: Request;
-  res: Response;
   userId: PlutomiId<AllEntityNames.USER>;
 };
 
 export const createSession = async ({
   req,
-  res,
   userId
-}: CreateSessionProps) => {
-  const cookieStore = getCookieStore({ req, res });
+}: CreateSessionProps): Promise<PlutomiId<AllEntityNames.SESSION>> => {
   const now = new Date();
   const nowIso = now.toISOString();
 
@@ -40,7 +35,7 @@ export const createSession = async ({
     createdAt: nowIso,
     updatedAt: nowIso,
     expiresAt: dayjs(now)
-      .add(COOKIE_MAX_AGE_IN_MS, "milliseconds")
+      .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
       .toISOString(),
     entityType: AllEntityNames.SESSION,
     ip,
@@ -62,9 +57,5 @@ export const createSession = async ({
   };
   await req.items.insertOne(newSession);
 
-  cookieStore.set(
-    `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-cookie`,
-    sessionId,
-    getCookieSettings()
-  );
+  return sessionId;
 };
