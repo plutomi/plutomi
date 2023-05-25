@@ -24,8 +24,7 @@ export const allEnvVariablesSchema = z.object({
   AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid(),
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
-  // ! TODO: Set this length min
-  SESSION_PASSWORD_1: z.string()
+  SESSION_PASSWORD_1: z.string().min(100)
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
