@@ -1,14 +1,18 @@
 import { useState } from "react";
 import {
-  createStyles,
+  AppShell,
   Navbar,
-  Group,
-  getStylesRef,
-  rem,
-  Title,
-  Button,
+  Header,
   Text,
-  Flex,
+  MediaQuery,
+  Burger,
+  useMantineTheme,
+  Button,
+  getStylesRef,
+  Group,
+  Title,
+  createStyles,
+  rem,
   Center
 } from "@mantine/core";
 import { IconInfoCircle, IconSwitchHorizontal } from "@tabler/icons-react";
@@ -27,14 +31,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
-  header: {
-    paddingBottom: theme.spacing.md,
-    marginBottom: `calc(${theme.spacing.md} * 1.5)`,
-    borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2]
-    }`
-  },
-
   footer: {
     paddingTop: theme.spacing.md,
     marginTop: theme.spacing.md,
@@ -110,6 +106,9 @@ const navData = [
 ];
 
 const Dashboard: NextPage = () => {
+  const theme = useMantineTheme();
+  const [opened, setOpened] = useState(false);
+
   const { classes, cx } = useStyles();
   const router = useRouter();
   const [active, setActive] = useState("Dashboard");
@@ -165,46 +164,89 @@ const Dashboard: NextPage = () => {
   ));
 
   return (
-    <Flex>
-      <Navbar width={{ sm: 300 }} p="md">
-        <Navbar.Section grow>
-          <Group className={classes.header}>
-            <Link
-              href="/"
-              passHref
-              style={{ textDecoration: "none", color: "black" }}
+    <AppShell
+      navbarOffsetBreakpoint="sm"
+      asideOffsetBreakpoint="sm"
+      navbar={
+        <Navbar
+          width={{ sm: 300 }}
+          p="md"
+          hiddenBreakpoint="sm"
+          hidden={!opened}
+        >
+          <Navbar.Section grow>{links}</Navbar.Section>
+
+          <Navbar.Section className={classes.footer}>
+            <Button variant="subtle" size="lg" className={classes.link}>
+              <IconSwitchHorizontal
+                className={classes.linkIcon}
+                size="1.4rem"
+              />
+              <Text fz="md">Change Workspace</Text>
+            </Button>
+
+            <Button
+              variant="subtle"
+              onClick={() => {
+                void handleLogout();
+              }}
+              size="lg"
+              className={classes.link}
             >
-              <Title order={2}>Plutomi</Title>
-            </Link>
-          </Group>
-
-          {links}
-        </Navbar.Section>
-
-        <Navbar.Section className={classes.footer}>
-          <Button variant="subtle" size="lg" className={classes.link}>
-            <IconSwitchHorizontal className={classes.linkIcon} size="1.4rem" />
-            <Text fz="md">Change Workspace</Text>
-          </Button>
-
-          <Button
-            variant="subtle"
-            onClick={() => {
-              void handleLogout();
-            }}
-            size="lg"
-            className={classes.link}
+              <MdLogout className={classes.linkIcon} size="1.4rem" />
+              <Text fz="md">Logout</Text>
+            </Button>
+          </Navbar.Section>
+        </Navbar>
+      }
+      //   aside={
+      //     <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
+      //       <Aside p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
+      //         <Center w="100%">
+      //           <Title>Under Construction 🙂</Title>
+      //         </Center>
+      //       </Aside>
+      //     </MediaQuery>
+      //   }
+      //   footer={
+      //     <Footer height={60} p="md">
+      //       Application footer
+      //     </Footer>
+      //   }
+      header={
+        <Header height={{ base: 50, md: 70 }} p="md">
+          <div
+            style={{ display: "flex", alignItems: "center", height: "100%" }}
           >
-            <MdLogout className={classes.linkIcon} size="1.4rem" />
-            <Text fz="md">Logout</Text>
-          </Button>
-        </Navbar.Section>
-      </Navbar>
+            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+              <Burger
+                opened={opened}
+                onClick={() => {
+                  setOpened((o) => !o);
+                }}
+                size="sm"
+                color={theme.colors.gray[6]}
+                mr="xl"
+              />
+            </MediaQuery>
 
+            <Group>
+              <Link
+                href="/"
+                passHref
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Title order={2}>Plutomi</Title>
+              </Link>
+            </Group>
+          </div>
+        </Header>
+      }
+    >
       <Center w="100%">
         <Title>Under Construction 🙂</Title>
       </Center>
-    </Flex>
+    </AppShell>
   );
 };
 

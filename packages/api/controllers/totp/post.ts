@@ -123,14 +123,14 @@ export const post: RequestHandler = async (req, res) => {
         _id: sessionId as PlutomiId<AllEntityNames.SESSION>
       });
 
-      if (sessionIsActive({ session })) {
+      if (session !== null && sessionIsActive({ session })) {
         res.status(302).json({
           message: "You already have an active session!"
         });
         return;
       }
 
-      // Delete the previous cookie, they will get a new one with a new login
+      // Delete the previous cookie, if any, they will get a new one with a new login
       cookieJar.set(getSessionCookieName(), undefined, getCookieSettings());
     } catch (error) {
       res.status(500).json({
