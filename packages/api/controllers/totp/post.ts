@@ -123,6 +123,7 @@ export const post: RequestHandler = async (req, res) => {
         _id: sessionId as PlutomiId<AllEntityNames.SESSION>
       });
 
+      // ! TODO: Clean this up in two parts, first check if session is null, then check if it is active
       if (session !== null && sessionIsActive({ session })) {
         res.status(302).json({
           message: "You already have an active session!"
