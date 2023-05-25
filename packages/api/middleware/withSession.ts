@@ -32,6 +32,7 @@ export const withSession: RequestHandler = async (req, res, next) => {
       message: "An error ocurred authenticating your session",
       error
     });
+    return;
   }
 
   // Get the user attached to the session
