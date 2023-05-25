@@ -7,6 +7,12 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
+import { createSession } from "../../../utils/sessions";
+import {
+  getCookieJar,
+  getCookieSettings,
+  getSessionCookieName
+} from "../../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -28,7 +34,7 @@ export const post: RequestHandler = async (req, res) => {
       .find<TOTPCode>({
         relatedTo: {
           id: email,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         }
       })
       .sort({ createdAt: -1 })
@@ -51,6 +57,8 @@ export const post: RequestHandler = async (req, res) => {
     mostRecentCode === undefined ||
     // Expired by status
     mostRecentCode.status === TOTPCodeStatus.EXPIRED ||
+    // Code has been used
+    mostRecentCode.status === TOTPCodeStatus.USED ||
     // Expired by exhaustive check
     dayjs(mostRecentCode.expiresAt).isBefore(now) ||
     // Code is invalid
@@ -85,7 +93,18 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  res.status(200).json({ message: "Logged in successfully!" });
+  const { _id: userId } = user;
+
+  try {
+    const sessionId = await createSession({ req, userId });
+    const cookieJar = getCookieJar({ req, res });
+    cookieJar.set(getSessionCookieName(), sessionId, getCookieSettings());
+
+    res.status(200).json({ message: "Logged in successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "An error ocurred logging you in", error });
+    return;
+  }
 
   const nowIso = now.toISOString();
   if (!user.emailVerified) {
@@ -110,14 +129,34 @@ export const post: RequestHandler = async (req, res) => {
     }
   }
 
-  // Expire all other codes
+  const { _id: usedCodeId } = mostRecentCode;
+
+  try {
+    // Mark the code that was just used as used
+    await req.items.updateOne(
+      {
+        _id: usedCodeId
+      },
+      {
+        $set: {
+          status: TOTPCodeStatus.USED,
+          updatedAt: nowIso
+        }
+      }
+    );
+  } catch (error) {
+    // ! TODO: Logging
+  }
+
+  // Expire all other active codes
   try {
     await req.items.updateMany(
       {
-        status: { $ne: TOTPCodeStatus.EXPIRED },
+        _id: { $ne: usedCodeId },
+        status: TOTPCodeStatus.ACTIVE,
         relatedTo: {
           id: email,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         }
       },
       {
@@ -128,6 +167,6 @@ export const post: RequestHandler = async (req, res) => {
       }
     );
   } catch (error) {
-    // TODO: Logging
+    // ! TODO: Logging
   }
 };

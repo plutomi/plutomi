@@ -2,11 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { COOKIE_NAME, COOKIE_SETTINGS, WEBSITE_URL } from '../../Config';
 
 export default async function withSession(req: Request, res: Response, next: NextFunction) {
-  // const userId = req.signedCookies[COOKIE_NAME];
-  // if (!userId) {
-  //   res.location(WEBSITE_URL);
-  //   return res.status(401).json({ message: 'Please log in again' });
-  // }
+  const userId = req.signedCookies["plutomi"];
+  if (!userId) {
+    res.location(WEBSITE_URL);
+    return res.status(401).json({ message: 'Please log in again' });
+  }
 
   // let user: UserEntity;
   // let error: any;

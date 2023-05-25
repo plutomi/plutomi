@@ -1,20 +1,30 @@
 import {
   AllEntityNames,
   RelatedToType,
-  generateTOTPCode,
+  generateTOTP,
   type User,
   type Email,
   type TOTPCode,
   TOTPCodeStatus,
-  MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES,
-  MAX_TOTP_CODES_IN_LOOK_BACK_TIME,
-  TOTP_CODE_EXPIRATION_TIME_IN_MINUTES,
-  PlutomiEmails
+  TOTP_EXPIRATION_TIME_IN_MINUTES,
+  PlutomiEmails,
+  MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
+  MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
+  type Session,
+  type PlutomiId
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import { EMAIL_TEMPLATES, generatePlutomiId, sendEmail } from "../../utils";
+import {
+  EMAIL_TEMPLATES,
+  generatePlutomiId,
+  getCookieJar,
+  getCookieSettings,
+  getSessionCookieName,
+  sendEmail,
+  sessionIsActive
+} from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -103,6 +113,34 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
+  const cookieJar = getCookieJar({ req, res });
+  const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
+
+  if (sessionId !== undefined) {
+    // If a user already has a session, and it is valid, redirect them to dashboard
+    try {
+      const session = await req.items.findOne<Session>({
+        _id: sessionId as PlutomiId<AllEntityNames.SESSION>
+      });
+
+      if (sessionIsActive({ session })) {
+        res.status(302).json({
+          message: "You already have an active session!"
+        });
+        return;
+      }
+
+      // Delete the previous cookie, they will get a new one with a new login
+      cookieJar.set(getSessionCookieName(), undefined, getCookieSettings());
+    } catch (error) {
+      res.status(500).json({
+        message: "An error ocurred creating a session for you",
+        error
+      });
+      return;
+    }
+  }
+
   let recentTotpCodes: TOTPCode[] = [];
   const { _id: userId } = user;
 
@@ -114,16 +152,16 @@ export const post: RequestHandler = async (req, res) => {
           status: TOTPCodeStatus.ACTIVE,
           relatedTo: {
             id: userId,
-            type: RelatedToType.TOTP_CODE
+            type: RelatedToType.TOTP
           },
           createdAt: {
             $gte: now
-              .subtract(MAX_TOTP_CODE_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+              .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
               .toISOString()
           }
         },
         {
-          limit: MAX_TOTP_CODES_IN_LOOK_BACK_TIME
+          limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME
         }
       )
       .toArray();
@@ -135,7 +173,7 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (recentTotpCodes.length >= MAX_TOTP_CODES_IN_LOOK_BACK_TIME) {
+  if (recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
     // ! TODO: Log attempt
     res.status(403).json({
       message:
@@ -144,14 +182,14 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  const totpCode = generateTOTPCode();
+  const totpCode = generateTOTP();
 
   try {
     const now = dayjs();
     const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({
       date: now.toDate(),
-      entity: AllEntityNames.TOTP_CODE
+      entity: AllEntityNames.TOTP
     });
 
     const newTotpCode: TOTPCode = {
@@ -159,14 +197,14 @@ export const post: RequestHandler = async (req, res) => {
       code: totpCode,
       createdAt: nowIso,
       updatedAt: nowIso,
-      entityType: AllEntityNames.TOTP_CODE,
+      entityType: AllEntityNames.TOTP,
       expiresAt: now
-        .add(TOTP_CODE_EXPIRATION_TIME_IN_MINUTES, "minutes")
+        .add(TOTP_EXPIRATION_TIME_IN_MINUTES, "minutes")
         .toISOString(),
       status: TOTPCodeStatus.ACTIVE,
       relatedTo: [
         {
-          id: AllEntityNames.TOTP_CODE,
+          id: AllEntityNames.TOTP,
           type: RelatedToType.ENTITY
         },
         {
@@ -175,11 +213,11 @@ export const post: RequestHandler = async (req, res) => {
         },
         {
           id: userId,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         },
         {
           id: email as Email,
-          type: RelatedToType.TOTP_CODE
+          type: RelatedToType.TOTP
         }
       ]
     };

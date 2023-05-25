@@ -21,7 +21,9 @@ export const createSESPolicy = ({ stack }: CreateSESPolicyProps) => {
       SESPolicies.SendTemplatedEmail
     ],
     resources: [
-      `arn:aws:ses:${env.AWS_REGION}:${env.AWS_ACCOUNT_ID}:identity/${env.DOMAIN}`
+      `arn:aws:ses:${env.AWS_REGION}:${env.AWS_ACCOUNT_ID}:identity/${
+        new URL(env.NEXT_PUBLIC_BASE_URL).hostname
+      }`
     ]
   });
 

@@ -15,7 +15,7 @@ import { useAuthContext } from "@/hooks";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
-import { IconX } from "@tabler/icons-react";
+import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 
@@ -30,9 +30,9 @@ export const LogInOrSignUpForm: React.FC = () => {
     validate: zodResolver(Schema.LogInOrSignUp.email.UISchema)
   });
 
-  const totpCodeForm = useForm<Schema.LogInOrSignUp.totpCode.UIValues>({
+  const totpCodeForm = useForm<Schema.LogInOrSignUp.totp.UIValues>({
     initialValues: { totpCode: "" },
-    validate: zodResolver(Schema.LogInOrSignUp.totpCode.UISchema)
+    validate: zodResolver(Schema.LogInOrSignUp.totp.UISchema)
   });
 
   const getFormByStep = () => {
@@ -58,12 +58,29 @@ export const LogInOrSignUpForm: React.FC = () => {
 
     if (step === 1) {
       try {
-        await axios.post("/api/totpCodes", {
+        await axios.post("/api/totp", {
           email: emailForm.values.email
         });
+
         setStep((currentStep) => currentStep + 1);
-      } catch (error) {
+      } catch (error: any) {
         const message = handleAxiosError(error);
+
+        if (error.response.status === 302) {
+          // User already has a session, redirect them to the dashboard
+          notifications.show({
+            withCloseButton: true,
+            title: message,
+            message: "Redirecting you to the dashboard...",
+            autoClose: 5000,
+            icon: <IconInfoCircle />,
+            color: "blue"
+          });
+
+          void router.push("/dashboard");
+          return;
+        }
+
         notifications.show({
           withCloseButton: true,
           title: "An error ocurred",
@@ -80,15 +97,18 @@ export const LogInOrSignUpForm: React.FC = () => {
 
     if (step === 2) {
       try {
-        await axios.post("/api/totpCodes/verify", {
+        await axios.post("/api/totp/verify", {
           email: emailForm.values.email,
           totpCode: totpCodeForm.values.totpCode
         });
 
         notifications.show({
           withCloseButton: true,
+          // title: "Login successful!",
+          // ! TODO: Have this be dynamic depending on where they are going
           message: "Login successful!",
           autoClose: 4000,
+          icon: <IconCheck />,
           color: "green"
         });
         void router.push("/dashboard");
@@ -110,6 +130,8 @@ export const LogInOrSignUpForm: React.FC = () => {
   };
 
   const previousStep = () => {
+    // Reset code form if they go back
+    totpCodeForm.reset();
     setStep((currentStep) => currentStep - 1);
   };
 

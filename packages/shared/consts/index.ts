@@ -1,2 +1,2 @@
-export * from "./totpCodes";
+export * from "./totp";
 export * from "./plutomiEmails";

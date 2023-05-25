@@ -1,4 +1,4 @@
-import { TOTP_CODE_LENGTH } from "@plutomi/shared";
+import { TOTP_LENGTH } from "@plutomi/shared";
 import { z } from "zod";
 
 export const baseSchema = z.object({
@@ -6,7 +6,7 @@ export const baseSchema = z.object({
     .string({
       required_error: "Code is required"
     })
-    .length(TOTP_CODE_LENGTH, `Code must be ${TOTP_CODE_LENGTH} characters`)
+    .length(TOTP_LENGTH, `Code must be ${TOTP_LENGTH} characters`)
 });
 
 export const UISchema = baseSchema;

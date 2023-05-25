@@ -1,5 +1,6 @@
-import type { AllEntityNames, PlutomiId } from "@plutomi/shared";
+import { AllEntityNames, type PlutomiId } from "@plutomi/shared";
 import ksuid from "ksuid";
+import { customAlphabet } from "nanoid";
 
 type GenerateIdProps<T extends AllEntityNames> = {
   date: Date;
@@ -10,7 +11,15 @@ export const generatePlutomiId = <T extends AllEntityNames>({
   date,
   entity
 }: GenerateIdProps<T>): PlutomiId<T> => {
-  const id = ksuid.randomSync(date).string;
+  // Do not include a timestamp or -_ in the sessionId
+  const characters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const nanoid = customAlphabet(characters, 50);
+
+  const id =
+    entity === AllEntityNames.SESSION
+      ? nanoid()
+      : ksuid.randomSync(date).string;
 
   return `${entity}_${id}`;
 };

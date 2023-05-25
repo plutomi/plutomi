@@ -2,8 +2,8 @@ import { Router } from "express";
 import { post } from "./post";
 import { verify } from "./verify";
 
-export const totpCodes = Router();
+export const totp = Router();
 
-totpCodes.use("/verify", verify);
+totp.use("/verify", verify);
 
-totpCodes.post("/", post);
+totp.post("/", post);

@@ -36,6 +36,7 @@ import API from "./controllers";
     console.error("Error connecting to database:", error);
     process.exit(1);
   }
+
   server.use(express.json());
   // server.use(compression());
   server.use(cors());

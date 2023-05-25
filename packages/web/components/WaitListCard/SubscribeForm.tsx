@@ -1,4 +1,4 @@
-import { Text, Button, createStyles, TextInput, Alert } from "@mantine/core";
+import { Button, createStyles, TextInput, Alert } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import axios from "axios";
 import { Schema } from "@plutomi/validation";
@@ -51,7 +51,7 @@ export const SubscribeForm: React.FC = () => {
   const handleFormSubmit = async (values: Schema.Subscribe.UIValues) => {
     setIsSubmitting(true);
     try {
-      await axios.post("/api/waitList", values);
+      await axios.post("/api/waitlist", values);
       setSuccess(true);
     } catch (error) {
       const message = handleAxiosError(error);
@@ -76,34 +76,28 @@ export const SubscribeForm: React.FC = () => {
       You&apos;ve been added to our wait list 🚀
     </Alert>
   ) : (
-    <>
-      <form onSubmit={form.onSubmit((values) => void handleFormSubmit(values))}>
-        <div className={classes.controls}>
-          <TextInput
-            {...form.getInputProps("email")}
-            placeholder="example@mail.com"
-            disabled={isSubmitting}
-            type="email"
-            classNames={{
-              input: classes.input,
-              root: classes.inputWrapper
-            }}
-          />
-          <Button
-            type="submit"
-            loading={isSubmitting}
-            disabled={!form.isDirty()}
-            className={classes.control}
-            style={{ cursor: isSubmitting ? "not-allowed" : "pointer" }}
-          >
-            {isSubmitting ? "Joining" : "Join"}
-          </Button>
-        </div>
-      </form>
-      <Text c="dimmed">
-        We won&apos;t spam you - we don&apos;t even have the ability to send
-        emails yet! 😅
-      </Text>
-    </>
+    <form onSubmit={form.onSubmit((values) => void handleFormSubmit(values))}>
+      <div className={classes.controls}>
+        <TextInput
+          {...form.getInputProps("email")}
+          placeholder="example@mail.com"
+          disabled={isSubmitting}
+          type="email"
+          classNames={{
+            input: classes.input,
+            root: classes.inputWrapper
+          }}
+        />
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          disabled={!form.isDirty()}
+          className={classes.control}
+          style={{ cursor: isSubmitting ? "not-allowed" : "pointer" }}
+        >
+          {isSubmitting ? "Joining" : "Join"}
+        </Button>
+      </div>
+    </form>
   );
 };
