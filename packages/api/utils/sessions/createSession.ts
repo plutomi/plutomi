@@ -3,7 +3,8 @@ import {
   AllEntityNames,
   type PlutomiId,
   RelatedToType,
-  type Session
+  type Session,
+  SessionStatus
 } from "@plutomi/shared";
 import dayjs from "dayjs";
 import { generatePlutomiId } from "../generatePlutomiId";
@@ -37,6 +38,7 @@ export const createSession = async ({
     expiresAt: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
       .toISOString(),
+    status: SessionStatus.ACTIVE,
     entityType: AllEntityNames.SESSION,
     ip,
     userAgent,

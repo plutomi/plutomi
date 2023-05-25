@@ -1,5 +1,6 @@
 import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
+import type { SessionStatus } from "../sessionStatus";
 import type { AllEntityNames } from "./allEntityNames";
 import type { BaseEntity } from "./baseEntity";
 
@@ -19,4 +20,5 @@ export type Session = BaseEntity<AllEntityNames.SESSION> & {
   expiresAt: string;
   userAgent: string;
   relatedTo: SessionRelatedToArray;
+  status: SessionStatus;
 };
