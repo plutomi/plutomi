@@ -100,9 +100,7 @@ export const post: RequestHandler = async (req, res) => {
 
     res.status(200).json({ message: "Logged in successfully!" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "An error ocurred creating your session", error });
+    res.status(500).json({ message: "An error ocurred logging you in", error });
     return;
   }
 
