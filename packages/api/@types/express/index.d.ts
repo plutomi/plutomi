@@ -1,4 +1,4 @@
-import type { AllEntities } from "@plutomi/shared";
+import type { AllEntities, Session, User } from "@plutomi/shared";
 import type { MongoClient, Collection } from "mongodb";
 
 declare global {
@@ -8,6 +8,10 @@ declare global {
     interface Request {
       items: Collection<AllEntities>;
       client: MongoClient;
+
+      // ! Only available if withSession middleware is used
+      session: Session;
+      user: User;
     }
   }
 }

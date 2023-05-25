@@ -33,6 +33,7 @@ export const createSession = async ({
 
   const newSession: Session = {
     _id: sessionId,
+    user: userId,
     createdAt: nowIso,
     updatedAt: nowIso,
     // ! TODO: Schedule an event to mark this as expired
