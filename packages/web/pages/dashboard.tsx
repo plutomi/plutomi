@@ -195,7 +195,7 @@ const Dashboard: NextPage = () => {
             >
               <MdLogout className={classes.linkIcon} size="1.4rem" />
               <Text fz="md">Logout</Text>
-            </Button>
+          </Button>
           </Navbar.Section>
         </Navbar>
       }
