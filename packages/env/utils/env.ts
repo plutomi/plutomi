@@ -13,7 +13,6 @@ export const allEnvVariablesSchema = z.object({
   PORT: portSchema,
   NODE_ENV: z.nativeEnum(NodeEnvironment),
   DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
-  DOMAIN: z.string(), // Used by infra to setup DNS stuff
   // ! For NextJS, make sure to add to packages/web/env.ts as well as the Dockerfile
   NEXT_PUBLIC_BASE_URL: z.string().url(), // Used by API and web
   // WAF Will block requests that don't include this header
@@ -25,6 +24,7 @@ export const allEnvVariablesSchema = z.object({
   AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid(),
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
+  // ! TODO: Set this length min
   SESSION_PASSWORD_1: z.string()
 });
 
@@ -48,7 +48,6 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   NODE_ENV: process.env.NODE_ENV as NodeEnvironment,
   DEPLOYMENT_ENVIRONMENT: process.env
     .DEPLOYMENT_ENVIRONMENT as DeploymentEnvironment,
-  DOMAIN: process.env.DOMAIN as string,
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL as string,
   CF_HEADER_KEY: process.env.CF_HEADER_KEY as string,
   CF_HEADER_VALUE: process.env.CF_HEADER_VALUE as string,

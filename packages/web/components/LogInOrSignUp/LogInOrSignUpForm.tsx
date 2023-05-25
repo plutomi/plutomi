@@ -80,10 +80,16 @@ export const LogInOrSignUpForm: React.FC = () => {
 
     if (step === 2) {
       try {
-        await axios.post("/api/totp/verify", {
-          email: emailForm.values.email,
-          totpCode: totpCodeForm.values.totpCode
-        });
+        await axios.post(
+          "/api/totp/verify",
+          {
+            email: emailForm.values.email,
+            totpCode: totpCodeForm.values.totpCode
+          },
+          {
+            withCredentials: true
+          }
+        );
 
         notifications.show({
           withCloseButton: true,

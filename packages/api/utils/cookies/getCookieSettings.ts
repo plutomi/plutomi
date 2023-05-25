@@ -8,5 +8,5 @@ export const getCookieSettings = (): Cookies.SetOption => ({
   sameSite: "strict",
   maxAge: MAX_SESSION_AGE_IN_MS, // 1 day
   signed: true,
-  domain: env.NEXT_PUBLIC_BASE_URL
+  domain: new URL(env.NEXT_PUBLIC_BASE_URL).hostname
 });

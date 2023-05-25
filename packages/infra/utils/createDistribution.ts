@@ -28,6 +28,8 @@ type CreateDistributionProps = {
 const aRecordAlias = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-alias`;
 const distributionName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-distribution`;
 
+const domainName = new URL(env.NEXT_PUBLIC_BASE_URL).hostname;
+
 export const createDistribution = ({
   stack,
   fargateService,
@@ -56,7 +58,7 @@ export const createDistribution = ({
 
   const distribution = new Distribution(stack, distributionName, {
     certificate,
-    domainNames: [env.DOMAIN],
+    domainNames: [domainName],
     defaultBehavior: {
       ...defaultBehavior,
       origin: loadBalancerOrigin
@@ -72,7 +74,7 @@ export const createDistribution = ({
   });
 
   void new ARecord(stack, aRecordAlias, {
-    recordName: env.DOMAIN,
+    recordName: domainName,
     zone: hostedZone,
     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
   });
