@@ -131,7 +131,8 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
 
-      // Delete the previous cookie, if any, they will get a new one with a new login
+      // Delete the previous cookie, if any, they will get a new one on their new login
+      // Any other session statuses are irrelevant from this point.
       cookieJar.set(getSessionCookieName(), undefined, getCookieSettings());
     } catch (error) {
       res.status(500).json({

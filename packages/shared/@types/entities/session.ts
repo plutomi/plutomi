@@ -13,7 +13,6 @@ type SessionRelatedToArray = [
 export type Session = BaseEntity<AllEntityNames.SESSION> & {
   user: PlutomiId<AllEntityNames.USER>;
   ip: string;
-  // ISO timestamp
   expiresAt: string;
   userAgent: string;
   relatedTo: SessionRelatedToArray;
