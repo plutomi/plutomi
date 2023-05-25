@@ -14,6 +14,7 @@ import {
   getCookieSettings
 } from "../../../utils/cookies";
 import { generatePlutomiId } from "../../../utils";
+import { createSession } from "../../../utils/sessions";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -93,15 +94,15 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   // ! TODO: Save to DB
-  const cookieStore = getCookieStore({ req, res });
-  cookieStore.set(
-    getCookieName(),
-    generatePlutomiId({
-      date: now.toDate(),
-      entity: AllEntityNames.SESSION
-    }),
-    getCookieSettings()
-  );
+
+  try {
+    await createSession({ req, res });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "An error ocurred creating your session", error });
+    return;
+  }
 
   res.status(200).json({ message: "Logged in successfully!" });
 
