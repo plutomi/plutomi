@@ -9,7 +9,7 @@ import {
   TOTP_EXPIRATION_TIME_IN_MINUTES,
   PlutomiEmails,
   MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
-  MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME,
+  MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
   type Session,
   type PlutomiId
 } from "@plutomi/shared";
@@ -161,7 +161,7 @@ export const post: RequestHandler = async (req, res) => {
           }
         },
         {
-          limit: MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME
+          limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME
         }
       )
       .toArray();
@@ -173,7 +173,7 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (recentTotpCodes.length >= MAX_TOTP_ALLOWED_IN_LOOK_BACK_TIME) {
+  if (recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
     // ! TODO: Log attempt
     res.status(403).json({
       message:
