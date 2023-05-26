@@ -19,7 +19,15 @@ import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 
-export const LogInOrSignUpForm: React.FC = () => {
+type LoginOrSignupProps = {
+  title?: string;
+  subTitle?: string;
+};
+
+export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
+  title = "Welcome",
+  subTitle = "We'll send a one time code to your email"
+}) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -77,7 +85,8 @@ export const LogInOrSignUpForm: React.FC = () => {
             color: "blue"
           });
 
-          void router.push("/dashboard");
+          // Dynamic redirect
+          void router.push(router.pathname);
           return;
         }
 
@@ -111,7 +120,8 @@ export const LogInOrSignUpForm: React.FC = () => {
           icon: <IconCheck />,
           color: "green"
         });
-        void router.push("/dashboard");
+        // Dynamic redirect
+        void router.push(router.pathname);
       } catch (error) {
         const message = handleAxiosError(error);
         notifications.show({
@@ -164,11 +174,20 @@ export const LogInOrSignUpForm: React.FC = () => {
   };
   const buttonText = getButtonText();
 
+  const getAuthContext = () => {
+    if (subTitle !== undefined) {
+      return "continue";
+    }
+
+    if (authContext === "login") {
+      return "log in";
+    }
+    return "sign up";
+  };
+
   const getSubheaderText = () => {
     if (step === 1) {
-      return `To ${
-        authContext === "login" ? "log in" : "sign up"
-      }, we'll send a one-time code to your email.`;
+      return `To ${getAuthContext()}, we'll send a one-time code to your email.`;
     }
 
     if (step === 2) {
@@ -180,11 +199,19 @@ export const LogInOrSignUpForm: React.FC = () => {
 
   const subheaderText = getSubheaderText();
 
+  const getTitle = () => {
+    if (title === undefined) {
+      return `Welcome${authContext === "login" ? " back" : ""}!`;
+    }
+    return title;
+  };
+
+  const titleText = getTitle();
   return (
-    <Container size="xs" my={40}>
+    <Container size="sm" my={40}>
       <Card>
         <Stack>
-          <Title>Welcome{authContext === "login" ? " back" : ""}!</Title>
+          <Title>{titleText}</Title>
           <Text>{subheaderText}</Text>
           <form>
             {step === 1 ? (

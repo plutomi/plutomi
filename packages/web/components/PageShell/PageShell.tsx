@@ -1,32 +1,36 @@
-import Login from "@/pages/login";
-import {
-  Center,
-  Container,
-  Flex,
-  Loader,
-  Navbar,
-  Text,
-  AppShell,
-  Stack,
-  Alert
-} from "@mantine/core";
-import { LogInOrSignUp } from "@plutomi/validation/schemas";
+import { Center, Container, Loader, AppShell, Alert } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { LogInOrSignUpForm } from "../LogInOrSignUp";
 
 type PageShellProps = {
   children: React.ReactNode;
 };
 
+const getDestinationContext = (pathName: string) => {
+  if (pathName === "/dashboard") {
+    return "Log in to view your dashboard";
+  }
+
+  if (pathName === "/test") {
+    return "Log in to view your test page";
+  }
+
+  return "Log in to continue.";
+};
 export const PageShell: React.FC<PageShellProps> = ({ children }) => {
+  const router = useRouter();
+
+  const destinationContext = getDestinationContext(router.pathname);
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const result = await axios.get("/api/users/me");
       return result;
-    }
+    },
+    retry: false
   });
 
   if (isLoading) {
@@ -43,7 +47,7 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
     if (error.response.status === 401) {
       return (
         <AppShell padding={0}>
-          <LogInOrSignUpForm />
+          <LogInOrSignUpForm title={destinationContext} />
         </AppShell>
       );
     }
@@ -57,16 +61,12 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
             color="red"
             radius="md"
           >
-            We weren't able to retrieve your info. Try logging in again!
+            We were not able to retrieve your info. Try logging in again!
           </Alert>
         </Center>
       </AppShell>
     );
   }
 
-  return (
-    <Container style={{ height: "100%", border: "2px solid blue" }}>
-      {children}
-    </Container>
-  );
+  return <Container>{children}</Container>;
 };
