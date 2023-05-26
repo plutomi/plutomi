@@ -1,4 +1,3 @@
-import { DashboardContent } from "@/components/Dashboard";
 import { PageShell } from "@/components/PageShell";
 import type { NextPage } from "next";
 

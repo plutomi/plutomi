@@ -8,14 +8,15 @@ import {
   Title,
   Card
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
+import { useMutation } from "@tanstack/react-query";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 
@@ -25,11 +26,11 @@ type LoginOrSignupProps = {
 };
 
 export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
-  title = "Welcome",
-  subTitle = "We'll send a one time code to your email"
+  title,
+  subTitle
 }) => {
   const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const authContext = useAuthContext();
 
@@ -43,6 +44,21 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     validate: zodResolver(Schema.LogInOrSignUp.totp.UISchema)
   });
 
+  const requestTotp = useMutation({
+    mutationFn: async () =>
+      axios.post("/api/totp", {
+        email: emailForm.values.email
+      })
+  });
+
+  const totpVerify = useMutation({
+    mutationFn: async () =>
+      axios.post("/api/totp/verify", {
+        totpCode: totpCodeForm.values.totpCode,
+        email: emailForm.values.email
+      })
+  });
+
   const getFormByStep = () => {
     switch (step) {
       case 1:
@@ -54,6 +70,83 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (requestTotp.isSuccess) {
+      setStep((currentStep) => currentStep + 1);
+      return;
+    }
+
+    if (requestTotp.isError) {
+      const message = handleAxiosError(requestTotp.error);
+
+      if (
+        requestTotp.error instanceof AxiosError &&
+        requestTotp.error?.response?.status === 302
+      ) {
+        // User already has a session, redirect them
+        notifications.show({
+          withCloseButton: true,
+          title: message,
+          message: "Redirecting you...",
+          autoClose: 5000,
+          icon: <IconInfoCircle />,
+          color: "blue"
+        });
+
+        if (router.pathname === "/login") {
+          void router.push("/dashboard");
+        } else {
+          // Dynamic redirect
+          void router.push(router.pathname);
+        }
+        return;
+      }
+
+      notifications.show({
+        withCloseButton: true,
+        title: "An error ocurred",
+        message,
+        color: "red",
+        icon: <IconX />,
+        loading: false
+      });
+    }
+  }, [requestTotp.isSuccess, requestTotp.isError, requestTotp.error, router]);
+
+  useEffect(() => {
+    if (totpVerify.isSuccess) {
+      notifications.show({
+        withCloseButton: true,
+        // title: "Login successful!",
+        // ! TODO: Have this be dynamic depending on where they are going
+        message: "Login successful!",
+        autoClose: 4000,
+        icon: <IconCheck />,
+        color: "green"
+      });
+
+      if (router.pathname === "/login") {
+        void router.push("/dashboard");
+      } else {
+        // Dynamic redirect
+        void router.push(router.pathname);
+      }
+      return;
+    }
+
+    if (totpVerify.isError) {
+      const message = handleAxiosError(totpVerify.error);
+      notifications.show({
+        withCloseButton: true,
+        title: "An error ocurred",
+        message,
+        color: "red",
+        icon: <IconX />,
+        loading: false
+      });
+    }
+  }, [totpVerify.isSuccess, totpVerify.isError, totpVerify.error, router]);
+
   const nextStep = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const currentForm = getFormByStep();
@@ -61,81 +154,13 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     if (currentForm.validate().hasErrors) {
       return;
     }
-
-    setIsSubmitting(true);
-
     if (step === 1) {
-      try {
-        await axios.post("/api/totp", {
-          email: emailForm.values.email
-        });
-
-        setStep((currentStep) => currentStep + 1);
-      } catch (error: any) {
-        const message = handleAxiosError(error);
-
-        if (error.response.status === 302) {
-          // User already has a session, redirect them to the dashboard
-          notifications.show({
-            withCloseButton: true,
-            title: message,
-            message: "Redirecting you to the dashboard...",
-            autoClose: 5000,
-            icon: <IconInfoCircle />,
-            color: "blue"
-          });
-
-          // Dynamic redirect
-          void router.push(router.pathname);
-          return;
-        }
-
-        notifications.show({
-          withCloseButton: true,
-          title: "An error ocurred",
-          message,
-          color: "red",
-          icon: <IconX />,
-          loading: false
-        });
-        return;
-      } finally {
-        setIsSubmitting(false);
-      }
+      requestTotp.mutate();
+      return;
     }
 
     if (step === 2) {
-      try {
-        await axios.post("/api/totp/verify", {
-          email: emailForm.values.email,
-          totpCode: totpCodeForm.values.totpCode
-        });
-
-        notifications.show({
-          withCloseButton: true,
-          // title: "Login successful!",
-          // ! TODO: Have this be dynamic depending on where they are going
-          message: "Login successful!",
-          autoClose: 4000,
-          icon: <IconCheck />,
-          color: "green"
-        });
-        // Dynamic redirect
-        void router.push(router.pathname);
-      } catch (error) {
-        const message = handleAxiosError(error);
-        notifications.show({
-          withCloseButton: true,
-          title: "An error ocurred",
-          message,
-          color: "red",
-          icon: <IconX />,
-          loading: false
-        });
-
-        // Only disable on error incase the page switch takes a while
-        setIsSubmitting(false);
-      }
+      totpVerify.mutate();
     }
   };
 
@@ -146,7 +171,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   };
 
   const getButtonText = () => {
-    if (isSubmitting && step === 1) {
+    if (requestTotp.isLoading && step === 1) {
       return "Sending...";
     }
 
@@ -154,7 +179,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       return "Send";
     }
 
-    if (isSubmitting && step === 2) {
+    if (requestTotp.isLoading && step === 2) {
       if (authContext === "login") {
         return "Logging in...";
       }
@@ -170,7 +195,8 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       return "Sign up";
     }
 
-    return "";
+    // This should never be triggered
+    return "Continue";
   };
   const buttonText = getButtonText();
 
@@ -215,9 +241,15 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
           <Text>{subheaderText}</Text>
           <form>
             {step === 1 ? (
-              <LoginEmailForm form={emailForm} isSubmitting={isSubmitting} />
+              <LoginEmailForm
+                form={emailForm}
+                isSubmitting={requestTotp.isLoading}
+              />
             ) : (
-              <TOTPCodeForm form={totpCodeForm} isSubmitting={isSubmitting} />
+              <TOTPCodeForm
+                form={totpCodeForm}
+                isSubmitting={totpVerify.isLoading}
+              />
             )}
             <Flex justify={step === 1 ? "end" : "space-between"} mt="md">
               {step === 1 ? null : (
@@ -225,7 +257,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
                   radius="md"
                   variant="default"
                   onClick={previousStep}
-                  disabled={isSubmitting}
+                  disabled={requestTotp.isLoading || totpVerify.isLoading}
                 >
                   Back
                 </Button>
@@ -235,7 +267,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
                 radius="md"
                 type="submit"
                 onClick={(e) => void nextStep(e)}
-                loading={isSubmitting}
+                loading={requestTotp.isLoading || totpVerify.isLoading}
               >
                 {buttonText}
               </Button>

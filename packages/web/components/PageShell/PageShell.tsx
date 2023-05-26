@@ -1,30 +1,53 @@
-import { Center, Container, Loader, AppShell, Alert } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { Container, AppShell } from "@mantine/core";
+import { IconX } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { useRef } from "react";
 import { useRouter } from "next/router";
+import { notifications } from "@mantine/notifications";
+
 import { LogInOrSignUpForm } from "../LogInOrSignUp";
+import { PageLoader } from "../PageLoader";
 
 type PageShellProps = {
   children: React.ReactNode;
 };
 
+// What should show on the header of the login page
 const getDestinationContext = (pathName: string) => {
   if (pathName === "/dashboard") {
     return "Log in to view your dashboard";
   }
 
-  if (pathName === "/test") {
-    return "Log in to view your test page";
+  if (pathName === "/applications") {
+    return "Log in to view your applications";
+  }
+
+  if (pathName === "/webhooks") {
+    return "Log in to view your webhooks";
+  }
+
+  if (pathName === "/team") {
+    return "Log in to view your team";
+  }
+
+  if (pathName === "/settings") {
+    return "Log in to view your settings";
+  }
+
+  if (pathName === "/billing") {
+    return "Log in to view your billing details";
   }
 
   return "Log in to continue.";
 };
+
 export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   const router = useRouter();
+  const errorToastShownRef = useRef(false);
 
   const destinationContext = getDestinationContext(router.pathname);
-  const { isLoading, isError, data, error } = useQuery({
+  const { isLoading, isError, error } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const result = await axios.get("/api/users/me");
@@ -34,17 +57,11 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   });
 
   if (isLoading) {
-    return (
-      <AppShell padding={0}>
-        <Center h="100%" w="100%">
-          <Loader size="xl" variant="dots" />
-        </Center>
-      </AppShell>
-    );
+    return <PageLoader />;
   }
 
   if (isError) {
-    if (error.response.status === 401) {
+    if (error instanceof AxiosError && error.response?.status === 401) {
       return (
         <AppShell padding={0}>
           <LogInOrSignUpForm title={destinationContext} />
@@ -52,18 +69,22 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
       );
     }
 
+    if (!errorToastShownRef.current) {
+      errorToastShownRef.current = true;
+      notifications.show({
+        withCloseButton: true,
+        title: "An error ocurred",
+        message: "We were unable to retrieve your info. Please log in again!",
+        color: "red",
+        autoClose: 5000,
+        icon: <IconX />,
+        loading: false
+      });
+    }
+
     return (
       <AppShell padding={0}>
-        <Center h="100%" w="100%">
-          <Alert
-            icon={<IconAlertCircle size={24} />}
-            title="An error ocurred"
-            color="red"
-            radius="md"
-          >
-            We were not able to retrieve your info. Try logging in again!
-          </Alert>
-        </Center>
+        <LogInOrSignUpForm title={destinationContext} />
       </AppShell>
     );
   }
