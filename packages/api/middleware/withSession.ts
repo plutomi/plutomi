@@ -25,7 +25,7 @@ export const withSession: RequestHandler = async (req, res, next) => {
       return;
     }
 
-  // ! TODO: Extend session by 4 hours
+    // ! TODO: Extend session by 4 hours
     req.session = session;
   } catch (error) {
     res.status(500).json({
