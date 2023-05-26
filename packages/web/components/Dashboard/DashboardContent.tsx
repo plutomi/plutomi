@@ -114,7 +114,7 @@ export const DashboardContent: NextPage = () => {
   const router = useRouter();
   const [active, setActive] = useState("Dashboard");
 
-  const { refetch, data } = useQuery({
+  const { refetch } = useQuery({
     queryKey: ["logout"],
     queryFn: async () => {
       const result = await axios.get("/api/logout");
@@ -124,11 +124,9 @@ export const DashboardContent: NextPage = () => {
     enabled: false,
     onSuccess: () => {
       void router.push("/");
-      console.log(`LOGOUT DATA`, data);
       notifications.show({
         id: "logout",
-        message:
-          data !== undefined ? data.data.message : "You have been logged out",
+        message: "You have been logged out.",
         color: "blue",
         autoClose: 5000,
         icon: <IconInfoCircle />
