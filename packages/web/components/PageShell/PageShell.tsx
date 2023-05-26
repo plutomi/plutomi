@@ -51,7 +51,9 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
       const result = await axios.get("/api/users/me");
       return result;
     },
-    retry: false
+    retry: false,
+    // If you switch tabs to get the login code, we don't want to refetch and reset the state
+    refetchOnWindowFocus: false
   });
 
   if (isLoading) {

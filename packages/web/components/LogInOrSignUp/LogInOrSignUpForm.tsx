@@ -8,7 +8,7 @@ import {
   Title,
   Card
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
@@ -16,7 +16,7 @@ import axios, { type AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 
@@ -24,6 +24,8 @@ type LoginOrSignupProps = {
   title?: string;
   subTitle?: string;
 };
+
+const redirectToDashboardPaths = ["/login", "/signup"];
 
 export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   title,
@@ -67,14 +69,14 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
           color: "blue"
         });
 
-        const redirectToDashboard = ["/login", "/signup"];
-        if (redirectToDashboard.includes(router.pathname)) {
-          // If we don't do this, these pages will cause an infinite loop
+        if (redirectToDashboardPaths.includes(router.pathname)) {
+          // Redirect to dashboard if we're on login or signup
           void router.push("/dashboard");
-        } else {
-          // Dynamic redirect
-          void router.push(router.pathname);
+          // Otherwise, refetch the page to remove the login/signup form
+          // From the page shell
         }
+
+        void router.push("/dashboard");
         return;
       }
 
@@ -95,7 +97,38 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       axios.post("/api/totp/verify", {
         totpCode: totpCodeForm.values.totpCode,
         email: emailForm.values.email
-      })
+      }),
+    onSuccess: () => {
+      notifications.show({
+        id: "login-success",
+        withCloseButton: true,
+        message: "Login successful!",
+        autoClose: 4000,
+        icon: <IconCheck />,
+        color: "green"
+      });
+
+      if (redirectToDashboardPaths.includes(router.pathname)) {
+        // Redirect to dashboard if we're on login or signup
+        void router.push("/dashboard");
+        // Otherwise, refetch the page to remove the login/signup form
+        // From the page shell
+      }
+
+      void router.push("/dashboard");
+    },
+    onError: (error: AxiosError) => {
+      const message = handleAxiosError(error);
+      notifications.show({
+        id: "totp-verify-error",
+        withCloseButton: true,
+        title: "An error ocurred",
+        message,
+        color: "red",
+        icon: <IconX />,
+        loading: false
+      });
+    }
   });
 
   const getFormByStep = () => {
@@ -108,41 +141,6 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         return emailForm;
     }
   };
-
-  useEffect(() => {
-    if (totpVerify.isSuccess) {
-      notifications.show({
-        id: "login-success",
-        withCloseButton: true,
-        message: "Login successful!",
-        autoClose: 4000,
-        icon: <IconCheck />,
-        color: "green"
-      });
-
-      if (router.pathname === "/login") {
-        void router.push("/dashboard");
-      } else {
-        // Dynamic redirect
-        void router.push(router.pathname);
-      }
-
-      return;
-    }
-
-    if (totpVerify.isError) {
-      const message = handleAxiosError(totpVerify.error);
-      notifications.show({
-        id: "totp-verify-error",
-        withCloseButton: true,
-        title: "An error ocurred",
-        message,
-        color: "red",
-        icon: <IconX />,
-        loading: false
-      });
-    }
-  }, [totpVerify.isSuccess, totpVerify.isError, totpVerify.error, router]);
 
   const nextStep = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
