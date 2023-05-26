@@ -1,4 +1,15 @@
-import { Center, Container, Flex, Loader, Text } from "@mantine/core";
+import {
+  Center,
+  Container,
+  Flex,
+  Loader,
+  Navbar,
+  Text,
+  AppShell,
+  Stack,
+  Alert
+} from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -17,28 +28,44 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
 
   if (isLoading) {
     return (
-      <Flex
-        h="100%"
-        w="100%"
-        style={{ minHeight: "100%", border: "2px solid red" }}
-      >
-        <Center h="100%" style={{ border: "2px solid green" }}>
+      <AppShell padding={0}>
+        <Center h="100%" w="100%">
           <Loader size="xl" variant="dots" />
         </Center>
-      </Flex>
+      </AppShell>
     );
   }
 
   if (isError) {
     if (error.response.status === 401) {
       return (
-        <Container>
-          <Text fz="md">You are not logged in.</Text>
-        </Container>
+        <AppShell padding={0}>
+          <Center h="100%" w="100%">
+            <Text fz="md">You are not logged in.</Text>
+          </Center>
+        </AppShell>
       );
     }
-    return <span>Error: {error.message}</span>;
+
+    return (
+      <AppShell padding={0}>
+        <Center h="100%" w="100%">
+          <Alert
+            icon={<IconAlertCircle size={24} />}
+            title="An error ocurred"
+            color="red"
+            radius="md"
+          >
+            We weren't able to retrieve your info. Try logging in again!
+          </Alert>
+        </Center>
+      </AppShell>
+    );
   }
 
-  return <Container>{children}</Container>;
+  return (
+    <Container style={{ height: "100%", border: "2px solid blue" }}>
+      {children}
+    </Container>
+  );
 };

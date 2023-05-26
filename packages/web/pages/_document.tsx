@@ -10,7 +10,13 @@ export default class _Document extends Document {
 
   render() {
     return (
-      <Html>
+      <Html
+        style={{
+          height: "100%",
+          margin: 0,
+          padding: 0
+        }}
+      >
         <Head>
           <link
             rel="apple-touch-icon"
@@ -31,7 +37,13 @@ export default class _Document extends Document {
           />
           <link rel="manifest" href="/site.webmanifest" />
         </Head>
-        <body>
+        <body
+          style={{
+            height: "100%",
+            margin: 0,
+            padding: 0
+          }}
+        >
           <Main />
           <NextScript />
         </body>
