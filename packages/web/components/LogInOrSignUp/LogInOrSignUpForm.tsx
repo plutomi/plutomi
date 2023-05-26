@@ -60,14 +60,16 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         notifications.show({
           id: "redirecting",
           withCloseButton: true,
-          title: message,
+          title: "You already have an active session!",
           message: "Redirecting you...",
           autoClose: 5000,
           icon: <IconInfoCircle />,
           color: "blue"
         });
 
-        if (router.pathname === "/login") {
+        const redirectToDashboard = ["/login", "/signup"];
+        if (redirectToDashboard.includes(router.pathname)) {
+          // If we don't do this, these pages will cause an infinite loop
           void router.push("/dashboard");
         } else {
           // Dynamic redirect
