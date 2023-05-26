@@ -1,12 +1,12 @@
 import { Button, createStyles, TextInput, Alert } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import axios from "axios";
+import axios, { type AxiosError } from "axios";
 import { Schema } from "@plutomi/validation";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { AiFillCheckCircle } from "react-icons/ai";
-import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
+import { useMutation } from "@tanstack/react-query";
 
 const useStyles = createStyles((theme) => ({
   controls: {
@@ -38,8 +38,6 @@ const useStyles = createStyles((theme) => ({
 
 export const SubscribeForm: React.FC = () => {
   const { classes } = useStyles();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -48,12 +46,12 @@ export const SubscribeForm: React.FC = () => {
     validate: zodResolver(Schema.Subscribe.UISchema)
   });
 
-  const handleFormSubmit = async (values: Schema.Subscribe.UIValues) => {
-    setIsSubmitting(true);
-    try {
-      await axios.post("/api/waitlist", values);
-      setSuccess(true);
-    } catch (error) {
+  const subscribe = useMutation({
+    mutationFn: async () =>
+      axios.post("/api/waitlist", {
+        email: form.values.email
+      }),
+    onError: (error: AxiosError) => {
       const message = handleAxiosError(error);
       notifications.show({
         id: "wl-error",
@@ -62,27 +60,33 @@ export const SubscribeForm: React.FC = () => {
         color: "red",
         icon: <IconAlertCircle size={24} />
       });
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+  });
 
-  return success ? (
-    <Alert
-      icon={<AiFillCheckCircle size="1rem" />}
-      title="Awesome!"
-      color="green"
-      radius="md"
+  if (subscribe.isSuccess) {
+    return (
+      <Alert
+        icon={<AiFillCheckCircle size="1rem" />}
+        title="Awesome!"
+        color="green"
+        radius="md"
+      >
+        You&apos;ve been added to our wait list 🚀
+      </Alert>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={form.onSubmit(() => {
+        subscribe.mutate();
+      })}
     >
-      You&apos;ve been added to our wait list 🚀
-    </Alert>
-  ) : (
-    <form onSubmit={form.onSubmit((values) => void handleFormSubmit(values))}>
       <div className={classes.controls}>
         <TextInput
           {...form.getInputProps("email")}
           placeholder="example@mail.com"
-          disabled={isSubmitting}
+          disabled={subscribe.isLoading}
           type="email"
           classNames={{
             input: classes.input,
@@ -91,12 +95,12 @@ export const SubscribeForm: React.FC = () => {
         />
         <Button
           type="submit"
-          loading={isSubmitting}
+          loading={subscribe.isLoading}
           disabled={!form.isDirty()}
           className={classes.control}
-          style={{ cursor: isSubmitting ? "not-allowed" : "pointer" }}
+          style={{ cursor: subscribe.isLoading ? "not-allowed" : "pointer" }}
         >
-          {isSubmitting ? "Joining" : "Join"}
+          {subscribe.isLoading ? "Joining" : "Join"}
         </Button>
       </div>
     </form>

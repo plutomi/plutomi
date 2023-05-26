@@ -8,11 +8,11 @@ import {
   Title,
   Card
 } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
-import axios, { AxiosError } from "axios";
+import axios, { type AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
@@ -48,12 +48,13 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       axios.post("/api/totp", {
         email: emailForm.values.email
       }),
+
     onSuccess: () => {
       setStep((currentStep) => currentStep + 1);
     },
+
     onError: (error: AxiosError) => {
       const message = handleAxiosError(error);
-
       if (error.response?.status === 302) {
         // User already has a session, redirect them
         notifications.show({
@@ -69,7 +70,6 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         if (router.pathname === "/login") {
           void router.push("/dashboard");
         } else {
-          console.log(`REDIRECTING TO ${router.pathname}`);
           // Dynamic redirect
           void router.push(router.pathname);
         }

@@ -1,8 +1,7 @@
 import { Container, AppShell } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import { useRef } from "react";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { notifications } from "@mantine/notifications";
 
@@ -44,27 +43,22 @@ const getDestinationContext = (pathName: string) => {
 
 export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   const router = useRouter();
-  const errorToastShownRef = useRef(false);
-
   const destinationContext = getDestinationContext(router.pathname);
+
   const { isLoading, isError } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      console.log("Fetchin!");
       const result = await axios.get("/api/users/me");
       return result;
     },
-
     retry: false
   });
 
-  console.log(`is laoding`, isLoading, `isError`, isError);
   if (isLoading) {
     return <PageLoader />;
   }
 
   if (isError) {
-    console.log("renderin!");
     notifications.show({
       id: "login-error",
       withCloseButton: true,

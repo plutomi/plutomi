@@ -29,6 +29,7 @@ import { notifications } from "@mantine/notifications";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
+import { useQuery } from "@tanstack/react-query";
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -113,20 +114,26 @@ export const DashboardContent: NextPage = () => {
   const router = useRouter();
   const [active, setActive] = useState("Dashboard");
 
-  const handleLogout = async () => {
-    try {
-      const { data } = await axios.get("/api/logout");
-
+  const { refetch, data } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const result = await axios.get("/api/logout");
+      return result;
+    },
+    retry: false,
+    enabled: false,
+    onSuccess: () => {
       void router.push("/");
-
       notifications.show({
         id: "logout",
-        message: data.message,
+        message:
+          data !== undefined ? data.data.message : "You have been logged out",
         color: "blue",
         autoClose: 5000,
         icon: <IconInfoCircle />
       });
-    } catch (error) {
+    },
+    onError: (error) => {
       const message = handleAxiosError(error);
       notifications.show({
         id: "logout-error",
@@ -136,7 +143,7 @@ export const DashboardContent: NextPage = () => {
         autoClose: 5000
       });
     }
-  };
+  });
 
   const links = navData.map((item) => (
     <Link
@@ -190,7 +197,7 @@ export const DashboardContent: NextPage = () => {
             <Button
               variant="subtle"
               onClick={() => {
-                void handleLogout();
+                void refetch();
               }}
               size="lg"
               className={classes.link}
