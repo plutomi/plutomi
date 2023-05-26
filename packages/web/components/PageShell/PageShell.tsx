@@ -1,3 +1,4 @@
+import Login from "@/pages/login";
 import {
   Center,
   Container,
@@ -9,9 +10,11 @@ import {
   Stack,
   Alert
 } from "@mantine/core";
+import { LogInOrSignUp } from "@plutomi/validation/schemas";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { LogInOrSignUpForm } from "../LogInOrSignUp";
 
 type PageShellProps = {
   children: React.ReactNode;
@@ -40,9 +43,7 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
     if (error.response.status === 401) {
       return (
         <AppShell padding={0}>
-          <Center h="100%" w="100%">
-            <Text fz="md">You are not logged in.</Text>
-          </Center>
+          <LogInOrSignUpForm />
         </AppShell>
       );
     }
