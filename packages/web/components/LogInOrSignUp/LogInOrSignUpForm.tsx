@@ -179,7 +179,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       return "Send";
     }
 
-    if (requestTotp.isLoading && step === 2) {
+    if (totpVerify.isLoading && step === 2) {
       if (authContext === "login") {
         return "Logging in...";
       }
