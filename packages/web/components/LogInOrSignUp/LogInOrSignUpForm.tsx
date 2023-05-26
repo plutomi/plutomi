@@ -8,7 +8,7 @@ import {
   Title,
   Card
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
@@ -30,7 +30,6 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   subTitle
 }) => {
   const [step, setStep] = useState(1);
-  // const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const authContext = useAuthContext();
 
@@ -48,7 +47,45 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     mutationFn: async () =>
       axios.post("/api/totp", {
         email: emailForm.values.email
-      })
+      }),
+    onSuccess: () => {
+      setStep((currentStep) => currentStep + 1);
+    },
+    onError: (error: AxiosError) => {
+      const message = handleAxiosError(error);
+
+      if (error.response?.status === 302) {
+        // User already has a session, redirect them
+        notifications.show({
+          id: "redirecting",
+          withCloseButton: true,
+          title: message,
+          message: "Redirecting you...",
+          autoClose: 5000,
+          icon: <IconInfoCircle />,
+          color: "blue"
+        });
+
+        if (router.pathname === "/login") {
+          void router.push("/dashboard");
+        } else {
+          console.log(`REDIRECTING TO ${router.pathname}`);
+          // Dynamic redirect
+          void router.push(router.pathname);
+        }
+        return;
+      }
+
+      notifications.show({
+        id: "totp-request-error",
+        withCloseButton: true,
+        title: "An error ocurred",
+        message,
+        color: "red",
+        icon: <IconX />,
+        loading: false
+      });
+    }
   });
 
   const totpVerify = useMutation({
@@ -71,54 +108,10 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   };
 
   useEffect(() => {
-    if (requestTotp.isSuccess) {
-      setStep((currentStep) => currentStep + 1);
-      return;
-    }
-
-    if (requestTotp.isError) {
-      const message = handleAxiosError(requestTotp.error);
-
-      if (
-        requestTotp.error instanceof AxiosError &&
-        requestTotp.error?.response?.status === 302
-      ) {
-        // User already has a session, redirect them
-        notifications.show({
-          withCloseButton: true,
-          title: message,
-          message: "Redirecting you...",
-          autoClose: 5000,
-          icon: <IconInfoCircle />,
-          color: "blue"
-        });
-
-        if (router.pathname === "/login") {
-          void router.push("/dashboard");
-        } else {
-          // Dynamic redirect
-          void router.push(router.pathname);
-        }
-        return;
-      }
-
-      notifications.show({
-        withCloseButton: true,
-        title: "An error ocurred",
-        message,
-        color: "red",
-        icon: <IconX />,
-        loading: false
-      });
-    }
-  }, [requestTotp.isSuccess, requestTotp.isError, requestTotp.error, router]);
-
-  useEffect(() => {
     if (totpVerify.isSuccess) {
       notifications.show({
+        id: "login-success",
         withCloseButton: true,
-        // title: "Login successful!",
-        // ! TODO: Have this be dynamic depending on where they are going
         message: "Login successful!",
         autoClose: 4000,
         icon: <IconCheck />,
@@ -131,12 +124,14 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         // Dynamic redirect
         void router.push(router.pathname);
       }
+
       return;
     }
 
     if (totpVerify.isError) {
       const message = handleAxiosError(totpVerify.error);
       notifications.show({
+        id: "totp-verify-error",
         withCloseButton: true,
         title: "An error ocurred",
         message,

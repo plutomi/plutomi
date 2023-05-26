@@ -47,40 +47,34 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   const errorToastShownRef = useRef(false);
 
   const destinationContext = getDestinationContext(router.pathname);
-  const { isLoading, isError, error } = useQuery({
+  const { isLoading, isError } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
+      console.log("Fetchin!");
       const result = await axios.get("/api/users/me");
       return result;
     },
+
     retry: false
   });
 
+  console.log(`is laoding`, isLoading, `isError`, isError);
   if (isLoading) {
     return <PageLoader />;
   }
 
   if (isError) {
-    if (error instanceof AxiosError && error.response?.status === 401) {
-      return (
-        <AppShell padding={0}>
-          <LogInOrSignUpForm title={destinationContext} />
-        </AppShell>
-      );
-    }
-
-    if (!errorToastShownRef.current) {
-      errorToastShownRef.current = true;
-      notifications.show({
-        withCloseButton: true,
-        title: "An error ocurred",
-        message: "We were unable to retrieve your info. Please log in again!",
-        color: "red",
-        autoClose: 5000,
-        icon: <IconX />,
-        loading: false
-      });
-    }
+    console.log("renderin!");
+    notifications.show({
+      id: "login-error",
+      withCloseButton: true,
+      title: "An error ocurred",
+      message: "We were unable to retrieve your info. Please log in again!",
+      color: "red",
+      autoClose: 5000,
+      icon: <IconX />,
+      loading: false
+    });
 
     return (
       <AppShell padding={0}>

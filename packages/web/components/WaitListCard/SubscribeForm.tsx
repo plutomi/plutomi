@@ -56,6 +56,7 @@ export const SubscribeForm: React.FC = () => {
     } catch (error) {
       const message = handleAxiosError(error);
       notifications.show({
+        id: "wl-error",
         title: "An error ocurred 😢",
         message,
         color: "red",

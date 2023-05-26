@@ -120,6 +120,7 @@ export const DashboardContent: NextPage = () => {
       void router.push("/");
 
       notifications.show({
+        id: "logout",
         message: data.message,
         color: "blue",
         autoClose: 5000,
@@ -128,6 +129,7 @@ export const DashboardContent: NextPage = () => {
     } catch (error) {
       const message = handleAxiosError(error);
       notifications.show({
+        id: "logout-error",
         title: "An error ocurred logging you out",
         message,
         color: "red",
