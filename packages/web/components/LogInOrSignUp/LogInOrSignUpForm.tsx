@@ -17,6 +17,7 @@ import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryKeys } from "@/@types";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 
@@ -34,7 +35,6 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   const [step, setStep] = useState(1);
   const router = useRouter();
   const authContext = useAuthContext();
-
   const queryClient = useQueryClient();
 
   const emailForm = useForm<Schema.LogInOrSignUp.email.UIValues>({
@@ -55,7 +55,9 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     }
 
     // Otherwise, refetch the user data to remove the login/signup form from the page shell
-    void queryClient.invalidateQueries({ queryKey: ["user"] });
+    void queryClient.invalidateQueries({
+      queryKey: [QueryKeys.GET_CURRENT_USER]
+    });
   };
 
   const requestTotp = useMutation({

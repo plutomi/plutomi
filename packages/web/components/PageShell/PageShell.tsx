@@ -2,6 +2,7 @@ import { Container, AppShell } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { QueryKeys } from "@/@types";
 import { LogInOrSignUpForm } from "../LogInOrSignUp";
 import { PageLoader } from "../PageLoader";
 
@@ -43,7 +44,7 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   const destinationContext = getDestinationContext(router.pathname);
 
   const { isLoading, isError } = useQuery({
-    queryKey: ["user"],
+    queryKey: [QueryKeys.GET_CURRENT_USER],
     queryFn: async () => {
       const result = await axios.get("/api/users/me");
       return result;

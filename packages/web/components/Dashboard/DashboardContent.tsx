@@ -30,6 +30,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { useQuery } from "@tanstack/react-query";
+import { QueryKeys } from "@/@types";
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -115,7 +116,7 @@ export const DashboardContent: NextPage = () => {
   const [active, setActive] = useState("Dashboard");
 
   const { refetch } = useQuery({
-    queryKey: ["logout"],
+    queryKey: [QueryKeys.LOGOUT],
     queryFn: async () => {
       const result = await axios.get("/api/logout");
       return result;
