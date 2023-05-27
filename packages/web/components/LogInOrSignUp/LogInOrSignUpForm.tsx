@@ -47,6 +47,17 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     validate: zodResolver(Schema.LogInOrSignUp.totp.UISchema)
   });
 
+  const handleRedirect = () => {
+    if (redirectToDashboardPaths.includes(router.pathname)) {
+      // Redirect to dashboard if we're on login or signup
+      void router.push("/dashboard");
+      return;
+    }
+
+    // Otherwise, refetch the user data to remove the login/signup form from the page shell
+    void queryClient.invalidateQueries({ queryKey: ["user"] });
+  };
+
   const requestTotp = useMutation({
     mutationFn: async () =>
       axios.post("/api/totp", {
@@ -71,14 +82,15 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
           color: "blue"
         });
 
-        if (redirectToDashboardPaths.includes(router.pathname)) {
-          // Redirect to dashboard if we're on login or signup
-          void router.push("/dashboard");
-          return;
-        }
+        handleRedirect();
+        // if (redirectToDashboardPaths.includes(router.pathname)) {
+        //   // Redirect to dashboard if we're on login or signup
+        //   void router.push("/dashboard");
+        //   return;
+        // }
 
-        // Otherwise, refetch the user data to remove the login/signup form from the page shell
-        void queryClient.invalidateQueries({ queryKey: ["user"] });
+        // // Otherwise, refetch the user data to remove the login/signup form from the page shell
+        // void queryClient.invalidateQueries({ queryKey: ["user"] });
         return;
       }
 
@@ -110,13 +122,15 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         color: "green"
       });
 
-      if (redirectToDashboardPaths.includes(router.pathname)) {
-        // Redirect to dashboard if we're on login or signup
-        void router.push("/dashboard");
-        return;
-      }
-      // Otherwise, refetch the user data to remove the login/signup form from the page shell
-      void queryClient.invalidateQueries({ queryKey: ["user"] });
+      handleRedirect();
+
+      // if (redirectToDashboardPaths.includes(router.pathname)) {
+      //   // Redirect to dashboard if we're on login or signup
+      //   void router.push("/dashboard");
+      //   return;
+      // }
+      // // Otherwise, refetch the user data to remove the login/signup form from the page shell
+      // void queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error: AxiosError) => {
       const message = handleAxiosError(error);

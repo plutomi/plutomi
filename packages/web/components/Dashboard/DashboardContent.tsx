@@ -126,7 +126,7 @@ export const DashboardContent: NextPage = () => {
       void router.push("/");
       notifications.show({
         id: "logout",
-        message: "You have been logged out.",
+        message: "You have been logged out. See you soon!",
         color: "blue",
         autoClose: 5000,
         icon: <IconInfoCircle />
