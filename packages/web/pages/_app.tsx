@@ -17,8 +17,6 @@ const queryClient = new QueryClient();
 
 const App = ({ Component, pageProps }: AppProps) => (
   <QueryClientProvider client={queryClient}>
-    {/* The rest of your application */}
-
     <MantineProvider
       withGlobalStyles
       withNormalizeCSS
