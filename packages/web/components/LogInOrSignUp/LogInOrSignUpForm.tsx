@@ -12,18 +12,37 @@ import { useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryKeys } from "@/@types";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
+import {
+  getButtonText,
+  getFormByStep,
+  getSubheaderAction,
+  getSubheaderText,
+  getTitleText
+} from "./utils";
 
-export const LogInOrSignUpForm: React.FC = () => {
+type LoginOrSignupProps = {
+  title?: string;
+  subTitle?: string;
+};
+
+const redirectToDashboardPaths = ["/login", "/signup"];
+
+export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
+  title,
+  subTitle
+}) => {
   const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const authContext = useAuthContext();
+  const queryClient = useQueryClient();
 
   const emailForm = useForm<Schema.LogInOrSignUp.email.UIValues>({
     initialValues: { email: "" },
@@ -35,97 +54,109 @@ export const LogInOrSignUpForm: React.FC = () => {
     validate: zodResolver(Schema.LogInOrSignUp.totp.UISchema)
   });
 
-  const getFormByStep = () => {
-    switch (step) {
-      case 1:
-        return emailForm;
-      case 2:
-        return totpCodeForm;
-      default:
-        return emailForm;
+  const handleRedirect = () => {
+    if (redirectToDashboardPaths.includes(router.pathname)) {
+      // Redirect to dashboard if we're on login or signup
+      void router.push("/dashboard");
+      return;
     }
+
+    // Otherwise, refetch the user data to remove the login/signup form from the page shell
+    void queryClient.invalidateQueries({
+      queryKey: [QueryKeys.GET_CURRENT_USER]
+    });
   };
+
+  const requestTotp = useMutation({
+    mutationFn: async () =>
+      axios.post("/api/totp", {
+        email: emailForm.values.email
+      }),
+
+    onSuccess: () => {
+      setStep((currentStep) => currentStep + 1);
+    },
+
+    onError: (error) => {
+      const message = handleAxiosError(error);
+      if (error instanceof AxiosError && error.response?.status === 302) {
+        // User already has a session, redirect them
+        notifications.show({
+          id: "redirecting",
+          withCloseButton: true,
+          title: message,
+          message: "Redirecting you...",
+          autoClose: 5000,
+          icon: <IconInfoCircle />,
+          color: "blue"
+        });
+
+        handleRedirect();
+        return;
+      }
+
+      notifications.show({
+        id: "totp-request-error",
+        withCloseButton: true,
+        title: "An error ocurred",
+        message,
+        color: "red",
+        icon: <IconX />,
+        loading: false
+      });
+    }
+  });
+
+  const verifyTotp = useMutation({
+    mutationFn: async () =>
+      axios.post("/api/totp/verify", {
+        totpCode: totpCodeForm.values.totpCode,
+        email: emailForm.values.email
+      }),
+    onSuccess: () => {
+      notifications.show({
+        id: "login-success",
+        withCloseButton: true,
+        message: "Login successful!",
+        autoClose: 2500,
+        icon: <IconCheck />,
+        color: "green"
+      });
+
+      handleRedirect();
+    },
+    onError: (error) => {
+      const message = handleAxiosError(error);
+      notifications.show({
+        id: "totp-verify-error",
+        withCloseButton: true,
+        title: "An error ocurred",
+        message,
+        color: "red",
+        icon: <IconX />,
+        loading: false
+      });
+    }
+  });
 
   const nextStep = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const currentForm = getFormByStep();
+    const currentForm = getFormByStep({
+      step,
+      emailForm,
+      totpCodeForm
+    });
 
     if (currentForm.validate().hasErrors) {
       return;
     }
-
-    setIsSubmitting(true);
-
     if (step === 1) {
-      try {
-        await axios.post("/api/totp", {
-          email: emailForm.values.email
-        });
-
-        setStep((currentStep) => currentStep + 1);
-      } catch (error: any) {
-        const message = handleAxiosError(error);
-
-        if (error.response.status === 302) {
-          // User already has a session, redirect them to the dashboard
-          notifications.show({
-            withCloseButton: true,
-            title: message,
-            message: "Redirecting you to the dashboard...",
-            autoClose: 5000,
-            icon: <IconInfoCircle />,
-            color: "blue"
-          });
-
-          void router.push("/dashboard");
-          return;
-        }
-
-        notifications.show({
-          withCloseButton: true,
-          title: "An error ocurred",
-          message,
-          color: "red",
-          icon: <IconX />,
-          loading: false
-        });
-        return;
-      } finally {
-        setIsSubmitting(false);
-      }
+      requestTotp.mutate();
+      return;
     }
 
     if (step === 2) {
-      try {
-        await axios.post("/api/totp/verify", {
-          email: emailForm.values.email,
-          totpCode: totpCodeForm.values.totpCode
-        });
-
-        notifications.show({
-          withCloseButton: true,
-          // title: "Login successful!",
-          // ! TODO: Have this be dynamic depending on where they are going
-          message: "Login successful!",
-          autoClose: 4000,
-          icon: <IconCheck />,
-          color: "green"
-        });
-        void router.push("/dashboard");
-      } catch (error) {
-        const message = handleAxiosError(error);
-        notifications.show({
-          withCloseButton: true,
-          title: "An error ocurred",
-          message,
-          color: "red",
-          icon: <IconX />,
-          loading: false
-        });
-
-        // Only disable on error incase the page switch takes a while
-        setIsSubmitting(false);
-      }
+      verifyTotp.mutate();
     }
   };
 
@@ -135,62 +166,36 @@ export const LogInOrSignUpForm: React.FC = () => {
     setStep((currentStep) => currentStep - 1);
   };
 
-  const getButtonText = () => {
-    if (isSubmitting && step === 1) {
-      return "Sending...";
-    }
+  const buttonText = getButtonText({
+    step,
+    requestTotpIsLoading: requestTotp.isLoading || requestTotp.isSuccess,
+    verifyTotpIsLoading: verifyTotp.isLoading || verifyTotp.isSuccess,
+    authContext
+  });
+  const titleText = getTitleText({ authContext, title });
+  const subheaderAction = getSubheaderAction({ subTitle, authContext });
+  const subheaderText = getSubheaderText({ step, subheaderAction });
 
-    if (step === 1) {
-      return "Send";
-    }
-
-    if (isSubmitting && step === 2) {
-      if (authContext === "login") {
-        return "Logging in...";
-      }
-
-      return "Signing up...";
-    }
-
-    if (step === 2) {
-      if (authContext === "login") {
-        return "Log in";
-      }
-
-      return "Sign up";
-    }
-
-    return "";
-  };
-  const buttonText = getButtonText();
-
-  const getSubheaderText = () => {
-    if (step === 1) {
-      return `To ${
-        authContext === "login" ? "log in" : "sign up"
-      }, we'll send a one-time code to your email.`;
-    }
-
-    if (step === 2) {
-      return "Enter the code that you received. It will expire in 5 minutes.";
-    }
-
-    return "";
-  };
-
-  const subheaderText = getSubheaderText();
+  const nextAndBackButtonsDisabled =
+    requestTotp.isLoading || verifyTotp.isLoading || verifyTotp.isSuccess;
 
   return (
     <Container size="xs" my={40}>
-      <Card>
+      <Card withBorder shadow="sm" radius="md">
         <Stack>
-          <Title>Welcome{authContext === "login" ? " back" : ""}!</Title>
+          <Title order={3}>{titleText}</Title>
           <Text>{subheaderText}</Text>
           <form>
             {step === 1 ? (
-              <LoginEmailForm form={emailForm} isSubmitting={isSubmitting} />
+              <LoginEmailForm
+                form={emailForm}
+                isSubmitting={requestTotp.isLoading}
+              />
             ) : (
-              <TOTPCodeForm form={totpCodeForm} isSubmitting={isSubmitting} />
+              <TOTPCodeForm
+                form={totpCodeForm}
+                isSubmitting={verifyTotp.isLoading}
+              />
             )}
             <Flex justify={step === 1 ? "end" : "space-between"} mt="md">
               {step === 1 ? null : (
@@ -198,7 +203,7 @@ export const LogInOrSignUpForm: React.FC = () => {
                   radius="md"
                   variant="default"
                   onClick={previousStep}
-                  disabled={isSubmitting}
+                  disabled={nextAndBackButtonsDisabled}
                 >
                   Back
                 </Button>
@@ -208,7 +213,7 @@ export const LogInOrSignUpForm: React.FC = () => {
                 radius="md"
                 type="submit"
                 onClick={(e) => void nextStep(e)}
-                loading={isSubmitting}
+                loading={nextAndBackButtonsDisabled}
               >
                 {buttonText}
               </Button>

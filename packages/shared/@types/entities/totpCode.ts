@@ -14,7 +14,6 @@ type TOTPCodeRelatedToArray = [
 
 export enum TOTPCodeStatus {
   ACTIVE = "ACTIVE",
-  // ! TODO: Add a "USED" status
   USED = "USED",
   EXPIRED = "EXPIRED"
 }

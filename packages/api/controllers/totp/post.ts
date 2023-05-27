@@ -123,6 +123,7 @@ export const post: RequestHandler = async (req, res) => {
         _id: sessionId as PlutomiId<AllEntityNames.SESSION>
       });
 
+      // ! TODO: Clean this up in two parts, first check if session is null, then check if it is active
       if (session !== null && sessionIsActive({ session })) {
         res.status(302).json({
           message: "You already have an active session!"
@@ -130,7 +131,8 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
 
-      // Delete the previous cookie, if any, they will get a new one with a new login
+      // Delete the previous cookie, if any, they will get a new one on their new login
+      // Any other session statuses are irrelevant from this point.
       cookieJar.set(getSessionCookieName(), undefined, getCookieSettings());
     } catch (error) {
       res.status(500).json({
@@ -145,6 +147,7 @@ export const post: RequestHandler = async (req, res) => {
   const { _id: userId } = user;
 
   try {
+    // Get the recent login codes for this user, and see if they're allowed to request another one at this time
     const now = dayjs();
     recentTotpCodes = await req.items
       .find<TOTPCode>(
@@ -185,6 +188,7 @@ export const post: RequestHandler = async (req, res) => {
   const totpCode = generateTOTP();
 
   try {
+    // Create a new code for the user
     const now = dayjs();
     const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({

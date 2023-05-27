@@ -3,6 +3,7 @@ import type { UseFormReturnType } from "@mantine/form";
 import { PlutomiEmails } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 import { useAuthContext } from "@/hooks";
+import { useEffect, useRef } from "react";
 
 type LoginEmailFormProps = {
   form: UseFormReturnType<Schema.LogInOrSignUp.email.UIValues>;
@@ -17,6 +18,13 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
 }) => {
   const authContext = useAuthContext();
   const actionText = authContext === "login" ? "logging" : "signing";
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isSubmitting) {
+      inputRef.current?.focus();
+    }
+  }, [isSubmitting]);
 
   return (
     <>
@@ -28,6 +36,7 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
         placeholder={PlutomiEmails.JOSE}
         radius="md"
         disabled={isSubmitting}
+        ref={inputRef}
         autoFocus
       />
       <Text c="dimmed">
