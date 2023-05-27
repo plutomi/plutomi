@@ -22,6 +22,7 @@ import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 import {
   getButtonText,
+  getFormByStep,
   getSubheaderAction,
   getSubheaderText,
   getTitleText
@@ -138,20 +139,13 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     }
   });
 
-  const getFormByStep = () => {
-    switch (step) {
-      case 1:
-        return emailForm;
-      case 2:
-        return totpCodeForm;
-      default:
-        return emailForm;
-    }
-  };
-
   const nextStep = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const currentForm = getFormByStep();
+    const currentForm = getFormByStep({
+      step,
+      emailForm,
+      totpCodeForm
+    });
 
     if (currentForm.validate().hasErrors) {
       return;
