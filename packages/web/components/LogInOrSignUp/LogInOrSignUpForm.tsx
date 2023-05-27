@@ -247,10 +247,10 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
 
   const titleText = getTitle();
   return (
-    <Container size="sm" my={40}>
-      <Card>
+    <Container size="xs" my={40}>
+      <Card withBorder shadow="sm" radius="md">
         <Stack>
-          <Title>{titleText}</Title>
+          <Title order={3}>{titleText}</Title>
           <Text>{subheaderText}</Text>
           <form>
             {step === 1 ? (
