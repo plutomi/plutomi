@@ -13,7 +13,7 @@ type PageShellProps = {
 
 export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   const router = useRouter();
-  const destinationContext = getLoggedOutPageHeader(router.pathname);
+  const loggedOutPageHeader = getLoggedOutPageHeader(router.pathname);
 
   const { isLoading, isError } = useQuery({
     queryKey: [QueryKeys.GET_CURRENT_USER],
@@ -33,7 +33,7 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   if (isError) {
     return (
       <AppShell padding={0}>
-        <LogInOrSignUpForm title={destinationContext} />
+        <LogInOrSignUpForm title={loggedOutPageHeader} />
       </AppShell>
     );
   }
