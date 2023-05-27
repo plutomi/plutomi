@@ -20,7 +20,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "@/@types";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
-import { getSubheaderAction, getSubheaderText, getTitleText } from "./utils";
+import {
+  getButtonText,
+  getSubheaderAction,
+  getSubheaderText,
+  getTitleText
+} from "./utils";
 
 type LoginOrSignupProps = {
   title?: string;
@@ -167,36 +172,12 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     setStep((currentStep) => currentStep - 1);
   };
 
-  const getButtonText = () => {
-    if (requestTotp.isLoading && step === 1) {
-      return "Sending...";
-    }
-
-    if (step === 1) {
-      return "Send";
-    }
-
-    if (totpVerify.isLoading && step === 2) {
-      if (authContext === "login") {
-        return "Logging in...";
-      }
-
-      return "Signing up...";
-    }
-
-    if (step === 2) {
-      if (authContext === "login") {
-        return "Log in";
-      }
-
-      return "Sign up";
-    }
-
-    // This should never be triggered
-    return "Continue";
-  };
-  const buttonText = getButtonText();
-
+  const buttonText = getButtonText({
+    step,
+    totpIsLoading: totpVerify.isLoading,
+    totpVerifyIsLoading: totpVerify.isLoading,
+    authContext
+  });
   const titleText = getTitleText({ authContext, title });
   const subheaderAction = getSubheaderAction({ subTitle, authContext });
   const subheaderText = getSubheaderText({ step, subheaderAction });
