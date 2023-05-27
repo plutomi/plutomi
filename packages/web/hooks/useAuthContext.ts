@@ -10,21 +10,10 @@ export const useAuthContext = (): AuthContext => {
   const router = useRouter();
   const { pathname } = router;
 
-  // User likely already has an account if they are hitting one of these
-  const loginPaths = [
-    "/dashboard",
-    "/applications",
-    "/questions",
-    "/team",
-    "/analytics",
-    "/billing",
-    "/webhooks",
-    "/settings",
-    "/login"
-  ];
-  if (loginPaths.includes(pathname)) {
-    return "login";
+  if (pathname === "/signup") {
+    return "signUp";
   }
 
-  return "signUp";
+  // Any other route is typically a
+  return "login";
 };
