@@ -51,7 +51,8 @@ export const SubscribeForm: React.FC = () => {
       axios.post("/api/waitlist", {
         email: form.values.email
       }),
-    onError: (error: unknown) => {
+
+    onError: (error) => {
       const message = handleAxiosError(error);
       notifications.show({
         id: "wl-error",
