@@ -42,7 +42,7 @@ import { withClientIp } from "./middleware";
   // server.use(compression());
   server.use(cors());
   server.use(withClientIp);
-  
+
   // All routes are handled here
   server.use("/api", API);
 
