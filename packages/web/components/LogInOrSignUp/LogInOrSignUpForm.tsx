@@ -16,7 +16,7 @@ import axios, { type AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 
@@ -34,6 +34,8 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   const [step, setStep] = useState(1);
   const router = useRouter();
   const authContext = useAuthContext();
+
+  const queryClient = useQueryClient();
 
   const emailForm = useForm<Schema.LogInOrSignUp.email.UIValues>({
     initialValues: { email: "" },
@@ -72,12 +74,11 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         if (redirectToDashboardPaths.includes(router.pathname)) {
           // Redirect to dashboard if we're on login or signup
           void router.push("/dashboard");
-          // Otherwise, refetch the page to remove the login/signup form
-          // From the page shell
           return;
         }
 
-        void router.push(router.pathname);
+        // Otherwise, refetch the user data to remove the login/signup form from the page shell
+        void queryClient.invalidateQueries({ queryKey: ["user"] });
         return;
       }
 
@@ -112,12 +113,10 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       if (redirectToDashboardPaths.includes(router.pathname)) {
         // Redirect to dashboard if we're on login or signup
         void router.push("/dashboard");
-        // Otherwise, refetch the page to remove the login/signup form
-        // From the page shell
         return;
       }
-
-      void router.push(router.pathname);
+      // Otherwise, refetch the user data to remove the login/signup form from the page shell
+      void queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error: AxiosError) => {
       const message = handleAxiosError(error);
