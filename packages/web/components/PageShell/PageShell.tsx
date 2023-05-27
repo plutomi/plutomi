@@ -61,16 +61,16 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   }
 
   if (isError) {
-    notifications.show({
-      id: "login-error",
-      withCloseButton: true,
-      title: "An error ocurred",
-      message: "We were unable to retrieve your info. Please log in again!",
-      color: "red",
-      autoClose: 5000,
-      icon: <IconX />,
-      loading: false
-    });
+    // notifications.show({
+    //   id: "login-error",
+    //   withCloseButton: true,
+    //   title: "An error ocurred",
+    //   message: "We were unable to retrieve your info. Please log in again!",
+    //   color: "red",
+    //   autoClose: 5000,
+    //   icon: <IconX />,
+    //   loading: false
+    // });
 
     return (
       <AppShell padding={0}>

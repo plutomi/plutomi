@@ -105,7 +105,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         id: "login-success",
         withCloseButton: true,
         message: "Login successful!",
-        autoClose: 4000,
+        autoClose: 2500,
         icon: <IconCheck />,
         color: "green"
       });

@@ -1,6 +1,5 @@
 import { TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
-import { useFocusTrap } from "@mantine/hooks";
 import { TOTP_LENGTH, generateTOTP } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 import { useEffect, useRef } from "react";
