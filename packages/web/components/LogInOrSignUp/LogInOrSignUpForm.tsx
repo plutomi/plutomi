@@ -74,9 +74,10 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
           void router.push("/dashboard");
           // Otherwise, refetch the page to remove the login/signup form
           // From the page shell
+          return;
         }
 
-        void router.push("/dashboard");
+        void router.push(router.pathname);
         return;
       }
 
@@ -113,9 +114,10 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         void router.push("/dashboard");
         // Otherwise, refetch the page to remove the login/signup form
         // From the page shell
+        return;
       }
 
-      void router.push("/dashboard");
+      void router.push(router.pathname);
     },
     onError: (error: AxiosError) => {
       const message = handleAxiosError(error);

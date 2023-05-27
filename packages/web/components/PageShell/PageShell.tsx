@@ -45,7 +45,7 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   const router = useRouter();
   const destinationContext = getDestinationContext(router.pathname);
 
-  const { isLoading, isError } = useQuery({
+  const { isLoading, isError, isSuccess } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const result = await axios.get("/api/users/me");
@@ -79,5 +79,9 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
     );
   }
 
-  return <Container>{children}</Container>;
+  if (isSuccess) {
+    return <Container>{children}</Container>;
+  }
+
+  return <div></div>;
 };

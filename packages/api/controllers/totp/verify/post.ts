@@ -27,7 +27,7 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email, totpCode } = data;
 
-  let mostRecentCodes: TOTPCode[];
+  let mostRecentCodes: TOTPCode[] = [];
 
   try {
     mostRecentCodes = await req.items
@@ -37,7 +37,7 @@ export const post: RequestHandler = async (req, res) => {
           type: RelatedToType.TOTP
         }
       })
-      .sort({ createdAt: -1 })
+      .sort({ _id: -1 })
       .limit(1)
       .toArray();
   } catch (error) {
@@ -59,7 +59,8 @@ export const post: RequestHandler = async (req, res) => {
     mostRecentCode.status === TOTPCodeStatus.EXPIRED ||
     // Code has been used
     mostRecentCode.status === TOTPCodeStatus.USED ||
-    // Expired by exhaustive check
+    // Expired by date exhaustive check
+    // TODO: Can remove when scheduled events are in
     dayjs(mostRecentCode.expiresAt).isBefore(now) ||
     // Code is invalid
     mostRecentCode.code !== totpCode

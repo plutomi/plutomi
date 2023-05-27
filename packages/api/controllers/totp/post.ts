@@ -147,6 +147,7 @@ export const post: RequestHandler = async (req, res) => {
   const { _id: userId } = user;
 
   try {
+    // Get the recent login codes for this user, and see if they're allowed to request another one at this time
     const now = dayjs();
     recentTotpCodes = await req.items
       .find<TOTPCode>(
@@ -187,6 +188,7 @@ export const post: RequestHandler = async (req, res) => {
   const totpCode = generateTOTP();
 
   try {
+    // Create a new code for the user
     const now = dayjs();
     const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({
