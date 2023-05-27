@@ -14,6 +14,6 @@ export const useAuthContext = (): AuthContext => {
     return "signUp";
   }
 
-  // Any other route is typically a
+  // Any other route is typically a returning user
   return "login";
 };
