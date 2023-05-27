@@ -1,10 +1,7 @@
 import { Container, AppShell } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { notifications } from "@mantine/notifications";
-
 import { LogInOrSignUpForm } from "../LogInOrSignUp";
 import { PageLoader } from "../PageLoader";
 
@@ -45,7 +42,7 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
   const router = useRouter();
   const destinationContext = getDestinationContext(router.pathname);
 
-  const { isLoading, isError, isSuccess } = useQuery({
+  const { isLoading, isError } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const result = await axios.get("/api/users/me");
@@ -79,9 +76,5 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
     );
   }
 
-  if (isSuccess) {
-    return <Container>{children}</Container>;
-  }
-
-  return <div></div>;
+  return <Container>{children}</Container>;
 };
