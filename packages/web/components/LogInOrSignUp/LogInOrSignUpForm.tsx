@@ -77,7 +77,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         notifications.show({
           id: "redirecting",
           withCloseButton: true,
-          title: "You already have an active session!",
+          title: message,
           message: "Redirecting you...",
           autoClose: 5000,
           icon: <IconInfoCircle />,
