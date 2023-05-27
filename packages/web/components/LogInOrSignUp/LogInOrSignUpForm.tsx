@@ -107,7 +107,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     }
   });
 
-  const totpVerify = useMutation({
+  const verifyTotp = useMutation({
     mutationFn: async () =>
       axios.post("/api/totp/verify", {
         totpCode: totpCodeForm.values.totpCode,
@@ -156,7 +156,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     }
 
     if (step === 2) {
-      totpVerify.mutate();
+      verifyTotp.mutate();
     }
   };
 
@@ -168,8 +168,8 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
 
   const buttonText = getButtonText({
     step,
-    totpIsLoading: totpVerify.isLoading,
-    totpVerifyIsLoading: totpVerify.isLoading,
+    requestTotpIsLoading: requestTotp.isLoading || requestTotp.isSuccess,
+    verifyTotpIsLoading: verifyTotp.isLoading || verifyTotp.isSuccess,
     authContext
   });
   const titleText = getTitleText({ authContext, title });
@@ -177,7 +177,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   const subheaderText = getSubheaderText({ step, subheaderAction });
 
   const nextAndBackButtonsDisabled =
-    requestTotp.isLoading || totpVerify.isLoading || totpVerify.isSuccess;
+    requestTotp.isLoading || verifyTotp.isLoading || verifyTotp.isSuccess;
 
   return (
     <Container size="xs" my={40}>
@@ -194,7 +194,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
             ) : (
               <TOTPCodeForm
                 form={totpCodeForm}
-                isSubmitting={totpVerify.isLoading}
+                isSubmitting={verifyTotp.isLoading}
               />
             )}
             <Flex justify={step === 1 ? "end" : "space-between"} mt="md">

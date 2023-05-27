@@ -1,19 +1,19 @@
 import type { AuthContext } from "@/hooks";
 
 type GetButtonTextProps = {
-  totpIsLoading: boolean;
-  totpVerifyIsLoading: boolean;
+  requestTotpIsLoading: boolean;
+  verifyTotpIsLoading: boolean;
   authContext: AuthContext;
   step: number;
 };
 
 export const getButtonText = ({
-  totpIsLoading,
-  totpVerifyIsLoading,
+  requestTotpIsLoading,
+  verifyTotpIsLoading,
   step,
   authContext
 }: GetButtonTextProps) => {
-  if (totpIsLoading && step === 1) {
+  if (requestTotpIsLoading && step === 1) {
     return "Sending...";
   }
 
@@ -21,7 +21,7 @@ export const getButtonText = ({
     return "Send";
   }
 
-  if (totpVerifyIsLoading && step === 2) {
+  if (verifyTotpIsLoading && step === 2) {
     if (authContext === "login") {
       return "Logging in...";
     }

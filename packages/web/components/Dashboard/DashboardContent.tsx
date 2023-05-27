@@ -112,7 +112,7 @@ export const DashboardContent: NextPage = () => {
         id: "logout",
         message: "You have been logged out. See you soon!",
         color: "blue",
-        autoClose: 5000,
+        autoClose: 3000,
         icon: <IconInfoCircle />
       });
     },
