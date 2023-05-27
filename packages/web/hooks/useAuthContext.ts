@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-type AuthContext = "login" | "signUp";
+export type AuthContext = "login" | "signUp";
 
 /**
  * Checks if the user is logging in or signing up

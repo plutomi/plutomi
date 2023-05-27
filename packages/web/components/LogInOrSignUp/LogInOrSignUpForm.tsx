@@ -20,6 +20,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "@/@types";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
+import { getSubheaderAction, getSubheaderText, getTitleText } from "./utils";
 
 type LoginOrSignupProps = {
   title?: string;
@@ -196,42 +197,13 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
   };
   const buttonText = getButtonText();
 
-  const getAuthContext = () => {
-    if (subTitle !== undefined) {
-      return "continue";
-    }
-
-    if (authContext === "login") {
-      return "log in";
-    }
-    return "sign up";
-  };
-
-  const getSubheaderText = () => {
-    if (step === 1) {
-      return `To ${getAuthContext()}, we'll send a one-time code to your email.`;
-    }
-
-    if (step === 2) {
-      return "Enter the code that you received. It will expire in 5 minutes.";
-    }
-
-    return "";
-  };
-
-  const subheaderText = getSubheaderText();
-
-  const getTitle = () => {
-    if (title === undefined) {
-      return `Welcome${authContext === "login" ? " back" : ""}!`;
-    }
-    return title;
-  };
+  const titleText = getTitleText({ authContext, title });
+  const subheaderAction = getSubheaderAction({ subTitle, authContext });
+  const subheaderText = getSubheaderText({ step, subheaderAction });
 
   const nextAndBackButtonsDisabled =
     requestTotp.isLoading || totpVerify.isLoading || totpVerify.isSuccess;
 
-  const titleText = getTitle();
   return (
     <Container size="xs" my={40}>
       <Card withBorder shadow="sm" radius="md">
