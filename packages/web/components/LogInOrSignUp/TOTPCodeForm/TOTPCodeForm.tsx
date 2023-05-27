@@ -1,5 +1,6 @@
 import { TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
+import { useFocusTrap } from "@mantine/hooks";
 import { TOTP_LENGTH, generateTOTP } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 
@@ -19,6 +20,7 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
   isSubmitting
 }) => {
   const { onChange, ...otherProps } = form.getInputProps("totpCode");
+  const focusRef = useFocusTrap(true);
 
   return (
     <TextInput
@@ -30,7 +32,7 @@ export const TOTPCodeForm: React.FC<TOTPCodeFormProps> = ({
       disabled={isSubmitting}
       maxLength={TOTP_LENGTH}
       placeholder={placeholderText}
-      autoFocus
+      ref={focusRef}
       onChange={(event) => {
         form.setFieldValue("totpCode", event.currentTarget.value.toUpperCase());
       }}

@@ -228,6 +228,9 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     return title;
   };
 
+  const nextAndBackButtonsDisabled =
+    requestTotp.isLoading || totpVerify.isLoading || totpVerify.isSuccess;
+
   const titleText = getTitle();
   return (
     <Container size="sm" my={40}>
@@ -253,7 +256,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
                   radius="md"
                   variant="default"
                   onClick={previousStep}
-                  disabled={requestTotp.isLoading || totpVerify.isLoading}
+                  disabled={nextAndBackButtonsDisabled}
                 >
                   Back
                 </Button>
@@ -263,7 +266,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
                 radius="md"
                 type="submit"
                 onClick={(e) => void nextStep(e)}
-                loading={requestTotp.isLoading || totpVerify.isLoading}
+                loading={nextAndBackButtonsDisabled}
               >
                 {buttonText}
               </Button>

@@ -3,6 +3,7 @@ import type { UseFormReturnType } from "@mantine/form";
 import { PlutomiEmails } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 import { useAuthContext } from "@/hooks";
+import { useFocusTrap } from "@mantine/hooks";
 
 type LoginEmailFormProps = {
   form: UseFormReturnType<Schema.LogInOrSignUp.email.UIValues>;
@@ -17,6 +18,7 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
 }) => {
   const authContext = useAuthContext();
   const actionText = authContext === "login" ? "logging" : "signing";
+  const focusRef = useFocusTrap(true);
 
   return (
     <>
@@ -28,7 +30,7 @@ export const LoginEmailForm: React.FC<LoginEmailFormProps> = ({
         placeholder={PlutomiEmails.JOSE}
         radius="md"
         disabled={isSubmitting}
-        autoFocus
+        ref={focusRef}
       />
       <Text c="dimmed">
         We won&apos;t send you spam. This is just for {actionText} in.
