@@ -27,8 +27,6 @@ export const createSession = async ({
     entity: AllEntityNames.SESSION
   });
 
-  const forwardedFor = (req.headers["x-forwarded-for"] ?? [])[0];
-  const ip = forwardedFor ?? req.socket.remoteAddress;
   const userAgent = req.get("User-Agent") ?? "unknown";
 
   const newSession: Session = {
@@ -42,7 +40,7 @@ export const createSession = async ({
       .toISOString(),
     status: SessionStatus.ACTIVE,
     entityType: AllEntityNames.SESSION,
-    ip,
+    ip: req.ip,
     userAgent,
     relatedTo: [
       {
