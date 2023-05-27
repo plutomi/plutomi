@@ -1,6 +1,6 @@
 import { Button, createStyles, TextInput, Alert } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import axios, { type AxiosError } from "axios";
+import axios from "axios";
 import { Schema } from "@plutomi/validation";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { AiFillCheckCircle } from "react-icons/ai";
@@ -51,7 +51,7 @@ export const SubscribeForm: React.FC = () => {
       axios.post("/api/waitlist", {
         email: form.values.email
       }),
-    onError: (error: AxiosError) => {
+    onError: (error: unknown) => {
       const message = handleAxiosError(error);
       notifications.show({
         id: "wl-error",

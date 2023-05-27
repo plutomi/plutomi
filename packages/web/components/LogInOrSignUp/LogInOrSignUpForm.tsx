@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/hooks";
-import axios, { type AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
@@ -68,9 +68,9 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       setStep((currentStep) => currentStep + 1);
     },
 
-    onError: (error: AxiosError) => {
+    onError: (error) => {
       const message = handleAxiosError(error);
-      if (error.response?.status === 302) {
+      if (error instanceof AxiosError && error.response?.status === 302) {
         // User already has a session, redirect them
         notifications.show({
           id: "redirecting",
@@ -83,14 +83,6 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
         });
 
         handleRedirect();
-        // if (redirectToDashboardPaths.includes(router.pathname)) {
-        //   // Redirect to dashboard if we're on login or signup
-        //   void router.push("/dashboard");
-        //   return;
-        // }
-
-        // // Otherwise, refetch the user data to remove the login/signup form from the page shell
-        // void queryClient.invalidateQueries({ queryKey: ["user"] });
         return;
       }
 
@@ -123,16 +115,8 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       });
 
       handleRedirect();
-
-      // if (redirectToDashboardPaths.includes(router.pathname)) {
-      //   // Redirect to dashboard if we're on login or signup
-      //   void router.push("/dashboard");
-      //   return;
-      // }
-      // // Otherwise, refetch the user data to remove the login/signup form from the page shell
-      // void queryClient.invalidateQueries({ queryKey: ["user"] });
     },
-    onError: (error: AxiosError) => {
+    onError: (error) => {
       const message = handleAxiosError(error);
       notifications.show({
         id: "totp-verify-error",
