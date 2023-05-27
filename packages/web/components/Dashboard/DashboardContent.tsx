@@ -16,13 +16,7 @@ import {
   Text
 } from "@mantine/core";
 import { IconInfoCircle, IconSwitchHorizontal } from "@tabler/icons-react";
-import { BsQuestionCircle } from "react-icons/bs";
-import { TbLayoutDashboard } from "react-icons/tb";
-import { BiDollarCircle } from "react-icons/bi";
-import { MdLogout, MdWebhook } from "react-icons/md";
-import { IoBarChart } from "react-icons/io5";
-import { AiOutlineForm, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { FiSettings } from "react-icons/fi";
+import { MdLogout } from "react-icons/md";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { notifications } from "@mantine/notifications";
@@ -31,6 +25,7 @@ import { useRouter } from "next/router";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "@/@types";
+import { sideBarData } from "./utils";
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -96,21 +91,9 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-const navData = [
-  { link: "/dashboard", label: "Dashboard", icon: TbLayoutDashboard },
-  { link: "/applications", label: "Applications", icon: AiOutlineForm },
-  { link: "/questions", label: "Questions", icon: BsQuestionCircle },
-  { link: "/team", label: "Team", icon: AiOutlineUsergroupAdd },
-  { link: "/analytics", label: "Analytics", icon: IoBarChart },
-  { link: "/webhooks", label: "Webhooks", icon: MdWebhook },
-  { link: "/billing", label: "Billing", icon: BiDollarCircle },
-  { link: "/settings", label: "Settings", icon: FiSettings }
-];
-
 export const DashboardContent: NextPage = () => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
-
   const { classes, cx } = useStyles();
   const router = useRouter();
   const [active, setActive] = useState("Dashboard");
@@ -145,7 +128,7 @@ export const DashboardContent: NextPage = () => {
     }
   });
 
-  const links = navData.map((item) => (
+  const links = sideBarData.map((item) => (
     <Link
       href="/dashboard"
       passHref
