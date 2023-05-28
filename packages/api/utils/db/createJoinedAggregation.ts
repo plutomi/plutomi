@@ -83,6 +83,7 @@ const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
     });
   });
 
+  console.log(`finalllll`, final[0].relatedTo);
   return { $or: final };
 };
 /**

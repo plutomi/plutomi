@@ -9,7 +9,7 @@ export const get: RequestHandler = async (req, res) => {
         createJoinedAggregation({
           id: "user_9510",
           entitiesToRetrieve: ["id", "notes", "files"],
-          entitiesToRetrieveNames: ["note", "file"],
+          entitiesToRetrieveNames: ["user", "notes", "file"],
           rootItem: "user"
         })
       )
