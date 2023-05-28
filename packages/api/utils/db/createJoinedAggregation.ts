@@ -3,7 +3,7 @@ import type { Document } from "mongodb";
 
 /**
  * ! TODO: Some queries might need this to return nested entities. Example:
- * 
+ *
  * /applicants/:id should return everything, but we will also have an endpoint for /applicants/:id/notes
  * and /notes/:id for a specific note which won't need this aggregation. Same with files and other stuff.
  */
@@ -93,3 +93,53 @@ export const createJoinedAggregation = ({
     $unset: "user"
   }
 ];
+
+// ! TODO: Another shorter one if we go the _id first route and then the related items:
+
+// [
+//     {
+//       '$match': {
+//         'relatedTo': {
+//           '$elemMatch': {
+//             'id': 'user_9510'
+//           }
+//         }
+//       }
+//     }, {
+//       '$group': {
+//         '_id': 'entityType',
+//         'allItems': {
+//           '$push': '$$ROOT'
+//         }
+//       }
+//     }, {
+//       '$project': {
+//         'notes': {
+//           '$filter': {
+//             'input': '$allItems',
+//             'as': 'item',
+//             'cond': {
+//               '$eq': [
+//                 '$$item.entityType', 'note'
+//               ]
+//             }
+//           }
+//         },
+//         'files': {
+//           '$filter': {
+//             'input': '$allItems',
+//             'as': 'item',
+//             'cond': {
+//               '$eq': [
+//                 '$$item.entityType', 'file'
+//               ]
+//             }
+//           }
+//         }
+//       }
+//     }, {
+//       '$unset': [
+//         '_id'
+//       ]
+//     }
+//   ]

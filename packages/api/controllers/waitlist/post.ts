@@ -38,7 +38,7 @@ export const post: RequestHandler = async (req, res) => {
         },
         {
           id: email as Email,
-          type: RelatedToType.WAIT_LIST_USER
+          type: RelatedToType.WAIT_LIST_USERS
         }
       ]
     });

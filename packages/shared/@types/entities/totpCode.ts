@@ -7,9 +7,9 @@ import type { BaseEntity } from "./baseEntity";
 type TOTPCodeRelatedToArray = [
   ...RelatedToArray<AllEntityNames.TOTP>,
   // Get login codes for a user
-  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.TOTP },
+  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.TOTPS },
   // Get login codes for an email
-  { id: Email; type: RelatedToType.TOTP }
+  { id: Email; type: RelatedToType.TOTPS }
 ];
 
 export enum TOTPCodeStatus {

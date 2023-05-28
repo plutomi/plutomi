@@ -35,7 +35,7 @@ export const post: RequestHandler = async (req, res) => {
         relatedTo: {
           $elemMatch: {
             id: email,
-            type: RelatedToType.TOTP
+            type: RelatedToType.TOTPS
           }
         }
       })
@@ -80,7 +80,7 @@ export const post: RequestHandler = async (req, res) => {
       relatedTo: {
         $elemMatch: {
           id: email,
-          type: RelatedToType.USER
+          type: RelatedToType.USERS
         }
       }
     });
@@ -119,7 +119,7 @@ export const post: RequestHandler = async (req, res) => {
           relatedTo: {
             $elemMatch: {
               id: email,
-              type: RelatedToType.USER
+              type: RelatedToType.USERS
             }
           }
         },
@@ -164,7 +164,7 @@ export const post: RequestHandler = async (req, res) => {
         relatedTo: {
           $elemMatch: {
             id: email,
-            type: RelatedToType.TOTP
+            type: RelatedToType.TOTPS
           }
         }
       },

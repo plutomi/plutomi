@@ -6,7 +6,7 @@ import type { BaseEntity } from "./baseEntity";
 type WaitListUserRelatedToArray = [
   ...RelatedToArray<AllEntityNames.WAIT_LIST_USER>,
   // Get a user by email
-  { id: Email; type: RelatedToType.WAIT_LIST_USER }
+  { id: Email; type: RelatedToType.WAIT_LIST_USERS }
 ];
 
 export type WaitListUser = BaseEntity<AllEntityNames.WAIT_LIST_USER> & {
