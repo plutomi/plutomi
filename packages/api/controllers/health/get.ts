@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
 import { createJoinedAggregation, getDbName } from "../../utils";
-import { AllEntityNames, Email, RelatedToType } from "@plutomi/shared";
+import { AllEntityNames, Email, RelatedToType, User } from "@plutomi/shared";
 
 export const get: RequestHandler = async (req, res) => {
   await req.items.deleteMany({});
@@ -72,9 +72,9 @@ export const get: RequestHandler = async (req, res) => {
 
   try {
     const x = await req.items
-      .aggregate(
+      .aggregate<User>(
         createJoinedAggregation({
-          id: userId,
+          id: `userId`,
           entitiesToRetrieve: [
             {
               entityType: RelatedToType.SELF,
@@ -92,6 +92,14 @@ export const get: RequestHandler = async (req, res) => {
         })
       )
       .toArray();
+
+    const userDat = x[0];
+    console.log(`USERDATA`, userDat);
+
+    if (!userDat || userDat.entityType === "entityType") {
+      res.status(404).json({ message: "Not found" });
+      return;
+    }
 
     res.send(x[0]);
   } catch (error) {

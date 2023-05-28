@@ -32,6 +32,26 @@ type CreateJoinedAggregationProps = {
    */
   id: PlutomiId<AllEntityNames>;
 
+  /**
+   * The entities you want to retrieve. This will be used to create the projection.
+   *
+   * @example
+   * Give me an applicant and their notes & files
+   * [{
+   * entityType: RelatedToType.SELF,
+   * entityName: AllEntityNames.APPLICANT
+   * },
+   * {
+   *  entityType: RelatedToType.NOTES,
+   * entityName: AllEntityNames.NOTE
+   *
+   * },
+   * {
+   * entityType: RelatedToType.FILES,
+   * entityName: AllEntityNames.FILE}
+   *
+   * ]
+   */
   entitiesToRetrieve: EntitiesToRetrieve[];
 };
 
