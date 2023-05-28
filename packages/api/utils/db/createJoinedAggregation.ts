@@ -1,6 +1,11 @@
 import type { RelatedToType, AllEntityNames, PlutomiId } from "@plutomi/shared";
 import type { Document } from "mongodb";
 
+type EntitiesToRetrieve = {
+  entityType: RelatedToType;
+  entityName: AllEntityNames;
+};
+
 /**
  * ! TODO: Some queries might need this to return nested entities.
  * ! DOUBLE NOTE: On the result, if the `_id` === entityType, the root entity was NOT FOUND.
@@ -22,31 +27,19 @@ type CreateJoinedAggregationProps = {
    * The user will be returned, and all other sub-entities will be returned in the `relatedTo` array.
    */
   rootItem: AllEntityNames;
-  /**
-   * What related entities to retrieve. For example:
-   * An applicant's notes & files
-   *
-   * entitiesToRetrieve: [RelatedToType.NOTES, RelatedToType.FILES]
-   */
-  entitiesToRetrieve: RelatedToType[];
-  /**
-   * Add the associated entityNames here. This is used to create the projection in the groupBy stage., This is the _id prefix.
-   */
-  entitiesToRetrieveNames: AllEntityNames[];
+
+  entitiesToRetrieve: EntitiesToRetrieve[];
 };
 
-type CreateProjectionProps = {
-  entityNames: AllEntityNames[];
-};
-const createProjection = ({ entityNames }: CreateProjectionProps) => {
+const createProjection = (entitiesToRetrieve: EntitiesToRetrieve[]) => {
   const projection: Record<string, unknown> = {};
-  Object.values(entityNames).forEach((entityName) => {
-    projection[entityName] = {
+  Object.values(entitiesToRetrieve).forEach((item) => {
+    projection[item.entityType] = {
       $filter: {
         input: "$allItems",
         as: "item",
         cond: {
-          $eq: ["$$item.entityType", entityName]
+          $eq: ["$$item.entityType", item.entityName]
         }
       }
     };
@@ -91,12 +84,14 @@ const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
 export const createJoinedAggregation = ({
   id,
   entitiesToRetrieve,
-  entitiesToRetrieveNames,
   rootItem
 }: CreateJoinedAggregationProps): Document[] => [
   {
     $match: {
-      ...createMatchStage({ id, relatedToEntities: entitiesToRetrieve })
+      ...createMatchStage({
+        id,
+        relatedToEntities: entitiesToRetrieve.map((item) => item.entityType)
+      })
     }
   },
   {
@@ -109,7 +104,7 @@ export const createJoinedAggregation = ({
   },
   {
     $project: {
-      ...createProjection({ entityNames: entitiesToRetrieveNames })
+      ...createProjection(entitiesToRetrieve)
     }
   },
   {

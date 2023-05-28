@@ -53,7 +53,7 @@ export const get: RequestHandler = async (req, res) => {
 
   const files = Array.from({ length: 5 }).map((_, i) => ({
     _id: `file_${i}`,
-    entityType: AllEntityNames.NOTE,
+    entityType: AllEntityNames.FILE,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     relatedTo: [
@@ -63,12 +63,12 @@ export const get: RequestHandler = async (req, res) => {
       },
       {
         id: userId,
-        type: RelatedToType.NOTES
+        type: RelatedToType.FILES
       }
     ]
   }));
 
-  await req.items.insertMany([...notes, ...files]);
+  await req.items.insertMany([user, ...notes, ...files]);
 
   try {
     const x = await req.items
@@ -76,14 +76,18 @@ export const get: RequestHandler = async (req, res) => {
         createJoinedAggregation({
           id: userId,
           entitiesToRetrieve: [
-            RelatedToType.SELF,
-            RelatedToType.NOTES,
-            RelatedToType.FILES
-          ],
-          entitiesToRetrieveNames: [
-            AllEntityNames.USER,
-            AllEntityNames.NOTE,
-            AllEntityNames.FILE
+            {
+              entityType: RelatedToType.SELF,
+              entityName: AllEntityNames.USER
+            },
+            {
+              entityType: RelatedToType.NOTES,
+              entityName: AllEntityNames.NOTE
+            },
+            {
+              entityType: RelatedToType.FILES,
+              entityName: AllEntityNames.FILE
+            }
           ],
           rootItem: AllEntityNames.USER
         })
