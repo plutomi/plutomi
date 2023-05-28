@@ -20,6 +20,7 @@ export enum TOTPCodeStatus {
 
 export type TOTPCode = BaseEntity<AllEntityNames.TOTP> & {
   code: string;
+  // ! TODO: Add user & email to this
   // ISO Timestamp
   expiresAt: string;
   relatedTo: TOTPCodeRelatedToArray;

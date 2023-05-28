@@ -7,7 +7,7 @@ import type { BaseEntity } from "./baseEntity";
 type SessionRelatedToArray = [
   ...RelatedToArray<AllEntityNames.SESSION>,
   // Get all sessions for a user
-  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.SESSION }
+  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.SESSIONS }
 ];
 
 export type Session = BaseEntity<AllEntityNames.SESSION> & {
