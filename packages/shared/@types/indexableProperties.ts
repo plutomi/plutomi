@@ -27,7 +27,7 @@ type OtherRelatedToArrayItems = {
  * the related data afterwards. You can do that like this: 
  * 
  * {$or: [ { relatedTo: { $elemMatch: { id: 'user_3810', type: 'files' } }},{ relatedTo: { $elemMatch: { id: 'user_3810', type: 'notes' } }}]}
-
+ * 
  * The second index plays a crucial role for when other entities relate to this stage.
  * Because the id will be the same (indexing on a common attribute), and the 'type' will be different,
  * we can query for this stage by id, and then filter by the type to get all entities that relate to this stage in 1 query.

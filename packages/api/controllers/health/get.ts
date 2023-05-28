@@ -29,7 +29,7 @@ export const get: RequestHandler = async (req, res) => {
   };
 
   const notes = Array.from({ length: randomNumberBetween(2, 20) }, () => ({
-    _id: `${userId}#note_${randomNumberBetween(1, 10000)}`,
+    _id: `note_${randomNumberBetween(1, 10000)}`,
     entityType: "note",
     relatedTo: [
       {
@@ -39,8 +39,22 @@ export const get: RequestHandler = async (req, res) => {
     ]
   }));
 
+  const files = Array.from({ length: randomNumberBetween(2, 20) }, () => ({
+    _id: `file_${randomNumberBetween(1, 10000)}`,
+    entityType: "file",
+    relatedTo: [
+      {
+        id: userId,
+        type: "files"
+      }
+    ]
+  }));
+
+
+
+
   try {
-    await req.items.insertMany([user, ...notes]);
+    await req.items.insertMany([user, ...notes, ...files]);
 
     // const users = await req.items
     //   .find(

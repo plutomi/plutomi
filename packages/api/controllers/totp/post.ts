@@ -45,8 +45,10 @@ export const post: RequestHandler = async (req, res) => {
     // Check if a user exists with that email, and if not, create them
     user = await req.items.findOne<User>({
       relatedTo: {
-        id: email,
-        type: RelatedToType.USER
+        $elemMatch: {
+          id: email,
+          type: RelatedToType.USER
+        }
       }
     });
   } catch (error) {
@@ -150,8 +152,10 @@ export const post: RequestHandler = async (req, res) => {
         {
           status: TOTPCodeStatus.ACTIVE,
           relatedTo: {
-            id: userId,
-            type: RelatedToType.TOTP
+            $elemMatch: {
+              id: userId,
+              type: RelatedToType.TOTP
+            }
           },
           createdAt: {
             $gte: now
