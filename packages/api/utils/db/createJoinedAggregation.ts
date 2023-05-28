@@ -63,20 +63,18 @@ type RelatedToMatchObject = {
 };
 
 const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
-  const final: RelatedToMatchObject[] = [];
-
-  relatedToEntities.forEach((entity) => {
-    final.push({
+  const relatedItems: RelatedToMatchObject[] = relatedToEntities.map(
+    (entity) => ({
       relatedTo: {
         $elemMatch: {
           id,
           type: entity
         }
       }
-    });
-  });
+    })
+  );
 
-  return { $or: final };
+  return { $or: relatedItems };
 };
 /**
  * Given an entity {@link AllEntities}, get the entity at the root as well as any entities that are related to it
