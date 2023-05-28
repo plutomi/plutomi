@@ -1,6 +1,7 @@
 import type { RelatedToType, AllEntityNames, PlutomiId } from "@plutomi/shared";
 import type { Document } from "mongodb";
 
+type EntitiesToRetrieve = AllEntityNames[];
 /**
  * ! TODO: Some queries might need this to return nested entities.
  * ! DOUBLE NOTE: On the result, if the `_id` === entityType, the root entity was NOT FOUND.
@@ -22,14 +23,32 @@ type CreateJoinedAggregationProps = {
    *
    * entitiesToRetrieve: ["note", "file"]
    */
-  entitiesToRetrieve: RelatedToType[];
+  entitiesToRetrieve: EntitiesToRetrieve;
+};
+
+const createProjection = ({ entityNames }: { entityNames: AllEntityNames }) => {
+  const projection: Record<string, unknown> = {};
+  Object.values(entityNames).forEach((entityName) => {
+    projection[entityName] = {
+      $filter: {
+        input: "$allItems",
+        as: "item",
+        cond: {
+          $eq: ["$$item.entityType", entityName]
+        }
+      }
+    };
+  });
+
+  return projection;
 };
 
 /**
  * Given an entity {@link AllEntities}, get the entity at the root as well as any entities that are related to it
  */
 export const createJoinedAggregation = ({
-  id
+  id,
+  entitiesToRetrieve
 }: CreateJoinedAggregationProps): Document[] => [
   {
     $match: {
@@ -50,33 +69,7 @@ export const createJoinedAggregation = ({
   },
   {
     $project: {
-      notes: {
-        $filter: {
-          input: "$allItems",
-          as: "item",
-          cond: {
-            $eq: ["$$item.entityType", "note"]
-          }
-        }
-      },
-      files: {
-        $filter: {
-          input: "$allItems",
-          as: "item",
-          cond: {
-            $eq: ["$$item.entityType", "file"]
-          }
-        }
-      },
-      user: {
-        $filter: {
-          input: "$allItems",
-          as: "item",
-          cond: {
-            $eq: ["$$item.entityType", "user"]
-          }
-        }
-      }
+      ...createProjection({ entityNames: entitiesToRetrieve })
     }
   },
   {
