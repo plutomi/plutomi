@@ -40,7 +40,7 @@ export const createSession = async ({
       .toISOString(),
     status: SessionStatus.ACTIVE,
     entityType: AllEntityNames.SESSION,
-    ip: req.requesterIp,
+    ip: req.clientIp ?? "unknown",
     userAgent,
     relatedTo: [
       {
