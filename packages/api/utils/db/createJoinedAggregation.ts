@@ -1,7 +1,6 @@
 import type { RelatedToType, AllEntityNames, PlutomiId } from "@plutomi/shared";
 import type { Document } from "mongodb";
 
-type EntitiesToRetrieve = AllEntityNames[];
 /**
  * ! TODO: Some queries might need this to return nested entities.
  * ! DOUBLE NOTE: On the result, if the `_id` === entityType, the root entity was NOT FOUND.
@@ -17,16 +16,29 @@ type CreateJoinedAggregationProps = {
    * ie: Give me an applicant and all of their notes & files -> Applicant is the root entity.
    */
   id: PlutomiId<AllEntityNames>;
+
+  /**
+   * This is the main item / resource. For /applicants/:id, this would be RelatedTo.APPLICANT. For /users/:id, this would be RelatedTo.USER.
+   * The user will be returned, and all other sub-entities will be returned in the `relatedTo` array.
+   */
+  rootItem: RelatedToType;
   /**
    * What related entities to retrieve. For example:
    * An applicant's notes & files
    *
-   * entitiesToRetrieve: ["note", "file"]
+   * entitiesToRetrieve: [RelatedToType.NOTES, RelatedToType.FILES]
    */
-  entitiesToRetrieve: EntitiesToRetrieve;
+  entitiesToRetrieve: RelatedToType[];
+  /**
+   * Add the associated entityNames here. This is used to create the projection in the groupBy stage., This is the _id prefix.
+   */
+  entitiesToRetrieveNames: AllEntityNames[];
 };
 
-const createProjection = ({ entityNames }: { entityNames: AllEntityNames }) => {
+type CreateProjectionProps = {
+  entityNames: AllEntityNames[];
+};
+const createProjection = ({ entityNames }: CreateProjectionProps) => {
   const projection: Record<string, unknown> = {};
   Object.values(entityNames).forEach((entityName) => {
     projection[entityName] = {
@@ -43,20 +55,48 @@ const createProjection = ({ entityNames }: { entityNames: AllEntityNames }) => {
   return projection;
 };
 
+type CreateMatchStageProps = {
+  id: PlutomiId<AllEntityNames>;
+  relatedToEntities: RelatedToType[];
+};
+
+type RelatedToMatchObject = {
+  relatedTo: {
+    $elemMatch: {
+      id: PlutomiId<AllEntityNames>;
+      type: RelatedToType;
+    };
+  };
+};
+
+const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
+  const final: RelatedToMatchObject[] = [];
+
+  relatedToEntities.forEach((entity) => {
+    final.push({
+      relatedTo: {
+        $elemMatch: {
+          id,
+          type: entity
+        }
+      }
+    });
+  });
+
+  return { $or: final };
+};
 /**
  * Given an entity {@link AllEntities}, get the entity at the root as well as any entities that are related to it
  */
 export const createJoinedAggregation = ({
   id,
-  entitiesToRetrieve
+  entitiesToRetrieve,
+  entitiesToRetrieveNames,
+  rootItem
 }: CreateJoinedAggregationProps): Document[] => [
   {
     $match: {
-      relatedTo: {
-        $elemMatch: {
-          id
-        }
-      }
+      ...createMatchStage({ id, relatedToEntities: entitiesToRetrieve })
     }
   },
   {
@@ -69,7 +109,7 @@ export const createJoinedAggregation = ({
   },
   {
     $project: {
-      ...createProjection({ entityNames: entitiesToRetrieve })
+      ...createProjection({ entityNames: entitiesToRetrieveNames })
     }
   },
   {
@@ -78,14 +118,14 @@ export const createJoinedAggregation = ({
         $mergeObjects: [
           "$$ROOT",
           {
-            $arrayElemAt: ["$user", 0]
+            $arrayElemAt: [`$${rootItem}`, 0]
           }
         ]
       }
     }
   },
   {
-    $unset: "user"
+    $unset: rootItem
   }
 ];
 
