@@ -88,8 +88,7 @@ export const get: RequestHandler = async (req, res) => {
               entityType: RelatedToType.FILES,
               entityName: AllEntityNames.FILE
             }
-          ],
-          rootItem: RelatedToType.SELF
+          ]
         })
       )
       .toArray();

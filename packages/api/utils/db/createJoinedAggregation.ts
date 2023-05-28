@@ -1,8 +1,18 @@
-import type { RelatedToType, AllEntityNames, PlutomiId } from "@plutomi/shared";
+import {
+  RelatedToType,
+  type AllEntityNames,
+  type PlutomiId
+} from "@plutomi/shared";
 import type { Document } from "mongodb";
 
 type EntitiesToRetrieve = {
+  /**
+   * The type of the entity you want to retrieve. In the relatedTo array, this is the `type` property.
+   */
   entityType: RelatedToType;
+  /**
+   * The entity name of the entity to retrieve. ie: If you want to retrieve all notes for an applicant, this would be AllEntityNames.NOTE.
+   */
   entityName: AllEntityNames;
 };
 
@@ -21,12 +31,6 @@ type CreateJoinedAggregationProps = {
    * ie: Give me an applicant and all of their notes & files -> Applicant is the root entity.
    */
   id: PlutomiId<AllEntityNames>;
-
-  /**
-   * This is the main item / resource. For /applicants/:id, this would be RelatedTo.APPLICANT. For /users/:id, this would be RelatedTo.USER.
-   * The user will be returned, and all other sub-entities will be returned in the `relatedTo` array.
-   */
-  rootItem: RelatedToType;
 
   entitiesToRetrieve: EntitiesToRetrieve[];
 };
@@ -81,8 +85,7 @@ const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
  */
 export const createJoinedAggregation = ({
   id,
-  entitiesToRetrieve,
-  rootItem
+  entitiesToRetrieve
 }: CreateJoinedAggregationProps): Document[] => [
   {
     $match: {
@@ -111,14 +114,14 @@ export const createJoinedAggregation = ({
         $mergeObjects: [
           "$$ROOT",
           {
-            $arrayElemAt: [`$${rootItem}`, 0]
+            $arrayElemAt: [`$${RelatedToType.SELF}`, 0]
           }
         ]
       }
     }
   },
   {
-    $unset: rootItem
+    $unset: RelatedToType.SELF
   }
 ];
 
