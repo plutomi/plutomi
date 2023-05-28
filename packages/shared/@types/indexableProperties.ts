@@ -11,7 +11,9 @@ export enum RelatedToType {
   WAIT_LIST_USERS = "waitListUsers",
   TOTPS = "totps",
   SESSIONS = "sessions",
-  SELF = "self"
+  SELF = "self",
+  NOTES = "notes",
+  FILES = "files"
 }
 
 // These can be anything

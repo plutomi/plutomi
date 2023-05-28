@@ -21,7 +21,7 @@ type CreateJoinedAggregationProps = {
    * This is the main item / resource. For /applicants/:id, this would be RelatedTo.APPLICANT. For /users/:id, this would be RelatedTo.USER.
    * The user will be returned, and all other sub-entities will be returned in the `relatedTo` array.
    */
-  rootItem: RelatedToType;
+  rootItem: AllEntityNames;
   /**
    * What related entities to retrieve. For example:
    * An applicant's notes & files
@@ -83,7 +83,6 @@ const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
     });
   });
 
-  console.log(`finalllll`, final[0].relatedTo);
   return { $or: final };
 };
 /**
