@@ -8,7 +8,7 @@ declare global {
     interface Request {
       items: Collection<AllEntities>;
       client: MongoClient;
-
+      requesterIp: string | "unknown";
       // ! Only available if withSession middleware is used
       session: Session;
       user: User;

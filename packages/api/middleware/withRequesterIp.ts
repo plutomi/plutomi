@@ -1,12 +1,11 @@
 import requestIp from "request-ip";
 import type { Request, Response, NextFunction } from "express";
 
-export const withClientIp = (
+export const withRequesterIp = (
   req: Request,
   _res: Response,
   next: NextFunction
 ) => {
-  const clientIp = requestIp.getClientIp(req);
-  req.ip = clientIp ?? "unknown";
+  req.requesterIp = requestIp.getClientIp(req) ?? "unknown";
   next();
 };

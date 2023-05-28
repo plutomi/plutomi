@@ -9,7 +9,7 @@ import express, { type RequestHandler } from "express";
 import cors from "cors";
 import { connectToDatabase, env, nextHandler, webApp } from "./utils";
 import API from "./controllers";
-import { withClientIp } from "./middleware";
+import { withRequesterIp } from "./middleware";
 
 (async () => {
   try {
@@ -41,7 +41,7 @@ import { withClientIp } from "./middleware";
   server.use(express.json());
   // server.use(compression());
   server.use(cors());
-  server.use(withClientIp);
+  server.use(withRequesterIp);
 
   // All routes are handled here
   server.use("/api", API);

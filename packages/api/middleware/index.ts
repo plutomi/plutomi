@@ -1,2 +1,2 @@
 export * from "./withSession";
-export * from "./withClientIp";
+export * from "./withRequesterIp";

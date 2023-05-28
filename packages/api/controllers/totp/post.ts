@@ -79,12 +79,8 @@ export const post: RequestHandler = async (req, res) => {
       entityType: AllEntityNames.USER,
       relatedTo: [
         {
-          id: AllEntityNames.USER,
-          type: RelatedToType.ENTITY
-        },
-        {
           id: userId,
-          type: RelatedToType.ID
+          type: RelatedToType.SELF
         },
         {
           id: email as Email,
@@ -208,12 +204,8 @@ export const post: RequestHandler = async (req, res) => {
       status: TOTPCodeStatus.ACTIVE,
       relatedTo: [
         {
-          id: AllEntityNames.TOTP,
-          type: RelatedToType.ENTITY
-        },
-        {
           id: totpCodeId,
-          type: RelatedToType.ID
+          type: RelatedToType.SELF
         },
         {
           id: userId,
