@@ -7,6 +7,8 @@ export enum AllEntityNames {
   // Time-based One Time Password
   TOTP = "totp",
   SESSION = "session",
+
+  // ! TODO: Remove
   NOTE = "note",
   FILE = "file"
 }

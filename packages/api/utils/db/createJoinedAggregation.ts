@@ -26,7 +26,7 @@ type CreateJoinedAggregationProps = {
    * This is the main item / resource. For /applicants/:id, this would be RelatedTo.APPLICANT. For /users/:id, this would be RelatedTo.USER.
    * The user will be returned, and all other sub-entities will be returned in the `relatedTo` array.
    */
-  rootItem: AllEntityNames;
+  rootItem: RelatedToType;
 
   entitiesToRetrieve: EntitiesToRetrieve[];
 };
