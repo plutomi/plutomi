@@ -2,7 +2,9 @@ import type { RelatedToType, AllEntityNames, PlutomiId } from "@plutomi/shared";
 import type { Document } from "mongodb";
 
 /**
- * ! TODO: Some queries might need this to return nested entities. Example:
+ * ! TODO: Some queries might need this to return nested entities.
+ * ! DOUBLE NOTE: On the result, if the `_id` === entityType, the root entity was NOT FOUND.
+ *  Example:
  *
  * /applicants/:id should return everything, but we will also have an endpoint for /applicants/:id/notes
  * and /notes/:id for a specific note which won't need this aggregation. Same with files and other stuff.
