@@ -51,7 +51,7 @@ export const get: RequestHandler = async (req, res) => {
   const now = new Date();
 
   const users = Array.from({ length: randomNumberInclusive(10000, 10000) }).map(
-    (_, i) => {
+    () => {
       const userId = generatePlutomiId({
         date: now,
         entity: AllEntityNames.USER
@@ -84,60 +84,56 @@ export const get: RequestHandler = async (req, res) => {
 
   const { _id: id } = randomItemFromArray(users);
 
-  const notes = Array.from({ length: randomNumberInclusive(5, 20) }).map(
-    (_) => {
-      const noteId = generatePlutomiId({
-        date: now,
-        entity: AllEntityNames.NOTE
-      });
+  const notes = Array.from({ length: randomNumberInclusive(5, 20) }).map(() => {
+    const noteId = generatePlutomiId({
+      date: now,
+      entity: AllEntityNames.NOTE
+    });
 
-      return {
-        _id: noteId,
-        entityType: AllEntityNames.NOTE,
-        createdAt: now.toISOString(),
-        updatedAt: now.toISOString(),
-        relatedTo: [
-          {
-            id: noteId,
-            type: RelatedToType.SELF
-          },
-          {
-            id,
-            type: RelatedToType.NOTES
-          }
-        ]
-      };
-    }
-  );
+    return {
+      _id: noteId,
+      entityType: AllEntityNames.NOTE,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      relatedTo: [
+        {
+          id: noteId,
+          type: RelatedToType.SELF
+        },
+        {
+          id,
+          type: RelatedToType.NOTES
+        }
+      ]
+    };
+  });
 
-  const files = Array.from({ length: randomNumberInclusive(5, 20) }).map(
-    (_, i) => {
-      const fileId = generatePlutomiId({
-        date: now,
-        entity: AllEntityNames.FILE
-      });
+  const files = Array.from({ length: randomNumberInclusive(5, 20) }).map(() => {
+    const fileId = generatePlutomiId({
+      date: now,
+      entity: AllEntityNames.FILE
+    });
 
-      return {
-        _id: fileId,
-        entityType: AllEntityNames.FILE,
-        createdAt: now.toISOString(),
-        updatedAt: now.toISOString(),
-        relatedTo: [
-          {
-            id: fileId,
-            type: RelatedToType.SELF
-          },
-          {
-            id,
-            type: RelatedToType.FILES
-          }
-        ]
-      };
-    }
-  );
+    return {
+      _id: fileId,
+      entityType: AllEntityNames.FILE,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      relatedTo: [
+        {
+          id: fileId,
+          type: RelatedToType.SELF
+        },
+        {
+          id,
+          type: RelatedToType.FILES
+        }
+      ]
+    };
+  });
 
   const memberships = Array.from({ length: randomNumberInclusive(5, 20) }).map(
-    (_) => {
+    () => {
       const membershipId = generatePlutomiId({
         date: now,
         entity: AllEntityNames.MEMBERSHIP
@@ -163,7 +159,7 @@ export const get: RequestHandler = async (req, res) => {
   );
 
   const invites = Array.from({ length: randomNumberInclusive(5, 20) }).map(
-    (_) => {
+    () => {
       const inviteId = generatePlutomiId({
         date: now,
         entity: AllEntityNames.INVITE
@@ -188,15 +184,20 @@ export const get: RequestHandler = async (req, res) => {
     }
   );
 
-  const tasks = Array.from({ length: randomNumberInclusive(5, 20) }).map(
-    (_, i) => ({
-      _id: `tasks_${i}`,
+  const tasks = Array.from({ length: randomNumberInclusive(5, 20) }).map(() => {
+    const taskId = generatePlutomiId({
+      date: now,
+      entity: AllEntityNames.TASK
+    });
+
+    return {
+      _id: taskId,
       entityType: AllEntityNames.TASK,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
       relatedTo: [
         {
-          id: `tasks_${i}`,
+          id: taskId,
           type: RelatedToType.SELF
         },
         {
@@ -204,45 +205,59 @@ export const get: RequestHandler = async (req, res) => {
           type: RelatedToType.TASKS
         }
       ]
-    })
-  );
+    };
+  });
 
   const sessions = Array.from({ length: randomNumberInclusive(5, 20) }).map(
-    (_, i) => ({
-      _id: `session_${i}`,
-      entityType: AllEntityNames.SESSION,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
-      relatedTo: [
-        {
-          id: `session_${i}`,
-          type: RelatedToType.SELF
-        },
-        {
-          id,
-          type: RelatedToType.SESSIONS
-        }
-      ]
-    })
+    () => {
+      const sessionId = generatePlutomiId({
+        date: now,
+        entity: AllEntityNames.SESSION
+      });
+
+      return {
+        _id: sessionId,
+        entityType: AllEntityNames.SESSION,
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+        relatedTo: [
+          {
+            id: sessionId,
+            type: RelatedToType.SELF
+          },
+          {
+            id,
+            type: RelatedToType.SESSIONS
+          }
+        ]
+      };
+    }
   );
 
   const activity = Array.from({ length: randomNumberInclusive(5, 20) }).map(
-    (_, i) => ({
-      _id: `activity_${i}`,
-      entityType: AllEntityNames.ACTIVITY,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
-      relatedTo: [
-        {
-          id: `activity_${i}`,
-          type: RelatedToType.SELF
-        },
-        {
-          id,
-          type: RelatedToType.ACTIVITY
-        }
-      ]
-    })
+    () => {
+      const activityId = generatePlutomiId({
+        date: now,
+        entity: AllEntityNames.ACTIVITY
+      });
+
+      return {
+        _id: activityId,
+        entityType: AllEntityNames.ACTIVITY,
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+        relatedTo: [
+          {
+            id: activityId,
+            type: RelatedToType.SELF
+          },
+          {
+            id,
+            type: RelatedToType.ACTIVITY
+          }
+        ]
+      };
+    }
   );
 
   await req.items.insertMany([
