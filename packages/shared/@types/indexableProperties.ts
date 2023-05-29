@@ -16,7 +16,8 @@ export enum RelatedToType {
   FILES = "files",
   MEMBERSHIPS = "memberships",
   INVITES = "invites",
-  TASKS = "tasks"
+  TASKS = "tasks",
+  ACTIVITIES = "activities"
 }
 
 // These can be anything

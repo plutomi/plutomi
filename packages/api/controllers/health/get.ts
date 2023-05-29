@@ -172,6 +172,44 @@ export const get: RequestHandler = async (req, res) => {
     })
   );
 
+  const sessions = Array.from({ length: randomNumberInclusive(5, 20) }).map(
+    (_, i) => ({
+      _id: `session_${i}`,
+      entityType: AllEntityNames.SESSION,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      relatedTo: [
+        {
+          id: `session_${i}`,
+          type: RelatedToType.SELF
+        },
+        {
+          id: randomUser._id,
+          type: RelatedToType.SESSIONS
+        }
+      ]
+    })
+  );
+
+  const activity = Array.from({ length: randomNumberInclusive(5, 20) }).map(
+    (_, i) => ({
+      _id: `activity_${i}`,
+      entityType: AllEntityNames.ACTIVITY,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      relatedTo: [
+        {
+          id: `activity_${i}`,
+          type: RelatedToType.SELF
+        },
+        {
+          id: randomUser._id,
+          type: RelatedToType.ACTIVITIES
+        }
+      ]
+    })
+  );
+
   console.log(`rANDOM USER ID`, randomUser._id);
   await req.items.insertMany([
     ...users,
@@ -179,7 +217,8 @@ export const get: RequestHandler = async (req, res) => {
     ...files,
     ...memberships,
     ...invites,
-    ...tasks
+    ...tasks,
+    ...sessions
   ]);
 
   const aggregationd = createJoinedAggregation({
@@ -208,15 +247,14 @@ export const get: RequestHandler = async (req, res) => {
       {
         entityType: RelatedToType.TASKS,
         entityName: AllEntityNames.TASK
+      },
+      {
+        entityType: RelatedToType.SESSIONS,
+        entityName: AllEntityNames.SESSION
       }
     ]
   });
-  // res.send(aggregationd);
-  // return;
 
-  // console.log(`GGAREGA`, aggregationd);
-  // res.send(aggregationd);
-  // return;
   try {
     const x = await req.items.aggregate<User>(aggregationd).toArray();
 
