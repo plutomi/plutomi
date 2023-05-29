@@ -16,6 +16,36 @@ export const get: RequestHandler = async (req, res) => {
   await req.items.deleteMany({});
   await req.items.deleteMany({});
   await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
 
   const users = Array.from({ length: randomNumberInclusive(10000, 10000) }).map(
     (_, i) => {
@@ -23,12 +53,12 @@ export const get: RequestHandler = async (req, res) => {
       return {
         _id: userId,
         entityType: AllEntityNames.USER,
-        firstName: "asdasd",
-        lastName: "asdasd",
+        firstName: "Jose",
+        lastName: "Valerio",
         emailVerified: false,
         emailVerifiedAt: null,
         canReceiveEmails: true,
-        email: "adasd@sda.com",
+        email: "jose@plutomi.com",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         relatedTo: [
@@ -37,7 +67,7 @@ export const get: RequestHandler = async (req, res) => {
             type: RelatedToType.SELF
           },
           {
-            id: "emailasdasdasd" as Email,
+            id: "jose@plutomi.com" as Email,
             type: RelatedToType.USERS
           }
         ]
@@ -47,7 +77,7 @@ export const get: RequestHandler = async (req, res) => {
 
   const randomUser = randomItemFromArray(users);
 
-  const notes = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+  const notes = Array.from({ length: randomNumberInclusive(5, 20) }).map(
     (_, i) => ({
       _id: `note_${i}`,
       entityType: AllEntityNames.NOTE,
@@ -66,7 +96,7 @@ export const get: RequestHandler = async (req, res) => {
     })
   );
 
-  const files = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+  const files = Array.from({ length: randomNumberInclusive(5, 20) }).map(
     (_, i) => ({
       _id: `file_${i}`,
       entityType: AllEntityNames.FILE,
@@ -85,7 +115,7 @@ export const get: RequestHandler = async (req, res) => {
     })
   );
 
-  const memberships = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+  const memberships = Array.from({ length: randomNumberInclusive(5, 20) }).map(
     (_, i) => ({
       _id: `memberships_${i}`,
       entityType: AllEntityNames.MEMBERSHIP,
@@ -104,7 +134,7 @@ export const get: RequestHandler = async (req, res) => {
     })
   );
 
-  const invites = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+  const invites = Array.from({ length: randomNumberInclusive(5, 20) }).map(
     (_, i) => ({
       _id: `invites_${i}`,
       entityType: AllEntityNames.INVITE,
@@ -123,7 +153,7 @@ export const get: RequestHandler = async (req, res) => {
     })
   );
 
-  const tasks = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+  const tasks = Array.from({ length: randomNumberInclusive(5, 20) }).map(
     (_, i) => ({
       _id: `tasks_${i}`,
       entityType: AllEntityNames.TASK,
@@ -166,6 +196,18 @@ export const get: RequestHandler = async (req, res) => {
       {
         entityType: RelatedToType.FILES,
         entityName: AllEntityNames.FILE
+      },
+      {
+        entityType: RelatedToType.MEMBERSHIPS,
+        entityName: AllEntityNames.MEMBERSHIP
+      },
+      {
+        entityType: RelatedToType.INVITES,
+        entityName: AllEntityNames.INVITE
+      },
+      {
+        entityType: RelatedToType.TASKS,
+        entityName: AllEntityNames.TASK
       }
     ]
   });
