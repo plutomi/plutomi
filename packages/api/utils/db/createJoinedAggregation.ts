@@ -37,7 +37,7 @@ type CreateJoinedAggregationProps = {
    * entityName: IdPrefix.FILE}
    *
    * ]
-   * 
+   *
    * _id: 'applicant_3810',
    * notes: [...array_of_notes],
    * files: [...array_of_files]
@@ -85,7 +85,7 @@ type RelatedToMatchObject = {
 };
 
 /**
- * 
+ *
  * Does the main filtering on the selective multi-key index
  */
 const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
