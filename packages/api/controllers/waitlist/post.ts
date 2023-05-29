@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
-import { AllEntityNames, type Email, RelatedToType } from "@plutomi/shared";
+import { IdPrefix, type Email, RelatedToType } from "@plutomi/shared";
 import { generatePlutomiId } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
@@ -22,28 +22,23 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now.toDate(),
-      entity: AllEntityNames.WAIT_LIST_USER
+      entity: IdPrefix.WAIT_LIST_USER
     });
 
     await req.items.insertOne({
       _id: userId,
-      entityType: AllEntityNames.WAIT_LIST_USER,
+      entityType: IdPrefix.WAIT_LIST_USER,
       email: email as Email,
       createdAt: nowIso,
       updatedAt: nowIso,
       relatedTo: [
         {
-          id: AllEntityNames.WAIT_LIST_USER,
-          type: RelatedToType.ENTITY
-        },
-
-        {
           id: userId,
-          type: RelatedToType.ID
+          type: RelatedToType.SELF
         },
         {
           id: email as Email,
-          type: RelatedToType.WAIT_LIST_USER
+          type: RelatedToType.WAIT_LIST_USERS
         }
       ]
     });

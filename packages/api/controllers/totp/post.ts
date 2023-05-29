@@ -1,5 +1,5 @@
 import {
-  AllEntityNames,
+  IdPrefix,
   RelatedToType,
   generateTOTP,
   type User,
@@ -45,8 +45,10 @@ export const post: RequestHandler = async (req, res) => {
     // Check if a user exists with that email, and if not, create them
     user = await req.items.findOne<User>({
       relatedTo: {
-        id: email,
-        type: RelatedToType.USER
+        $elemMatch: {
+          id: email,
+          type: RelatedToType.USERS
+        }
       }
     });
   } catch (error) {
@@ -63,7 +65,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now.toDate(),
-      entity: AllEntityNames.USER
+      entity: IdPrefix.USER
     });
 
     const userData: User = {
@@ -76,19 +78,15 @@ export const post: RequestHandler = async (req, res) => {
       email: email as Email,
       createdAt: nowIso,
       updatedAt: nowIso,
-      entityType: AllEntityNames.USER,
+      entityType: IdPrefix.USER,
       relatedTo: [
         {
-          id: AllEntityNames.USER,
-          type: RelatedToType.ENTITY
-        },
-        {
           id: userId,
-          type: RelatedToType.ID
+          type: RelatedToType.SELF
         },
         {
           id: email as Email,
-          type: RelatedToType.USER
+          type: RelatedToType.USERS
         }
       ]
     };
@@ -120,7 +118,7 @@ export const post: RequestHandler = async (req, res) => {
     // If a user already has a session, and it is valid, redirect them to dashboard
     try {
       const session = await req.items.findOne<Session>({
-        _id: sessionId as PlutomiId<AllEntityNames.SESSION>
+        _id: sessionId as PlutomiId<IdPrefix.SESSION>
       });
 
       // ! TODO: Clean this up in two parts, first check if session is null, then check if it is active
@@ -154,8 +152,10 @@ export const post: RequestHandler = async (req, res) => {
         {
           status: TOTPCodeStatus.ACTIVE,
           relatedTo: {
-            id: userId,
-            type: RelatedToType.TOTP
+            $elemMatch: {
+              id: userId,
+              type: RelatedToType.TOTPS
+            }
           },
           createdAt: {
             $gte: now
@@ -193,35 +193,33 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({
       date: now.toDate(),
-      entity: AllEntityNames.TOTP
+      entity: IdPrefix.TOTP
     });
 
     const newTotpCode: TOTPCode = {
       _id: totpCodeId,
       code: totpCode,
+      user: userId,
+      email: email as Email,
       createdAt: nowIso,
       updatedAt: nowIso,
-      entityType: AllEntityNames.TOTP,
+      entityType: IdPrefix.TOTP,
       expiresAt: now
         .add(TOTP_EXPIRATION_TIME_IN_MINUTES, "minutes")
         .toISOString(),
       status: TOTPCodeStatus.ACTIVE,
       relatedTo: [
         {
-          id: AllEntityNames.TOTP,
-          type: RelatedToType.ENTITY
-        },
-        {
           id: totpCodeId,
-          type: RelatedToType.ID
+          type: RelatedToType.SELF
         },
         {
           id: userId,
-          type: RelatedToType.TOTP
+          type: RelatedToType.TOTPS
         },
         {
           id: email as Email,
-          type: RelatedToType.TOTP
+          type: RelatedToType.TOTPS
         }
       ]
     };

@@ -1,10 +1,9 @@
 import type { RequestHandler } from "express";
-import { getDbName } from "../../utils/db/getDbName";
+import { databaseName } from "../../utils";
 
 export const get: RequestHandler = async (req, res) => {
   try {
-    const result = await req.client.db(getDbName()).command({ ping: 1 });
-
+    const result = await req.client.db(databaseName).command({ ping: 1 });
     res.status(200).json({
       message: "Saul Goodman",
       db: result

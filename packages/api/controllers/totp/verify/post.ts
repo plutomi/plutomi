@@ -33,8 +33,10 @@ export const post: RequestHandler = async (req, res) => {
     mostRecentCodes = await req.items
       .find<TOTPCode>({
         relatedTo: {
-          id: email,
-          type: RelatedToType.TOTP
+          $elemMatch: {
+            id: email,
+            type: RelatedToType.TOTPS
+          }
         }
       })
       .sort({ _id: -1 })
@@ -76,8 +78,10 @@ export const post: RequestHandler = async (req, res) => {
   try {
     user = await req.items.findOne<User>({
       relatedTo: {
-        id: email,
-        type: RelatedToType.USER
+        $elemMatch: {
+          id: email,
+          type: RelatedToType.USERS
+        }
       }
     });
   } catch (error) {
@@ -113,8 +117,10 @@ export const post: RequestHandler = async (req, res) => {
       await req.items.updateOne(
         {
           relatedTo: {
-            id: email,
-            type: RelatedToType.USER
+            $elemMatch: {
+              id: email,
+              type: RelatedToType.USERS
+            }
           }
         },
         {
@@ -156,8 +162,10 @@ export const post: RequestHandler = async (req, res) => {
         _id: { $ne: usedCodeId },
         status: TOTPCodeStatus.ACTIVE,
         relatedTo: {
-          id: email,
-          type: RelatedToType.TOTP
+          $elemMatch: {
+            id: email,
+            type: RelatedToType.TOTPS
+          }
         }
       },
       {

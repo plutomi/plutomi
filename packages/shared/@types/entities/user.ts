@@ -1,7 +1,7 @@
 import type { Email } from "../email";
 import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 // import type { PlutomiId } from "../plutomiId";
-import type { AllEntityNames } from "./allEntityNames";
+import type { IdPrefix } from "./idPrefix";
 import type { BaseEntity } from "./baseEntity";
 
 // type UserTotals = {
@@ -10,20 +10,20 @@ import type { BaseEntity } from "./baseEntity";
 //   workspaces: number;
 // };
 
-// type UserOrgId = PlutomiId<AllEntityNames.Org> | null;
-// type UserWorkspaceId = PlutomiId<AllEntityNames.Workspace> | null;
+// type UserOrgId = PlutomiId<IdPrefix.Org> | null;
+// type UserWorkspaceId = PlutomiId<IdPrefix.Workspace> | null;
 
 type UserRelatedToArray = [
-  ...RelatedToArray<AllEntityNames.USER>,
+  ...RelatedToArray<IdPrefix.USER>,
   // Get a user by email
-  { id: Email; type: RelatedToType.USER }
+  { id: Email; type: RelatedToType.USERS }
   // // Get all users in an org
-  // { id: UserOrgId; type: RelatedToType.User },
+  // { id: UserOrgId; type: RelatedToType.USERS },
   // // Get all users in a workspace
-  // { id: UserWorkspaceId; type: RelatedToType.User },
+  // { id: UserWorkspaceId; type: RelatedToType.USERS },
 ];
 
-export type User = BaseEntity<AllEntityNames.USER> & {
+export type User = BaseEntity<IdPrefix.USER> & {
   firstName: string | null;
   lastName: string | null;
   email: Email;
