@@ -1,5 +1,5 @@
 // ! TODO: Rename this to ID prefix
-export enum AllEntityNames {
+export enum IdPrefix {
   /**
    * These are all lowercase because they are used in URLs as IDs. The truncation may differ from the RelatedTo types.
    */

@@ -1,6 +1,6 @@
 import type { Request } from "express";
 import {
-  AllEntityNames,
+  IdPrefix,
   type PlutomiId,
   RelatedToType,
   type Session,
@@ -12,19 +12,19 @@ import { MAX_SESSION_AGE_IN_MS } from "../../consts";
 
 type CreateSessionProps = {
   req: Request;
-  userId: PlutomiId<AllEntityNames.USER>;
+  userId: PlutomiId<IdPrefix.USER>;
 };
 
 export const createSession = async ({
   req,
   userId
-}: CreateSessionProps): Promise<PlutomiId<AllEntityNames.SESSION>> => {
+}: CreateSessionProps): Promise<PlutomiId<IdPrefix.SESSION>> => {
   const now = new Date();
   const nowIso = now.toISOString();
 
   const sessionId = generatePlutomiId({
     date: now,
-    entity: AllEntityNames.SESSION
+    entity: IdPrefix.SESSION
   });
 
   const userAgent = req.get("User-Agent") ?? "unknown";
@@ -39,7 +39,7 @@ export const createSession = async ({
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
       .toISOString(),
     status: SessionStatus.ACTIVE,
-    entityType: AllEntityNames.SESSION,
+    entityType: IdPrefix.SESSION,
     ip: req.clientIp ?? "unknown",
     userAgent,
     relatedTo: [

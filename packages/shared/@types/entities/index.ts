@@ -22,7 +22,7 @@ export type AllEntities =
 // | StageQuestionItem
 // | Workspace;
 
-export * from "./allEntityNames";
+export * from "./idPrefix";
 // export * from "./application";
 // export * from "./invite";
 // export * from "./membership";

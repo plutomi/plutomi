@@ -1,13 +1,13 @@
 import type { Email } from "../email";
 import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
-import type { AllEntityNames } from "./allEntityNames";
+import type { IdPrefix } from "./idPrefix";
 import type { BaseEntity } from "./baseEntity";
 
 type TOTPCodeRelatedToArray = [
-  ...RelatedToArray<AllEntityNames.TOTP>,
+  ...RelatedToArray<IdPrefix.TOTP>,
   // Get login codes for a user
-  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.TOTPS },
+  { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.TOTPS },
   // Get login codes for an email
   { id: Email; type: RelatedToType.TOTPS }
 ];
@@ -18,9 +18,9 @@ export enum TOTPCodeStatus {
   EXPIRED = "EXPIRED"
 }
 
-export type TOTPCode = BaseEntity<AllEntityNames.TOTP> & {
+export type TOTPCode = BaseEntity<IdPrefix.TOTP> & {
   code: string;
-  user: PlutomiId<AllEntityNames.USER>;
+  user: PlutomiId<IdPrefix.USER>;
   email: Email;
   // ISO Timestamp
   expiresAt: string;

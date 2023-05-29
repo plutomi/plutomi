@@ -1,10 +1,6 @@
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import {
-  type AllEntityNames,
-  type PlutomiId,
-  SessionStatus
-} from "@plutomi/shared";
+import { type IdPrefix, type PlutomiId, SessionStatus } from "@plutomi/shared";
 import {
   getCookieJar,
   getCookieSettings,
@@ -27,7 +23,7 @@ export const get: RequestHandler = async (req, res) => {
     try {
       await req.items.updateOne(
         {
-          _id: sessionId as PlutomiId<AllEntityNames.SESSION>
+          _id: sessionId as PlutomiId<IdPrefix.SESSION>
         },
         {
           $set: {

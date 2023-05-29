@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
 import {
-  AllEntityNames,
+  IdPrefix,
   RelatedToType,
   type Email,
   type User,
@@ -55,12 +55,12 @@ export const get: RequestHandler = async (req, res) => {
   }).map(() => {
     const userId = generatePlutomiId({
       date: now,
-      entity: AllEntityNames.USER
+      entity: IdPrefix.USER
     });
 
     return {
       _id: userId,
-      entityType: AllEntityNames.USER,
+      entityType: IdPrefix.USER,
       firstName: "Jose",
       lastName: "Valerio",
       emailVerified: false,
@@ -87,12 +87,12 @@ export const get: RequestHandler = async (req, res) => {
   const notes = Array.from({ length: randomNumberInclusive(5, 20) }).map(() => {
     const noteId = generatePlutomiId({
       date: now,
-      entity: AllEntityNames.NOTE
+      entity: IdPrefix.NOTE
     });
 
     return {
       _id: noteId,
-      entityType: AllEntityNames.NOTE,
+      entityType: IdPrefix.NOTE,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
       relatedTo: [
@@ -111,12 +111,12 @@ export const get: RequestHandler = async (req, res) => {
   const files = Array.from({ length: randomNumberInclusive(5, 20) }).map(() => {
     const fileId = generatePlutomiId({
       date: now,
-      entity: AllEntityNames.FILE
+      entity: IdPrefix.FILE
     });
 
     return {
       _id: fileId,
-      entityType: AllEntityNames.FILE,
+      entityType: IdPrefix.FILE,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
       relatedTo: [
@@ -136,12 +136,12 @@ export const get: RequestHandler = async (req, res) => {
     () => {
       const membershipId = generatePlutomiId({
         date: now,
-        entity: AllEntityNames.MEMBERSHIP
+        entity: IdPrefix.MEMBERSHIP
       });
 
       return {
         _id: membershipId,
-        entityType: AllEntityNames.MEMBERSHIP,
+        entityType: IdPrefix.MEMBERSHIP,
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         relatedTo: [
@@ -162,12 +162,12 @@ export const get: RequestHandler = async (req, res) => {
     () => {
       const inviteId = generatePlutomiId({
         date: now,
-        entity: AllEntityNames.INVITE
+        entity: IdPrefix.INVITE
       });
 
       return {
         _id: inviteId,
-        entityType: AllEntityNames.INVITE,
+        entityType: IdPrefix.INVITE,
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         relatedTo: [
@@ -187,12 +187,12 @@ export const get: RequestHandler = async (req, res) => {
   const tasks = Array.from({ length: randomNumberInclusive(5, 20) }).map(() => {
     const taskId = generatePlutomiId({
       date: now,
-      entity: AllEntityNames.TASK
+      entity: IdPrefix.TASK
     });
 
     return {
       _id: taskId,
-      entityType: AllEntityNames.TASK,
+      entityType: IdPrefix.TASK,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
       relatedTo: [
@@ -212,12 +212,12 @@ export const get: RequestHandler = async (req, res) => {
     () => {
       const sessionId = generatePlutomiId({
         date: now,
-        entity: AllEntityNames.SESSION
+        entity: IdPrefix.SESSION
       });
 
       return {
         _id: sessionId,
-        entityType: AllEntityNames.SESSION,
+        entityType: IdPrefix.SESSION,
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         relatedTo: [
@@ -238,12 +238,12 @@ export const get: RequestHandler = async (req, res) => {
     () => {
       const activityId = generatePlutomiId({
         date: now,
-        entity: AllEntityNames.ACTIVITY
+        entity: IdPrefix.ACTIVITY
       });
 
       return {
         _id: activityId,
-        entityType: AllEntityNames.ACTIVITY,
+        entityType: IdPrefix.ACTIVITY,
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         relatedTo: [
@@ -277,35 +277,35 @@ export const get: RequestHandler = async (req, res) => {
     entitiesToRetrieve: [
       {
         entityType: RelatedToType.SELF,
-        entityName: AllEntityNames.USER
+        entityName: IdPrefix.USER
       },
       {
         entityType: RelatedToType.NOTES,
-        entityName: AllEntityNames.NOTE
+        entityName: IdPrefix.NOTE
       },
       {
         entityType: RelatedToType.FILES,
-        entityName: AllEntityNames.FILE
+        entityName: IdPrefix.FILE
       },
       {
         entityType: RelatedToType.MEMBERSHIPS,
-        entityName: AllEntityNames.MEMBERSHIP
+        entityName: IdPrefix.MEMBERSHIP
       },
       {
         entityType: RelatedToType.INVITES,
-        entityName: AllEntityNames.INVITE
+        entityName: IdPrefix.INVITE
       },
       {
         entityType: RelatedToType.TASKS,
-        entityName: AllEntityNames.TASK
+        entityName: IdPrefix.TASK
       },
       {
         entityType: RelatedToType.SESSIONS,
-        entityName: AllEntityNames.SESSION
+        entityName: IdPrefix.SESSION
       },
       {
         entityType: RelatedToType.ACTIVITY,
-        entityName: AllEntityNames.ACTIVITY
+        entityName: IdPrefix.ACTIVITY
       }
     ]
   });

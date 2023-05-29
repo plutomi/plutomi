@@ -2,7 +2,7 @@
 // import Joi from 'joi';
 // import { Emails, JOI_SETTINGS, WEBSITE_URL } from '../../Config';
 // import {
-//   AllEntityNames,
+//   IdPrefix,
 //   EntityPrefix,
 //   findInRelatedToArray,
 //   generatePlutomiId,
@@ -95,7 +95,7 @@
 //       emailVerified: false,
 //       canReceiveEmails: true,
 //       relatedTo: [
-//         { id: AllEntityNames.User, type: IndexableProperties.Entity },
+//         { id: IdPrefix.User, type: IndexableProperties.Entity },
 //         { id: userId, type: IndexableProperties.Id },
 //         { id: recipientEmail, type: IndexableProperties.Email },
 //       ],
@@ -134,7 +134,7 @@
 //     },
 //     expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
 //     relatedTo: [
-//       { id: AllEntityNames.Invite, type: IndexableProperties.Entity },
+//       { id: IdPrefix.Invite, type: IndexableProperties.Entity },
 //       { id: newInviteId, type: IndexableProperties.Id },
 //       { id: recipientEmail, type: IndexableProperties.Email },
 //       {

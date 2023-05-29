@@ -1,21 +1,21 @@
 // import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 // import type { PlutomiId } from "../plutomiId";
-// import type { AllEntityNames } from "./allEntityNames";
+// import type { IdPrefix } from "./idPrefix";
 // import type { BaseEntity } from "./baseEntity";
 
 // export type InviteRelatedToArray = [
-//   ...RelatedToArray<AllEntityNames.Invite>,
+//   ...RelatedToArray<IdPrefix.Invite>,
 //   // Get all invites for a user
-//   { id: PlutomiId<AllEntityNames.User>; type: RelatedToType.Invite },
+//   { id: PlutomiId<IdPrefix.User>; type: RelatedToType.Invite },
 //   // Get all invites for an org
-//   { id: PlutomiId<AllEntityNames.Org>; type: RelatedToType.Invite },
+//   { id: PlutomiId<IdPrefix.Org>; type: RelatedToType.Invite },
 //   // Get invites associated for a given membership (should only ever be one)
-//   { id: PlutomiId<AllEntityNames.Membership>; type: RelatedToType.Invite },
+//   { id: PlutomiId<IdPrefix.Membership>; type: RelatedToType.Invite },
 //   // Get invites associated for a given workspace
-//   { id: PlutomiId<AllEntityNames.Workspace>; type: RelatedToType.Invite }
+//   { id: PlutomiId<IdPrefix.Workspace>; type: RelatedToType.Invite }
 // ];
 
-// export type Invite = BaseEntity<AllEntityNames.Invite> & {
+// export type Invite = BaseEntity<IdPrefix.Invite> & {
 //   org: {
 //     id: string;
 //     name: string;

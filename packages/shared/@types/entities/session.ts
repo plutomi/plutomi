@@ -1,17 +1,17 @@
 import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 import type { SessionStatus } from "../sessionStatus";
-import type { AllEntityNames } from "./allEntityNames";
+import type { IdPrefix } from "./idPrefix";
 import type { BaseEntity } from "./baseEntity";
 
 type SessionRelatedToArray = [
-  ...RelatedToArray<AllEntityNames.SESSION>,
+  ...RelatedToArray<IdPrefix.SESSION>,
   // Get all sessions for a user
-  { id: PlutomiId<AllEntityNames.USER>; type: RelatedToType.SESSIONS }
+  { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.SESSIONS }
 ];
 
-export type Session = BaseEntity<AllEntityNames.SESSION> & {
-  user: PlutomiId<AllEntityNames.USER>;
+export type Session = BaseEntity<IdPrefix.SESSION> & {
+  user: PlutomiId<IdPrefix.USER>;
   ip: string;
   expiresAt: string;
   userAgent: string;

@@ -1,8 +1,4 @@
-import {
-  RelatedToType,
-  type AllEntityNames,
-  type PlutomiId
-} from "@plutomi/shared";
+import { RelatedToType, type IdPrefix, type PlutomiId } from "@plutomi/shared";
 import type { Document } from "mongodb";
 
 type EntitiesToRetrieve = {
@@ -11,9 +7,9 @@ type EntitiesToRetrieve = {
    */
   entityType: RelatedToType;
   /**
-   * The entity name of the entity to retrieve. ie: If you want to retrieve all notes for an applicant, this would be AllEntityNames.NOTE.
+   * The entity name of the entity to retrieve. ie: If you want to retrieve all notes for an applicant, this would be IdPrefix.NOTE.
    */
-  entityName: AllEntityNames;
+  entityName: IdPrefix;
 };
 
 /**
@@ -30,7 +26,7 @@ type CreateJoinedAggregationProps = {
    * Id of the root entity.
    * ie: Give me an applicant and all of their notes & files -> Applicant is the root entity.
    */
-  id: PlutomiId<AllEntityNames>;
+  id: PlutomiId<IdPrefix>;
 
   /**
    * The entities you want to retrieve. This will be used to create the projection.
@@ -39,16 +35,16 @@ type CreateJoinedAggregationProps = {
    * Give me an applicant and their notes & files
    * [{
    * entityType: RelatedToType.SELF,
-   * entityName: AllEntityNames.APPLICANT
+   * entityName: IdPrefix.APPLICANT
    * },
    * {
    *  entityType: RelatedToType.NOTES,
-   * entityName: AllEntityNames.NOTE
+   * entityName: IdPrefix.NOTE
    *
    * },
    * {
    * entityType: RelatedToType.FILES,
-   * entityName: AllEntityNames.FILE}
+   * entityName: IdPrefix.FILE}
    *
    * ]
    */
@@ -56,7 +52,7 @@ type CreateJoinedAggregationProps = {
     {
       // First item must always be the root entity
       entityType: RelatedToType.SELF;
-      entityName: AllEntityNames;
+      entityName: IdPrefix;
     },
     ...EntitiesToRetrieve[]
   ];
@@ -80,14 +76,14 @@ const createProjection = (entitiesToRetrieve: EntitiesToRetrieve[]) => {
 };
 
 type CreateMatchStageProps = {
-  id: PlutomiId<AllEntityNames>;
+  id: PlutomiId<IdPrefix>;
   relatedToEntities: RelatedToType[];
 };
 
 type RelatedToMatchObject = {
   relatedTo: {
     $elemMatch: {
-      id: PlutomiId<AllEntityNames>;
+      id: PlutomiId<IdPrefix>;
       type: RelatedToType;
     };
   };

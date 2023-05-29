@@ -1,3 +1,3 @@
-import type { AllEntityNames } from "./entities";
+import type { IdPrefix } from "./entities";
 
-export type PlutomiId<T extends AllEntityNames> = `${T}_${string}`;
+export type PlutomiId<T extends IdPrefix> = `${T}_${string}`;

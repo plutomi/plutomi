@@ -1,4 +1,4 @@
-// import type { AllEntityNames } from "./allEntityNames";
+// import type { IdPrefix } from "./idPrefix";
 // import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 // import type { BaseEntity } from "./baseEntity";
 // import type { PlutomiId } from "../plutomiId";
@@ -9,14 +9,14 @@
 // };
 
 // type ApplicationRelatedToArray = [
-//   ...RelatedToArray<AllEntityNames.Application>,
+//   ...RelatedToArray<IdPrefix.Application>,
 //   // Get all applications for an org
-//   { id: PlutomiId<AllEntityNames.Org>; type: RelatedToType.Org },
+//   { id: PlutomiId<IdPrefix.Org>; type: RelatedToType.Org },
 //   // Get all applications for a workspace
-//   { id: PlutomiId<AllEntityNames.Workspace>; type: RelatedToType.Workspace }
+//   { id: PlutomiId<IdPrefix.Workspace>; type: RelatedToType.Workspace }
 // ];
 
-// export type Application = BaseEntity<AllEntityNames.Application> & {
+// export type Application = BaseEntity<IdPrefix.Application> & {
 //   name: string;
 //   org: string;
 //   workspace: string;

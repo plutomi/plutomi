@@ -1,5 +1,5 @@
 // import type { RelatedToArray } from "../indexableProperties";
-// import type { AllEntityNames } from "./allEntityNames";
+// import type { IdPrefix } from "./idPrefix";
 // import type { BaseEntity } from "./baseEntity";
 
 // /**
@@ -17,9 +17,9 @@
 //   workspaces: number;
 // };
 
-// type OrgRelatedToArray = RelatedToArray<AllEntityNames.Org>;
+// type OrgRelatedToArray = RelatedToArray<IdPrefix.Org>;
 
-// export type Org = BaseEntity<AllEntityNames.Org> & {
+// export type Org = BaseEntity<IdPrefix.Org> & {
 //   displayName: string;
 //   totals: OrgTotals;
 //   relatedTo: OrgRelatedToArray;

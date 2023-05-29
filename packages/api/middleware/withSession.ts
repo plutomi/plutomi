@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import type { AllEntityNames, PlutomiId, Session, User } from "@plutomi/shared";
+import type { IdPrefix, PlutomiId, Session, User } from "@plutomi/shared";
 import { getCookieJar, getSessionCookieName, sessionIsActive } from "../utils";
 
 export const withSession: RequestHandler = async (req, res, next) => {
@@ -15,7 +15,7 @@ export const withSession: RequestHandler = async (req, res, next) => {
 
   try {
     const session = await req.items.findOne<Session>({
-      _id: sessionId as PlutomiId<AllEntityNames.SESSION>
+      _id: sessionId as PlutomiId<IdPrefix.SESSION>
     });
 
     if (session === null || !sessionIsActive({ session })) {

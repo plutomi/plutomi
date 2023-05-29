@@ -1,5 +1,5 @@
 import {
-  AllEntityNames,
+  IdPrefix,
   RelatedToType,
   generateTOTP,
   type User,
@@ -65,7 +65,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now.toDate(),
-      entity: AllEntityNames.USER
+      entity: IdPrefix.USER
     });
 
     const userData: User = {
@@ -78,7 +78,7 @@ export const post: RequestHandler = async (req, res) => {
       email: email as Email,
       createdAt: nowIso,
       updatedAt: nowIso,
-      entityType: AllEntityNames.USER,
+      entityType: IdPrefix.USER,
       relatedTo: [
         {
           id: userId,
@@ -118,7 +118,7 @@ export const post: RequestHandler = async (req, res) => {
     // If a user already has a session, and it is valid, redirect them to dashboard
     try {
       const session = await req.items.findOne<Session>({
-        _id: sessionId as PlutomiId<AllEntityNames.SESSION>
+        _id: sessionId as PlutomiId<IdPrefix.SESSION>
       });
 
       // ! TODO: Clean this up in two parts, first check if session is null, then check if it is active
@@ -193,7 +193,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({
       date: now.toDate(),
-      entity: AllEntityNames.TOTP
+      entity: IdPrefix.TOTP
     });
 
     const newTotpCode: TOTPCode = {
@@ -203,7 +203,7 @@ export const post: RequestHandler = async (req, res) => {
       email: email as Email,
       createdAt: nowIso,
       updatedAt: nowIso,
-      entityType: AllEntityNames.TOTP,
+      entityType: IdPrefix.TOTP,
       expiresAt: now
         .add(TOTP_EXPIRATION_TIME_IN_MINUTES, "minutes")
         .toISOString(),
