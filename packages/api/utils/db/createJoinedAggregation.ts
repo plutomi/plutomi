@@ -52,7 +52,14 @@ type CreateJoinedAggregationProps = {
    *
    * ]
    */
-  entitiesToRetrieve: EntitiesToRetrieve[];
+  entitiesToRetrieve: [
+    {
+      // First item must always be the root entity
+      entityType: RelatedToType.SELF;
+      entityName: AllEntityNames;
+    },
+    ...EntitiesToRetrieve[]
+  ];
 };
 
 const createProjection = (entitiesToRetrieve: EntitiesToRetrieve[]) => {
