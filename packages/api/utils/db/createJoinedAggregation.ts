@@ -12,15 +12,6 @@ type EntitiesToRetrieve = {
   entityName: IdPrefix;
 };
 
-/**
- * ! TODO: Some queries might need this to return nested entities.
- * ! DOUBLE NOTE: On the result, if the `_id` === entityType, the root entity was NOT FOUND.
- *  Example:
- *
- * /applicants/:id should return everything, but we will also have an endpoint for /applicants/:id/notes
- * and /notes/:id for a specific note which won't need this aggregation. Same with files and other stuff.
- */
-
 type CreateJoinedAggregationProps = {
   /**
    * Id of the root entity.
@@ -31,8 +22,7 @@ type CreateJoinedAggregationProps = {
   /**
    * The entities you want to retrieve. This will be used to create the projection.
    *
-   * @example
-   * Give me an applicant and their notes & files
+   * Give me an applicant and their notes & files:
    * [{
    * entityType: RelatedToType.SELF,
    * entityName: IdPrefix.APPLICANT
@@ -47,6 +37,11 @@ type CreateJoinedAggregationProps = {
    * entityName: IdPrefix.FILE}
    *
    * ]
+   * 
+   * _id: 'applicant_3810',
+   * notes: [...array_of_notes],
+   * files: [...array_of_files]
+   * ...restOfApplicantData
    */
   entitiesToRetrieve: [
     {
@@ -89,6 +84,10 @@ type RelatedToMatchObject = {
   };
 };
 
+/**
+ * 
+ * Does the main filtering on the selective multi-key index
+ */
 const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
   const relatedItems: RelatedToMatchObject[] = relatedToEntities.map(
     (entity) => ({
