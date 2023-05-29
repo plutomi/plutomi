@@ -23,7 +23,7 @@ type UserRelatedToArray = [
   // { id: UserWorkspaceId; type: RelatedToType.USERS },
 
   // ! Some notes:
-  // To get all the subentities of a user, we can do this:
+  // To get all the child entities of a user, we can do this:
 
   // { $or: [ { relatedTo: { $elemMatch:  {id: "user_3810",  type: "files"}}}, { relatedTo: { $elemMatch:  {id: "user_3810",  type: "notes"}}}]}
   // If we try to get the user as well with an OR, the documents examined doubles as Mongo has to do a double check to make sure there weren't any duplicates
