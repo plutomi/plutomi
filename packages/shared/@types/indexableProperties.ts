@@ -19,11 +19,9 @@ export enum RelatedToType {
   // TASKS = "tasks",
   // ACTIVITY = "activity"
 
-
   // These are metadata and are not directly related to parent <> child relationships
   SELF = "self",
   ENTITY = "entity"
-
 }
 
 // These can be anything
