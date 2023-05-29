@@ -6,6 +6,8 @@ export const withSession: RequestHandler = async (req, res, next) => {
   const cookieJar = getCookieJar({ req, res });
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
 
+  // ! TODO: Clear cookies if session is invalid
+  
   if (sessionId === undefined) {
     res.status(401).json({
       message: "Please log in again."
