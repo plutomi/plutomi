@@ -204,7 +204,7 @@ export const get: RequestHandler = async (req, res) => {
         },
         {
           id: randomUser._id,
-          type: RelatedToType.ACTIVITIES
+          type: RelatedToType.ACTIVITY
         }
       ]
     })
@@ -218,7 +218,8 @@ export const get: RequestHandler = async (req, res) => {
     ...memberships,
     ...invites,
     ...tasks,
-    ...sessions
+    ...sessions,
+    ...activity
   ]);
 
   const aggregationd = createJoinedAggregation({
@@ -251,6 +252,10 @@ export const get: RequestHandler = async (req, res) => {
       {
         entityType: RelatedToType.SESSIONS,
         entityName: AllEntityNames.SESSION
+      },
+      {
+        entityType: RelatedToType.ACTIVITY,
+        entityName: AllEntityNames.ACTIVITY
       }
     ]
   });

@@ -4,7 +4,8 @@ import type { PlutomiId } from "./plutomiId";
 // These are properties, aside from each entity type, that can be indexed
 export enum RelatedToType {
   /**
-   * All entities
+   * All entities. Note: When doing aggregations, these will be keys in the parent object.
+   * ie: /applicants/:id will have the applicant as the parent and the notes & files as keys in the parent object
    */
 
   USERS = "users",
@@ -17,7 +18,7 @@ export enum RelatedToType {
   MEMBERSHIPS = "memberships",
   INVITES = "invites",
   TASKS = "tasks",
-  ACTIVITIES = "activities"
+  ACTIVITY = "activity"
 }
 
 // These can be anything
