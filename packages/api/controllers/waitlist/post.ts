@@ -33,6 +33,10 @@ export const post: RequestHandler = async (req, res) => {
       updatedAt: nowIso,
       relatedTo: [
         {
+          id: IdPrefix.WAIT_LIST_USER,
+          type: RelatedToType.ENTITY
+        },
+        {
           id: userId,
           type: RelatedToType.SELF
         },

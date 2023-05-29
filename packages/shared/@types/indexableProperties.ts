@@ -12,13 +12,18 @@ export enum RelatedToType {
   WAIT_LIST_USERS = "waitListUsers",
   TOTPS = "totps",
   SESSIONS = "sessions",
+  // NOTES = "notes",
+  // FILES = "files",
+  // MEMBERSHIPS = "memberships",
+  // INVITES = "invites",
+  // TASKS = "tasks",
+  // ACTIVITY = "activity"
+
+
+  // These are metadata and are not directly related to parent <> child relationships
   SELF = "self",
-  NOTES = "notes",
-  FILES = "files",
-  MEMBERSHIPS = "memberships",
-  INVITES = "invites",
-  TASKS = "tasks",
-  ACTIVITY = "activity"
+  ENTITY = "entity"
+
 }
 
 // These can be anything
@@ -50,6 +55,7 @@ type OtherRelatedToArrayItems = {
  */
 export type RelatedToArray<T extends IdPrefix> = [
   // These two will always be the first two items
+  { id: T; type: RelatedToType.ENTITY },
   { id: PlutomiId<T>; type: RelatedToType.SELF },
   ...OtherRelatedToArrayItems[]
 ];

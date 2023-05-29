@@ -81,6 +81,10 @@ export const post: RequestHandler = async (req, res) => {
       entityType: IdPrefix.USER,
       relatedTo: [
         {
+          id: IdPrefix.USER,
+          type: RelatedToType.ENTITY
+        },
+        {
           id: userId,
           type: RelatedToType.SELF
         },
@@ -209,6 +213,10 @@ export const post: RequestHandler = async (req, res) => {
         .toISOString(),
       status: TOTPCodeStatus.ACTIVE,
       relatedTo: [
+        {
+          id: IdPrefix.TOTP,
+          type: RelatedToType.ENTITY
+        },
         {
           id: totpCodeId,
           type: RelatedToType.SELF
