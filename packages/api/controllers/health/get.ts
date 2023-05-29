@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { createJoinedAggregation, getDbName } from "../../utils";
+import { createJoinedAggregation } from "../../utils";
 import {
   AllEntityNames,
   Email,
@@ -17,7 +17,7 @@ export const get: RequestHandler = async (req, res) => {
   await req.items.deleteMany({});
   await req.items.deleteMany({});
 
-  const users = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+  const users = Array.from({ length: randomNumberInclusive(10000, 10000) }).map(
     (_, i) => {
       const userId = `user_${i}`;
       return {
@@ -85,8 +85,72 @@ export const get: RequestHandler = async (req, res) => {
     })
   );
 
+  const memberships = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+    (_, i) => ({
+      _id: `memberships_${i}`,
+      entityType: AllEntityNames.MEMBERSHIP,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      relatedTo: [
+        {
+          id: `memberships_${i}`,
+          type: RelatedToType.SELF
+        },
+        {
+          id: randomUser._id,
+          type: RelatedToType.MEMBERSHIPS
+        }
+      ]
+    })
+  );
+
+  const invites = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+    (_, i) => ({
+      _id: `invites_${i}`,
+      entityType: AllEntityNames.INVITE,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      relatedTo: [
+        {
+          id: `invites_${i}`,
+          type: RelatedToType.SELF
+        },
+        {
+          id: randomUser._id,
+          type: RelatedToType.INVITES
+        }
+      ]
+    })
+  );
+
+  const tasks = Array.from({ length: randomNumberInclusive(5, 100) }).map(
+    (_, i) => ({
+      _id: `tasks_${i}`,
+      entityType: AllEntityNames.TASK,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      relatedTo: [
+        {
+          id: `tasks_${i}`,
+          type: RelatedToType.SELF
+        },
+        {
+          id: randomUser._id,
+          type: RelatedToType.TASKS
+        }
+      ]
+    })
+  );
+
   console.log(`rANDOM USER ID`, randomUser._id);
-  await req.items.insertMany([...users, ...notes, ...files]);
+  await req.items.insertMany([
+    ...users,
+    ...notes,
+    ...files,
+    ...memberships,
+    ...invites,
+    ...tasks
+  ]);
 
   const aggregationd = createJoinedAggregation({
     id: randomUser._id,

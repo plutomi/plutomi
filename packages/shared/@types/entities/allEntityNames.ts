@@ -10,5 +10,8 @@ export enum AllEntityNames {
 
   // ! TODO: Remove
   NOTE = "note",
-  FILE = "file"
+  FILE = "file",
+  INVITE = "invite",
+  TASK = "task",
+  MEMBERSHIP = "membership",
 }

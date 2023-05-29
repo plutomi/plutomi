@@ -49,7 +49,7 @@ export const createSession = async ({
       },
       {
         id: userId,
-        type: RelatedToType.SESSION
+        type: RelatedToType.SESSIONS
       }
     ]
   };

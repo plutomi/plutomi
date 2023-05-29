@@ -13,7 +13,10 @@ export enum RelatedToType {
   SESSIONS = "sessions",
   SELF = "self",
   NOTES = "notes",
-  FILES = "files"
+  FILES = "files",
+  MEMBERSHIPS = "memberships",
+  INVITES = "invites",
+  TASKS = "tasks"
 }
 
 // These can be anything
