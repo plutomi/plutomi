@@ -21,14 +21,6 @@ type UserRelatedToArray = [
   // { id: UserOrgId; type: RelatedToType.USERS },
   // // Get all users in a workspace
   // { id: UserWorkspaceId; type: RelatedToType.USERS },
-
-  // ! Some notes:
-  // To get all the child entities of a user, we can do this:
-
-  // { $or: [ { relatedTo: { $elemMatch:  {id: "user_3810",  type: "files"}}}, { relatedTo: { $elemMatch:  {id: "user_3810",  type: "notes"}}}]}
-  // If we try to get the user as well with an OR, the documents examined doubles as Mongo has to do a double check to make sure there weren't any duplicates
-  //  BAD - Don't do this -> { $or: [ {_id: "user_3810"}, { relatedTo: { $elemMatch:  {id: "user_3810",  type: "files"}}}, { relatedTo: { $elemMatch:  {id: "user_3810",  type: "notes"}}}]}
-  // Whenever we fetch an entity, we almost always want to fetch it first, check if it exists, and if so, get the rest of the data and group it together
 ];
 
 export type User = BaseEntity<AllEntityNames.USER> & {
