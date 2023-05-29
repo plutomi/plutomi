@@ -50,37 +50,37 @@ export const get: RequestHandler = async (req, res) => {
 
   const now = new Date();
 
-  const users = Array.from({ length: randomNumberInclusive(10000, 10000) }).map(
-    () => {
-      const userId = generatePlutomiId({
-        date: now,
-        entity: AllEntityNames.USER
-      });
+  const users: User[] = Array.from({
+    length: randomNumberInclusive(10000, 10000)
+  }).map(() => {
+    const userId = generatePlutomiId({
+      date: now,
+      entity: AllEntityNames.USER
+    });
 
-      return {
-        _id: userId,
-        entityType: AllEntityNames.USER,
-        firstName: "Jose",
-        lastName: "Valerio",
-        emailVerified: false,
-        emailVerifiedAt: null,
-        canReceiveEmails: true,
-        email: "jose@plutomi.com",
-        createdAt: now.toISOString(),
-        updatedAt: now.toISOString(),
-        relatedTo: [
-          {
-            id: userId,
-            type: RelatedToType.SELF
-          },
-          {
-            id: "jose@plutomi.com" as Email,
-            type: RelatedToType.USERS
-          }
-        ]
-      };
-    }
-  );
+    return {
+      _id: userId,
+      entityType: AllEntityNames.USER,
+      firstName: "Jose",
+      lastName: "Valerio",
+      emailVerified: false,
+      emailVerifiedAt: null,
+      canReceiveEmails: true,
+      email: "jose@plutomi.com",
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      relatedTo: [
+        {
+          id: userId,
+          type: RelatedToType.SELF
+        },
+        {
+          id: "jose@plutomi.com" as Email,
+          type: RelatedToType.USERS
+        }
+      ]
+    };
+  });
 
   const { _id: id } = randomItemFromArray(users);
 
@@ -260,6 +260,7 @@ export const get: RequestHandler = async (req, res) => {
     }
   );
 
+  // @ts-expect-error We don't have the actual entities for this yet so this will throw an error
   await req.items.insertMany([
     ...users,
     ...notes,
