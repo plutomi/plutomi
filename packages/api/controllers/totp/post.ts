@@ -199,6 +199,8 @@ export const post: RequestHandler = async (req, res) => {
     const newTotpCode: TOTPCode = {
       _id: totpCodeId,
       code: totpCode,
+      user: userId,
+      email: email as Email,
       createdAt: nowIso,
       updatedAt: nowIso,
       entityType: AllEntityNames.TOTP,
