@@ -34,12 +34,14 @@ type OtherRelatedToArrayItems = {
  *
  * There is a util method called getJoinedAggregation that will do this for us. Provide it with the entity and the related entities you want to retrieve.
  *
- * ! If the `_id` field of the returned document is "entityType", then the root document does not exist. Make sure to handle that case.
- *
+ * The util method will return an entity with all related items that you provide, and it will be undefined if the root item does not exist.
+ * 
  * For more fine-grained endpoints like /applicants/:id/notes, we can use the following query and retrieve those items directly.
  * You *must* include `$elemMatch` to use the index.
  *
  * { relatedTo: { $elemMatch: { id: 'applicant_3810', type: 'notes' } } }
+ * 
+ * And to retrieve a specific item, we can use the _id field directly.
  *
  * To see this indexed multi-key array in action, watch this video:
  *
