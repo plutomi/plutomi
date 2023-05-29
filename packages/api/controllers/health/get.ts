@@ -3,36 +3,36 @@ import { createJoinedAggregation, getDbName } from "../../utils";
 import { AllEntityNames, Email, RelatedToType, User } from "@plutomi/shared";
 
 export const get: RequestHandler = async (req, res) => {
-  await req.items.deleteMany({});
-  await req.items.deleteMany({});
-  await req.items.deleteMany({});
-  await req.items.deleteMany({});
-  await req.items.deleteMany({});
-  await req.items.deleteMany({});
+  // await req.items.deleteMany({});
+  // await req.items.deleteMany({});
+  // await req.items.deleteMany({});
+  // await req.items.deleteMany({});
+  // await req.items.deleteMany({});
+  // await req.items.deleteMany({});
 
   const userId = "user_9510";
-  const user = await req.items.insertOne({
-    _id: userId,
-    entityType: AllEntityNames.USER,
-    firstName: "asdasd",
-    lastName: "asdasd",
-    emailVerified: false,
-    emailVerifiedAt: null,
-    canReceiveEmails: true,
-    email: "adasd@sda.com",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    relatedTo: [
-      {
-        id: userId,
-        type: RelatedToType.SELF
-      },
-      {
-        id: "emailasdasdasd" as Email,
-        type: RelatedToType.USERS
-      }
-    ]
-  });
+  // const user = await req.items.insertOne({
+  //   _id: userId,
+  //   entityType: AllEntityNames.USER,
+  //   firstName: "asdasd",
+  //   lastName: "asdasd",
+  //   emailVerified: false,
+  //   emailVerifiedAt: null,
+  //   canReceiveEmails: true,
+  //   email: "adasd@sda.com",
+  //   createdAt: new Date().toISOString(),
+  //   updatedAt: new Date().toISOString(),
+  //   relatedTo: [
+  //     {
+  //       id: userId,
+  //       type: RelatedToType.SELF
+  //     },
+  //     {
+  //       id: "emailasdasdasd" as Email,
+  //       type: RelatedToType.USERS
+  //     }
+  //   ]
+  // });
 
   const notes = Array.from({ length: 10 }).map((_, i) => ({
     _id: `note_${i}`,
@@ -68,40 +68,42 @@ export const get: RequestHandler = async (req, res) => {
     ]
   }));
 
-  await req.items.insertMany([user, ...notes, ...files]);
+  // await req.items.insertMany([user, ...notes, ...files]);
 
+  const aggregationd = createJoinedAggregation({
+    id: userId,
+    entitiesToRetrieve: [
+      {
+        entityType: RelatedToType.SELF,
+        entityName: AllEntityNames.USER
+      },
+      {
+        entityType: RelatedToType.NOTES,
+        entityName: AllEntityNames.NOTE
+      },
+      {
+        entityType: RelatedToType.FILES,
+        entityName: AllEntityNames.FILE
+      }
+    ]
+  });
+  // res.send(aggregationd);
+  // return;
+
+  // console.log(`GGAREGA`, aggregationd);
+  // res.send(aggregationd);
+  // return;
   try {
-    const x = await req.items
-      .aggregate<User>(
-        createJoinedAggregation({
-          id: `userId`,
-          entitiesToRetrieve: [
-            {
-              entityType: RelatedToType.SELF,
-              entityName: AllEntityNames.USER
-            },
-            {
-              entityType: RelatedToType.NOTES,
-              entityName: AllEntityNames.NOTE
-            },
-            {
-              entityType: RelatedToType.FILES,
-              entityName: AllEntityNames.FILE
-            }
-          ]
-        })
-      )
-      .toArray();
+    const x = await req.items.aggregate<User>(aggregationd).toArray();
 
-    const userDat = x[0];
+    const userDat: User | null = x[0];
     console.log(`USERDATA`, userDat);
 
-    if (!userDat || userDat.entityType === "entityType") {
-      res.status(404).json({ message: "Not found" });
+    if (!userDat) {
+      res.status(404).send("User not found");
       return;
     }
-
-    res.send(x[0]);
+    res.send(userDat);
   } catch (error) {
     console.error(error);
     res.send(error);

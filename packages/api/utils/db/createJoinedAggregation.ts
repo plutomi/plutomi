@@ -100,50 +100,80 @@ const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
 
   return { $or: relatedItems };
 };
+
+type CreateMatchFilterProps = {
+  /**
+   * The type of the root entity
+   */
+  entityType: RelatedToType;
+};
+
+const createMatchFilter = ({ entityType }: CreateMatchFilterProps) => ({
+  // Filters out results if the root entity is not found
+  [entityType]: {
+    $ne: []
+  }
+});
+
+const getRootEntityType = (entitiesToRetrieve: EntitiesToRetrieve[]) =>
+  entitiesToRetrieve.filter((item) => item.entityType === RelatedToType.SELF)[0]
+    .entityType;
+
 /**
  * Given an entity {@link AllEntities}, get the entity at the root as well as any entities that are related to it
  */
 export const createJoinedAggregation = ({
   id,
   entitiesToRetrieve
-}: CreateJoinedAggregationProps): Document[] => [
-  {
-    $match: {
-      ...createMatchStage({
-        id,
-        relatedToEntities: entitiesToRetrieve.map((item) => item.entityType)
-      })
-    }
-  },
-  {
-    $group: {
-      _id: "entityType",
-      allItems: {
-        $push: "$$ROOT"
+}: CreateJoinedAggregationProps): Document[] => {
+  const rootEntityType = getRootEntityType(entitiesToRetrieve);
+  const entityTypesOnly = entitiesToRetrieve.map((item) => item.entityType);
+  return [
+    {
+      $match: {
+        ...createMatchStage({
+          id,
+          relatedToEntities: entityTypesOnly
+        })
       }
-    }
-  },
-  {
-    $project: {
-      ...createProjection(entitiesToRetrieve)
-    }
-  },
-  {
-    $replaceRoot: {
-      newRoot: {
-        $mergeObjects: [
-          "$$ROOT",
-          {
-            $arrayElemAt: [`$${RelatedToType.SELF}`, 0]
-          }
-        ]
+    },
+    {
+      $group: {
+        _id: null,
+        allItems: {
+          $push: "$$ROOT"
+        }
       }
+    },
+    {
+      $project: {
+        ...createProjection(entitiesToRetrieve)
+      }
+    },
+    {
+      $match: {
+        ...createMatchFilter({
+          entityType: rootEntityType
+        })
+      }
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: [
+            "$$ROOT",
+            {
+              $arrayElemAt: [`$${rootEntityType}`, 0]
+            }
+          ]
+        }
+      }
+    },
+    {
+      $unset: rootEntityType
     }
-  },
-  {
-    $unset: RelatedToType.SELF
-  }
-];
+  ];
+};
 
 // ! TODO: Another shorter one if we go the _id first route and then the related items:
 
