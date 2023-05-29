@@ -44,6 +44,10 @@ export const createSession = async ({
     userAgent,
     relatedTo: [
       {
+        id: IdPrefix.SESSION,
+        type: RelatedToType.ENTITY
+      },
+      {
         id: sessionId,
         type: RelatedToType.SELF
       },
