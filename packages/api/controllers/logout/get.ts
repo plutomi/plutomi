@@ -1,11 +1,7 @@
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
 import { type IdPrefix, type PlutomiId, SessionStatus } from "@plutomi/shared";
-import {
-  getCookieJar,
-  getCookieSettings,
-  getSessionCookieName
-} from "../../utils";
+import { clearCookie, getCookieJar, getSessionCookieName } from "../../utils";
 
 // TODO Handle query param to log out of all sessions
 export const get: RequestHandler = async (req, res) => {
@@ -14,7 +10,7 @@ export const get: RequestHandler = async (req, res) => {
   const sessionId = cookieJar.get(cookieName, { signed: true });
 
   // Delete cookie client side
-  cookieJar.set(cookieName, undefined, getCookieSettings());
+  clearCookie({ cookieJar });
 
   res.status(200).json({ message: "You've been logged out!" });
 
