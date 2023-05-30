@@ -1,12 +1,18 @@
 import type { RequestHandler } from "express";
 import type { IdPrefix, PlutomiId, Session, User } from "@plutomi/shared";
-import { getCookieJar, getSessionCookieName, sessionIsActive } from "../utils";
+import {
+  clearCookie,
+  getCookieJar,
+  getSessionCookieName,
+  sessionIsActive
+} from "../utils";
 
 export const withSession: RequestHandler = async (req, res, next) => {
   const cookieJar = getCookieJar({ req, res });
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
 
   if (sessionId === undefined) {
+    clearCookie({ cookieJar });
     res.status(401).json({
       message: "Please log in again."
     });
@@ -19,6 +25,7 @@ export const withSession: RequestHandler = async (req, res, next) => {
     });
 
     if (session === null || !sessionIsActive({ session })) {
+      clearCookie({ cookieJar });
       res.status(401).json({
         message: "Please log in again."
       });

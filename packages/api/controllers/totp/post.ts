@@ -18,9 +18,9 @@ import type { RequestHandler } from "express";
 import dayjs from "dayjs";
 import {
   EMAIL_TEMPLATES,
+  clearCookie,
   generatePlutomiId,
   getCookieJar,
-  getCookieSettings,
   getSessionCookieName,
   sendEmail,
   sessionIsActive
@@ -135,7 +135,7 @@ export const post: RequestHandler = async (req, res) => {
 
       // Delete the previous cookie, if any, they will get a new one on their new login
       // Any other session statuses are irrelevant from this point.
-      cookieJar.set(getSessionCookieName(), undefined, getCookieSettings());
+      clearCookie({ cookieJar });
     } catch (error) {
       res.status(500).json({
         message: "An error ocurred creating a session for you",
