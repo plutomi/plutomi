@@ -12,7 +12,6 @@ export const withSession: RequestHandler = async (req, res, next) => {
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
 
   if (sessionId === undefined) {
-    // Clear cookie from the browser
     clearCookie({ cookieJar });
     res.status(401).json({
       message: "Please log in again."
@@ -26,7 +25,6 @@ export const withSession: RequestHandler = async (req, res, next) => {
     });
 
     if (session === null || !sessionIsActive({ session })) {
-      // Clear cookie from the browser
       clearCookie({ cookieJar });
       res.status(401).json({
         message: "Please log in again."
