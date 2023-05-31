@@ -24,12 +24,9 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const { user } = req;
   const { _id: userId } = user;
-
-  const { name } = data;
-
-  const session = req.client.startSession();
-
+  const { name, publicOrgId } = data;
   const now = new Date();
+
   const orgId = generatePlutomiId({
     date: now,
     idPrefix: IdPrefix.ORG
@@ -39,6 +36,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     _id: orgId,
     entityType: IdPrefix.ORG,
     name,
+    publicOrgId,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     createdBy: userId,
@@ -122,12 +120,15 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
       }
     ]
   };
+
+  const session = req.client.startSession();
+
   try {
     await session.withTransaction(async () => {
-      // Important:: You must pass the session to the operations
-      await req.items.insertOne(newOrg, { session });
-      await req.items.insertOne(newWorkspace, { session });
-      await req.items.insertOne(newMembership, { session });
+      // ! Important: You must pass the session to the operations
+      await req.items.insertMany([newOrg, newWorkspace, newMembership], {
+        session
+      });
     });
   } catch (error) {
     await session.abortTransaction();

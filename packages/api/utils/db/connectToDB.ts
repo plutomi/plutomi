@@ -100,6 +100,38 @@ export const connectToDatabase =
       throw new Error(errorMessage);
     }
 
+    // ! TODO: Wrap this in a util function
+    // Create the public orgID index, if it doesn't exist
+
+    const publicOrgIdUniqueIndexName = "publicOrgIdUnique";
+    const publicOrgIdIndexSpec: IndexSpecification = {
+      publicOrgId: 1
+    };
+    try {
+      const publicOrgIdIndexExists = await items.indexExists(
+        publicOrgIdUniqueIndexName
+      );
+
+      if (!publicOrgIdIndexExists) {
+        try {
+          await items.createIndex(publicOrgIdIndexSpec, {
+            name: publicOrgIdUniqueIndexName,
+            unique: true,
+            // Otherwise, items that don't have a publicOrgId will be indexed, and this will throw an error
+            sparse: true
+          });
+        } catch (error) {
+          const errorMessage = `An error ocurred creating the publicOrgId index: '${collectionName}'`;
+          console.error(errorMessage, error);
+          throw new Error(errorMessage);
+        }
+      }
+    } catch (error) {
+      const errorMessage = `An error ocurred checking if the publicOrgId index exists: '${collectionName}'`;
+      console.error(errorMessage, error);
+      throw new Error(errorMessage);
+    }
+
     console.log("Done.");
     return { client, items };
   };
