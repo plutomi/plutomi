@@ -1,4 +1,9 @@
-import { IdPrefix, Org, RelatedToType } from "@plutomi/shared";
+import {
+  IdPrefix,
+  RelatedToType,
+  type Workspace,
+  type Org
+} from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
 import { generatePlutomiId } from "../../utils";
@@ -13,7 +18,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   if (errorHandled) {
     return;
   }
+  // ! TODO: Must block the user from creating an org if they already have a membership to an org!
 
+  const { user } = req;
+  const { _id: userId } = user;
   const { displayName } = data;
 
   const session = req.client.startSession();
@@ -30,6 +38,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     displayName,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
+    createdBy: userId,
     relatedTo: [
       {
         id: IdPrefix.ORG,
@@ -42,15 +51,49 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     ]
   };
 
+  const workspaceId = generatePlutomiId({
+    date: now,
+    idPrefix: IdPrefix.WORKSPACE
+  });
+
+  const newWorkspace: Workspace = {
+    _id: workspaceId,
+    entityType: IdPrefix.WORKSPACE,
+    // We will prompt the user to update it right after
+    displayName: "Default Workspace",
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
+    org: orgId,
+    createdBy: userId,
+    relatedTo: [
+      {
+        id: IdPrefix.WORKSPACE,
+        type: RelatedToType.ENTITY
+      },
+      {
+        id: workspaceId,
+        type: RelatedToType.SELF
+      },
+      {
+        id: orgId,
+        type: RelatedToType.WORKSPACES
+      }
+    ]
+  };
+
   try {
     await session.withTransaction(async () => {
       // Important:: You must pass the session to the operations
       await req.items.insertOne(newOrg, { session });
-      await coll2.insertOne({ xyz: 999 }, { session });
-    }, transactionOptions);
+      await req.items.insertOne(newWorkspace, { session });
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    res.status(500).json({ message: "Something went wrong creating your org" });
+    return;
   } finally {
     await session.endSession();
-    await client.close();
+    await req.client.close();
   }
 
   // 1. Create an org
@@ -58,5 +101,5 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   // 2. Create a default workspace
 
   // 3. Create a membership for the user
-  res.status(200).json({ message: displayName });
+  res.status(200).json({ message: "Org created!", org: newOrg });
 };
