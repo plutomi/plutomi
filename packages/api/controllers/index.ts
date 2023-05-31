@@ -5,6 +5,7 @@ import { totp } from "./totp";
 import { waitlist } from "./waitlist";
 import { logout } from "./logout";
 import { users } from "./users";
+import { orgs } from "./orgs";
 
 const API = Router();
 
@@ -13,6 +14,7 @@ API.use("/health", health);
 API.use("/totp", totp);
 API.use("/logout", logout);
 API.use("/users", users);
+API.use("/orgs", orgs);
 
 // Catch All
 API.use("*", fourOhFour);
