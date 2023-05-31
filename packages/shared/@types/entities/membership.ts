@@ -13,7 +13,6 @@ export enum WorkspaceRole {
   OWNER = "owner"
 }
 
-
 /**
  * Memberships are the link between users, workspaces, and orgs.
  * An org can have many workspaces, which in turn can have many users, and they can belong to multiple workspaces.
@@ -36,6 +35,8 @@ type MembershipRelatedToArray = [
 
 export type Membership = BaseEntity<IdPrefix.MEMBERSHIP> & {
   org: string;
+  orgRole: OrgRole;
+  workspaceRole: WorkspaceRole;
   workspace: string;
   relatedTo: MembershipRelatedToArray;
 };

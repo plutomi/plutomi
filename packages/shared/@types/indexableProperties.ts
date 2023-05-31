@@ -16,12 +16,6 @@ export enum RelatedToType {
   ORGS = "orgs",
   WORKSPACES = "workspaces",
 
-  // // Each org has 1 owner, and they can only have 1 org. They can, however, create multiple workspaces.
-  // ORG_OWNER = "orgOwner",
-
-  // // Each workspace has one owner for the purposes of creation
-  // WORKSPACE_OWNER = "workspaceOwner",
-
   // TODO
   // NOTES = "notes",
   // FILES = "files",
