@@ -6,6 +6,7 @@ import type { TOTPCode } from "./totpCode";
 import type { User } from "./user";
 import type { WaitListUser } from "./waitListUser";
 import type { Session } from "./session";
+import type { Membership } from "./membership";
 // import type { Question } from "./question";
 // import type { Stage } from "./stage";
 // import type { StageQuestionItem } from "./stageQuestionItem";
@@ -16,7 +17,7 @@ export type AllEntities =
   // | Invite
   // | Membership
   // | Org
-  User | TOTPCode | WaitListUser | Session;
+  User | TOTPCode | WaitListUser | Session | Membership;
 // | Question
 // | Stage
 // | StageQuestionItem
@@ -31,6 +32,7 @@ export * from "./user";
 export * from "./session";
 export * from "./waitListUser";
 export * from "./totpCode";
+export * from "./membership";
 // export * from "./question";
 // export * from "./stage";
 // export * from "./stageQuestionItem";

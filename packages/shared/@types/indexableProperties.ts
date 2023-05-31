@@ -12,6 +12,7 @@ export enum RelatedToType {
   WAIT_LIST_USERS = "waitListUsers",
   TOTPS = "totps",
   SESSIONS = "sessions",
+  MEMBERSHIPS = "memberships",
   // NOTES = "notes",
   // FILES = "files",
   // MEMBERSHIPS = "memberships",
