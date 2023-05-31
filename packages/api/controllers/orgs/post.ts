@@ -18,10 +18,36 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   if (errorHandled) {
     return;
   }
-  // ! TODO: Must block the user from creating an org if they already have a membership to an org!
 
   const { user } = req;
   const { _id: userId } = user;
+
+  try {
+    // Block user from creating an org if they already created one.
+    // Orgs are top level entities and are a parent to pretty much everything else.
+    const ownedOrg = await req.items.findOne({
+      relatedTo: {
+        $elemMatch: {
+          id: userId,
+          type: RelatedToType.ORG_OWNER
+        }
+      }
+    });
+
+    if (ownedOrg !== null) {
+      res.status(400).json({
+        message:
+          "You've already created an org. Maybe you want to create a workspace instead?"
+      });
+      return;
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "An error ocurred checking if you already own an org" });
+    return;
+  }
+
   const { displayName } = data;
 
   const session = req.client.startSession();
@@ -48,6 +74,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
         id: orgId,
         type: RelatedToType.SELF
       }
+      // {
+      //   id: userId,
+      //   type: RelatedToType.ORG_OWNER
+      // }
     ]
   };
 

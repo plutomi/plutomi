@@ -7,6 +7,7 @@ type WorkspaceRelatedToArray = [
   ...RelatedToArray<IdPrefix.WORKSPACE>,
   // Get all workspaces for an org
   { id: PlutomiId<IdPrefix.ORG>; type: RelatedToType.WORKSPACES }
+  // { id: PlutomiId<IdPrefix.USER>; type: RelatedToType }
 ];
 
 export type Workspace = BaseEntity<IdPrefix.WORKSPACE> & {

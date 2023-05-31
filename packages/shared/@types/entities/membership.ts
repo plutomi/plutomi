@@ -3,6 +3,17 @@ import type { PlutomiId } from "../plutomiId";
 import type { IdPrefix } from "./idPrefix";
 import type { BaseEntity } from "./baseEntity";
 
+export enum OrgRole {
+  // Creator of the org
+  OWNER = "owner"
+}
+
+export enum WorkspaceRole {
+  // Creator of the workspace
+  OWNER = "owner"
+}
+
+
 /**
  * Memberships are the link between users, workspaces, and orgs.
  * An org can have many workspaces, which in turn can have many users, and they can belong to multiple workspaces.
