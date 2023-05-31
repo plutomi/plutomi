@@ -1,8 +1,11 @@
 import {
+  type Workspace,
+  type Org,
+  type Membership,
   IdPrefix,
   RelatedToType,
-  type Workspace,
-  type Org
+  WorkspaceRole,
+  OrgRole
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
@@ -81,11 +84,50 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     ]
   };
 
+  const memberShipId = generatePlutomiId({
+    date: now,
+    idPrefix: IdPrefix.MEMBERSHIP
+  });
+
+  const newMembership: Membership = {
+    _id: memberShipId,
+    entityType: IdPrefix.MEMBERSHIP,
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
+    org: orgId,
+    workspace: workspaceId,
+    orgRole: OrgRole.OWNER,
+    workspaceRole: WorkspaceRole.OWNER,
+    user: userId,
+    relatedTo: [
+      {
+        id: IdPrefix.MEMBERSHIP,
+        type: RelatedToType.ENTITY
+      },
+      {
+        id: memberShipId,
+        type: RelatedToType.SELF
+      },
+      {
+        id: orgId,
+        type: RelatedToType.MEMBERSHIPS
+      },
+      {
+        id: workspaceId,
+        type: RelatedToType.MEMBERSHIPS
+      },
+      {
+        id: userId,
+        type: RelatedToType.MEMBERSHIPS
+      }
+    ]
+  };
   try {
     await session.withTransaction(async () => {
       // Important:: You must pass the session to the operations
       await req.items.insertOne(newOrg, { session });
       await req.items.insertOne(newWorkspace, { session });
+      await req.items.insertOne(newMembership, { session });
     });
   } catch (error) {
     await session.abortTransaction();
@@ -96,10 +138,5 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     await req.client.close();
   }
 
-  // 1. Create an org
-
-  // 2. Create a default workspace
-
-  // 3. Create a membership for the user
   res.status(200).json({ message: "Org created!", org: newOrg });
 };

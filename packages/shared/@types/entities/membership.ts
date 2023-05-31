@@ -27,16 +27,17 @@ type MembershipRelatedToArray = [
   ...RelatedToArray<IdPrefix.MEMBERSHIP>,
   // Get all members of an org
   { id: PlutomiId<IdPrefix.ORG>; type: RelatedToType.MEMBERSHIPS },
-  // Get all memberships for a user and with it, all the workspaces they are in
-  { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.MEMBERSHIPS },
   // Get all memberships for a workspace and with it, all the users in that workspace
-  { id: PlutomiId<IdPrefix.WORKSPACE>; type: RelatedToType.MEMBERSHIPS }
+  { id: PlutomiId<IdPrefix.WORKSPACE>; type: RelatedToType.MEMBERSHIPS },
+  // Get all memberships for a user and with it, all the workspaces they are in
+  { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.MEMBERSHIPS }
 ];
 
 export type Membership = BaseEntity<IdPrefix.MEMBERSHIP> & {
   org: string;
   orgRole: OrgRole;
-  workspaceRole: WorkspaceRole;
   workspace: string;
+  workspaceRole: WorkspaceRole;
+  user: PlutomiId<IdPrefix.USER>;
   relatedTo: MembershipRelatedToArray;
 };
