@@ -7,13 +7,15 @@ export enum IdPrefix {
   WAIT_LIST_USER = "wl_user",
   // Time-based One Time Password
   TOTP = "totp",
-  SESSION = "session"
+  SESSION = "session",
+  MEMBERSHIP = "membership",
+  ORG = "org",
+  WORKSPACE = "workspace"
 
   // // ! TODO: Remove
   // NOTE = "note",
   // FILE = "file",
   // INVITE = "invite",
   // TASK = "task",
-  // MEMBERSHIP = "membership",
   // ACTIVITY = "activity"
 }
