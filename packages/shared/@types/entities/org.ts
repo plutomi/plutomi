@@ -1,26 +1,19 @@
-// import type { RelatedToArray } from "../indexableProperties";
-// import type { IdPrefix } from "./idPrefix";
-// import type { BaseEntity } from "./baseEntity";
+import type { RelatedToArray } from "../indexableProperties";
+import type { IdPrefix } from "./idPrefix";
+import type { BaseEntity } from "./baseEntity";
 
-// /**
-//  * These totals are for an org, across all workspaces!
-//  */
-// export type OrgTotals = {
-//   applicants: number;
-//   applications: number;
-//   users: number;
-//   invites: number;
-//   memberships: number;
-//   stages: number;
-//   webhooks: number;
-//   questions: number;
-//   workspaces: number;
-// };
+/**
+ * An org is the parent of all workspaces and users, and therefore the parent of all memberships.
+ */
 
-// type OrgRelatedToArray = RelatedToArray<IdPrefix.Org>;
+type MembershipRelatedToArray = [
+  ...RelatedToArray<IdPrefix.ORG>
+  // Get all members of an org
+  //   { id: PlutomiId<IdPrefix.ORG>; type: RelatedToType.MEMBERSHIPS }
+];
 
-// export type Org = BaseEntity<IdPrefix.Org> & {
-//   displayName: string;
-//   totals: OrgTotals;
-//   relatedTo: OrgRelatedToArray;
-// };
+export type Org = BaseEntity<IdPrefix.ORG> & {
+  createdBy: string;
+  displayName: string;
+  relatedTo: MembershipRelatedToArray;
+};
