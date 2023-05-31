@@ -24,7 +24,7 @@ export const createSession = async ({
 
   const sessionId = generatePlutomiId({
     date: now,
-    entity: IdPrefix.SESSION
+    idPrefix: IdPrefix.SESSION
   });
 
   const userAgent = req.get("User-Agent") ?? "unknown";
