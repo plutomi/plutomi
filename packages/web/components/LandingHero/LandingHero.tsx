@@ -1,4 +1,5 @@
 import { Title, Text, Container, createStyles, rem } from "@mantine/core";
+import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -85,6 +86,14 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
+export const createOrg = async () => {
+  try {
+    await axios.post("/api/orgs", { displayName: "test" });
+    alert("Success");
+  } catch (error) {
+    console.error(error);
+  }
+};
 export const LandingHero: React.FC = () => {
   const { classes } = useStyles();
 
@@ -107,6 +116,9 @@ export const LandingHero: React.FC = () => {
             any scale
           </Text>
         </Title>
+        <button type="submit" onClick={() => createOrg()}>
+          CREATe ORG
+        </button>
 
         <Container size={1100}>
           <Text size="lg" className={classes.description}>

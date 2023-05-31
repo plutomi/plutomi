@@ -11,7 +11,7 @@ type WorkspaceRelatedToArray = [
 ];
 
 export type Workspace = BaseEntity<IdPrefix.WORKSPACE> & {
-  displayName: string;
+  name: string;
   relatedTo: WorkspaceRelatedToArray;
   org: PlutomiId<IdPrefix.ORG>;
   createdBy: PlutomiId<IdPrefix.USER>;

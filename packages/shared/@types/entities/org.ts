@@ -14,6 +14,6 @@ type MembershipRelatedToArray = [
 
 export type Org = BaseEntity<IdPrefix.ORG> & {
   createdBy: PlutomiId<IdPrefix.USER>;
-  displayName: string;
+  name: string;
   relatedTo: MembershipRelatedToArray;
 };

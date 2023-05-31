@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const baseSchema = z.object({
-  displayName: z.string().min(1).max(255)
+  name: z.string().min(1).max(255)
 });
 
 export const UISchema = baseSchema;

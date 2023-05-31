@@ -25,7 +25,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const { user } = req;
   const { _id: userId } = user;
 
-  const { displayName } = data;
+  const { name } = data;
 
   const session = req.client.startSession();
 
@@ -38,7 +38,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newOrg: Org = {
     _id: orgId,
     entityType: IdPrefix.ORG,
-    displayName,
+    name,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     createdBy: userId,
@@ -63,7 +63,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     _id: workspaceId,
     entityType: IdPrefix.WORKSPACE,
     // We will prompt the user to update it right after
-    displayName: "Default Workspace",
+    name: "Default Workspace",
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     org: orgId,
