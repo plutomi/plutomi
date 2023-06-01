@@ -1,8 +1,4 @@
 import { Title, Text, Container, createStyles, rem } from "@mantine/core";
-import { createRandomOrgId } from "@plutomi/shared";
-import axios from "axios";
-import { GetServerSideProps } from "next";
-import { useEffect, useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -89,19 +85,7 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-export const createOrg = async () => {
-  try {
-    await axios.post("/api/orgs", { name: "test", customOrgId: "beans" });
-    alert("Success");
-  } catch (error) {
-    alert(error.response.data.message);
-    console.error(error);
-  }
-};
-
-export const LandingHero: React.FC<{ randomOrgId: string }> = ({
-  randomOrgId
-}) => {
+export const LandingHero: React.FC = () => {
   const { classes } = useStyles();
 
   return (
@@ -123,9 +107,6 @@ export const LandingHero: React.FC<{ randomOrgId: string }> = ({
             any scale
           </Text>
         </Title>
-        <button type="submit" onClick={() => createOrg()}>
-          CREATe ORG - {randomOrgId}
-        </button>
 
         <Container size={1100}>
           <Text size="lg" className={classes.description}>
@@ -137,4 +118,3 @@ export const LandingHero: React.FC<{ randomOrgId: string }> = ({
     </div>
   );
 };
-
