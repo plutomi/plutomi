@@ -2,6 +2,11 @@ import type { RequestHandler } from "express";
 import { databaseName } from "../../utils";
 
 export const get: RequestHandler = async (req, res) => {
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+  await req.items.deleteMany({});
+
   try {
     const result = await req.client.db(databaseName).command({ ping: 1 });
     res.status(200).json({
