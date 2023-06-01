@@ -13,6 +13,13 @@ export enum WorkspaceRole {
   OWNER = "owner"
 }
 
+export enum MembershipStatus {
+  // User has been invited to join the workspace, but has not accepted yet
+  PENDING = "pending",
+  // User has accepted the invitation to join the workspace, or created one themselves
+  ACTIVE = "active"
+}
+
 /**
  * Memberships are the link between users, workspaces, and orgs.
  * An org can have many workspaces, which in turn can have many users, and they can belong to multiple workspaces.
@@ -40,4 +47,5 @@ export type Membership = BaseEntity<IdPrefix.MEMBERSHIP> & {
   workspaceRole: WorkspaceRole;
   user: PlutomiId<IdPrefix.USER>;
   relatedTo: MembershipRelatedToArray;
+  status: MembershipStatus;
 };

@@ -9,6 +9,7 @@ type SessionRelatedToArray = [
   ...RelatedToArray<IdPrefix.SESSION>,
   // Get all sessions for a user
   { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.SESSIONS },
+
   // Get all sessions for an org
   {
     id: PlutomiId<IdPrefix.ORG> | EmptyValues.NO_ORG;

@@ -9,7 +9,8 @@ import {
   OrgRole,
   defaultWorkspaceName,
   SessionStatus,
-  createRandomWorkspaceId
+  createRandomWorkspaceId,
+  MembershipStatus
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
@@ -145,6 +146,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     entityType: IdPrefix.MEMBERSHIP,
     createdAt: nowIso,
     updatedAt: nowIso,
+    status: MembershipStatus.ACTIVE,
     org: orgId,
     workspace: workspaceId,
     orgRole: OrgRole.OWNER,
