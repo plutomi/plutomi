@@ -256,7 +256,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     orgFailedToCreate = true;
     if (error?.code === 11000) {
       errorMessage =
-        "An org with that id already exists, please choose another.";
+        "A workspace with that id already exists, please choose another.";
     }
   } finally {
     await transactionSession.endSession();
