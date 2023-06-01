@@ -106,6 +106,10 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   const { _id: userId } = user;
+  // ! TODO: Abstract this to a util method.
+  // Get the default workspace for a user
+
+  
 
   // ! TODO: Get a random membership for a user and get an org id / workspace id from that
 

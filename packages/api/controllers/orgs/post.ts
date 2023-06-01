@@ -111,7 +111,6 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newWorkspace: Workspace = {
     _id: workspaceId,
     entityType: IdPrefix.WORKSPACE,
-    isDefault: true,
     customWorkspaceId: createRandomWorkspaceId(),
     // We will prompt the user to update it right after
     name: defaultWorkspaceName,
@@ -146,6 +145,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     entityType: IdPrefix.MEMBERSHIP,
     createdAt: nowIso,
     updatedAt: nowIso,
+    isDefault: true,
     status: MembershipStatus.ACTIVE,
     org: orgId,
     workspace: workspaceId,
