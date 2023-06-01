@@ -136,7 +136,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   } catch (error: any) {
     orgFailedToCreate = true;
     if (error?.code === 11000) {
-      errorMessage = "An org with that id exists, please choose another.";
+      errorMessage = "An org with that id already exists, please choose another.";
     }
   } finally {
     await session.endSession();
