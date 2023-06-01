@@ -2,16 +2,24 @@ import {
   type Workspace,
   type Org,
   type Membership,
+  type Session,
   IdPrefix,
   RelatedToType,
   WorkspaceRole,
   OrgRole,
-  defaultOrgName,
-  defaultWorkspaceName
+  defaultWorkspaceName,
+  SessionStatus
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
-import { createRandomOrgId, generatePlutomiId } from "../../utils";
+import dayjs from "dayjs";
+import {
+  generatePlutomiId,
+  getCookieJar,
+  getCookieSettings,
+  getSessionCookieName
+} from "../../utils";
+import { MAX_SESSION_AGE_IN_MS } from "../../consts";
 
 export const post: RequestHandler = async (req: Request, res: Response) => {
   const { data, errorHandled } = validate({
@@ -30,10 +38,16 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const { _id: userId } = user;
   const { name, publicOrgId } = data;
 
+  // 1. Create an org for the user
+  // 2. Create a default workspace for the org
+  // 3. Create a membership for that user and org / workspace
+  // 4. Create a new session for that user in the org / workspace
+  // 5. Expire the old session
+
   const now = new Date();
   const nowIso = now.toISOString();
 
-  // 1. Create an org for the user
+  // 1. Create an org entity
   const orgId = generatePlutomiId({
     date: now,
     idPrefix: IdPrefix.ORG
@@ -43,7 +57,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     _id: orgId,
     entityType: IdPrefix.ORG,
     name,
-    publicOrgId: createRandomOrgId(),
+    publicOrgId,
     createdAt: nowIso,
     updatedAt: nowIso,
     createdBy: userId,
@@ -59,6 +73,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     ]
   };
 
+  // 2. Create the workspace entity
   const workspaceId = generatePlutomiId({
     date: now,
     idPrefix: IdPrefix.WORKSPACE
@@ -90,6 +105,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     ]
   };
 
+  // 3. Create a membership entity
   const memberShipId = generatePlutomiId({
     date: now,
     idPrefix: IdPrefix.MEMBERSHIP
@@ -129,17 +145,83 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     ]
   };
 
-  const session = req.client.startSession();
+  const newUserSessionId = generatePlutomiId({
+    date: now,
+    idPrefix: IdPrefix.SESSION
+  });
+
+  // ! TODO: Wrap this in a util function
+  const newUserSession: Session = {
+    _id: newUserSessionId,
+    entityType: IdPrefix.SESSION,
+    createdAt: nowIso,
+    updatedAt: nowIso,
+    status: SessionStatus.ACTIVE,
+    expiresAt: dayjs(now)
+      .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
+      .toISOString(),
+    org: orgId,
+    ip: req.clientIp ?? "unknown",
+    userAgent: req.get("User-Agent") ?? "unknown",
+    workspace: workspaceId,
+    user: userId,
+    relatedTo: [
+      {
+        id: IdPrefix.SESSION,
+        type: RelatedToType.ENTITY
+      },
+      {
+        id: newUserSessionId,
+        type: RelatedToType.SELF
+      },
+      {
+        id: userId,
+        type: RelatedToType.SESSIONS
+      },
+      {
+        id: orgId,
+        type: RelatedToType.SESSIONS
+      },
+      {
+        id: workspaceId,
+        type: RelatedToType.SESSIONS
+      }
+    ]
+  };
+
+  // ! TODO: Rename this
+  const transactionSession = req.client.startSession();
 
   let orgFailedToCreate = false;
   let errorMessage = "Something went wrong creating your org";
 
+  const { _id: sessionId } = req.session;
+
   try {
-    await session.withTransaction(async () => {
+    await transactionSession.withTransaction(async () => {
       // ! Important: You must pass the session to the operations
-      await req.items.insertMany([newOrg, newWorkspace, newMembership], {
-        session
-      });
+
+      // Create the new entities
+      await req.items.insertMany(
+        [newOrg, newWorkspace, newMembership, newUserSession],
+        {
+          session: transactionSession
+        }
+      );
+
+      // Update the old session so it can't be used anymore
+      await req.items.updateOne(
+        {
+          _id: sessionId
+        },
+        {
+          $set: {
+            status: SessionStatus.SWITCHED_WORKSPACE,
+            updatedAt: nowIso
+          }
+        },
+        { session: transactionSession }
+      );
     });
   } catch (error: any) {
     orgFailedToCreate = true;
@@ -148,7 +230,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
         "An org with that id already exists, please choose another.";
     }
   } finally {
-    await session.endSession();
+    await transactionSession.endSession();
     await req.client.close();
   }
 
@@ -156,6 +238,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     res.status(500).json({ message: errorMessage });
     return;
   }
+
+  // Give the new session with the new workspace & org to the user
+  const cookieJar = getCookieJar({ req, res });
+  cookieJar.set(getSessionCookieName(), newUserSessionId, getCookieSettings());
 
   res.status(200).json({ message: "Org created!", org: newOrg });
 };

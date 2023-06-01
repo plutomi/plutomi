@@ -34,9 +34,9 @@ type MembershipRelatedToArray = [
 ];
 
 export type Membership = BaseEntity<IdPrefix.MEMBERSHIP> & {
-  org: string;
+  org: PlutomiId<IdPrefix.ORG>;
   orgRole: OrgRole;
-  workspace: string;
+  workspace: PlutomiId<IdPrefix.WORKSPACE>;
   workspaceRole: WorkspaceRole;
   user: PlutomiId<IdPrefix.USER>;
   relatedTo: MembershipRelatedToArray;

@@ -28,4 +28,6 @@ export type Session = BaseEntity<IdPrefix.SESSION> & {
   userAgent: string;
   relatedTo: SessionRelatedToArray;
   status: SessionStatus;
+  org: PlutomiId<IdPrefix.ORG> | EmptyValues.NO_ORG;
+  workspace: PlutomiId<IdPrefix.WORKSPACE> | EmptyValues.NO_WORKSPACE;
 };

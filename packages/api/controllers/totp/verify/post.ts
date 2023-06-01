@@ -5,6 +5,7 @@ import {
   type User,
   type Session,
   type TOTPCode,
+  type Membership,
   SessionStatus,
   EmptyValues
 } from "@plutomi/shared";
@@ -106,25 +107,37 @@ export const post: RequestHandler = async (req, res) => {
 
   const { _id: userId } = user;
 
-  // ! If everything is good, create an org, workspace, membership, and session for the user
-  // ! TODO: Don't skip if joining by invite,
+  // ! TODO: Get a random membership for a user and get an org id / workspace id from that
 
-  // 2. Create a workspace for the user
+  let userMembership: Membership | null = null;
 
-  // 3. Create a membership for the user
-
-  // 4. Create a session for the user
+  try {
+    userMembership = await req.items.findOne<Membership>({
+      relatedTo: {
+        $elemMatch: {
+          id: userId,
+          type: RelatedToType.MEMBERSHIPS
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "An error ocurred getting your memberships!",
+      error
+    });
+    return;
+  }
 
   const sessionId = generatePlutomiId({
     date: now,
     idPrefix: IdPrefix.SESSION
   });
 
-  const userAgent = req.get("User-Agent") ?? "unknown";
-
   const newSession: Session = {
     _id: sessionId,
     user: userId,
+    org: userMembership?.org ?? EmptyValues.NO_ORG,
+    workspace: userMembership?.workspace ?? EmptyValues.NO_WORKSPACE,
     createdAt: nowIso,
     updatedAt: nowIso,
     // ! TODO: Schedule an event to mark this as expired
@@ -134,7 +147,7 @@ export const post: RequestHandler = async (req, res) => {
     status: SessionStatus.ACTIVE,
     entityType: IdPrefix.SESSION,
     ip: req.clientIp ?? "unknown",
-    userAgent,
+    userAgent: req.get("User-Agent") ?? "unknown",
     relatedTo: [
       {
         id: IdPrefix.SESSION,
