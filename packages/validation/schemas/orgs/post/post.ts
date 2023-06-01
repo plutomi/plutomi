@@ -6,7 +6,7 @@ const baseSchema = z.object({
     .string()
     .regex(/^[a-z0-9-]*$/)
     .min(1)
-    .max(100)
+    .max(25)
 });
 
 export const UISchema = baseSchema;
