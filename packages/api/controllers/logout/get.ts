@@ -12,7 +12,7 @@ export const get: RequestHandler = async (req, res) => {
   // Delete cookie client side
   clearCookie({ cookieJar });
 
-  res.status(200).json({ message: "You've been logged out!" });
+  res.sendStatus(204);
 
   if (sessionId !== undefined) {
     // Log out the session in DB
