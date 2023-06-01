@@ -10,9 +10,11 @@ import { WaitListCard } from "@/components/WaitListCard";
 import Head from "next/head";
 import { env } from "@/utils";
 import { HomepageNavbar } from "@/components/HomepageNavbar/HomepageNavbar";
+import { createRandomOrgId } from "@plutomi/shared";
 
 type HomeProps = {
   commits: CommitType[];
+  randomOrgId: string;
 };
 
 const title = "Plutomi - Applicant management at any scale";
@@ -28,7 +30,7 @@ const ogImage = `${env.NEXT_PUBLIC_BASE_URL}/og-image.png`;
 //   // }
 // ];
 
-const Home: NextPage<HomeProps> = ({ commits }) => (
+const Home: NextPage<HomeProps> = ({ commits, randomOrgId }) => (
   <>
     <Head>
       <title>Plutomi</title>
@@ -47,7 +49,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
       <meta property="twitter:image" content={ogImage} />
     </Head>
     <HomepageNavbar />
-    <LandingHero />
+    <LandingHero randomOrgId={randomOrgId} />
     <UseCaseSection />
     <Space h="lg" />
     <WaitListCard />
@@ -107,9 +109,11 @@ export const getStaticProps: GetStaticProps = async () => {
       self.findIndex((t) => t.url === value.url && t.date === value.date)
   );
 
+  const randomOrgId = createRandomOrgId();
   return {
     props: {
-      commits
+      commits,
+      randomOrgId
     }
   };
 };

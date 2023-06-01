@@ -9,7 +9,6 @@ type SessionRelatedToArray = [
   ...RelatedToArray<IdPrefix.SESSION>,
   // Get all sessions for a user
   { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.SESSIONS },
-  // These will only be populated if a user is in an org or workspace.
   // Get all sessions for an org
   {
     id: PlutomiId<IdPrefix.ORG> | EmptyValues.NO_ORG;

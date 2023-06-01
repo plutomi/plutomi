@@ -1,24 +1,17 @@
 import {
   RelatedToType,
-  type TOTPCode,
   TOTPCodeStatus,
-  type User,
   IdPrefix,
-  OrgRole,
-  WorkspaceRole,
-  Workspace,
-  Membership,
-  Session,
+  type User,
+  type Session,
+  type TOTPCode,
   SessionStatus,
-  defaultWorkspaceName,
-  defaultOrgName
+  EmptyValues
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
-import { createSession } from "../../../utils/sessions";
 import {
-  createRandomOrgName,
   generatePlutomiId,
   getCookieJar,
   getCookieSettings,
@@ -116,101 +109,6 @@ export const post: RequestHandler = async (req, res) => {
   // ! If everything is good, create an org, workspace, membership, and session for the user
   // ! TODO: Don't skip if joining by invite,
 
-  // 1. Create an org for the user
-  const orgId = generatePlutomiId({
-    date: now,
-    idPrefix: IdPrefix.ORG
-  });
-
-  const newOrg: Org = {
-    _id: orgId,
-    entityType: IdPrefix.ORG,
-    name: defaultOrgName,
-    publicOrgId: createRandomOrgName(),
-    createdAt: nowIso,
-    updatedAt: nowIso,
-    createdBy: userId,
-    relatedTo: [
-      {
-        id: IdPrefix.ORG,
-        type: RelatedToType.ENTITY
-      },
-      {
-        id: orgId,
-        type: RelatedToType.SELF
-      }
-    ]
-  };
-
-  const workspaceId = generatePlutomiId({
-    date: now,
-    idPrefix: IdPrefix.WORKSPACE
-  });
-
-  const newWorkspace: Workspace = {
-    _id: workspaceId,
-    entityType: IdPrefix.WORKSPACE,
-    // We will prompt the user to update it right after
-    name: defaultWorkspaceName,
-    createdAt: nowIso,
-    updatedAt: nowIso,
-    org: orgId,
-    createdBy: userId,
-    relatedTo: [
-      {
-        id: IdPrefix.WORKSPACE,
-        type: RelatedToType.ENTITY
-      },
-      {
-        id: workspaceId,
-        type: RelatedToType.SELF
-      },
-      {
-        id: orgId,
-        type: RelatedToType.WORKSPACES
-      }
-    ]
-  };
-
-  const memberShipId = generatePlutomiId({
-    date: now,
-    idPrefix: IdPrefix.MEMBERSHIP
-  });
-
-  const newMembership: Membership = {
-    _id: memberShipId,
-    entityType: IdPrefix.MEMBERSHIP,
-    createdAt: nowIso,
-    updatedAt: nowIso,
-    org: orgId,
-    workspace: workspaceId,
-    orgRole: OrgRole.OWNER,
-    workspaceRole: WorkspaceRole.OWNER,
-    user: userId,
-    relatedTo: [
-      {
-        id: IdPrefix.MEMBERSHIP,
-        type: RelatedToType.ENTITY
-      },
-      {
-        id: memberShipId,
-        type: RelatedToType.SELF
-      },
-      {
-        id: orgId,
-        type: RelatedToType.MEMBERSHIPS
-      },
-      {
-        id: workspaceId,
-        type: RelatedToType.MEMBERSHIPS
-      },
-      {
-        id: userId,
-        type: RelatedToType.MEMBERSHIPS
-      }
-    ]
-  };
-
   // 2. Create a workspace for the user
 
   // 3. Create a membership for the user
@@ -249,10 +147,24 @@ export const post: RequestHandler = async (req, res) => {
       {
         id: userId,
         type: RelatedToType.SESSIONS
+      },
+      {
+        id: EmptyValues.NO_ORG,
+        type: RelatedToType.SESSIONS
+      },
+      {
+        id: EmptyValues.NO_WORKSPACE,
+        type: RelatedToType.SESSIONS
       }
     ]
   };
-  await req.items.insertOne(newSession);
+
+  try {
+    await req.items.insertOne(newSession);
+  } catch (error) {
+    res.status(500).json({ message: "An error ocurred logging you in!" });
+    return;
+  }
 
   try {
     const cookieJar = getCookieJar({ req, res });

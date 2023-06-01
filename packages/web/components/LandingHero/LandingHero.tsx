@@ -1,5 +1,8 @@
 import { Title, Text, Container, createStyles, rem } from "@mantine/core";
+import { createRandomOrgId } from "@plutomi/shared";
 import axios from "axios";
+import { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -95,7 +98,10 @@ export const createOrg = async () => {
     console.error(error);
   }
 };
-export const LandingHero: React.FC = () => {
+
+export const LandingHero: React.FC<{ randomOrgId: string }> = ({
+  randomOrgId
+}) => {
   const { classes } = useStyles();
 
   return (
@@ -118,7 +124,7 @@ export const LandingHero: React.FC = () => {
           </Text>
         </Title>
         <button type="submit" onClick={() => createOrg()}>
-          CREATe ORG
+          CREATe ORG - {randomOrgId}
         </button>
 
         <Container size={1100}>
@@ -131,3 +137,4 @@ export const LandingHero: React.FC = () => {
     </div>
   );
 };
+

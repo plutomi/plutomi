@@ -1,10 +1,12 @@
 import { faker } from "@faker-js/faker";
 
-export const createRandomOrgName = () => {
+export const createRandomOrgId = () => {
   const randomColor = faker.color.human();
   const randomAdjective = faker.commerce.productAdjective();
   const randomThing =
-    Math.random() > 0.5 ? faker.commerce.product() : faker.vehicle.type();
+    Math.random() > 0.5
+      ? faker.commerce.product()
+      : faker.commerce.productMaterial();
   const randomOrgName = [randomColor, randomAdjective, randomThing]
     .map((word) => word.toLowerCase())
     .join("-");
