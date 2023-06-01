@@ -27,7 +27,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now.toDate(),
-      entity: IdPrefix.WAIT_LIST_USER
+      idPrefix: IdPrefix.WAIT_LIST_USER
     });
 
     const waitListUser: WaitListUser = {

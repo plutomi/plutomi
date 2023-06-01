@@ -1,18 +1,24 @@
 import {
   RelatedToType,
-  type TOTPCode,
   TOTPCodeStatus,
-  type User
+  IdPrefix,
+  type User,
+  type Session,
+  type TOTPCode,
+  type Membership,
+  SessionStatus,
+  EmptyValues
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
-import { createSession } from "../../../utils/sessions";
 import {
+  generatePlutomiId,
   getCookieJar,
   getCookieSettings,
   getSessionCookieName
 } from "../../../utils";
+import { MAX_SESSION_AGE_IN_MS } from "../../../consts";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -51,7 +57,8 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  const now = dayjs();
+  const now = new Date();
+  const nowIso = now.toISOString();
 
   const mostRecentCode = mostRecentCodes[0];
   if (
@@ -100,8 +107,82 @@ export const post: RequestHandler = async (req, res) => {
 
   const { _id: userId } = user;
 
+  // Get the default membership for a user, and with it, the org and workspace
+  let defaultUserMembership: Membership | null = null;
+
   try {
-    const sessionId = await createSession({ req, userId });
+    defaultUserMembership = await req.items.findOne<Membership>({
+      relatedTo: {
+        $elemMatch: {
+          id: userId,
+          type: RelatedToType.MEMBERSHIPS
+        }
+      },
+      isDefault: true
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "An error ocurred getting your memberships!",
+      error
+    });
+    return;
+  }
+
+  const sessionId = generatePlutomiId({
+    date: now,
+    idPrefix: IdPrefix.SESSION
+  });
+  const orgForSession = defaultUserMembership?.org ?? EmptyValues.NO_ORG;
+  const workspaceForSession =
+    defaultUserMembership?.workspace ?? EmptyValues.NO_WORKSPACE;
+
+  const newSession: Session = {
+    _id: sessionId,
+    user: userId,
+    org: orgForSession,
+    workspace: workspaceForSession,
+    createdAt: nowIso,
+    updatedAt: nowIso,
+    // ! TODO: Schedule an event to mark this as expired
+    expiresAt: dayjs(now)
+      .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
+      .toISOString(),
+    status: SessionStatus.ACTIVE,
+    entityType: IdPrefix.SESSION,
+    ip: req.clientIp ?? "unknown",
+    userAgent: req.get("User-Agent") ?? "unknown",
+    relatedTo: [
+      {
+        id: IdPrefix.SESSION,
+        type: RelatedToType.ENTITY
+      },
+      {
+        id: sessionId,
+        type: RelatedToType.SELF
+      },
+      {
+        id: userId,
+        type: RelatedToType.SESSIONS
+      },
+      {
+        id: orgForSession,
+        type: RelatedToType.SESSIONS
+      },
+      {
+        id: workspaceForSession,
+        type: RelatedToType.SESSIONS
+      }
+    ]
+  };
+
+  try {
+    await req.items.insertOne(newSession);
+  } catch (error) {
+    res.status(500).json({ message: "An error ocurred logging you in!" });
+    return;
+  }
+
+  try {
     const cookieJar = getCookieJar({ req, res });
     cookieJar.set(getSessionCookieName(), sessionId, getCookieSettings());
 
@@ -111,7 +192,6 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  const nowIso = now.toISOString();
   if (!user.emailVerified) {
     try {
       await req.items.updateOne(

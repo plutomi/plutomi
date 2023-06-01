@@ -65,7 +65,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const userId = generatePlutomiId({
       date: now.toDate(),
-      entity: IdPrefix.USER
+      idPrefix: IdPrefix.USER
     });
 
     const userData: User = {
@@ -197,7 +197,7 @@ export const post: RequestHandler = async (req, res) => {
     const nowIso = now.toISOString();
     const totpCodeId = generatePlutomiId({
       date: now.toDate(),
-      entity: IdPrefix.TOTP
+      idPrefix: IdPrefix.TOTP
     });
 
     const newTotpCode: TOTPCode = {

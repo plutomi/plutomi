@@ -2,13 +2,13 @@
 import {
   MongoClient,
   type Collection,
-  type IndexSpecification,
   type Db,
   ServerApiVersion
 } from "mongodb";
 import type { AllEntities } from "@plutomi/shared";
 import { env } from "../env";
 import { getDbName } from "./getDbName";
+import { createIndex } from "./createIndex";
 
 export const collectionName = "items";
 export const databaseName = getDbName();
@@ -58,13 +58,6 @@ export const connectToDatabase =
       (item) => item.name === collectionName
     );
 
-    // Define our two indexes
-    const relatedToArrayIndexName = "relatedToArray";
-    const relatedToArrayIndexSpec: IndexSpecification = {
-      "relatedTo.id": 1,
-      "relatedTo.type": 1
-    };
-
     if (collectionExists === undefined) {
       try {
         console.info("Creating collection", collectionName);
@@ -76,29 +69,28 @@ export const connectToDatabase =
       }
     }
 
-    // ! TODO: Make this generic so we can use it for all indexes
-    //  Create the relatedTo index, if it doesn't exist
-    try {
-      const relatedToArrayIndexExists = await items.indexExists(
-        relatedToArrayIndexName
-      );
+    await createIndex({
+      name: "relatedToArray",
+      indexSpec: {
+        "relatedTo.id": 1,
+        "relatedTo.type": 1
+      },
+      items,
+      unique: false,
+      sparse: false
+    });
 
-      if (!relatedToArrayIndexExists) {
-        try {
-          await items.createIndex(relatedToArrayIndexSpec, {
-            name: relatedToArrayIndexName
-          });
-        } catch (error) {
-          const errorMessage = `An error ocurred creating the relatedTo array index: '${collectionName}'`;
-          console.error(errorMessage, error);
-          throw new Error(errorMessage);
-        }
+    await createIndex({
+      name: "customWorkspaceIdUnique",
+      indexSpec: {
+        customWorkspaceId: 1
+      },
+      unique: true,
+      items,
+      partialFilterExpression: {
+        customWorkspaceId: { $exists: true }
       }
-    } catch (error) {
-      const errorMessage = `An error ocurred checking if the relatedTo array index exists: '${collectionName}'`;
-      console.error(errorMessage, error);
-      throw new Error(errorMessage);
-    }
+    });
 
     console.log("Done.");
     return { client, items };

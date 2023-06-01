@@ -4,12 +4,12 @@ import { customAlphabet } from "nanoid";
 
 type GenerateIdProps<T extends IdPrefix> = {
   date: Date;
-  entity: T;
+  idPrefix: T;
 };
 
 export const generatePlutomiId = <T extends IdPrefix>({
   date,
-  entity
+  idPrefix
 }: GenerateIdProps<T>): PlutomiId<T> => {
   const characters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -17,7 +17,7 @@ export const generatePlutomiId = <T extends IdPrefix>({
 
   const id =
     // Do not include a timestamp or -_ in the sessionId
-    entity === IdPrefix.SESSION ? nanoid() : ksuid.randomSync(date).string;
+    idPrefix === IdPrefix.SESSION ? nanoid() : ksuid.randomSync(date).string;
 
-  return `${entity}_${id}`;
+  return `${idPrefix}_${id}`;
 };

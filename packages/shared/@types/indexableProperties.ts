@@ -15,6 +15,8 @@ export enum RelatedToType {
   MEMBERSHIPS = "memberships",
   ORGS = "orgs",
   WORKSPACES = "workspaces",
+
+  // TODO
   // NOTES = "notes",
   // FILES = "files",
   // MEMBERSHIPS = "memberships",
