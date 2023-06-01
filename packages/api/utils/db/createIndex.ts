@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { AllEntities } from "@plutomi/shared";
-import type { Collection, IndexSpecification } from "mongodb";
+import type { Collection, Filter, IndexSpecification } from "mongodb";
 
 type CreateIndexProps = {
   name: string;
@@ -8,13 +8,15 @@ type CreateIndexProps = {
   items: Collection<AllEntities>;
   unique?: boolean;
   sparse?: boolean;
+  partialFilterExpression?: Filter<AllEntities>;
 };
 export const createIndex = async ({
   name,
   indexSpec,
   items,
   unique = false,
-  sparse = false
+  sparse = false,
+  partialFilterExpression
 }: CreateIndexProps) => {
   try {
     const indexExists = await items.indexExists(name);
@@ -24,7 +26,8 @@ export const createIndex = async ({
         await items.createIndex(indexSpec, {
           name,
           unique,
-          sparse
+          sparse,
+          partialFilterExpression
         });
       } catch (error) {
         const errorMessage = `An error ocurred creating the ${name} index`;

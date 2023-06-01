@@ -12,6 +12,11 @@ type MembershipRelatedToArray = [...RelatedToArray<IdPrefix.ORG>];
 export type Org = BaseEntity<IdPrefix.ORG> & {
   createdBy: PlutomiId<IdPrefix.USER>;
   name: string;
+
+  /**
+   * This is used for public applications like plutomi.com/plutomi/apply
+   * That will hit a middleware that will retrieve the real orgId for downstream calls
+   */
   customOrgId: string; // ^[a-z0-9\-]*$ -> ORG#1234
   relatedTo: MembershipRelatedToArray;
 };

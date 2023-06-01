@@ -86,8 +86,10 @@ export const connectToDatabase =
         customOrgId: 1
       },
       unique: true,
-      sparse: true,
-      items
+      items,
+      partialFilterExpression: {
+        customOrgId: { $exists: true }
+      }
     });
 
     console.log("Done.");
