@@ -9,7 +9,9 @@ import {
   Workspace,
   Membership,
   Session,
-  SessionStatus
+  SessionStatus,
+  defaultWorkspaceName,
+  defaultOrgName
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
@@ -122,7 +124,7 @@ export const post: RequestHandler = async (req, res) => {
   const newOrg: Org = {
     _id: orgId,
     entityType: IdPrefix.ORG,
-    name: "TOOD-FAKER-JS",
+    name: defaultOrgName,
     publicOrgId: "TODO-FAKER-JS",
     createdAt: nowIso,
     updatedAt: nowIso,
@@ -148,7 +150,7 @@ export const post: RequestHandler = async (req, res) => {
     _id: workspaceId,
     entityType: IdPrefix.WORKSPACE,
     // We will prompt the user to update it right after
-    name: "Default Workspace",
+    name: defaultWorkspaceName,
     createdAt: nowIso,
     updatedAt: nowIso,
     org: orgId,
