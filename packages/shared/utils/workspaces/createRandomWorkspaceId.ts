@@ -7,9 +7,8 @@ export const createRandomWorkspaceId = () => {
     Math.random() > 0.5
       ? faker.commerce.product()
       : faker.commerce.productMaterial();
-  const randomOrgName = [randomColor, randomAdjective, randomThing]
+
+  return [randomColor, randomAdjective, randomThing]
     .map((word) => word.toLowerCase())
     .join("-");
-
-  return randomOrgName;
 };
