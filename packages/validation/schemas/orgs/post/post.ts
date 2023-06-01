@@ -7,7 +7,7 @@ const baseSchema = z.object({
       invalid_type_error: "Name must be a string."
     })
     .min(1, "Name must be at least 1 character long.")
-    .max(255, "Name must be at most 255 characters long.")
+    .max(100, "Name must be at most 100 characters long.")
 });
 
 export const UISchema = baseSchema;

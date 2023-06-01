@@ -13,7 +13,6 @@ import { HomepageNavbar } from "@/components/HomepageNavbar/HomepageNavbar";
 
 type HomeProps = {
   commits: CommitType[];
-  randomOrgId: string;
 };
 
 const title = "Plutomi - Applicant management at any scale";
