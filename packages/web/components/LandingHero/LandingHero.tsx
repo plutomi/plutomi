@@ -91,6 +91,7 @@ export const createOrg = async () => {
     await axios.post("/api/orgs", { name: "test", publicOrgId: "beans" });
     alert("Success");
   } catch (error) {
+    alert(error.response.data.message);
     console.error(error);
   }
 };
