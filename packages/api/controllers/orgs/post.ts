@@ -219,7 +219,6 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     ]
   };
 
-  // ! TODO: Rename this
   const transactionSession = req.client.startSession();
 
   let orgFailedToCreate = false;
@@ -271,5 +270,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const cookieJar = getCookieJar({ req, res });
   cookieJar.set(getSessionCookieName(), newUserSessionId, getCookieSettings());
 
-  res.status(200).json({ message: "Org created!", org: newOrg });
+  res
+    .status(201)
+    .json({ message: "Org created!", org: newOrg, workspace: newWorkspace });
 };
