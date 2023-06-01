@@ -106,23 +106,19 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   const { _id: userId } = user;
-  // ! TODO: Abstract this to a util method.
-  // Get the default workspace for a user
 
-  
-
-  // ! TODO: Get a random membership for a user and get an org id / workspace id from that
-
-  let userMembership: Membership | null = null;
+  // Get the default membership for a user, and with it, the org and workspace
+  let defaultUserMembership: Membership | null = null;
 
   try {
-    userMembership = await req.items.findOne<Membership>({
+    defaultUserMembership = await req.items.findOne<Membership>({
       relatedTo: {
         $elemMatch: {
           id: userId,
           type: RelatedToType.MEMBERSHIPS
         }
-      }
+      },
+      isDefault: true
     });
   } catch (error) {
     res.status(500).json({
@@ -140,8 +136,8 @@ export const post: RequestHandler = async (req, res) => {
   const newSession: Session = {
     _id: sessionId,
     user: userId,
-    org: userMembership?.org ?? EmptyValues.NO_ORG,
-    workspace: userMembership?.workspace ?? EmptyValues.NO_WORKSPACE,
+    org: defaultUserMembership?.org ?? EmptyValues.NO_ORG,
+    workspace: defaultUserMembership?.workspace ?? EmptyValues.NO_WORKSPACE,
     createdAt: nowIso,
     updatedAt: nowIso,
     // ! TODO: Schedule an event to mark this as expired
