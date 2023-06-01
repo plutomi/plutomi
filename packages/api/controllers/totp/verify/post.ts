@@ -132,12 +132,15 @@ export const post: RequestHandler = async (req, res) => {
     date: now,
     idPrefix: IdPrefix.SESSION
   });
+  const orgForSession = defaultUserMembership?.org ?? EmptyValues.NO_ORG;
+  const workspaceForSession =
+    defaultUserMembership?.workspace ?? EmptyValues.NO_WORKSPACE;
 
   const newSession: Session = {
     _id: sessionId,
     user: userId,
-    org: defaultUserMembership?.org ?? EmptyValues.NO_ORG,
-    workspace: defaultUserMembership?.workspace ?? EmptyValues.NO_WORKSPACE,
+    org: orgForSession,
+    workspace: workspaceForSession,
     createdAt: nowIso,
     updatedAt: nowIso,
     // ! TODO: Schedule an event to mark this as expired
@@ -162,11 +165,11 @@ export const post: RequestHandler = async (req, res) => {
         type: RelatedToType.SESSIONS
       },
       {
-        id: EmptyValues.NO_ORG,
+        id: orgForSession,
         type: RelatedToType.SESSIONS
       },
       {
-        id: EmptyValues.NO_WORKSPACE,
+        id: workspaceForSession,
         type: RelatedToType.SESSIONS
       }
     ]
