@@ -1,5 +1,13 @@
-export const createRandomOrgName = () => {
-  const x = "";
+import { faker } from "@faker-js/faker";
 
-  return x;
+export const createRandomOrgName = () => {
+  const randomColor = faker.color.human();
+  const randomAdjective = faker.commerce.productAdjective();
+  const randomThing =
+    Math.random() > 0.5 ? faker.commerce.product() : faker.vehicle.type();
+  const randomOrgName = [randomColor, randomAdjective, randomThing]
+    .map((word) => word.toLowerCase())
+    .join("-");
+
+  return randomOrgName;
 };

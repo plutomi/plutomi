@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import type { RequestHandler } from "express";
 import { createSession } from "../../../utils/sessions";
 import {
+  createRandomOrgName,
   generatePlutomiId,
   getCookieJar,
   getCookieSettings,
@@ -125,7 +126,7 @@ export const post: RequestHandler = async (req, res) => {
     _id: orgId,
     entityType: IdPrefix.ORG,
     name: defaultOrgName,
-    publicOrgId: "TODO-FAKER-JS",
+    publicOrgId: createRandomOrgName(),
     createdAt: nowIso,
     updatedAt: nowIso,
     createdBy: userId,
