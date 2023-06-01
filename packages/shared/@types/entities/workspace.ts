@@ -16,4 +16,5 @@ export type Workspace = BaseEntity<IdPrefix.WORKSPACE> & {
   relatedTo: WorkspaceRelatedToArray;
   org: PlutomiId<IdPrefix.ORG>;
   createdBy: PlutomiId<IdPrefix.USER>;
+  // TODO: Public Workspace Id?
 };

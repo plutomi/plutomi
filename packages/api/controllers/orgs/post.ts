@@ -32,11 +32,39 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     return;
   }
 
-  // ! TODO: Do not allow org creation until all invites have been accepted / rejected
-
   const { user } = req;
   const { _id: userId } = user;
   const { name, publicOrgId } = data;
+
+  // ! TODO: Do not allow org creation until all invites have been accepted / rejected
+
+  try {
+    // Don't allow org creation if user already owns an org
+    // Remember: Orgs are top level entities. They can create more workspaces if needed!
+    const userAlreadyOwnsAnOrg = await req.items.findOne<Membership>({
+      relatedTo: {
+        $elemMatch: {
+          id: userId,
+          type: RelatedToType.MEMBERSHIPS
+        }
+      },
+      orgRole: OrgRole.OWNER
+    });
+
+    if (userAlreadyOwnsAnOrg !== null) {
+      res.status(403).json({
+        message:
+          "You already own an organization. You cannot create another one."
+      });
+      return;
+    }
+  } catch (error) {
+    // ! TODO: Logging
+    res.status(500).json({
+      message: "An error ocurred checking if you're already in an org."
+    });
+    return;
+  }
 
   // 1. Create an org for the user
   // 2. Create a default workspace for the org
@@ -231,7 +259,6 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     }
   } finally {
     await transactionSession.endSession();
-    await req.client.close();
   }
 
   if (orgFailedToCreate) {

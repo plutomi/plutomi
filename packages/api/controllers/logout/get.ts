@@ -13,23 +13,21 @@ export const get: RequestHandler = async (req, res) => {
   res.sendStatus(204);
 
   const { _id: sessionId } = req.session;
-  
-  if (sessionId !== undefined) {
-    // Log out the session in DB
-    try {
-      await req.items.updateOne(
-        {
-          _id: sessionId
-        },
-        {
-          $set: {
-            status: SessionStatus.LOGGED_OUT,
-            updatedAt: dayjs().toISOString()
-          }
+
+  try {
+    // Log out the session in the DB
+    await req.items.updateOne(
+      {
+        _id: sessionId
+      },
+      {
+        $set: {
+          status: SessionStatus.LOGGED_OUT,
+          updatedAt: dayjs().toISOString()
         }
-      );
-    } catch (error) {
-      // ! TODO: Logging
-    }
+      }
+    );
+  } catch (error) {
+    // ! TODO: Logging
   }
 };
