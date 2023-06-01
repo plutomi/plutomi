@@ -9,6 +9,8 @@ Once a user joins for the first time, we should create an org for them along wit
 Similar to the "default" VPC in AWS, we should have a default org & workspace.
 We can then tie the sessions to the org & workspaces. 
 
+When a user joins, their OG session is attached to their user.
+
 # Table of Contents :book:
 
 1. [Intro](#intro)
