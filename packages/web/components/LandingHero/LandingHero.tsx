@@ -91,7 +91,7 @@ const useStyles = createStyles((theme) => ({
 
 export const createOrg = async () => {
   try {
-    await axios.post("/api/orgs", { name: "test", publicOrgId: "beans" });
+    await axios.post("/api/orgs", { name: "test", customOrgId: "beans" });
     alert("Success");
   } catch (error) {
     alert(error.response.data.message);

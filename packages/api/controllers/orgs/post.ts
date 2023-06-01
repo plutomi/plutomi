@@ -34,7 +34,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const { user } = req;
   const { _id: userId } = user;
-  const { name, publicOrgId } = data;
+  const { name, customOrgId } = data;
 
   // ! TODO: Do not allow org creation until all invites have been accepted / rejected
 
@@ -85,7 +85,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     _id: orgId,
     entityType: IdPrefix.ORG,
     name,
-    publicOrgId,
+    customOrgId,
     createdAt: nowIso,
     updatedAt: nowIso,
     createdBy: userId,

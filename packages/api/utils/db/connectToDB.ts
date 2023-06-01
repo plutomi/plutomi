@@ -81,9 +81,9 @@ export const connectToDatabase =
     });
 
     await createIndex({
-      name: "publicOrgIdUnique",
+      name: "customOrgIdUnique",
       indexSpec: {
-        publicOrgId: 1
+        customOrgId: 1
       },
       unique: true,
       sparse: true,

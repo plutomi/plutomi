@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const baseSchema = z.object({
   name: z.string().min(1).max(255),
-  publicOrgId: z
+  customOrgId: z
     .string()
     .regex(/^[a-z0-9-]*$/)
     .min(1)
