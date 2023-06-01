@@ -1,12 +1,13 @@
 import { z } from "zod";
 
 const baseSchema = z.object({
-  name: z.string().min(1).max(255),
-  customOrgId: z
-    .string()
-    .regex(/^[a-z0-9-]*$/)
-    .min(1)
-    .max(25)
+  name: z
+    .string({
+      required_error: "Name is required.",
+      invalid_type_error: "Name must be a string."
+    })
+    .min(1, "Name must be at least 1 character long.")
+    .max(255, "Name must be at most 255 characters long.")
 });
 
 export const UISchema = baseSchema;

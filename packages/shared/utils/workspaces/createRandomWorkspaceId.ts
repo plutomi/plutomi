@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-export const createRandomOrgId = () => {
+export const createRandomWorkspaceId = () => {
   const randomColor = faker.color.human();
   const randomAdjective = faker.commerce.productAdjective();
   const randomThing =

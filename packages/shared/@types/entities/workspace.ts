@@ -16,5 +16,9 @@ export type Workspace = BaseEntity<IdPrefix.WORKSPACE> & {
   relatedTo: WorkspaceRelatedToArray;
   org: PlutomiId<IdPrefix.ORG>;
   createdBy: PlutomiId<IdPrefix.USER>;
-  // TODO: Public Workspace Id?
+  /**
+   * This is used for public applications like plutomi.com/plutomi/apply
+   * That will hit a middleware that will retrieve the real workspaceId for downstream calls
+   */
+  customWorkspaceId: string; // ^[a-z0-9\-]*$ -> "plutomi"
 };

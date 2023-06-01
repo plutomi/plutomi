@@ -8,7 +8,8 @@ import {
   WorkspaceRole,
   OrgRole,
   defaultWorkspaceName,
-  SessionStatus
+  SessionStatus,
+  createRandomWorkspaceId
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
@@ -34,7 +35,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const { user } = req;
   const { _id: userId } = user;
-  const { name, customOrgId } = data;
+  const { name } = data;
 
   // ! TODO: Do not allow org creation until all invites have been accepted / rejected
 
@@ -85,7 +86,6 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     _id: orgId,
     entityType: IdPrefix.ORG,
     name,
-    customOrgId,
     createdAt: nowIso,
     updatedAt: nowIso,
     createdBy: userId,
@@ -111,6 +111,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     _id: workspaceId,
     entityType: IdPrefix.WORKSPACE,
     isDefault: true,
+    customWorkspaceId: createRandomWorkspaceId(),
     // We will prompt the user to update it right after
     name: defaultWorkspaceName,
     createdAt: nowIso,

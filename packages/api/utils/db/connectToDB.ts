@@ -81,14 +81,14 @@ export const connectToDatabase =
     });
 
     await createIndex({
-      name: "customOrgIdUnique",
+      name: "customWorkspaceIdUnique",
       indexSpec: {
-        customOrgId: 1
+        customWorkspaceId: 1
       },
       unique: true,
       items,
       partialFilterExpression: {
-        customOrgId: { $exists: true }
+        customWorkspaceId: { $exists: true }
       }
     });
 
