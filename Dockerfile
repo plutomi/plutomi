@@ -16,6 +16,7 @@ COPY packages/web/package.json packages/web/package.json
 COPY packages/env/package.json packages/env/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/validation/package.json packages/validation/package.json
+COPY packages/database/package.json packages/database/package.json
 
 
 RUN yarn install --frozen-lockfile
