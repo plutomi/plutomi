@@ -8,7 +8,8 @@ dotenv.config();
 import express, { type RequestHandler } from "express";
 import cors from "cors";
 import { mw as requestIpMiddleware } from "request-ip";
-import { connectToDatabase, env, nextHandler, webApp } from "./utils";
+import { connectToDatabase, getDatabaseName } from "@plutomi/database";
+import { env, nextHandler, webApp } from "./utils";
 import API from "./controllers";
 
 (async () => {
@@ -24,11 +25,14 @@ import API from "./controllers";
   server.set("trust proxy", true);
 
   try {
-    const { client, items } = await connectToDatabase();
+    const { client, items, database } = await connectToDatabase({
+      databaseName: getDatabaseName()
+    });
 
     const includeMongo: RequestHandler = (req, _res, next) => {
       req.client = client;
       req.items = items;
+      req.database = database;
       next();
     };
 
