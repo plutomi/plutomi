@@ -180,7 +180,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     idPrefix: IdPrefix.SESSION
   });
 
-  // ! TODO: Wrap this in a util function
+  // ! TODO: Wrap this in a util function as it's used in multiple places
   const newUserSession: Session = {
     _id: newUserSessionId,
     entityType: IdPrefix.SESSION,
@@ -266,7 +266,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     return;
   }
 
-  // Give the new session with the new workspace & org to the user
+  // Return the new session with the new workspace & org to the user
   const cookieJar = getCookieJar({ req, res });
   cookieJar.set(getSessionCookieName(), newUserSessionId, getCookieSettings());
 

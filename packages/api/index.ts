@@ -25,13 +25,14 @@ import API from "./controllers";
   server.set("trust proxy", true);
 
   try {
-    const { client, items } = await connectToDatabase({
+    const { client, items, database } = await connectToDatabase({
       databaseName: getDatabaseName()
     });
 
     const includeMongo: RequestHandler = (req, _res, next) => {
       req.client = client;
       req.items = items;
+      req.database = database;
       next();
     };
 
