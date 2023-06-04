@@ -1,5 +1,5 @@
 import type { AllEntities, Session, User } from "@plutomi/shared";
-import type { MongoClient, Collection } from "mongodb";
+import type { Collection, MongoClient } from "mongodb";
 
 declare global {
   namespace Express {

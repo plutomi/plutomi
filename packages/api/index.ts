@@ -8,7 +8,8 @@ dotenv.config();
 import express, { type RequestHandler } from "express";
 import cors from "cors";
 import { mw as requestIpMiddleware } from "request-ip";
-import { connectToDatabase, env, nextHandler, webApp } from "./utils";
+import { connectToDatabase } from "@plutomi/database";
+import { env, nextHandler, webApp } from "./utils";
 import API from "./controllers";
 
 (async () => {
