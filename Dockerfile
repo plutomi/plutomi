@@ -53,7 +53,6 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 
-
 # Copy API files that were built
 # Modify the outDir tsconfig file in packages/api if you want to change this
 COPY --from=builder /app/packages/api/dist packages/api
@@ -78,16 +77,20 @@ COPY --from=builder /app/packages/shared/dist packages/shared
 COPY --from=builder /app/packages/shared/package.json packages/shared/package.json
 COPY --from=builder /app/packages/shared/node_modules packages/shared/node_modules
 
+# Copy the DATABASE package
+COPY --from=builder /app/packages/database/dist packages/database
+COPY --from=builder /app/packages/database/package.json packages/database/package.json
+COPY --from=builder /app/packages/database/node_modules packages/database/node_modules
 
-
-# Copy the root files 
+# Copy the ROOT files 
 COPY --from=builder /app/package.json package.json
 COPY --from=builder /app/node_modules node_modules
 
 # Automatically leverage output traces to reduce image size # TODO
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next/standalone ./
-# Copy built Nextjs files, these will be cached by cloudfront
+
+# Copy built WEB / NEXTJS files, these will be cached by cloudfront
 COPY --from=builder  --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
 COPY --from=builder /app/packages/web/public packages/web/public
 

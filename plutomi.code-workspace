@@ -27,6 +27,10 @@
     {
       "path": "packages/shared",
       "name": "shared"
+    },
+    {
+      "path": "packages/database",
+      "name": "database"
     }
   ],
   "settings": {
@@ -35,7 +39,12 @@
       { "directory": "packages/web", "changeProcessCWD": true },
       { "directory": "packages/infra", "changeProcessCWD": true },
       { "directory": "packages/env", "changeProcessCWD": true },
-      { "directory": "packages/validation", "changeProcessCWD": true }
+      { "directory": "packages/validation", "changeProcessCWD": true },
+      {
+        "directory": "packages/shared",
+        "changeProcessCWD": true
+      },
+      { "directory": "packages/database", "changeProcessCWD": true }
     ],
     "search.exclude": {
       "**/node_modules": true,

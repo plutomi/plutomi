@@ -1,0 +1,22 @@
+{
+  "name": "@plutomi/database",
+  "version": "0.1.0",
+  "description": "Database Package for Plutomi.",
+  "repository": "https://github.com/plutomi/plutomi",
+  "author": "Plutomi Inc.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "zod": "^3.21.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "yarn eslint --ext .ts,.tsx .",
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "rimraf": "^4.4.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.4"
+  }
+}
