@@ -8,7 +8,7 @@ import {
   rem
 } from "@mantine/core";
 import { PlutomiEmails } from "@plutomi/shared";
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
@@ -78,5 +78,7 @@ export const FourOhFour: NextPage = () => {
     </Container>
   );
 };
+
+export const getStaticProps: GetStaticProps = async () => ({ props: {} });
 
 export default FourOhFour;
