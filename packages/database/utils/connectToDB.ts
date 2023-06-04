@@ -6,9 +6,9 @@ import {
   ServerApiVersion
 } from "mongodb";
 import type { AllEntities } from "@plutomi/shared";
-import { env } from "../env";
 import { getDbName } from "./getDbName";
 import { createIndex } from "./createIndex";
+import { env } from "./env";
 
 export const collectionName = "items";
 export const databaseName = getDbName();

@@ -40,6 +40,11 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
   SESSION_PASSWORD_1: true
 });
 
+export const databaseEnvSchema = allEnvVariablesSchema.pick({
+  DEPLOYMENT_ENVIRONMENT: true,
+  MONGO_URL: true
+});
+
 // We are overriding these types because they will get validated using the schema above.
 // We have to "destructure" these because NextJS won't allow process.env destructuring.
 export const processEnv: z.infer<typeof allEnvVariablesSchema> = {

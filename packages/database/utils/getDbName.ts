@@ -1,5 +1,5 @@
 import { DeploymentEnvironment } from "@plutomi/env";
-import { env } from "../env";
+import { env } from "./env";
 
 export const getDbName = () => {
   // Everything is in one cluster because I'm broke ATM :D
@@ -16,6 +16,6 @@ export const getDbName = () => {
   }
 
   throw new Error(
-    "Unable to get DB name due to invalid deployment environment"
+    "Unable to get the database name due to invalid deployment environment"
   );
 };
