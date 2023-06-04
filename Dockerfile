@@ -30,6 +30,7 @@ COPY --from=deps /app/packages/web/node_modules packages/web/node_modules
 COPY --from=deps /app/packages/env/node_modules packages/env/node_modules
 COPY --from=deps /app/packages/shared/node_modules packages/shared/node_modules
 COPY --from=deps /app/packages/validation/node_modules packages/validation/node_modules
+COPY --from=deps /app/packages/database/node_modules packages/database/node_modules
 COPY --from=deps /app/node_modules node_modules 
 
 COPY . .
