@@ -92,7 +92,7 @@ COPY --from=builder /app/node_modules node_modules
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next/standalone ./
 
-# Copy built WEB / NEXTJS files, these will be cached by cloudfront
+# Copy the WEB / NEXTJS files, these will be cached by cloudfront
 COPY --from=builder  --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
 COPY --from=builder /app/packages/web/public packages/web/public
 
