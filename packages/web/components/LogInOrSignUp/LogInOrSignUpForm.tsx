@@ -126,7 +126,6 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
       handleRedirect();
     },
     onError: (error) => {
-      console.log(`ERORROORRO`, error);
       const message = handleAxiosError(error);
       notifications.show({
         id: "totp-verify-error",
