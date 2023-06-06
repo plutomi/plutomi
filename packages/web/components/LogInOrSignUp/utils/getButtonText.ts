@@ -1,42 +1,29 @@
 import type { AuthContext } from "@/hooks";
 
 type GetButtonTextProps = {
-  requestTotpIsLoading: boolean;
-  verifyTotpIsLoading: boolean;
+  codeIsSending: boolean;
+  codeIsVerifying: boolean;
   authContext: AuthContext;
   step: number;
 };
 
 export const getButtonText = ({
-  requestTotpIsLoading,
-  verifyTotpIsLoading,
+  codeIsSending,
+  codeIsVerifying,
   step,
   authContext
 }: GetButtonTextProps) => {
-  if (requestTotpIsLoading && step === 1) {
-    return "Sending...";
-  }
-
   if (step === 1) {
-    return "Send";
-  }
-
-  if (verifyTotpIsLoading && step === 2) {
-    if (authContext === "login") {
-      return "Logging in...";
-    }
-
-    return "Signing up...";
+    return codeIsSending ? "Sending..." : "Send";
   }
 
   if (step === 2) {
-    if (authContext === "login") {
-      return "Log in";
+    if (codeIsVerifying) {
+      return authContext === "login" ? "Logging in..." : "Signing up...";
     }
-
-    return "Sign up";
+    return authContext === "login" ? "Log in" : "Sign up";
   }
 
-  // This should never be triggered
+  // This should never be triggered, but just in case
   return "Continue";
 };
