@@ -30,10 +30,16 @@ const baseSchema = z.object({
       .refine(
         (value) => reservedWorkspaceIds.every((id) => id !== value),
         (value) => ({
-          message: `${value} cannot be used as a workspace ID.`
+          message: `'${value}' cannot be used as a workspace ID.`
         })
       )
   )
+});
+
+// Note: This is a multi-step form on the FE
+export const UIOrgStepSchema = baseSchema.pick({ name: true });
+export const UIWorkspaceIdStepSchema = baseSchema.pick({
+  customWorkspaceId: true
 });
 
 export const UISchema = baseSchema;

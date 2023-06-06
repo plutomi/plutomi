@@ -1,15 +1,17 @@
-import { LandingHero } from "@/components/LandingHero";
-import { LatestCommits } from "@/components/LatestCommits";
-import type { CommitType } from "@/components/LatestCommits/Commit";
-import { UseCaseSection } from "@/components/UseCases";
+import {
+  LandingHero,
+  LatestCommits,
+  UseCaseSection,
+  HomepageNavbar,
+  WaitListCard,
+  type CommitType
+} from "@/components";
 import { Space } from "@mantine/core";
 import axios from "axios";
 import _ from "lodash";
 import type { GetStaticProps, NextPage } from "next";
-import { WaitListCard } from "@/components/WaitListCard";
 import Head from "next/head";
 import { env } from "@/utils";
-import { HomepageNavbar } from "@/components/HomepageNavbar/HomepageNavbar";
 
 type HomeProps = {
   commits: CommitType[];
