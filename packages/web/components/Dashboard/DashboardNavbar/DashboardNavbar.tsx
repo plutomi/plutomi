@@ -16,6 +16,7 @@ import { QueryKeys } from "@/@types";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { useRouter } from "next/router";
+import { useDashboardState } from "@/hooks";
 import { sideBarData } from "../utils";
 
 const useStyles = createStyles((theme) => ({
@@ -84,7 +85,8 @@ const useStyles = createStyles((theme) => ({
 
 export const DashboardNavbar: React.FC = () => {
   const [active, setActive] = useState("Dashboard");
-  const [opened, setOpened] = useState(false);
+  const { navbarIsOpen } = useDashboardState();
+
   const { classes, cx } = useStyles();
   const router = useRouter();
 
@@ -146,7 +148,12 @@ export const DashboardNavbar: React.FC = () => {
   });
 
   return (
-    <Navbar width={{ sm: 300 }} p="md" hiddenBreakpoint="sm" hidden={!opened}>
+    <Navbar
+      width={{ sm: 300 }}
+      p="md"
+      hiddenBreakpoint="sm"
+      hidden={!navbarIsOpen}
+    >
       <Navbar.Section grow>{links}</Navbar.Section>
       <Navbar.Section className={classes.footer}>
         <Button variant="subtle" size="lg" className={classes.link}>

@@ -1,3 +1,4 @@
+import { useDashboardState } from "@/hooks";
 import {
   MediaQuery,
   Header,
@@ -10,15 +11,16 @@ import Link from "next/link";
 
 export const DashboardHeader: React.FC = () => {
   const theme = useMantineTheme();
+  const { navbarIsOpen, setNavbarOpen } = useDashboardState();
 
   return (
     <Header height={{ base: 50, md: 70 }} p="md">
       <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
         <MediaQuery largerThan="sm" styles={{ display: "none" }}>
           <Burger
-            opened={opened}
+            opened={navbarIsOpen}
             onClick={() => {
-              setOpened((o) => !o);
+              setNavbarOpen(!navbarIsOpen);
             }}
             size="sm"
             color={theme.colors.gray[6]}
