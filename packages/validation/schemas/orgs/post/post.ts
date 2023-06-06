@@ -27,7 +27,12 @@ const baseSchema = z.object({
       )
       .min(1, "Workspace ID must be at least 1 character long.")
       .max(25, "Workspace ID must be at most 25 characters long.")
-      .refine((value) => reservedWorkspaceIds.every((id) => id !== value))
+      .refine(
+        (value) => reservedWorkspaceIds.every((id) => id !== value),
+        (value) => ({
+          message: `${value} cannot be used as a workspace ID.`
+        })
+      )
   )
 });
 
