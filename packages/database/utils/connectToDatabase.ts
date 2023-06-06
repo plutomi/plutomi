@@ -79,12 +79,11 @@ export const connectToDatabase = async ({
       "relatedTo.id": 1,
       "relatedTo.type": 1
     },
-    items,
-    unique: false,
-    sparse: false
+    items
   });
 
   await createIndex({
+    // Workspaces are globally unique
     name: "customWorkspaceIdUnique",
     indexSpec: {
       customWorkspaceId: 1
