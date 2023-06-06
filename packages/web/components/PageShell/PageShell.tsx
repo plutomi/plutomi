@@ -7,11 +7,11 @@ import { LogInOrSignUpForm } from "../LogInOrSignUp";
 import { PageLoader } from "../PageLoader";
 import { getLoggedOutPageHeader } from "./utils";
 
-type PageShellProps = {
-  appShellProps: AppShellProps;
-};
-
-export const PageShell: React.FC<PageShellProps> = ({ appShellProps }) => {
+export const PageShell: React.FC<AppShellProps> = ({
+  navbarOffsetBreakpoint = "sm",
+  asideOffsetBreakpoint = "sm",
+  ...props
+}) => {
   const router = useRouter();
   const loggedOutPageHeader = getLoggedOutPageHeader(router.pathname);
 
@@ -38,5 +38,11 @@ export const PageShell: React.FC<PageShellProps> = ({ appShellProps }) => {
     );
   }
 
-  return <AppShell {...appShellProps} />;
+  return (
+    <AppShell
+      navbarOffsetBreakpoint={navbarOffsetBreakpoint}
+      asideOffsetBreakpoint={asideOffsetBreakpoint}
+      {...props}
+    />
+  );
 };

@@ -3,14 +3,9 @@ import { DashboardNavbar } from "@/components/Dashboard/DashboardNavbar";
 import type { GetStaticProps, NextPage } from "next";
 
 const Dashboard: NextPage = () => (
-  <PageShell
-    appShellProps={{
-      navbarOffsetBreakpoint: "sm",
-      asideOffsetBreakpoint: "sm",
-      navbar: <DashboardNavbar />,
-      children: <DashboardContent />
-    }}
-  />
+  <PageShell navbar={<DashboardNavbar />}>
+    <DashboardContent />
+  </PageShell>
 );
 
 export const getStaticProps: GetStaticProps = async () => ({ props: {} });
