@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment Environment ('prod' / 'stage')'
+        description: 'Deployment Environment ("prod" / "stage" / "dev")'
         type: environment
         required: true
       notes:
         description: 'What are you deploying?'
-        type: text
+        type: string
 
 env:
   DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'stage' }}
@@ -50,13 +50,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Fixing lambda permissions
-        run: npm run docker-fix # TODO Is this needed?
-
       - name: Deploying to AWS...
         run: cdk deploy --all --verbose --require-approval never
         env:
-          # TODO Add to deploy
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
