@@ -3,6 +3,7 @@ name: Release
 on:
   push:
     branches: [main]
+    
   workflow_dispatch:
     inputs:
       environment:
@@ -15,7 +16,7 @@ on:
 
 env:
   DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'stage' }}
-  NODE_VERSION: 16
+  NODE_VERSION: 18
 
 concurrency:
   group: ${{ github.event.inputs.environment || 'stage' }}
