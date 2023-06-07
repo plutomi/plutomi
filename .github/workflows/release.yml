@@ -15,7 +15,7 @@ on:
 
 env:
   DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'stage' }}
-  NODE_VERSION: 16
+  NODE_VERSION: 18
 
 concurrency:
   group: ${{ github.event.inputs.environment || 'stage' }}
