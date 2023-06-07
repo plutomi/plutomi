@@ -1,86 +1,61 @@
 import { useState } from "react";
-import {
-  Stepper,
-  Button,
-  Group,
-  TextInput,
-  Code,
-  Container
-} from "@mantine/core";
+import { Container, Card } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { Schema } from "@/../validation";
+import { CustomStep } from "./CustomStep";
 
 export const CreateOrgOnboarding: React.FC = () => {
-  const [active, setActive] = useState(0);
+  const [step, setStep] = useState(0);
 
   const form = useForm<Schema.Orgs.post.UIValues>({
     initialValues: {
       name: "",
       customWorkspaceId: ""
     },
-
-    validate: () => {
-      if (active === 0) {
-        return zodResolver(Schema.Orgs.post.UIOrgStepSchema);
-      }
-
-      if (active === 1) {
-        return zodResolver(Schema.Orgs.post.UIWorkspaceIdStepSchema);
-      }
-
-      // Should never happen
-      return {};
-    }
+    validate: zodResolver(Schema.Orgs.post.UISchema)
   });
 
-  const nextStep = () => {
-    setActive((current) => {
-      if (form.validate().hasErrors) {
-        return current;
-      }
-      return current < 2 ? current + 1 : current;
-    });
-  };
-
-  const prevStep = () => {
-    setActive((current) => (current > 0 ? current - 1 : current));
-  };
-
   return (
-    <Container size="md" p={40} mt={40}>
-      <Stepper active={active} breakpoint="sm">
-        <Stepper.Step label="Org Setup" description="Organization Name">
-          <TextInput
-            label="Organization Name"
-            placeholder="Plutomi Inc."
-            {...form.getInputProps("name")}
-          />
-        </Stepper.Step>
+    <Container size="sm" p={40} mt={40}>
+      <Card withBorder shadow="sm" radius="md">
+        <form>
+          {step === 0 && <CustomStep form={form} setStep={setStep} />}
+          {step === 1 && <h1>STEP 2</h1>}
+        </form>
 
-        <Stepper.Step label="Workspace Setup" description="Choose a custom ID">
-          <TextInput
-            label="Workspace ID"
-            placeholder="plutomi.com/your-workspace-id"
-            {...form.getInputProps("customWorkspaceId")}
-          />
-        </Stepper.Step>
+        {/* {active === 0 ? <CustomStep form={form} /> : null}
+          {active === 1 ? (
+            <TextInput
+              label="Workspace ID"
+              placeholder="plutomi.com/your-workspace-id"
+              description="Create a custom ID where your applicants can apply to."
+              {...form.getInputProps("customWorkspaceId")}
+            />
+          ) : null} */}
+        {/* <Stepper active={active} breakpoint="sm" orientation="horizontal">
+            <Stepper.Step label="Org Setup"></Stepper.Step>
 
-        <Stepper.Completed>
-          Completed! Form values:
-          <Code block mt="xl">
-            {JSON.stringify(form.values, null, 2)}
-          </Code>
-        </Stepper.Completed>
-      </Stepper>
+            <Stepper.Step label="Workspace Setup">
+     
+            </Stepper.Step>
 
-      <Group position="right" mt="xl">
-        {active !== 0 && (
-          <Button variant="default" onClick={prevStep}>
-            Back
-          </Button>
-        )}
-        {active !== 3 && <Button onClick={nextStep}>Next step</Button>}
-      </Group>
+            <Stepper.Completed>
+              Completed! Form values:
+              <Code block mt="xl">
+                {JSON.stringify(form.values, null, 2)}
+              </Code>
+            </Stepper.Completed>
+          </Stepper> */}
+
+        {/* <Group position="right" mt="xl">
+          {active !== 0 && (
+            <Button variant="default" onClick={prevStep}>
+              Back
+            </Button>
+          )}
+          {active !== 2 && <Button onClick={nextStep}>Next</Button>}
+        </Group> */}
+      </Card>
     </Container>
   );
 };
