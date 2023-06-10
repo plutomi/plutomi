@@ -33,6 +33,7 @@ type ConnectToDatabaseProps = {
 export const connectToDatabase = async ({
   databaseName
 }: ConnectToDatabaseProps): Promise<ConnectToDatabaseResponse> => {
+  console.log("Connecting to MongoDB...");
   client = new MongoClient(env.MONGO_URL, {
     serverApi: {
       version: ServerApiVersion.v1,
@@ -81,10 +82,7 @@ export const connectToDatabase = async ({
       "relatedTo.type": 1
     },
     items,
-    partialFilterExpression: {
-      "relatedTo.id": { $exists: true },
-      "relatedTo.type": { $exists: true }
-    }
+    partialFilterExpression: { relatedTo: { $exists: true } }
   });
 
   await createIndex({

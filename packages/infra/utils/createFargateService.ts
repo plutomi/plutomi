@@ -29,6 +29,7 @@ export const createFargateService = ({
     serviceName,
     {
       vpc,
+
       certificate,
       taskDefinition,
       // The load balancer will be public, but our tasks will not.
