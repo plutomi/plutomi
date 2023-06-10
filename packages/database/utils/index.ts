@@ -32,46 +32,6 @@ export const load = async () => {
   await items.deleteMany({});
   await items.deleteMany({});
   await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
 
   console.log("DONE DELETING");
   for (let orgI = 0; orgI < orgs; orgI += 1) {
@@ -86,11 +46,9 @@ export const load = async () => {
     // eslint-disable-next-line no-await-in-loop
     await items.insertOne(org);
 
-    for (
-      let workspaceI = 0;
-      workspaceI < randomNumberInclusive(2, 30);
-      workspaceI += 1
-    ) {
+    const totalWorkspaces = randomNumberInclusive(2, 30);
+    console.log(`Total workspaces ${totalWorkspaces}`);
+    for (let workspaceI = 0; workspaceI < totalWorkspaces; workspaceI += 1) {
       const workspace = {
         _id: `workspace_${workspaceI}-${org._id}`,
         org: org._id,
@@ -110,18 +68,17 @@ export const load = async () => {
 
     // eslint-disable-next-line no-restricted-syntax, no-await-in-loop
     for await (const workspace of allWorkspaces) {
-      for (
-        let batchI = 0;
-        batchI < randomNumberInclusive(30, 500);
-        batchI += 1
-      ) {
+      const totalBatches = randomNumberInclusive(2, 30);
+      console.log(`Total batches: ${totalBatches}`);
+      for (let batchI = 0; batchI < totalBatches; batchI += 1) {
         console.log(`Batch I ${batchI}`);
         const applicantsInThisBatch = [];
         const filesInBatch = [];
         const notesInBatch = [];
+        const applicantsPerBatch = randomNumberInclusive(5, 5000);
         for (
           let applicantsI = 0;
-          applicantsI < randomNumberInclusive(5, 5000);
+          applicantsI < applicantsPerBatch;
           applicantsI += 1
         ) {
           const applicant = {
