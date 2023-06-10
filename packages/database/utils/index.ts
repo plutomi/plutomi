@@ -10,100 +10,14 @@ export * from "./env";
 // export * from "./scripts";
 
 import { faker } from "@faker-js/faker";
-import { connectToDatabase } from "./connectToDatabase";
 import { randomNumberInclusive } from "@plutomi/shared";
+import { connectToDatabase } from "./connectToDatabase";
 
 const orgs = 100;
-const workspacesPerOrg = 1;
-const applicantsPerBatch = 1;
-const batchesOfApplicants = 1;
 
 export const load = async () => {
   const { items } = await connectToDatabase({ databaseName: "plutomi-local" });
 
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-
-  console.log("HAlf way deleting");
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
   await items.deleteMany({});
   await items.deleteMany({});
   await items.deleteMany({});
@@ -165,16 +79,22 @@ export const load = async () => {
     const allWorkspaces = [];
     const org = {
       _id: `org_${orgI}`,
+      entityType: "org",
       name: faker.company.name()
     };
     // @ts-expect-error yeah
     // eslint-disable-next-line no-await-in-loop
     await items.insertOne(org);
 
-    for (let workspaceI = 0; workspaceI < workspacesPerOrg; workspaceI += 1) {
+    for (
+      let workspaceI = 0;
+      workspaceI < randomNumberInclusive(2, 30);
+      workspaceI += 1
+    ) {
       const workspace = {
         _id: `workspace_${workspaceI}-${org._id}`,
         org: org._id,
+        entityType: "workspace",
         name:
           Math.random() > 0.5
             ? faker.company.buzzNoun()
@@ -188,20 +108,27 @@ export const load = async () => {
     // eslint-disable-next-line no-await-in-loop
     await items.insertMany(allWorkspaces);
 
-    // Add items to workspace
-    allWorkspaces.map(async (workspace) => {
-      for (let batchI = 0; batchI < batchesOfApplicants; batchI += 1) {
+    // eslint-disable-next-line no-restricted-syntax, no-await-in-loop
+    for await (const workspace of allWorkspaces) {
+      for (
+        let batchI = 0;
+        batchI < randomNumberInclusive(30, 500);
+        batchI += 1
+      ) {
+        console.log(`Batch I ${batchI}`);
         const applicantsInThisBatch = [];
-
+        const filesInBatch = [];
+        const notesInBatch = [];
         for (
           let applicantsI = 0;
-          applicantsI < applicantsPerBatch;
+          applicantsI < randomNumberInclusive(5, 5000);
           applicantsI += 1
         ) {
           const applicant = {
             _id: `applicant_${applicantsI}-${workspace._id}-${org._id}-${batchI}}`,
             name: faker.person.fullName(),
             email: faker.internet.email(),
+            entityType: "applicant",
             org: workspace.org,
             workspace: workspace._id,
             metadata: {
@@ -231,13 +158,64 @@ export const load = async () => {
             ]
           };
 
+          const filesForApplicant = [];
+          // Create files
+          for (let i = 0; i < randomNumberInclusive(1, 10); i += 1) {
+            const file = {
+              _id: `file_${i}-${applicant._id}`,
+              entityType: "file",
+              name: faker.system.fileName(),
+              applicant: applicant._id,
+              org: org._id,
+              workspace: workspace._id,
+              relatedTo: [
+                { id: applicant._id, type: "file" },
+                { id: workspace._id, type: "file" },
+                { id: org._id, type: "file" }
+              ]
+            };
+
+            filesForApplicant.push(file);
+          }
+
+          const notesForApplicant = [];
+          // Create note
+          for (let i = 0; i < randomNumberInclusive(1, 10); i += 1) {
+            const note = {
+              _id: `note_${i}-${applicant._id}`,
+              entityType: "note",
+              applicant: applicant._id,
+              org: org._id,
+              workspace: workspace._id,
+              relatedTo: [
+                { id: applicant._id, type: "note" },
+                { id: workspace._id, type: "note" },
+                { id: org._id, type: "note" }
+              ]
+            };
+
+            notesForApplicant.push(note);
+          }
+
+          // eslint-disable-next-line no-await-in-loop
           applicantsInThisBatch.push(applicant);
+          notesInBatch.push(...notesForApplicant);
+          filesInBatch.push(...filesForApplicant);
         }
-        // @ts-expect-error yeah
-        // eslint-disable-next-line no-await-in-loop
-        await items.insertMany(applicantsInThisBatch);
+
+        try {
+          // @ts-expect-error yeah
+          // eslint-disable-next-line no-await-in-loop
+          await items.insertMany([
+            ...applicantsInThisBatch,
+            ...notesInBatch,
+            ...filesInBatch
+          ]);
+        } catch (error) {
+          console.error(`ERROR INSERTIN GAPPLINGATNS ${error}`);
+        }
       }
-    });
+    }
   }
 };
 
