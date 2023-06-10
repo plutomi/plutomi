@@ -5,7 +5,7 @@ import {
   type Db,
   ServerApiVersion
 } from "mongodb";
-import type { AllEntities } from "@plutomi/shared";
+import { type AllEntities, IdPrefix } from "@plutomi/shared";
 import { createIndex } from "./createIndex";
 import { env } from "./env";
 
@@ -74,24 +74,60 @@ export const connectToDatabase = async ({
   }
 
   await createIndex({
-    name: "relatedToArray",
+    // Our main indexed array
+    name: "related_to_array",
     indexSpec: {
       "relatedTo.id": 1,
       "relatedTo.type": 1
     },
-    items
+    items,
+    partialFilterExpression: {
+      "relatedTo.id": { $exists: true },
+      "relatedTo.type": { $exists: true }
+    }
   });
 
   await createIndex({
     // Workspaces are globally unique
-    name: "customWorkspaceIdUnique",
+    name: "unique_workspace_id",
     indexSpec: {
-      customWorkspaceId: 1
+      // Order doesn't *really* matter here
+      entityType: 1,
+      customId: 1
     },
     unique: true,
     items,
     partialFilterExpression: {
-      customWorkspaceId: { $exists: true }
+      $and: [
+        {
+          customId: { $exists: true }
+        },
+        {
+          entityType: IdPrefix.WORKSPACE
+        }
+      ]
+    }
+  });
+
+  await createIndex({
+    // User emails are globally unique
+    name: "unique_user_email",
+    indexSpec: {
+      // Order doesn't *really* matter here
+      entityType: 1,
+      email: 1
+    },
+    unique: true,
+    items,
+    partialFilterExpression: {
+      $and: [
+        {
+          email: { $exists: true }
+        },
+        {
+          entityType: IdPrefix.USER
+        }
+      ]
     }
   });
 
