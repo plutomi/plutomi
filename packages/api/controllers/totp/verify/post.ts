@@ -64,10 +64,8 @@ export const post: RequestHandler = async (req, res) => {
   if (
     // Code not found
     mostRecentCode === undefined ||
-    // Expired by status
-    mostRecentCode.status === TOTPCodeStatus.EXPIRED ||
-    // Code has been used
-    mostRecentCode.status === TOTPCodeStatus.USED ||
+    // No longer active
+    mostRecentCode.status !== TOTPCodeStatus.ACTIVE ||
     // Expired by date exhaustive check
     // TODO: Can remove when scheduled events are in
     dayjs(mostRecentCode.expiresAt).isBefore(now) ||
@@ -220,6 +218,7 @@ export const post: RequestHandler = async (req, res) => {
 
   try {
     // Mark the code that was just used as used
+    // ! TODO: Find one and update!
     await req.items.updateOne(
       {
         _id: usedCodeId
@@ -227,7 +226,8 @@ export const post: RequestHandler = async (req, res) => {
       {
         $set: {
           status: TOTPCodeStatus.USED,
-          updatedAt: nowIso
+          updatedAt: nowIso,
+          usedAt: nowIso
         }
       }
     );
@@ -250,8 +250,9 @@ export const post: RequestHandler = async (req, res) => {
       },
       {
         $set: {
-          status: TOTPCodeStatus.EXPIRED,
-          updatedAt: nowIso
+          status: TOTPCodeStatus.INVALIDATED,
+          updatedAt: nowIso,
+          invalidatedAt: nowIso
         }
       }
     );

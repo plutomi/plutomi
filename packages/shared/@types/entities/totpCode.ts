@@ -15,7 +15,8 @@ type TOTPCodeRelatedToArray = [
 export enum TOTPCodeStatus {
   ACTIVE = "ACTIVE",
   USED = "USED",
-  EXPIRED = "EXPIRED"
+  EXPIRED = "EXPIRED",
+  INVALIDATED = "INVALIDATED"
 }
 
 export type TOTPCode = BaseEntity<IdPrefix.TOTP> & {
@@ -26,4 +27,7 @@ export type TOTPCode = BaseEntity<IdPrefix.TOTP> & {
   expiresAt: string;
   relatedTo: TOTPCodeRelatedToArray;
   status: TOTPCodeStatus;
+  expiredAt?: string;
+  usedAt?: string;
+  invalidatedAt?: string;
 };
