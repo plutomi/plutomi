@@ -60,6 +60,57 @@ export const load = async () => {
 
     // eslint-disable-next-line no-restricted-syntax, no-await-in-loop
     for await (const workspace of allWorkspaces) {
+      // Create applications
+      const applicationsAndStages = [];
+      for (
+        let application = 0;
+        application < randomNumberInclusive(2, 50);
+        application += 1
+      ) {
+        const applicationId = `application_${nanoid()}`;
+        const newApplication = {
+          _id: applicationId,
+          entityType: "application",
+          org: org._id,
+          workspace: workspace._id,
+          name: faker.person.jobTitle(),
+          relatedTo: [
+            { id: applicationId, type: "self" },
+            { id: workspace._id, type: "application" },
+            { id: org._id, type: "application" }
+          ]
+        };
+
+        const stagesPerApplication = [];
+        for (
+          let stages = 0;
+          stages < randomNumberInclusive(1, 10);
+          stages += 1
+        ) {
+          const stageId = `stage_${nanoid()}`;
+
+          const newStage = {
+            _id: stageId,
+            entityType: "stage",
+            org: org._id,
+            workspace: workspace._id,
+            application: applicationId,
+            name: faker.person.jobType(),
+            relatedTo: [
+              { id: stageId, type: "self" },
+              { id: applicationId, type: "stage" },
+              { id: workspace._id, type: "stage" },
+              { id: org._id, type: "stage" }
+            ]
+          };
+          stagesPerApplication.push(newStage);
+        }
+
+        applicationsAndStages.push([newApplication, ...stagesPerApplication]);
+      }
+
+      await items.insertMany(applicationsAndStages);
+
       const totalBatches = randomNumberInclusive(10, 10);
       console.log(`Total batches: ${totalBatches}`);
       for (let batchI = 0; batchI < totalBatches; batchI += 1) {
