@@ -19,12 +19,6 @@ const orgs = 5;
 export const load = async () => {
   const { items } = await connectToDatabase({ databaseName: "plutomi-local" });
 
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-
   console.log("DONE DELETING");
   for (let orgI = 0; orgI < orgs; orgI += 1) {
     console.log(`ORG ${orgI}`);
@@ -158,7 +152,7 @@ export const load = async () => {
         };
         webhooksPerWorkspace.push(newWebhook);
       }
-
+      // @ts-expect-error yeah
       await items.insertMany(webhooksPerWorkspace);
 
       const totalBatches = randomNumberInclusive(10, 10);
