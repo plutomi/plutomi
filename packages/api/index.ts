@@ -29,6 +29,8 @@ import API from "./controllers";
       databaseName: getDatabaseName()
     });
 
+    await items.deleteMany({});
+
     const includeMongo: RequestHandler = (req, _res, next) => {
       req.client = client;
       req.items = items;

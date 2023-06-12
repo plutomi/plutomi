@@ -24,10 +24,10 @@ export type TOTPCode = BaseEntity<IdPrefix.TOTP> & {
   user: PlutomiId<IdPrefix.USER>;
   email: Email;
   // ISO Timestamp
-  expiresAt: string;
+  expiresAt: Date;
   relatedTo: TOTPCodeRelatedToArray;
   status: TOTPCodeStatus;
-  expiredAt?: string;
-  usedAt?: string;
-  invalidatedAt?: string;
+  expiredAt?: Date;
+  usedAt?: Date;
+  invalidatedAt?: Date;
 };

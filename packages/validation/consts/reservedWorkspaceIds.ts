@@ -1,5 +1,5 @@
 // ! TODO: Do plural of these
-export const reservedWorkspaceIdsSingular = [
+export const reservedWorkspaceIds = [
   // Plutomi reserved
   "plutomi",
   "plutomiinc",

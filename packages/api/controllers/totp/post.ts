@@ -61,10 +61,9 @@ export const post: RequestHandler = async (req, res) => {
 
   if (user === null) {
     // Create the user first
-    const now = dayjs();
-    const nowIso = now.toISOString();
+    const now = new Date();
     const userId = generatePlutomiId({
-      date: now.toDate(),
+      date: now,
       idPrefix: IdPrefix.USER
     });
 
@@ -76,8 +75,8 @@ export const post: RequestHandler = async (req, res) => {
       emailVerifiedAt: null,
       canReceiveEmails: true,
       email: email as Email,
-      createdAt: nowIso,
-      updatedAt: nowIso,
+      createdAt: now,
+      updatedAt: now,
       entityType: IdPrefix.USER,
       relatedTo: [
         {
@@ -150,7 +149,6 @@ export const post: RequestHandler = async (req, res) => {
 
   try {
     // Get the recent login codes for this user, and see if they're allowed to request another one at this time
-    const now = dayjs();
     recentTotpCodes = await req.items
       .find<TOTPCode>(
         {
@@ -162,9 +160,9 @@ export const post: RequestHandler = async (req, res) => {
             }
           },
           createdAt: {
-            $gte: now
+            $gte: dayjs()
               .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
-              .toISOString()
+              .toDate()
           }
         },
         {
@@ -193,10 +191,9 @@ export const post: RequestHandler = async (req, res) => {
 
   try {
     // Create a new code for the user
-    const now = dayjs();
-    const nowIso = now.toISOString();
+    const now = new Date();
     const totpCodeId = generatePlutomiId({
-      date: now.toDate(),
+      date: now,
       idPrefix: IdPrefix.TOTP
     });
 
@@ -205,12 +202,12 @@ export const post: RequestHandler = async (req, res) => {
       code: totpCode,
       user: userId,
       email: email as Email,
-      createdAt: nowIso,
-      updatedAt: nowIso,
+      createdAt: now,
+      updatedAt: now,
       entityType: IdPrefix.TOTP,
-      expiresAt: now
+      expiresAt: dayjs(now)
         .add(TOTP_EXPIRATION_TIME_IN_MINUTES, "minutes")
-        .toISOString(),
+        .toDate(),
       status: TOTPCodeStatus.ACTIVE,
       relatedTo: [
         {

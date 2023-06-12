@@ -4,8 +4,8 @@ import type { IdPrefix } from "./idPrefix";
 
 export type BaseEntity<T extends IdPrefix> = {
   _id: PlutomiId<T>;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   // This is the external name so it is easier to work with
   entityType: T;
   relatedTo: RelatedToArray<T>;
