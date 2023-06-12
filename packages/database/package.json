@@ -10,6 +10,7 @@
     "@plutomi/shared": "^0.1.0",
     "dotenv": "^16.1.4",
     "mongodb": "^5.6.0",
+    "nanoid": "3.3.4",
     "zod": "^3.21.4"
   },
   "scripts": {

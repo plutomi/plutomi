@@ -12,52 +12,44 @@ export * from "./env";
 import { faker } from "@faker-js/faker";
 import { randomNumberInclusive } from "@plutomi/shared";
 import { connectToDatabase } from "./connectToDatabase";
+import { nanoid } from "nanoid";
 
-const orgs = 100;
+const orgs = 5;
 
 export const load = async () => {
   const { items } = await connectToDatabase({ databaseName: "plutomi-local" });
-
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
-  await items.deleteMany({});
 
   console.log("DONE DELETING");
   for (let orgI = 0; orgI < orgs; orgI += 1) {
     console.log(`ORG ${orgI}`);
     const allWorkspaces = [];
+    const orgId = `org_${nanoid()}`;
     const org = {
-      _id: `org_${orgI}`,
+      _id: orgId,
       entityType: "org",
-      name: faker.company.name()
+      name: faker.company.name(),
+      relatedTo: [{ id: orgId, type: "self" }]
     };
     // @ts-expect-error yeah
     // eslint-disable-next-line no-await-in-loop
     await items.insertOne(org);
 
-    const totalWorkspaces = randomNumberInclusive(2, 30);
+    const totalWorkspaces = randomNumberInclusive(2, 4);
     console.log(`Total workspaces ${totalWorkspaces}`);
     for (let workspaceI = 0; workspaceI < totalWorkspaces; workspaceI += 1) {
+      const workspaceId = `workspace_${nanoid()}`;
       const workspace = {
-        _id: `workspace_${workspaceI}-${org._id}`,
-        org: org._id,
+        _id: workspaceId,
+        org: orgId,
         entityType: "workspace",
         name:
           Math.random() > 0.5
             ? faker.company.buzzNoun()
             : faker.company.catchPhraseDescriptor(),
-        relatedTo: [{ id: org._id, type: "workspace" }]
+        relatedTo: [
+          { id: workspaceId, type: "self" },
+          { id: org, type: "workspace" }
+        ]
       };
 
       allWorkspaces.push(workspace);
@@ -68,21 +60,22 @@ export const load = async () => {
 
     // eslint-disable-next-line no-restricted-syntax, no-await-in-loop
     for await (const workspace of allWorkspaces) {
-      const totalBatches = randomNumberInclusive(2, 30);
+      const totalBatches = randomNumberInclusive(10, 10);
       console.log(`Total batches: ${totalBatches}`);
       for (let batchI = 0; batchI < totalBatches; batchI += 1) {
         console.log(`Batch I ${batchI}`);
         const applicantsInThisBatch = [];
         const filesInBatch = [];
         const notesInBatch = [];
-        const applicantsPerBatch = randomNumberInclusive(5, 5000);
+        const applicantsPerBatch = randomNumberInclusive(10000, 10000);
         for (
           let applicantsI = 0;
           applicantsI < applicantsPerBatch;
           applicantsI += 1
         ) {
+          const applicantId = `applicant_${nanoid()}`;
           const applicant = {
-            _id: `applicant_${applicantsI}-${workspace._id}-${org._id}-${batchI}}`,
+            _id: applicantId,
             name: faker.person.fullName(),
             email: faker.internet.email(),
             entityType: "applicant",
@@ -110,6 +103,7 @@ export const load = async () => {
               )
             },
             relatedTo: [
+              { id: applicantId, type: "self" },
               { id: workspace._id, type: "applicant" },
               { id: org._id, type: "applicant" }
             ]
@@ -118,15 +112,17 @@ export const load = async () => {
           const filesForApplicant = [];
           // Create files
           for (let i = 0; i < randomNumberInclusive(1, 10); i += 1) {
+            const fileId = `file_${nanoid()}`;
             const file = {
-              _id: `file_${i}-${applicant._id}`,
+              _id: fileId,
               entityType: "file",
               name: faker.system.fileName(),
-              applicant: applicant._id,
+              applicant: applicantId,
               org: org._id,
               workspace: workspace._id,
               relatedTo: [
-                { id: applicant._id, type: "file" },
+                { id: fileId, type: "self" },
+                { id: applicantId, type: "file" },
                 { id: workspace._id, type: "file" },
                 { id: org._id, type: "file" }
               ]
@@ -137,16 +133,18 @@ export const load = async () => {
 
           const notesForApplicant = [];
           // Create note
-          for (let i = 0; i < randomNumberInclusive(1, 10); i += 1) {
+          for (let i = 0; i < randomNumberInclusive(1, 5); i += 1) {
+            const noteId = `note_${nanoid()}`;
             const note = {
-              _id: `note_${i}-${applicant._id}`,
+              _id: noteId,
               entityType: "note",
-              applicant: applicant._id,
+              applicant: applicantId,
               org: org._id,
               workspace: workspace._id,
               relatedTo: [
-                { id: applicant._id, type: "note" },
-                { id: workspace._id, type: "note" },
+                { id: noteId, type: "self" },
+                { id: applicantId, type: "note" },
+                { id: workspace, type: "note" },
                 { id: org._id, type: "note" }
               ]
             };
@@ -176,4 +174,4 @@ export const load = async () => {
   }
 };
 
-// load();
+load();
