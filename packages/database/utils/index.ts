@@ -113,6 +113,7 @@ export const load = async () => {
             workspace: workspace._id,
             application: applicationId,
             name: faker.person.jobType(),
+            description: faker.lorem.paragraphs({ min: 1, max: 20 }),
             relatedTo: [
               { id: stageId, type: "self" },
               { id: "stage", type: "entity" },
@@ -131,6 +132,34 @@ export const load = async () => {
 
       // @ts-expect-error yeah
       await items.insertMany(applicationsAndStages);
+
+      const webhooksPerWorkspace = [];
+
+      for (
+        let webhooks = 0;
+        webhooks < randomNumberInclusive(1, 100);
+        webhooks += 1
+      ) {
+        const webhookId = `webhook_${nanoid()}`;
+        const newWebhook = {
+          _id: webhookId,
+          entityType: "webhook",
+          org: org._id,
+          workspace: workspace._id,
+          name: faker.lorem.slug(),
+          short_description: faker.lorem.sentences(),
+          url: faker.internet.url(),
+          relatedTo: [
+            { id: webhookId, type: "self" },
+            { id: "webhook", type: "entity" },
+            { id: workspace._id, type: "webhook" },
+            { id: org._id, type: "webhook" }
+          ]
+        };
+        webhooksPerWorkspace.push(newWebhook);
+      }
+
+      await items.insertMany(webhooksPerWorkspace);
 
       const totalBatches = randomNumberInclusive(10, 10);
       console.log(`Total batches: ${totalBatches}`);
