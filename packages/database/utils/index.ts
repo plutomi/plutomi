@@ -19,6 +19,12 @@ const orgs = 5;
 export const load = async () => {
   const { items } = await connectToDatabase({ databaseName: "plutomi-local" });
 
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+
   console.log("DONE DELETING");
   for (let orgI = 0; orgI < orgs; orgI += 1) {
     console.log(`ORG ${orgI}`);
@@ -28,7 +34,10 @@ export const load = async () => {
       _id: orgId,
       entityType: "org",
       name: faker.company.name(),
-      relatedTo: [{ id: orgId, type: "self" }]
+      relatedTo: [
+        { id: orgId, type: "self" },
+        { id: "org", type: "entity" }
+      ]
     };
     // @ts-expect-error yeah
     // eslint-disable-next-line no-await-in-loop
@@ -48,6 +57,7 @@ export const load = async () => {
             : faker.company.catchPhraseDescriptor(),
         relatedTo: [
           { id: workspaceId, type: "self" },
+          { id: "workspace", type: "entity" },
           { id: org, type: "workspace" }
         ]
       };
@@ -76,6 +86,7 @@ export const load = async () => {
           name: faker.person.jobTitle(),
           relatedTo: [
             { id: applicationId, type: "self" },
+            { id: "application", type: "entity" },
             { id: workspace._id, type: "application" },
             { id: org._id, type: "application" }
           ]
@@ -98,6 +109,7 @@ export const load = async () => {
             name: faker.person.jobType(),
             relatedTo: [
               { id: stageId, type: "self" },
+              { id: "stage", type: "entity" },
               { id: applicationId, type: "stage" },
               { id: workspace._id, type: "stage" },
               { id: org._id, type: "stage" }
@@ -106,9 +118,12 @@ export const load = async () => {
           stagesPerApplication.push(newStage);
         }
 
-        applicationsAndStages.push([newApplication, ...stagesPerApplication]);
+        applicationsAndStages.push(
+          ...[newApplication, ...stagesPerApplication]
+        );
       }
 
+      // @ts-expect-error yeah
       await items.insertMany(applicationsAndStages);
 
       const totalBatches = randomNumberInclusive(10, 10);
@@ -155,6 +170,7 @@ export const load = async () => {
             },
             relatedTo: [
               { id: applicantId, type: "self" },
+              { id: "applicant", type: "entity" },
               { id: workspace._id, type: "applicant" },
               { id: org._id, type: "applicant" }
             ]
@@ -173,6 +189,7 @@ export const load = async () => {
               workspace: workspace._id,
               relatedTo: [
                 { id: fileId, type: "self" },
+                { id: "file", type: "entity" },
                 { id: applicantId, type: "file" },
                 { id: workspace._id, type: "file" },
                 { id: org._id, type: "file" }
@@ -194,6 +211,7 @@ export const load = async () => {
               workspace: workspace._id,
               relatedTo: [
                 { id: noteId, type: "self" },
+                { id: "note", type: "entity" },
                 { id: applicantId, type: "note" },
                 { id: workspace, type: "note" },
                 { id: org._id, type: "note" }
