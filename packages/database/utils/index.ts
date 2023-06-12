@@ -43,7 +43,7 @@ export const load = async () => {
     // eslint-disable-next-line no-await-in-loop
     await items.insertOne(org);
 
-    const totalWorkspaces = randomNumberInclusive(2, 4);
+    const totalWorkspaces = randomNumberInclusive(2, 30);
     console.log(`Total workspaces ${totalWorkspaces}`);
     for (let workspaceI = 0; workspaceI < totalWorkspaces; workspaceI += 1) {
       const workspaceId = `workspace_${nanoid()}`;
@@ -74,7 +74,7 @@ export const load = async () => {
       const applicationsAndStages = [];
       for (
         let application = 0;
-        application < randomNumberInclusive(2, 50);
+        application < randomNumberInclusive(2, 3000);
         application += 1
       ) {
         const applicationId = `application_${nanoid()}`;
@@ -83,7 +83,13 @@ export const load = async () => {
           entityType: "application",
           org: org._id,
           workspace: workspace._id,
+          customId: faker.database.mongodbObjectId(),
           name: faker.person.jobTitle(),
+          salary: randomNumberInclusive(10000, 1000000),
+          location: faker.location.city(),
+          description: faker.lorem.paragraph(),
+          markdown: faker.lorem.paragraphs({ min: 5, max: 20 }),
+          files: [Array.from({ length: 5 }, () => faker.image.avatarGitHub())],
           relatedTo: [
             { id: applicationId, type: "self" },
             { id: "application", type: "entity" },
@@ -95,7 +101,7 @@ export const load = async () => {
         const stagesPerApplication = [];
         for (
           let stages = 0;
-          stages < randomNumberInclusive(1, 10);
+          stages < randomNumberInclusive(3, 30);
           stages += 1
         ) {
           const stageId = `stage_${nanoid()}`;
@@ -160,7 +166,7 @@ export const load = async () => {
               description: faker.lorem.paragraph(),
               avatar: faker.image.avatar(),
               website: faker.internet.url(),
-              long_description: faker.lorem.paragraphs({ min: 1, max: 50 }),
+              long_description: faker.lorem.paragraphs({ min: 2, max: 100 }),
               files: Array.from({ length: randomNumberInclusive(3, 10) }, () =>
                 faker.system.fileName()
               ),
