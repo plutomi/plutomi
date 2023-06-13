@@ -217,17 +217,15 @@ export const load = async () => {
               notesForApplicant.push(note);
             }
 
-            applicantData.push([
-              applicant,
-              ...notesForApplicant,
-              ...filesForApplicant
-            ]);
+            applicantData.push(applicant);
+            applicantData.push(...notesForApplicant);
+            applicantData.push(...filesForApplicant);
 
             try {
               // @ts-expect-error yeah
               // eslint-disable-next-line no-await-in-loop
-              await items.insertMany(applicantData);
-              console.log(`inserting applicant`);
+              await items.insertMany([...applicantData]);
+              // console.log(`inserting applicant`);
             } catch (error) {
               console.error(`ERROR INSERTIN GAPPLINGATNS ${error}`);
             }
