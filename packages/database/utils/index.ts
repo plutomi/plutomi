@@ -77,6 +77,9 @@ export const load = async () => {
         application < randomNumberInclusive(2, 3000);
         application += 1
       ) {
+        if (application % 50 === 0) {
+          console.log("application", application);
+        }
         const applicationId = `application_${nanoid()}`;
         const newApplication = {
           _id: applicationId,
@@ -105,6 +108,10 @@ export const load = async () => {
           stages < randomNumberInclusive(3, 30);
           stages += 1
         ) {
+          if (stages % 5 === 0) {
+            console.log("stages", stages);
+          }
+
           const stageId = `stage_${nanoid()}`;
 
           const newStage = {
@@ -128,6 +135,7 @@ export const load = async () => {
           // ! TODO: Add applicants here
 
           const applicantsPerStage = randomNumberInclusive(500, 100000);
+          const applicantData = [];
 
           console.log(`Applicants per stage`, applicantsPerStage);
           for (
@@ -136,9 +144,8 @@ export const load = async () => {
             applicantsI += 1
           ) {
             if (applicantsI % 100 === 0) {
-              console.log("100 applicants", applicantsI);
+              console.log("applicants", applicantsI);
             }
-            const applicantData = [];
 
             const applicantId = `applicant_${nanoid()}`;
             const applicant = {
@@ -231,19 +238,22 @@ export const load = async () => {
             applicantData.push(applicant);
             applicantData.push(...notesForApplicant);
             applicantData.push(...filesForApplicant);
+          }
 
-            try {
-              // @ts-expect-error yeah
-              // eslint-disable-next-line no-await-in-loop
-              await items.insertMany([...applicantData]);
-              // console.log(`inserting applicant`);
-            } catch (error) {
-              console.error(`ERROR INSERTIN GAPPLINGATNS ${error}`);
-            }
+          try {
+            console.log("inserting");
+            // @ts-expect-error yeah
+            // eslint-disable-next-line no-await-in-loop
+            await items.insertMany([...applicantData]);
+            console.log("Done inserting applicant data");
+            // console.log(`inserting applicant`);
+          } catch (error) {
+            console.error(`ERROR INSERTIN GAPPLINGATNS ${error}`);
           }
         }
       }
 
+      console.log("Inserting applications");
       // @ts-expect-error yeah
       await items.insertMany(applicationsAndStages);
 
