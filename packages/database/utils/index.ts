@@ -19,6 +19,87 @@ const orgs = 5;
 export const load = async () => {
   const { items } = await connectToDatabase({ databaseName: "plutomi-local" });
 
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+
   console.log("DONE DELETING");
   for (let orgI = 0; orgI < orgs; orgI += 1) {
     console.log(`ORG ${orgI}`);
@@ -52,7 +133,7 @@ export const load = async () => {
         relatedTo: [
           { id: workspaceId, type: "self" },
           { id: "workspace", type: "entity" },
-          { id: org, type: "workspace" }
+          { id: org._id, type: "workspace" }
         ]
       };
 
@@ -242,7 +323,7 @@ export const load = async () => {
                 { id: noteId, type: "self" },
                 { id: "note", type: "entity" },
                 { id: applicantId, type: "note" },
-                { id: workspace, type: "note" },
+                { id: workspace._id, type: "note" },
                 { id: org._id, type: "note" }
               ]
             };
