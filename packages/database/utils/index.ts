@@ -19,6 +19,12 @@ const orgs = 5;
 export const load = async () => {
   const { items } = await connectToDatabase({ databaseName: "plutomi-local" });
 
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+  await items.deleteMany({});
+
   console.log("DONE DELETING");
   for (let orgI = 0; orgI < orgs; orgI += 1) {
     console.log(`ORG ${orgI}`);
@@ -92,12 +98,13 @@ export const load = async () => {
           ]
         };
 
+        applicationsAndStages.push(newApplication);
+
         for (
           let stages = 0;
           stages < randomNumberInclusive(3, 30);
           stages += 1
         ) {
-          const applicantsInStage = [];
           const stageId = `stage_${nanoid()}`;
 
           const newStage = {
@@ -120,13 +127,17 @@ export const load = async () => {
           applicationsAndStages.push(newStage);
           // ! TODO: Add applicants here
 
-          const applicantsPerStage = randomNumberInclusive(1000, 100000);
+          const applicantsPerStage = randomNumberInclusive(500, 100000);
 
+          console.log(`Applicants per stage`, applicantsPerStage);
           for (
             let applicantsI = 0;
             applicantsI < applicantsPerStage;
             applicantsI += 1
           ) {
+            if (applicantsI % 100 === 0) {
+              console.log("100 applicants", applicantsI);
+            }
             const applicantData = [];
 
             const applicantId = `applicant_${nanoid()}`;
@@ -231,8 +242,6 @@ export const load = async () => {
             }
           }
         }
-
-        applicationsAndStages.push(newApplication);
       }
 
       // @ts-expect-error yeah
