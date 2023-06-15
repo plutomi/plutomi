@@ -53,10 +53,13 @@
     "@types/node": "^18.15.10",
     "@types/react": "^18.0.29",
     "@types/react-dom": "^18.0.11",
+    "autoprefixer": "^10.4.14",
     "eslint": "^8.36.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "^13.2.4",
     "eslint-plugin-jsx-a11y": "^6.7.1",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2",
     "typescript": "^5.0.2"
   }
 }
