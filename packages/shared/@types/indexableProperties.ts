@@ -57,8 +57,7 @@ type OtherRelatedToArrayItems = {
  *
  */
 export type RelatedToArray<T extends IdPrefix> = [
-  // These two will always be the first two items
-  { id: T; type: RelatedToType.ENTITY },
+  // This will always be the first item
   { id: PlutomiId<T>; type: RelatedToType.SELF },
   ...OtherRelatedToArrayItems[]
 ];
