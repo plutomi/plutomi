@@ -54,32 +54,31 @@ export const Commit: React.FC<CommitType> = ({
   };
 
   return (
-    <div className="group px-2 block bg-white w-full max-w-3xl rounded-md shadow-md hover:shadow-xl transition ease-in-out duration-150 hover:scale-102 cursor-pointer">
-      <a href="#" className=" py-2">
-        <div className="flex items-center">
-          <div className="shrink-0">
-            <img
-              className="inline-block h-16 w-16 md:h-24 md:w-24 rounded-lg "
-              src={image}
-              alt={`@${username} GitHub avatar`}
-            />
-          </div>
-          <div className="px-3 max-w-2xl">
-            <p className="text-lg font-medium text-slate-700 group-hover:text-slate-900">
-              {name}
-            </p>
-            <span className="inline-block">
-            <p className="text-md border border-red-400 font-medium text-blue-400 hover:text-blue-700">
-              @{username} too text extending
-            </p>
-            </span>
-           
-            <p className="text-md font-light text-slate-500 group-hover:text-slate-700 line-clamp-2">
-              {message}
-            </p>
-          </div>
+    <div className="group p-2 bg-white w-full max-w-3xl rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-150 hover:scale-102 cursor-pointer">
+      <div className="flex items-center">
+        <div className="shrink-0">
+          <img
+            className="inline-block h-16 w-16 md:h-24 md:w-24 rounded-lg "
+            src={image}
+            alt={`@${username} GitHub avatar`}
+          />
         </div>
-      </a>
+        <div className="px-3 max-w-2xl">
+          <p className="text-sm font-bold text-slate-400 group-hover:text-slate-500">
+            {String(new Date(date).toLocaleDateString())}
+          </p>
+          <p className="text-lg font-medium text-slate-700 group-hover:text-slate-900">
+            {name} -{" "}
+            <span className="text-md  font-medium text-blue-400 hover:text-blue-600  ">
+              @{username}
+            </span>
+          </p>
+
+          <p className="text-md font-light text-slate-500 group-hover:text-slate-700 line-clamp-2">
+            {message}
+          </p>
+        </div>
+      </div>
     </div>
 
     // <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">

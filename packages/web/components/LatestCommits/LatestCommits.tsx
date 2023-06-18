@@ -5,7 +5,7 @@ type LatestCommitsProps = {
 };
 
 export const LatestCommits: React.FC<LatestCommitsProps> = ({ commits }) => (
-  <div className="w-full max-w-3xl space-y-3 flex flex-col border border-red-400 justify-center ">
+  <div className="w-full max-w-3xl space-y-3 flex flex-col justify-center ">
     {(commits ?? []).map((commit) => (
       <Commit key={commit.message} {...commit} />
     ))}
