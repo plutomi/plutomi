@@ -10,7 +10,7 @@ export default class _Document extends Document {
 
   render() {
     return (
-      <Html>
+      <Html className="bg-slate-100">
         <Head>
           <link
             rel="apple-touch-icon"

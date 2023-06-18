@@ -53,8 +53,63 @@ export const Commit: React.FC<CommitType> = ({
     window.open(url, "_blank");
   };
 
-  const { classes } = useStyles();
   return (
+    <div className="group px-2 block bg-white w-full max-w-3xl rounded-md shadow-md hover:shadow-xl transition ease-in-out duration-150 hover:scale-102 cursor-pointer">
+      <a href="#" className=" py-2">
+        <div className="flex items-center">
+          <div className="shrink-0">
+            <img
+              className="inline-block h-16 w-16 md:h-24 md:w-24 rounded-lg "
+              src={image}
+              alt={`@${username} GitHub avatar`}
+            />
+          </div>
+          <div className="px-3 max-w-2xl">
+            <p className="text-lg font-medium text-slate-700 group-hover:text-slate-900">
+              {name}
+            </p>
+            <span className="inline-block">
+            <p className="text-md border border-red-400 font-medium text-blue-400 hover:text-blue-700">
+              @{username} too text extending
+            </p>
+            </span>
+           
+            <p className="text-md font-light text-slate-500 group-hover:text-slate-700 line-clamp-2">
+              {message}
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    // <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+    //   <div className="flex border border-red-400">
+    //     <div className="w-full border">
+    //       <img
+    //         className="h-full w-full"
+    //         src={image}
+    //         alt={`@${username} GitHub avatar`}
+    //       />
+    //     </div>
+
+    //     <div className="p-8 border">
+    //       <p className="mt-1 "> {name}</p>
+
+    //       <a
+    //         href="#"
+    //         className="block mt-1 text-lg truncate font-medium text-black hover:underline"
+    //       >
+    //         @{username}
+    //       </a>
+    //       <p className="mt-2 text-slate-500">{message}</p>
+    //     </div>
+    //   </div>
+    // </div>
+  );
+};
+
+{
+  /* </>
     <>
       <MediaQuery smallerThan="lg" styles={{ display: "none" }}>
         <Card
@@ -166,6 +221,5 @@ export const Commit: React.FC<CommitType> = ({
           </Group>
         </Card>
       </MediaQuery>
-    </>
-  );
-};
+    </> */
+}
