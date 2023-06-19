@@ -47,7 +47,7 @@ type OtherRelatedToArrayItems = {
  * For more fine-grained endpoints like /applicants/:id/notes, we can use the following query and retrieve those items directly.
  * You *must* include `$elemMatch` to use the index.
  *
- * { relatedTo: { $elemMatch: { id: 'applicant_3810', type: 'notes' } } }
+ * { related_to: { $elemMatch: { id: 'applicant_3810', type: 'notes' } } }
  *
  * And to retrieve a specific item, we can use the _id field directly.
  *

@@ -33,5 +33,5 @@
 //     email: string;
 //   };
 //   expiresAt: Date;
-//   relatedTo: InviteRelatedToArray;
+//   related_to: InviteRelatedToArray;
 // };

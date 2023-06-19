@@ -82,7 +82,7 @@ export const connectToDatabase = async ({
       "relatedTo.type": 1
     },
     items,
-    partialFilterExpression: { relatedTo: { $exists: true } }
+    partialFilterExpression: { related_to: { $exists: true } }
   });
 
   await createIndex({

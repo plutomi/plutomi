@@ -29,5 +29,5 @@
 //   org: string;
 //   workspace: string;
 //   totals: StageTotals;
-//   relatedTo: StageRelatedToArray;
+//   related_to: StageRelatedToArray;
 // };

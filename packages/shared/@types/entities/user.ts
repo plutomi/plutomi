@@ -13,9 +13,5 @@ export type User = BaseEntity<IdPrefix.USER> & {
   email_verified_at: Date | null;
   can_receive_emails: boolean;
   unsubscribed_from_emails_at: Date | null;
-  /**
-   * Used to lock the user when requesting a TOTP code
-   */
-  is_requesting_totp: boolean;
   related_to: UserRelatedToArray;
 };

@@ -4,6 +4,7 @@ import {
   IdPrefix,
   RelatedToType
 } from "@plutomi/shared";
+import KSUID from "ksuid";
 import { generatePlutomiId } from "../generatePlutomiId";
 
 type CreateUserProps = {
@@ -19,6 +20,7 @@ export const createUser = ({ email }: CreateUserProps): User => {
   const newUser: User = {
     _id: userId,
     _type: IdPrefix.USER,
+    _locked_at: KSUID.randomSync().string,
     first_name: null,
     last_name: null,
     email,
@@ -26,7 +28,6 @@ export const createUser = ({ email }: CreateUserProps): User => {
     email_verified_at: null,
     can_receive_emails: true,
     unsubscribed_from_emails_at: null,
-    is_requesting_totp: false,
     created_at: now,
     updated_at: now,
     related_to: [

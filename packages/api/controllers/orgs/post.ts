@@ -43,7 +43,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     // Don't allow org creation if user already owns an org
     // Remember: Orgs are top level entities. They can create more workspaces if needed!
     const userAlreadyOwnsAnOrg = await req.items.findOne<Membership>({
-      relatedTo: {
+      related_to: {
         $elemMatch: {
           id: userId,
           type: RelatedToType.MEMBERSHIPS
@@ -86,10 +86,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     _id: orgId,
     entityType: IdPrefix.ORG,
     name: orgName,
-    createdAt: nowIso,
-    updatedAt: nowIso,
+    created_at: nowIso,
+    updated_at: nowIso,
     createdBy: userId,
-    relatedTo: [
+    related_to: [
       {
         id: IdPrefix.ORG,
         type: RelatedToType.ENTITY
@@ -113,11 +113,11 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     customWorkspaceId,
     // We will prompt the user to update it after / later
     name: defaultWorkspaceName,
-    createdAt: nowIso,
-    updatedAt: nowIso,
+    created_at: nowIso,
+    updated_at: nowIso,
     org: orgId,
     createdBy: userId,
-    relatedTo: [
+    related_to: [
       {
         id: IdPrefix.WORKSPACE,
         type: RelatedToType.ENTITY
@@ -142,8 +142,8 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newMembership: Membership = {
     _id: memberShipId,
     entityType: IdPrefix.MEMBERSHIP,
-    createdAt: nowIso,
-    updatedAt: nowIso,
+    created_at: nowIso,
+    updated_at: nowIso,
     isDefault: true,
     status: MembershipStatus.ACTIVE,
     org: orgId,
@@ -151,7 +151,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     orgRole: OrgRole.OWNER,
     workspaceRole: WorkspaceRole.OWNER,
     user: userId,
-    relatedTo: [
+    related_to: [
       {
         id: IdPrefix.MEMBERSHIP,
         type: RelatedToType.ENTITY
@@ -184,8 +184,8 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newUserSession: Session = {
     _id: newUserSessionId,
     entityType: IdPrefix.SESSION,
-    createdAt: nowIso,
-    updatedAt: nowIso,
+    created_at: nowIso,
+    updated_at: nowIso,
     status: SessionStatus.ACTIVE,
     expiresAt: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
@@ -195,7 +195,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     userAgent: req.get("User-Agent") ?? "unknown",
     workspace: workspaceId,
     user: userId,
-    relatedTo: [
+    related_to: [
       {
         id: IdPrefix.SESSION,
         type: RelatedToType.ENTITY
@@ -246,7 +246,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
         {
           $set: {
             status: SessionStatus.SWITCHED_WORKSPACE,
-            updatedAt: nowIso
+            updated_at: nowIso
           }
         },
         { session: transactionSession }

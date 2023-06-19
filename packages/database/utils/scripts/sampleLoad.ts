@@ -23,7 +23,7 @@
 //       _id: orgId,
 //       entityType: "org",
 //       name: faker.company.name(),
-//       relatedTo: [
+//       related_to: [
 //         { id: orgId, type: "self" },
 //         { id: "org", type: "entity" }
 //       ]
@@ -44,7 +44,7 @@
 //           Math.random() > 0.5
 //             ? faker.company.buzzNoun()
 //             : faker.company.catchPhraseDescriptor(),
-//         relatedTo: [
+//         related_to: [
 //           { id: workspaceId, type: "self" },
 //           { id: "workspace", type: "entity" },
 //           { id: org._id, type: "workspace" }
@@ -82,7 +82,7 @@
 //           description: faker.lorem.paragraph(),
 //           markdown: faker.lorem.paragraphs({ min: 5, max: 20 }),
 //           files: [Array.from({ length: 5 }, () => faker.image.avatarGitHub())],
-//           relatedTo: [
+//           related_to: [
 //             { id: applicationId, type: "self" },
 //             { id: "application", type: "entity" },
 //             { id: workspace._id, type: "application" },
@@ -111,7 +111,7 @@
 //             application: applicationId,
 //             name: faker.person.jobType(),
 //             description: faker.lorem.paragraphs({ min: 1, max: 20 }),
-//             relatedTo: [
+//             related_to: [
 //               { id: stageId, type: "self" },
 //               { id: "stage", type: "entity" },
 //               { id: applicationId, type: "stage" },
@@ -169,7 +169,7 @@
 //                   () => faker.lorem.paragraph()
 //                 )
 //               },
-//               relatedTo: [
+//               related_to: [
 //                 { id: applicantId, type: "self" },
 //                 { id: "applicant", type: "entity" },
 //                 { id: workspace._id, type: "applicant" },
@@ -190,7 +190,7 @@
 //                 applicant: applicantId,
 //                 org: org._id,
 //                 workspace: workspace._id,
-//                 relatedTo: [
+//                 related_to: [
 //                   { id: fileId, type: "self" },
 //                   { id: "file", type: "entity" },
 //                   { id: applicantId, type: "file" },
@@ -212,7 +212,7 @@
 //                 applicant: applicantId,
 //                 org: org._id,
 //                 workspace: workspace._id,
-//                 relatedTo: [
+//                 related_to: [
 //                   { id: noteId, type: "self" },
 //                   { id: "note", type: "entity" },
 //                   { id: applicantId, type: "note" },
@@ -262,7 +262,7 @@
 //           name: faker.lorem.slug(),
 //           short_description: faker.lorem.sentences(),
 //           url: faker.internet.url(),
-//           relatedTo: [
+//           related_to: [
 //             { id: webhookId, type: "self" },
 //             { id: "webhook", type: "entity" },
 //             { id: workspace._id, type: "webhook" },

@@ -16,18 +16,49 @@ import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
 import { type ModifyResult, ReturnDocument } from "mongodb";
+import KSUID from "ksuid";
+
 import {
   EMAIL_TEMPLATES,
   clearCookie,
   getCookieJar,
   getSessionCookieName,
   sendEmail,
-  sessionIsActive
+  sessionIsActive,
+  createTotpCode,
+  createUser
 } from "../../utils";
-import { createTotpCode } from "../../utils/totp";
-import { createUser } from "../../utils/users";
 
 export const post: RequestHandler = async (req, res) => {
+  const cookieJar = getCookieJar({ req, res });
+  const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
+
+  if (sessionId !== undefined) {
+    try {
+      // If a user already has a session, and it is valid, send a 302 and let the FE redirect
+      const session = await req.items.findOne<Session>({
+        _id: sessionId as PlutomiId<IdPrefix.SESSION>
+      });
+
+      if (session !== null && sessionIsActive({ session })) {
+        res.status(302).json({
+          message: "You already have an active session!"
+        });
+        return;
+      }
+
+      // Delete the previous cookie, if any, as they will get a new one on their new login
+      // Any other session statuses are irrelevant from this point.
+      clearCookie({ cookieJar });
+    } catch (error) {
+      res.status(500).json({
+        message: "An error ocurred logging you in",
+        error
+      });
+      return;
+    }
+  }
+
   const { data, errorHandled } = validate({
     req,
     res,
@@ -42,100 +73,31 @@ export const post: RequestHandler = async (req, res) => {
 
   let user: User | null = null;
 
-  try {
-    // Check if a user exists with that email, and if not, create them
-    const { value } = (await req.items.findOneAndUpdate(
-      {
-        email
-      },
-      {
-        $setOnInsert: createUser({ email: email as Email })
-      },
-      {
-        upsert: true,
-        returnDocument: ReturnDocument.AFTER
-      }
-    )) as ModifyResult<User>;
-
-    if (value === null) {
-      // Will be created if it doesn't exist
-      // TODO Logging
-      return;
-    }
-
-    user = value;
-  } catch (error) {
-    // TODO: Logging
-    res.status(500).json({
-      message: "An error ocurred creating your login code",
-      error
-    });
-    return;
-  }
-
-  if (!user.can_receive_emails) {
-    // TODO: Logging
-    res.status(403).json({
-      message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
-    });
-    return;
-  }
-
-  const cookieJar = getCookieJar({ req, res });
-  const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
-
-  if (sessionId !== undefined) {
-    // If a user already has a session, and it is valid, redirect them to dashboard
-    // TODO: Make dynamic based on where they're logging in from
-    try {
-      const session = await req.items.findOne<Session>({
-        _id: sessionId as PlutomiId<IdPrefix.SESSION>
-      });
-
-      if (session !== null && sessionIsActive({ session })) {
-        res.status(302).json({
-          message: "You already have an active session!"
-        });
-        return;
-      }
-
-      // Delete the previous cookie, if any, they will get a new one on their new login
-      // Any other session statuses are irrelevant from this point.
-      clearCookie({ cookieJar });
-    } catch (error) {
-      res.status(500).json({
-        message: "An error ocurred creating a session for you",
-        error
-      });
-      return;
-    }
-  }
-
-  const { _id: userId } = user;
   const transactionSession = req.client.startSession();
   const totpCode = generateTOTP();
-
   try {
-    // 1. Lock the user for concurrent requests
+    // 1. Lock the user for concurrent requests / create a new user if they doesn't exist
     // 2. Get the recent login codes for this user, and see if they're allowed to request another one at this time
     // 3. Create a new login code for this user
-    // 4. Unlock the user for concurrent requests
     await transactionSession.withTransaction(async () => {
-      const lockedUser = await req.items.findOneAndUpdate(
-        // Temporarily lock the user for concurrent requests
-        {
-          _id: userId,
-          is_requesting_totp: false
-        },
+      // 1. Get the user if they exist with that email, and if not, create them
+      const { value } = (await req.items.findOneAndUpdate(
+        { email: email as Email },
         {
           $set: {
-            is_requesting_totp: true
-          }
+            _locked_at: KSUID.randomSync().string,
+            updated_at: new Date()
+          },
+          $setOnInsert: createUser({ email: email as Email })
         },
-        { session: transactionSession }
-      );
+        {
+          upsert: true,
+          returnDocument: ReturnDocument.AFTER,
+          session: transactionSession
+        }
+      )) as ModifyResult<User>;
 
-      if (lockedUser.value === null) {
+      if (value === null) {
         // Concurrent request, return an error
         res.status(429).json({
           message:
@@ -144,18 +106,30 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
 
+      user = value;
+
+      if (!user.can_receive_emails) {
+        // TODO: Logging
+        res.status(403).json({
+          message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
+        });
+        return;
+      }
+
+      const { _id: userId } = user;
+
       const recentTotpCodes: TOTPCode[] = await req.items
         // Get N active codes for this user in the last N minutes
         .find<TOTPCode>(
           {
             status: TOTPCodeStatus.ACTIVE,
-            relatedTo: {
+            related_to: {
               $elemMatch: {
                 id: userId,
                 type: RelatedToType.TOTPS
               }
             },
-            createdAt: {
+            created_at: {
               $gte: dayjs()
                 .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
                 .toDate()
@@ -183,22 +157,6 @@ export const post: RequestHandler = async (req, res) => {
           userId,
           email: email as Email
         }),
-        {
-          session: transactionSession
-        }
-      );
-
-      // Unlock the user to make another request
-      await req.items.updateOne(
-        {
-          _id: userId,
-          is_requesting_totp: true
-        },
-        {
-          $set: {
-            is_requesting_totp: false
-          }
-        },
         {
           session: transactionSession
         }

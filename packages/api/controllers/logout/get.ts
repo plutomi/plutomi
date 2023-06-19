@@ -23,7 +23,7 @@ export const get: RequestHandler = async (req, res) => {
       {
         $set: {
           status: SessionStatus.LOGGED_OUT,
-          updatedAt: dayjs().toISOString()
+          updated_at: dayjs().toISOString()
         }
       }
     );

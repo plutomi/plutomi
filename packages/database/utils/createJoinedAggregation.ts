@@ -76,7 +76,7 @@ type CreateMatchStageProps = {
 };
 
 type RelatedToMatchObject = {
-  relatedTo: {
+  related_to: {
     $elemMatch: {
       id: PlutomiId<IdPrefix>;
       type: RelatedToType;
@@ -91,7 +91,7 @@ type RelatedToMatchObject = {
 const createMatchStage = ({ id, relatedToEntities }: CreateMatchStageProps) => {
   const relatedItems: RelatedToMatchObject[] = relatedToEntities.map(
     (entity) => ({
-      relatedTo: {
+      related_to: {
         $elemMatch: {
           id,
           type: entity

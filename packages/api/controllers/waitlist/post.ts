@@ -34,9 +34,9 @@ export const post: RequestHandler = async (req, res) => {
       _id: userId,
       entityType: IdPrefix.WAIT_LIST_USER,
       email: email as Email,
-      createdAt: nowIso,
-      updatedAt: nowIso,
-      relatedTo: [
+      created_at: nowIso,
+      updated_at: nowIso,
+      related_to: [
         {
           id: IdPrefix.WAIT_LIST_USER,
           type: RelatedToType.ENTITY

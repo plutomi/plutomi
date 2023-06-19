@@ -50,6 +50,6 @@ export type Membership = BaseEntity<IdPrefix.MEMBERSHIP> & {
   workspace: PlutomiId<IdPrefix.WORKSPACE>;
   workspaceRole: WorkspaceRole;
   user: PlutomiId<IdPrefix.USER>;
-  relatedTo: MembershipRelatedToArray;
+  related_to: MembershipRelatedToArray;
   status: MembershipStatus;
 };
