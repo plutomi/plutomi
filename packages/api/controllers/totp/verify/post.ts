@@ -211,7 +211,7 @@ export const post: RequestHandler = async (req, res) => {
   try {
     // Mark the code that was just used as used
     // ! TODO: Find one and update!
-    await req.items.updateOne(
+    await req.items.updateOne<User>(
       {
         _id: usedCodeId
       },
