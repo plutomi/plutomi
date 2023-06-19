@@ -12,6 +12,7 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
+import KSUID from "ksuid";
 import {
   generatePlutomiId,
   getCookieJar,
@@ -58,7 +59,6 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   const now = new Date();
-  const nowIso = now.toISOString();
 
   const mostRecentCode = mostRecentCodes[0];
   if (
@@ -72,6 +72,7 @@ export const post: RequestHandler = async (req, res) => {
     // Code is invalid
     mostRecentCode.code !== totpCode
   ) {
+    // TODO: Logging
     // ! TODO: Increment attempts here, block email if too many attempts
     res.status(403).json({ message: "Invalid login code" });
     return;
@@ -81,13 +82,8 @@ export const post: RequestHandler = async (req, res) => {
   let user: User | null = null;
 
   try {
-    user = await req.items.findOne<User>({
-      related_to: {
-        $elemMatch: {
-          id: email,
-          type: RelatedToType.USERS
-        }
-      }
+    user = await req.items.findOneAndUpdate({
+      email: email as Email
     });
   } catch (error) {
     // TODO: Logging
@@ -137,6 +133,7 @@ export const post: RequestHandler = async (req, res) => {
   const newSession: Session = {
     _id: sessionId,
     _type: IdPrefix.SESSION,
+    _locked_at: KSUID.randomSync().string,
     user: userId,
     org: orgForSession,
     workspace: workspaceForSession,
@@ -195,9 +192,9 @@ export const post: RequestHandler = async (req, res) => {
         },
         {
           $set: {
-            emailVerified: true,
-            emailVerifiedAt: nowIso,
-            updated_at: nowIso
+            email_verified: true,
+            email_verified_at: now,
+            updated_at: now
           }
         }
       );
@@ -218,8 +215,8 @@ export const post: RequestHandler = async (req, res) => {
       {
         $set: {
           status: TOTPCodeStatus.USED,
-          updated_at: nowIso,
-          used_at: nowIso
+          updated_at: now,
+          used_at: now
         }
       }
     );
@@ -243,8 +240,8 @@ export const post: RequestHandler = async (req, res) => {
       {
         $set: {
           status: TOTPCodeStatus.INVALIDATED,
-          updated_at: nowIso,
-          invalidatedAt: nowIso
+          updated_at: now,
+          invalidatedAt: now
         }
       }
     );
