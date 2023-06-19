@@ -1,5 +1,5 @@
 import {
-  IdPrefix,
+  type IdPrefix,
   RelatedToType,
   generateTOTP,
   type User,
@@ -19,13 +19,13 @@ import { type ModifyResult, ReturnDocument } from "mongodb";
 import {
   EMAIL_TEMPLATES,
   clearCookie,
-  generatePlutomiId,
   getCookieJar,
   getSessionCookieName,
   sendEmail,
   sessionIsActive
 } from "../../utils";
 import { createTotpCode } from "../../utils/totp";
+import { createUser } from "../../utils/users";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -42,33 +42,6 @@ export const post: RequestHandler = async (req, res) => {
 
   let user: User | null = null;
 
-  const now = new Date();
-  const userId = generatePlutomiId({
-    date: now,
-    idPrefix: IdPrefix.USER
-  });
-
-  const newUserData: User = {
-    _id: userId,
-    _type: IdPrefix.USER,
-    first_name: null,
-    last_name: null,
-    email: email as Email,
-    email_verified: false,
-    email_verified_at: null,
-    can_receive_emails: true,
-    unsubscribed_from_emails_at: null,
-    is_requesting_totp: false,
-    created_at: now,
-    updated_at: now,
-    related_to: [
-      {
-        id: userId,
-        type: RelatedToType.SELF
-      }
-    ]
-  };
-
   try {
     // Check if a user exists with that email, and if not, create them
     const { value } = (await req.items.findOneAndUpdate(
@@ -76,7 +49,7 @@ export const post: RequestHandler = async (req, res) => {
         email
       },
       {
-        $setOnInsert: newUserData
+        $setOnInsert: createUser({ email: email as Email })
       },
       {
         upsert: true,
@@ -157,7 +130,8 @@ export const post: RequestHandler = async (req, res) => {
           $set: {
             is_requesting_totp: true
           }
-        }
+        },
+        { session: transactionSession }
       );
 
       if (lockedUser.value === null) {
@@ -176,7 +150,7 @@ export const post: RequestHandler = async (req, res) => {
             status: TOTPCodeStatus.ACTIVE,
             relatedTo: {
               $elemMatch: {
-                id: userId,
+                id: user?._id,
                 type: RelatedToType.TOTPS
               }
             },
@@ -187,7 +161,8 @@ export const post: RequestHandler = async (req, res) => {
             }
           },
           {
-            limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME
+            limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
+            session: transactionSession
           }
         )
         .toArray();
@@ -206,7 +181,10 @@ export const post: RequestHandler = async (req, res) => {
         createTotpCode({
           userId,
           email: email as Email
-        })
+        }),
+        {
+          session: transactionSession
+        }
       );
 
       // Unlock the user to make another request
@@ -219,6 +197,9 @@ export const post: RequestHandler = async (req, res) => {
           $set: {
             is_requesting_totp: false
           }
+        },
+        {
+          session: transactionSession
         }
       );
     });
