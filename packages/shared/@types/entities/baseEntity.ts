@@ -6,7 +6,7 @@ export type BaseEntity<T extends IdPrefix> = {
   _id: PlutomiId<T>;
   // This is the external name so it is easier to work with
   _type: T;
-  createdAt: Date;
-  updatedAt: Date;
-  relatedTo: RelatedToArray<T>;
+  created_at: Date;
+  updated_at: Date;
+  related_to: RelatedToArray<T>;
 };

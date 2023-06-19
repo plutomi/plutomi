@@ -6,7 +6,6 @@ import {
   type Email,
   type TOTPCode,
   TOTPCodeStatus,
-  TOTP_EXPIRATION_TIME_IN_MINUTES,
   PlutomiEmails,
   MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
   MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
@@ -16,6 +15,7 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
+import { type ModifyResult, ReturnDocument } from "mongodb";
 import {
   EMAIL_TEMPLATES,
   clearCookie,
@@ -25,6 +25,7 @@ import {
   sendEmail,
   sessionIsActive
 } from "../../utils";
+import { createTotpCode } from "../../utils/totp";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -41,73 +42,66 @@ export const post: RequestHandler = async (req, res) => {
 
   let user: User | null = null;
 
+  const now = new Date();
+  const userId = generatePlutomiId({
+    date: now,
+    idPrefix: IdPrefix.USER
+  });
+
+  const newUserData: User = {
+    _id: userId,
+    _type: IdPrefix.USER,
+    first_name: null,
+    last_name: null,
+    email: email as Email,
+    email_verified: false,
+    email_verified_at: null,
+    can_receive_emails: true,
+    unsubscribed_from_emails_at: null,
+    is_requesting_totp: false,
+    created_at: now,
+    updated_at: now,
+    related_to: [
+      {
+        id: userId,
+        type: RelatedToType.SELF
+      }
+    ]
+  };
+
   try {
     // Check if a user exists with that email, and if not, create them
-    user = await req.items.findOne<User>({
-      relatedTo: {
-        $elemMatch: {
-          id: email,
-          type: RelatedToType.USERS
-        }
+    const { value } = (await req.items.findOneAndUpdate(
+      {
+        email
+      },
+      {
+        $setOnInsert: newUserData
+      },
+      {
+        upsert: true,
+        returnDocument: ReturnDocument.AFTER
       }
-    });
+    )) as ModifyResult<User>;
+
+    if (value === null) {
+      // Will be created if it doesn't exist
+      // TODO Logging
+      return;
+    }
+
+    user = value;
   } catch (error) {
+    // TODO: Logging
     res.status(500).json({
-      message: "An error ocurred checking if a user exists with that email",
+      message: "An error ocurred creating your login code",
       error
     });
     return;
   }
 
-  if (user === null) {
-    // Create the user first
-    const now = new Date();
-    const userId = generatePlutomiId({
-      date: now,
-      idPrefix: IdPrefix.USER
-    });
-
-    const userData: User = {
-      _id: userId,
-      firstName: null,
-      lastName: null,
-      emailVerified: false,
-      emailVerifiedAt: null,
-      canReceiveEmails: true,
-      email: email as Email,
-      createdAt: now,
-      updatedAt: now,
-      entityType: IdPrefix.USER,
-      relatedTo: [
-        {
-          id: IdPrefix.USER,
-          type: RelatedToType.ENTITY
-        },
-        {
-          id: userId,
-          type: RelatedToType.SELF
-        },
-        {
-          id: email as Email,
-          type: RelatedToType.USERS
-        }
-      ]
-    };
-
-    try {
-      // ! TODO: Concurrency issue when two people make the request at the same time
-      await req.items.insertOne(userData);
-      user = userData;
-    } catch (error) {
-      res.status(500).json({
-        message: "An error ocurred creating your user account",
-        error
-      });
-      return;
-    }
-  }
-
-  if (!user.canReceiveEmails) {
+  if (!user.can_receive_emails) {
+    // TODO: Logging
     res.status(403).json({
       message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
     });
@@ -119,12 +113,12 @@ export const post: RequestHandler = async (req, res) => {
 
   if (sessionId !== undefined) {
     // If a user already has a session, and it is valid, redirect them to dashboard
+    // TODO: Make dynamic based on where they're logging in from
     try {
       const session = await req.items.findOne<Session>({
         _id: sessionId as PlutomiId<IdPrefix.SESSION>
       });
 
-      // ! TODO: Clean this up in two parts, first check if session is null, then check if it is active
       if (session !== null && sessionIsActive({ session })) {
         res.status(302).json({
           message: "You already have an active session!"
@@ -144,99 +138,102 @@ export const post: RequestHandler = async (req, res) => {
     }
   }
 
-  let recentTotpCodes: TOTPCode[] = [];
-  const { _id: userId } = user;
-
-  try {
-    // Get the recent login codes for this user, and see if they're allowed to request another one at this time
-    recentTotpCodes = await req.items
-      .find<TOTPCode>(
-        {
-          status: TOTPCodeStatus.ACTIVE,
-          relatedTo: {
-            $elemMatch: {
-              id: userId,
-              type: RelatedToType.TOTPS
-            }
-          },
-          createdAt: {
-            $gte: dayjs()
-              .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
-              .toDate()
-          }
-        },
-        {
-          limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME
-        }
-      )
-      .toArray();
-  } catch (error) {
-    res.status(500).json({
-      message: "An error ocurred checking for any recent login codes",
-      error
-    });
-    return;
-  }
-
-  if (recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
-    // ! TODO: Log attempt
-    res.status(403).json({
-      message:
-        "You have requested too many login codes recently, please try again in a bit."
-    });
-    return;
-  }
-
+  const transactionSession = req.client.startSession();
   const totpCode = generateTOTP();
 
   try {
-    // Create a new code for the user
-    const now = new Date();
-    const totpCodeId = generatePlutomiId({
-      date: now,
-      idPrefix: IdPrefix.TOTP
-    });
-
-    const newTotpCode: TOTPCode = {
-      _id: totpCodeId,
-      code: totpCode,
-      user: userId,
-      email: email as Email,
-      createdAt: now,
-      updatedAt: now,
-      entityType: IdPrefix.TOTP,
-      expiresAt: dayjs(now)
-        .add(TOTP_EXPIRATION_TIME_IN_MINUTES, "minutes")
-        .toDate(),
-      status: TOTPCodeStatus.ACTIVE,
-      relatedTo: [
+    // 1. Lock the user for concurrent requests
+    // 2. Get the recent login codes for this user, and see if they're allowed to request another one at this time
+    // 3. Create a new login code for this user
+    // 4. Unlock the user for concurrent requests
+    await transactionSession.withTransaction(async () => {
+      const lockedUser = await req.items.findOneAndUpdate(
+        // Temporarily lock the user for concurrent requests
         {
-          id: IdPrefix.TOTP,
-          type: RelatedToType.ENTITY
+          _id: userId,
+          is_requesting_totp: false
         },
         {
-          id: totpCodeId,
-          type: RelatedToType.SELF
-        },
-        {
-          id: userId,
-          type: RelatedToType.TOTPS
-        },
-        {
-          id: email as Email,
-          type: RelatedToType.TOTPS
+          $set: {
+            is_requesting_totp: true
+          }
         }
-      ]
-    };
+      );
 
-    await req.items.insertOne(newTotpCode);
+      if (lockedUser.value === null) {
+        // Concurrent request, return an error
+        res.status(429).json({
+          message:
+            "You already have a one time code request in progress. Please wait a few seconds and try again."
+        });
+        return;
+      }
+
+      const recentTotpCodes: TOTPCode[] = await req.items
+        // Get N active codes for this user in the last N minutes
+        .find<TOTPCode>(
+          {
+            status: TOTPCodeStatus.ACTIVE,
+            relatedTo: {
+              $elemMatch: {
+                id: userId,
+                type: RelatedToType.TOTPS
+              }
+            },
+            createdAt: {
+              $gte: dayjs()
+                .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+                .toDate()
+            }
+          },
+          {
+            limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME
+          }
+        )
+        .toArray();
+
+      if (recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
+        // ! TODO: Log attempt
+        res.status(403).json({
+          message:
+            "You have requested too many login codes recently, please try again in a bit."
+        });
+        return;
+      }
+
+      // Create the code
+      await req.items.insertOne(
+        createTotpCode({
+          userId,
+          email: email as Email
+        })
+      );
+
+      // Unlock the user to make another request
+      await req.items.updateOne(
+        {
+          _id: userId,
+          is_requesting_totp: true
+        },
+        {
+          $set: {
+            is_requesting_totp: false
+          }
+        }
+      );
+    });
   } catch (error) {
+    // TODO: Logging
     res.status(500).json({
-      message: "An error ocurred creating your login code",
+      message: "An error ocurred creating your TOTP code",
       error
     });
+    return;
+  } finally {
+    await transactionSession.endSession();
   }
 
+  // Send code to user
   try {
     await sendEmail({
       to: email as Email,
