@@ -2,12 +2,13 @@ import {
   RelatedToType,
   TOTPCodeStatus,
   IdPrefix,
+  SessionStatus,
+  EmptyValues,
+  type Email,
   type User,
   type Session,
   type TOTPCode,
-  type Membership,
-  SessionStatus,
-  EmptyValues
+  type Membership
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
@@ -82,7 +83,7 @@ export const post: RequestHandler = async (req, res) => {
   let user: User | null = null;
 
   try {
-    user = await req.items.findOneAndUpdate({
+    user = await req.items.findOne<User>({
       email: email as Email
     });
   } catch (error) {
@@ -93,9 +94,8 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  // This shouldn't happen, but just in case
   if (user === null) {
-    res.status(500).json({ message: "An error ocurred logging you in!" });
+    res.status(404).json({ message: "User not found!" });
     return;
   }
 

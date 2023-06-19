@@ -10,7 +10,8 @@ import {
   MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
   MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
   type Session,
-  type PlutomiId
+  type PlutomiId,
+  delay
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
@@ -75,94 +76,115 @@ export const post: RequestHandler = async (req, res) => {
 
   const transactionSession = req.client.startSession();
   const totpCode = generateTOTP();
+
+  let shouldSendCode = false;
   try {
     // 1. Lock the user for concurrent requests / create a new user if they doesn't exist
     // 2. Get the recent login codes for this user, and see if they're allowed to request another one at this time
     // 3. Create a new login code for this user
-    await transactionSession.withTransaction(async () => {
-      // 1. Get the user if they exist with that email, and if not, create them
-      const { value } = (await req.items.findOneAndUpdate(
-        { email: email as Email },
-        {
-          $set: {
-            _locked_at: KSUID.randomSync().string,
-            updated_at: new Date()
-          },
-          $setOnInsert: createUser({ email: email as Email })
-        },
-        {
-          upsert: true,
-          returnDocument: ReturnDocument.AFTER,
-          session: transactionSession
-        }
-      )) as ModifyResult<User>;
+    const transactionResults = await transactionSession.withTransaction(
+      async () => {
+        await delay({ ms: 5000 });
 
-      if (value === null) {
-        // Concurrent request, return an error
-        res.status(429).json({
-          message:
-            "You already have a one time code request in progress. Please wait a few seconds and try again."
-        });
-        return;
-      }
-
-      user = value;
-
-      if (!user.can_receive_emails) {
-        // TODO: Logging
-        res.status(403).json({
-          message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
-        });
-        return;
-      }
-
-      const { _id: userId } = user;
-
-      const recentTotpCodes: TOTPCode[] = await req.items
-        // Get N active codes for this user in the last N minutes
-        .find<TOTPCode>(
+        // 1. Get & LOCK the user if they exist with that email, and if not, create them
+        const { value } = (await req.items.findOneAndUpdate(
+          { email: email as Email },
           {
-            status: TOTPCodeStatus.ACTIVE,
-            related_to: {
-              $elemMatch: {
-                id: userId,
-                type: RelatedToType.TOTPS
-              }
+            $set: {
+              _locked_at: KSUID.randomSync().string,
+              updated_at: new Date()
             },
-            created_at: {
-              $gte: dayjs()
-                .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
-                .toDate()
-            }
+            $setOnInsert: createUser({
+              email: email as Email,
+              removedKeys: ["_locked_at", "updated_at"]
+            })
           },
           {
-            limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
+            upsert: true,
+            returnDocument: ReturnDocument.AFTER,
             session: transactionSession
           }
-        )
-        .toArray();
+        )) as ModifyResult<User>;
 
-      if (recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
-        // ! TODO: Log attempt
-        res.status(403).json({
-          message:
-            "You have requested too many login codes recently, please try again in a bit."
-        });
-        return;
-      }
-
-      // Create the code
-      await req.items.insertOne(
-        createTotpCode({
-          userId,
-          email: email as Email
-        }),
-        {
-          session: transactionSession
+        if (value === null) {
+          // Concurrent request, return an error
+          res.status(429).json({
+            message:
+              "You already have a one time code request in progress. Please wait a few seconds and try again."
+          });
+          return;
         }
-      );
-    });
+
+        user = value;
+
+        if (!user.can_receive_emails) {
+          // TODO: Logging
+          res.status(403).json({
+            message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
+          });
+          return;
+        }
+
+        const { _id: userId } = user;
+
+        const recentTotpCodes: TOTPCode[] = await req.items
+          // Get N active codes for this user in the last N minutes
+          .find<TOTPCode>(
+            {
+              status: TOTPCodeStatus.ACTIVE,
+              related_to: {
+                $elemMatch: {
+                  id: userId,
+                  type: RelatedToType.TOTPS
+                }
+              },
+              created_at: {
+                $gte: dayjs()
+                  .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+                  .toDate()
+              }
+            },
+            {
+              limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
+              session: transactionSession
+            }
+          )
+          .toArray();
+
+        if (
+          recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME
+        ) {
+          // ! TODO: Log attempt
+          res.status(403).json({
+            message:
+              "You have requested too many login codes recently, please try again in a bit."
+          });
+          console.log("TOO MANY CODES");
+          return;
+        }
+
+        // Create the code
+        await req.items.insertOne(
+          createTotpCode({
+            userId,
+            email: email as Email
+          }),
+          {
+            session: transactionSession
+          }
+        );
+      }
+    );
+
+    if (transactionResults !== undefined) {
+      shouldSendCode = true;
+      console.log("Transaction aborted!");
+      return;
+    }
+
+    console.log("Transaction done!");
   } catch (error) {
+    console.error(`An error ocurred creating a TOTP code for ${email}`, error);
     // TODO: Logging
     res.status(500).json({
       message: "An error ocurred creating your TOTP code",
@@ -170,11 +192,17 @@ export const post: RequestHandler = async (req, res) => {
     });
     return;
   } finally {
+    console.log("T Session ended");
     await transactionSession.endSession();
   }
 
+  if (!shouldSendCode) {
+    return;
+  }
+  
   // Send code to user
   try {
+    console.log("Sending mail");
     await sendEmail({
       to: email as Email,
       subject: `Your Plutomi Code - ${totpCode}`,
@@ -185,10 +213,13 @@ export const post: RequestHandler = async (req, res) => {
       bodyHtml: EMAIL_TEMPLATES.TOTPTemplate({ code: totpCode })
     });
 
+    console.log("Mail sent!");
     res.status(201).json({
       message: "A login code has been sent to your email"
     });
   } catch (error) {
+    console.log(`DOUBLE SEND HAPPEND?!?!?`);
+    // ! TODO: Possible double send? How
     res.status(500).json({
       message: "An error ocurred sending your login code",
       error

@@ -90,7 +90,7 @@ export const connectToDatabase = async ({
     name: "unique_workspace_id",
     indexSpec: {
       // Order doesn't *really* matter here
-      entityType: 1,
+      _type: 1,
       customId: 1
     },
     unique: true,
@@ -101,7 +101,7 @@ export const connectToDatabase = async ({
           customId: { $exists: true }
         },
         {
-          entityType: IdPrefix.WORKSPACE
+          _type: IdPrefix.WORKSPACE
         }
       ]
     }
@@ -112,7 +112,7 @@ export const connectToDatabase = async ({
     name: "unique_user_email",
     indexSpec: {
       // Order doesn't *really* matter here
-      entityType: 1,
+      _type: 1,
       email: 1
     },
     unique: true,
@@ -123,7 +123,7 @@ export const connectToDatabase = async ({
           email: { $exists: true }
         },
         {
-          entityType: IdPrefix.USER
+          _type: IdPrefix.USER
         }
       ]
     }
