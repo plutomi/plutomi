@@ -68,7 +68,7 @@ export const post: RequestHandler = async (req, res) => {
     mostRecentCode.status !== TOTPCodeStatus.ACTIVE ||
     // Expired by date exhaustive check
     // TODO: Can remove when scheduled events are in
-    dayjs(mostRecentCode.expiresAt).isBefore(now) ||
+    dayjs(mostRecentCode.expires_at).isBefore(now) ||
     // Code is invalid
     mostRecentCode.code !== totpCode
   ) {
@@ -136,34 +136,26 @@ export const post: RequestHandler = async (req, res) => {
 
   const newSession: Session = {
     _id: sessionId,
+    _type: IdPrefix.SESSION,
     user: userId,
     org: orgForSession,
     workspace: workspaceForSession,
-    createdAt: nowIso,
-    updatedAt: nowIso,
+    created_at: now,
+    updated_at: now,
     // ! TODO: Schedule an event to mark this as expired
-    expiresAt: dayjs(now)
+    expires_at: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
       .toISOString(),
     status: SessionStatus.ACTIVE,
-    entityType: IdPrefix.SESSION,
     ip: req.clientIp ?? "unknown",
-    userAgent: req.get("User-Agent") ?? "unknown",
-    relatedTo: [
-      {
-        id: IdPrefix.SESSION,
-        type: RelatedToType.ENTITY
-      },
+    user_agent: req.get("User-Agent") ?? "unknown",
+    related_to: [
       {
         id: sessionId,
         type: RelatedToType.SELF
       },
       {
         id: userId,
-        type: RelatedToType.SESSIONS
-      },
-      {
-        id: orgForSession,
         type: RelatedToType.SESSIONS
       },
       {
@@ -190,7 +182,7 @@ export const post: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (!user.emailVerified) {
+  if (!user.email_verified) {
     try {
       await req.items.updateOne(
         {

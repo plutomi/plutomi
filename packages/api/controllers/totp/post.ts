@@ -111,6 +111,7 @@ export const post: RequestHandler = async (req, res) => {
     }
   }
 
+  const { _id: userId } = user;
   const transactionSession = req.client.startSession();
   const totpCode = generateTOTP();
 
@@ -150,7 +151,7 @@ export const post: RequestHandler = async (req, res) => {
             status: TOTPCodeStatus.ACTIVE,
             relatedTo: {
               $elemMatch: {
-                id: user?._id,
+                id: userId,
                 type: RelatedToType.TOTPS
               }
             },

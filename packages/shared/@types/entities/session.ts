@@ -10,11 +10,6 @@ type SessionRelatedToArray = [
   // Get all sessions for a user
   { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.SESSIONS },
 
-  // Get all sessions for an org
-  {
-    id: PlutomiId<IdPrefix.ORG> | EmptyValues.NO_ORG;
-    type: RelatedToType.SESSIONS;
-  },
   // Get all sessions for a workspace
   {
     id: PlutomiId<IdPrefix.WORKSPACE> | EmptyValues.NO_WORKSPACE;
@@ -25,9 +20,9 @@ type SessionRelatedToArray = [
 export type Session = BaseEntity<IdPrefix.SESSION> & {
   user: PlutomiId<IdPrefix.USER>;
   ip: string;
-  expiresAt: string;
-  userAgent: string;
-  relatedTo: SessionRelatedToArray;
+  expires_at: string;
+  user_agent: string;
+  related_to: SessionRelatedToArray;
   status: SessionStatus;
   org: PlutomiId<IdPrefix.ORG> | EmptyValues.NO_ORG;
   workspace: PlutomiId<IdPrefix.WORKSPACE> | EmptyValues.NO_WORKSPACE;
