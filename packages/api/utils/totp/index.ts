@@ -1,1 +1,1 @@
-export * from "./createTotpCode";
+export * from "./createTotpCodeItem";

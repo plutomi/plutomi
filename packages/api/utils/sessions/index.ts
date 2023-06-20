@@ -1,2 +1,2 @@
 export * from "./sessionIsActive";
-export * from "./createSession";
+export * from "./createSessionItem";

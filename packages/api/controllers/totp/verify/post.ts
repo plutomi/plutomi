@@ -13,7 +13,7 @@ import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
 import { type ModifyResult, ReturnDocument } from "mongodb";
 import {
-  createSession,
+  createSessionItem,
   getCookieJar,
   getCookieSettings,
   getSessionCookieName
@@ -82,7 +82,7 @@ export const post: RequestHandler = async (req, res) => {
             }
           }
         })
-        .sort({ _id: -1 })
+        .sort({ created_at: -1 })
         .limit(1)
         .toArray();
 
@@ -168,7 +168,7 @@ export const post: RequestHandler = async (req, res) => {
         );
       }
 
-      const newSession = await createSession({
+      const newSession = await createSessionItem({
         req,
         now,
         userId

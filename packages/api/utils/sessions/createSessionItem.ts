@@ -19,7 +19,7 @@ type CreateSessionProps = {
   userId: PlutomiId<IdPrefix.USER>;
 };
 // TODO: Rename so its not confusing
-export const createSession = async ({
+export const createSessionItem = async ({
   req,
   now,
   userId

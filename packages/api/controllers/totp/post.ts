@@ -10,8 +10,7 @@ import {
   MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
   MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
   type Session,
-  type PlutomiId,
-  delay
+  type PlutomiId
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
@@ -26,13 +25,15 @@ import {
   getSessionCookieName,
   sendEmail,
   sessionIsActive,
-  createTotpCode,
+  createTotpCodeItem,
   createUser
 } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const cookieJar = getCookieJar({ req, res });
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
+
+  const totpCode = generateTOTP();
 
   if (sessionId !== undefined) {
     try {
@@ -48,8 +49,7 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
 
-      // Delete the previous cookie, if any, as they will get a new one on their new login
-      // Any other session statuses are irrelevant from this point.
+      // Delete the previous cookie as they will get a new one on their new login
       clearCookie({ cookieJar });
     } catch (error) {
       res.status(500).json({
@@ -77,7 +77,7 @@ export const post: RequestHandler = async (req, res) => {
   let respondedInTransaction = false;
 
   const transactionSession = req.client.startSession(transactionOptions);
-  const totpCode = generateTOTP();
+  let totpCodeItem: TOTPCode | undefined;
 
   try {
     // 1. Lock the user for concurrent requests / create a new user if they doesn't exist
@@ -163,34 +163,26 @@ export const post: RequestHandler = async (req, res) => {
             message:
               "You have requested too many login codes recently, please try again in a bit."
           });
-          console.log("TOO MANY CODES");
           respondedInTransaction = true;
           await transactionSession.abortTransaction();
           return;
         }
 
+        totpCodeItem = createTotpCodeItem({
+          userId,
+          email: email as Email
+        });
         // Create the code
-        await req.items.insertOne(
-          createTotpCode({
-            userId,
-            email: email as Email
-          }),
-          {
-            session: transactionSession
-          }
-        );
+        await req.items.insertOne(totpCodeItem, {
+          session: transactionSession
+        });
+
+        shouldSendCode = true;
       }
     );
-
-    if (transactionResults !== undefined) {
-      shouldSendCode = true;
-      console.log("Transaction succeeded!");
-    }
   } catch (error) {
     // TODO: Logging
-    console.error(`An error ocurred creating a TOTP code for ${email}`, error);
     if (!respondedInTransaction) {
-      console.log("Transaction threw an error!", error);
       // Generic error
       res.status(500).json({
         message: "An error ocurred creating your TOTP code, please try again.",
@@ -199,12 +191,10 @@ export const post: RequestHandler = async (req, res) => {
     }
     return;
   } finally {
-    console.log("T Session ended");
     await transactionSession.endSession();
   }
 
   if (!shouldSendCode) {
-    console.log("Not sending code as transaction failed");
     return;
   }
 
