@@ -18,7 +18,6 @@ import type { RequestHandler } from "express";
 import dayjs from "dayjs";
 import { type ModifyResult, ReturnDocument } from "mongodb";
 import KSUID from "ksuid";
-
 import {
   EMAIL_TEMPLATES,
   clearCookie,
@@ -73,11 +72,19 @@ export const post: RequestHandler = async (req, res) => {
   const { email } = data;
 
   let user: User | null = null;
+  let shouldSendCode = false;
+  let respondedInTransaction = false;
 
-  const transactionSession = req.client.startSession();
+  const transactionSession = req.client.startSession({
+    // TODO: Move this out!
+    defaultTransactionOptions: {
+      readPreference: "primary",
+      readConcern: { level: "majority" },
+      writeConcern: { w: "majority" }
+    }
+  });
   const totpCode = generateTOTP();
 
-  let shouldSendCode = false;
   try {
     // 1. Lock the user for concurrent requests / create a new user if they doesn't exist
     // 2. Get the recent login codes for this user, and see if they're allowed to request another one at this time
@@ -91,6 +98,7 @@ export const post: RequestHandler = async (req, res) => {
           { email: email as Email },
           {
             $set: {
+              // Note: This runs after $setOnInsert, so we can use the user object here
               _locked_at: KSUID.randomSync().string,
               updated_at: new Date()
             },
@@ -112,6 +120,9 @@ export const post: RequestHandler = async (req, res) => {
             message:
               "You already have a one time code request in progress. Please wait a few seconds and try again."
           });
+
+          respondedInTransaction = true;
+          await transactionSession.abortTransaction();
           return;
         }
 
@@ -122,6 +133,8 @@ export const post: RequestHandler = async (req, res) => {
           res.status(403).json({
             message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
           });
+          respondedInTransaction = true;
+          await transactionSession.abortTransaction();
           return;
         }
 
@@ -160,6 +173,8 @@ export const post: RequestHandler = async (req, res) => {
               "You have requested too many login codes recently, please try again in a bit."
           });
           console.log("TOO MANY CODES");
+          respondedInTransaction = true;
+          await transactionSession.abortTransaction();
           return;
         }
 
@@ -178,18 +193,19 @@ export const post: RequestHandler = async (req, res) => {
 
     if (transactionResults !== undefined) {
       shouldSendCode = true;
-      console.log("Transaction aborted!");
-      return;
+      console.log("Transaction succeeded!");
     }
-
-    console.log("Transaction done!");
   } catch (error) {
-    console.error(`An error ocurred creating a TOTP code for ${email}`, error);
     // TODO: Logging
-    res.status(500).json({
-      message: "An error ocurred creating your TOTP code",
-      error
-    });
+    console.error(`An error ocurred creating a TOTP code for ${email}`, error);
+    if (!respondedInTransaction) {
+      console.log("Transaction threw an error!", error);
+      // Generic error
+      res.status(500).json({
+        message: "An error ocurred creating your TOTP code, please try again.",
+        error
+      });
+    }
     return;
   } finally {
     console.log("T Session ended");
@@ -197,9 +213,10 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   if (!shouldSendCode) {
+    console.log("Not sending code as transaction failed");
     return;
   }
-  
+
   // Send code to user
   try {
     console.log("Sending mail");
