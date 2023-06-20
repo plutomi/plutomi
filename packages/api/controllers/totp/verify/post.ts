@@ -1,26 +1,23 @@
 import {
   RelatedToType,
   TOTPCodeStatus,
-  IdPrefix,
-  SessionStatus,
-  EmptyValues,
   type Email,
   type User,
-  type Session,
   type TOTPCode,
-  type Membership
+  delay
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import dayjs from "dayjs";
 import type { RequestHandler } from "express";
 import KSUID from "ksuid";
+import { transactionOptions } from "@plutomi/database";
+import { type ModifyResult, ReturnDocument } from "mongodb";
 import {
-  generatePlutomiId,
+  createSession,
   getCookieJar,
   getCookieSettings,
   getSessionCookieName
 } from "../../../utils";
-import { MAX_SESSION_AGE_IN_MS } from "../../../consts";
 
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
@@ -35,152 +32,110 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email, totpCode } = data;
 
-  let mostRecentCodes: TOTPCode[] = [];
+  const transactionSession = req.client.startSession(transactionOptions);
+  let respondedInTransaction = false;
 
   try {
-    mostRecentCodes = await req.items
-      .find<TOTPCode>({
-        related_to: {
-          $elemMatch: {
-            id: email,
-            type: RelatedToType.TOTPS
+    // 1. Lock the user for concurrent requests
+    // 2. Get the most recent login code for this user, see if it is valid
+    // 3. Create a new login code for this user
+    // 4. Invalidate all other active codes
+    // 5. Update the user's session
+    await transactionSession.withTransaction(async () => {
+      const now = new Date();
+
+      // 1. Lock the user
+      const { value: user } = (await req.items.findOneAndUpdate(
+        { email: email as Email },
+        {
+          $set: {
+            _locked_at: KSUID.randomSync().string,
+            updated_at: now
           }
+        },
+        {
+          upsert: true,
+          returnDocument: ReturnDocument.AFTER,
+          session: transactionSession
         }
-      })
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray();
-  } catch (error) {
-    // TODO: Logging
-    res.status(500).json({
-      message: "An error ocurred getting your most recent login code",
-      error
-    });
-    return;
-  }
+      )) as ModifyResult<User>;
+      await delay({ ms: 5000 });
 
-  const now = new Date();
+      if (user === null) {
+        // Concurrent request, return an error
+        res.status(409).json({
+          message: "An error ocurred logging you in, please try again."
+        });
 
-  const mostRecentCode = mostRecentCodes[0];
-  if (
-    // Code not found
-    mostRecentCode === undefined ||
-    // No longer active
-    mostRecentCode.status !== TOTPCodeStatus.ACTIVE ||
-    // Expired by date exhaustive check
-    // TODO: Can remove when scheduled events are in
-    dayjs(mostRecentCode.expires_at).isBefore(now) ||
-    // Code is invalid
-    mostRecentCode.code !== totpCode
-  ) {
-    // TODO: Logging
-    // ! TODO: Increment attempts here, block email if too many attempts
-    res.status(403).json({ message: "Invalid login code" });
-    return;
-  }
-
-  // Get the user to set the cookie
-  let user: User | null = null;
-
-  try {
-    user = await req.items.findOne<User>({
-      email: email as Email
-    });
-  } catch (error) {
-    // TODO: Logging
-    res
-      .status(500)
-      .json({ message: "An error ocurred logging you in!", error });
-    return;
-  }
-
-  if (user === null) {
-    res.status(404).json({ message: "User not found!" });
-    return;
-  }
-
-  const { _id: userId } = user;
-
-  // Get the default membership for a user, and with it, the org and workspace
-  let defaultUserMembership: Membership | null = null;
-
-  try {
-    defaultUserMembership = await req.items.findOne<Membership>({
-      related_to: {
-        $elemMatch: {
-          id: userId,
-          type: RelatedToType.MEMBERSHIPS
-        }
-      },
-      isDefault: true
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "An error ocurred getting your memberships!",
-      error
-    });
-    return;
-  }
-
-  const sessionId = generatePlutomiId({
-    date: now,
-    idPrefix: IdPrefix.SESSION
-  });
-  const orgForSession = defaultUserMembership?.org ?? EmptyValues.NO_ORG;
-  const workspaceForSession =
-    defaultUserMembership?.workspace ?? EmptyValues.NO_WORKSPACE;
-
-  const newSession: Session = {
-    _id: sessionId,
-    _type: IdPrefix.SESSION,
-    _locked_at: KSUID.randomSync().string,
-    user: userId,
-    org: orgForSession,
-    workspace: workspaceForSession,
-    created_at: now,
-    updated_at: now,
-    // ! TODO: Schedule an event to mark this as expired
-    expires_at: dayjs(now)
-      .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
-      .toISOString(),
-    status: SessionStatus.ACTIVE,
-    ip: req.clientIp ?? "unknown",
-    user_agent: req.get("User-Agent") ?? "unknown",
-    related_to: [
-      {
-        id: sessionId,
-        type: RelatedToType.SELF
-      },
-      {
-        id: userId,
-        type: RelatedToType.SESSIONS
-      },
-      {
-        id: workspaceForSession,
-        type: RelatedToType.SESSIONS
+        respondedInTransaction = true;
+        await transactionSession.abortTransaction();
+        return;
       }
-    ]
-  };
+      // 2. Get the most recent code for this user
+      const mostRecentCodes = await req.items
+        .find<TOTPCode>({
+          related_to: {
+            $elemMatch: {
+              id: email,
+              type: RelatedToType.TOTPS
+            }
+          }
+        })
+        .sort({ _id: -1 })
+        .limit(1)
+        .toArray();
 
-  try {
-    await req.items.insertOne(newSession);
-  } catch (error) {
-    res.status(500).json({ message: "An error ocurred logging you in!" });
-    return;
-  }
+      const mostRecentCode = mostRecentCodes[0];
 
-  try {
-    const cookieJar = getCookieJar({ req, res });
-    cookieJar.set(getSessionCookieName(), sessionId, getCookieSettings());
+      if (
+        // Code not found
+        mostRecentCode === undefined ||
+        // No longer active
+        mostRecentCode.status !== TOTPCodeStatus.ACTIVE ||
+        // Expired by date exhaustive check
+        // TODO: Can remove when scheduled events are in
+        dayjs(mostRecentCode.expires_at).isBefore(now) ||
+        // Code is wrong
+        mostRecentCode.code !== totpCode
+      ) {
+        // TODO: Logging
+        // ! TODO: Increment attempts here, block email if too many attempts
+        res.status(403).json({ message: "Invalid login code" });
+        respondedInTransaction = true;
+        await transactionSession.abortTransaction();
+        return;
+      }
 
-    res.status(200).json({ message: "Logged in successfully!" });
-  } catch (error) {
-    res.status(500).json({ message: "An error ocurred logging you in", error });
-    return;
-  }
+      const { _id: userId } = user;
 
-  if (!user.email_verified) {
-    try {
+      const newSession = await createSession({
+        req,
+        now,
+        userId
+      });
+
+      // Create the new session
+      await req.items.insertOne(newSession, { session: transactionSession });
+
+      // Mark the code that was just used as used
+      const { _id: mostRecentCodeId } = mostRecentCode;
+      await req.items.updateOne(
+        {
+          _id: mostRecentCodeId
+        },
+        {
+          $set: {
+            status: TOTPCodeStatus.USED,
+            updated_at: now,
+            used_at: now,
+            // Lock the code
+            _locked_at: KSUID.randomSync().string
+          }
+        },
+        { session: transactionSession }
+      );
+
+      // Update the user's verified email status if needed
       await req.items.updateOne(
         {
           related_to: {
@@ -194,58 +149,51 @@ export const post: RequestHandler = async (req, res) => {
           $set: {
             email_verified: true,
             email_verified_at: now,
-            updated_at: now
+            updated_at: now,
+            _locked_at: KSUID.randomSync().string
           }
-        }
+        },
+        { session: transactionSession }
       );
-    } catch (error) {
-      // TODO: Logging
-    }
-  }
 
-  const { _id: usedCodeId } = mostRecentCode;
-
-  try {
-    // Mark the code that was just used as used
-    // ! TODO: Find one and update!
-    await req.items.updateOne(
-      {
-        _id: usedCodeId
-      },
-      {
-        $set: {
-          status: TOTPCodeStatus.USED,
-          updated_at: now,
-          used_at: now
-        }
-      }
-    );
-  } catch (error) {
-    // ! TODO: Logging
-  }
-
-  // Expire all other active codes
-  try {
-    await req.items.updateMany(
-      {
-        _id: { $ne: usedCodeId },
-        status: TOTPCodeStatus.ACTIVE,
-        related_to: {
-          $elemMatch: {
-            id: email,
-            type: RelatedToType.TOTPS
+      // Invalidate all other active codes
+      await req.items.updateMany(
+        {
+          _id: { $ne: mostRecentCodeId },
+          status: TOTPCodeStatus.ACTIVE,
+          related_to: {
+            $elemMatch: {
+              id: email,
+              type: RelatedToType.TOTPS
+            }
           }
-        }
-      },
-      {
-        $set: {
-          status: TOTPCodeStatus.INVALIDATED,
-          updated_at: now,
-          invalidatedAt: now
-        }
-      }
-    );
+        },
+        {
+          $set: {
+            status: TOTPCodeStatus.INVALIDATED,
+            updated_at: now,
+            invalidated_at: now,
+            _locked_at: KSUID.randomSync().string
+          }
+        },
+        { session: transactionSession }
+      );
+
+      const { _id: sessionId } = newSession;
+      const cookieJar = getCookieJar({ req, res });
+      cookieJar.set(getSessionCookieName(), sessionId, getCookieSettings());
+
+      res.status(200).json({ message: "Logged in successfully!" });
+    });
   } catch (error) {
-    // ! TODO: Logging
+    if (!respondedInTransaction) {
+      res.status(500).json({
+        message: "An error ocurred logging you in",
+        error
+      });
+      return;
+    }
+  } finally {
+    await transactionSession.endSession();
   }
 };

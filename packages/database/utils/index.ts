@@ -7,4 +7,5 @@ export * from "./createJoinedAggregation";
 export * from "./getDbName";
 export * from "./createIndex";
 export * from "./env";
+export * from "./transactionOptions";
 // export * from "./scripts";

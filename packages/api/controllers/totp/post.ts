@@ -18,6 +18,7 @@ import type { RequestHandler } from "express";
 import dayjs from "dayjs";
 import { type ModifyResult, ReturnDocument } from "mongodb";
 import KSUID from "ksuid";
+import { transactionOptions } from "@plutomi/database";
 import {
   EMAIL_TEMPLATES,
   clearCookie,
@@ -75,14 +76,7 @@ export const post: RequestHandler = async (req, res) => {
   let shouldSendCode = false;
   let respondedInTransaction = false;
 
-  const transactionSession = req.client.startSession({
-    // TODO: Move this out!
-    defaultTransactionOptions: {
-      readPreference: "primary",
-      readConcern: { level: "majority" },
-      writeConcern: { w: "majority" }
-    }
-  });
+  const transactionSession = req.client.startSession(transactionOptions);
   const totpCode = generateTOTP();
 
   try {
@@ -91,8 +85,6 @@ export const post: RequestHandler = async (req, res) => {
     // 3. Create a new login code for this user
     const transactionResults = await transactionSession.withTransaction(
       async () => {
-        await delay({ ms: 5000 });
-
         // 1. Get & LOCK the user if they exist with that email, and if not, create them
         const { value } = (await req.items.findOneAndUpdate(
           { email: email as Email },
@@ -116,9 +108,8 @@ export const post: RequestHandler = async (req, res) => {
 
         if (value === null) {
           // Concurrent request, return an error
-          res.status(429).json({
-            message:
-              "You already have a one time code request in progress. Please wait a few seconds and try again."
+          res.status(409).json({
+            message: "An error ocurred logging you in, please try again."
           });
 
           respondedInTransaction = true;

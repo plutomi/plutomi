@@ -42,13 +42,13 @@ type MembershipRelatedToArray = [
 
 export type Membership = BaseEntity<IdPrefix.MEMBERSHIP> & {
   org: PlutomiId<IdPrefix.ORG>;
-  orgRole: OrgRole;
+  org_role: OrgRole;
   /**
    * When logging in, we need to know which workspace to redirect to.
    */
-  isDefault: boolean;
+  is_default: boolean;
   workspace: PlutomiId<IdPrefix.WORKSPACE>;
-  workspaceRole: WorkspaceRole;
+  workspace_role: WorkspaceRole;
   user: PlutomiId<IdPrefix.USER>;
   related_to: MembershipRelatedToArray;
   status: MembershipStatus;
