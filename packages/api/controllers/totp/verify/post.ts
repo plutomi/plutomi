@@ -38,9 +38,10 @@ export const post: RequestHandler = async (req, res) => {
   try {
     // 1. Lock the user for concurrent requests
     // 2. Get the most recent login code for this user, see if it is valid
-    // 3. Create a new login code for this user
+    // 3. Mark code as used
     // 4. Invalidate all other active codes
-    // 5. Update the user's session
+    // 5. Verify the user's email address if they haven't already
+    // 6. Update the user's session with their default workspace
     await transactionSession.withTransaction(async () => {
       const now = new Date();
 
@@ -106,18 +107,7 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
 
-      const { _id: userId } = user;
-
-      const newSession = await createSession({
-        req,
-        now,
-        userId
-      });
-
-      // Create the new session
-      await req.items.insertOne(newSession, { session: transactionSession });
-
-      // Mark the code that was just used as used
+      // 3. Mark the code that was just used as used
       const { _id: mostRecentCodeId } = mostRecentCode;
       await req.items.updateOne(
         {
@@ -135,28 +125,7 @@ export const post: RequestHandler = async (req, res) => {
         { session: transactionSession }
       );
 
-      // Update the user's verified email status if needed
-      await req.items.updateOne(
-        {
-          related_to: {
-            $elemMatch: {
-              id: email,
-              type: RelatedToType.USERS
-            }
-          }
-        },
-        {
-          $set: {
-            email_verified: true,
-            email_verified_at: now,
-            updated_at: now,
-            _locked_at: KSUID.randomSync().string
-          }
-        },
-        { session: transactionSession }
-      );
-
-      // Invalidate all other active codes
+      // 4. Invalidate all other active codes
       await req.items.updateMany(
         {
           _id: { $ne: mostRecentCodeId },
@@ -179,13 +148,45 @@ export const post: RequestHandler = async (req, res) => {
         { session: transactionSession }
       );
 
+      const { _id: userId } = user;
+
+      // 5. Update the user's verified email status if needed
+      if (!user.email_verified) {
+        await req.items.updateOne(
+          {
+            _id: userId
+          },
+          {
+            $set: {
+              email_verified: true,
+              email_verified_at: now,
+              updated_at: now,
+              _locked_at: KSUID.randomSync().string
+            }
+          },
+          { session: transactionSession }
+        );
+      }
+
+      const newSession = await createSession({
+        req,
+        now,
+        userId
+      });
+
+      // 6. Create the new session for the user at their default workspace
+      await req.items.insertOne(newSession, { session: transactionSession });
+
       const { _id: sessionId } = newSession;
       const cookieJar = getCookieJar({ req, res });
       cookieJar.set(getSessionCookieName(), sessionId, getCookieSettings());
 
       res.status(200).json({ message: "Logged in successfully!" });
+      respondedInTransaction = true;
     });
   } catch (error) {
+    // TODO: Logging,
+    // Generic error
     if (!respondedInTransaction) {
       res.status(500).json({
         message: "An error ocurred logging you in",
