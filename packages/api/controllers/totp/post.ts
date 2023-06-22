@@ -15,7 +15,7 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import { type ModifyResult, ReturnDocument } from "mongodb";
+import { type ModifyResult, ReturnDocument, StrictFilter } from "mongodb";
 import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
 import {
@@ -83,103 +83,106 @@ export const post: RequestHandler = async (req, res) => {
     // 1. Lock the user for concurrent requests / create a new user if they doesn't exist
     // 2. Get the recent login codes for this user, and see if they're allowed to request another one at this time
     // 3. Create a new login code for this user
-    const transactionResults = await transactionSession.withTransaction(
-      async () => {
-        // 1. Get & LOCK the user if they exist with that email, and if not, create them
-        const { value } = (await req.items.findOneAndUpdate(
-          { email: email as Email },
-          {
-            $set: {
-              // Note: This runs after $setOnInsert, so we can use the user object here
-              _locked_at: KSUID.randomSync().string,
-              updated_at: new Date()
-            },
-            $setOnInsert: createUser({
-              email: email as Email,
-              removedKeys: ["_locked_at", "updated_at"]
-            })
+    await transactionSession.withTransaction(async () => {
+      // 1. Get & LOCK the user if they exist with that email, and if not, create them
+      const { value } = (await req.items.findOneAndUpdate(
+        { email: email as Email },
+        {
+          $set: {
+            // Note: This runs after $setOnInsert, so we can use the user object here
+            _locked_at: KSUID.randomSync().string,
+            updated_at: new Date()
           },
+          $setOnInsert: createUser({
+            email: email as Email,
+            removedKeys: ["_locked_at", "updated_at"]
+          })
+        },
+        {
+          upsert: true,
+          returnDocument: ReturnDocument.AFTER,
+          session: transactionSession
+        }
+      )) as ModifyResult<User>;
+
+      if (value === null) {
+        // Concurrent request, return an error
+        res.status(409).json({
+          message: "An error ocurred logging you in, please try again."
+        });
+
+        respondedInTransaction = true;
+        await transactionSession.abortTransaction();
+        return;
+      }
+
+      user = value;
+
+      if (!user.can_receive_emails) {
+        // TODO: Logging
+        res.status(403).json({
+          message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
+        });
+        respondedInTransaction = true;
+        await transactionSession.abortTransaction();
+        return;
+      }
+
+      const { _id: userId } = user;
+
+      const recentTotpCodesFilter: StrictFilter<TOTPCode> = {
+        status: TOTPCodeStatus.ACTIVE,
+        related_to: {
+          $elemMatch: {
+            id: userId,
+            type: 
+      };
+      const recentTotpCodes: TOTPCode[] = await req.items
+        // Get N active codes for this user in the last N minutes
+        .find<TOTPCode>(
           {
-            upsert: true,
-            returnDocument: ReturnDocument.AFTER,
-            session: transactionSession
-          }
-        )) as ModifyResult<User>;
-
-        if (value === null) {
-          // Concurrent request, return an error
-          res.status(409).json({
-            message: "An error ocurred logging you in, please try again."
-          });
-
-          respondedInTransaction = true;
-          await transactionSession.abortTransaction();
-          return;
-        }
-
-        user = value;
-
-        if (!user.can_receive_emails) {
-          // TODO: Logging
-          res.status(403).json({
-            message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
-          });
-          respondedInTransaction = true;
-          await transactionSession.abortTransaction();
-          return;
-        }
-
-        const { _id: userId } = user;
-
-        const recentTotpCodes: TOTPCode[] = await req.items
-          // Get N active codes for this user in the last N minutes
-          .find<TOTPCode>(
-            {
-              status: TOTPCodeStatus.ACTIVE,
-              related_to: {
-                $elemMatch: {
-                  id: userId,
-                  type: RelatedToType.TOTPS
-                }
-              },
-              created_at: {
-                $gte: dayjs()
-                  .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
-                  .toDate()
+            status: TOTPCodeStatus.ACTIVE,
+            related_to: {
+              $elemMatch: {
+                id: userId,
+                type: RelatedToType.TOTPS
               }
             },
-            {
-              limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
-              session: transactionSession
+            created_at: {
+              $gte: dayjs()
+                .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+                .toDate()
             }
-          )
-          .toArray();
+          },
+          {
+            limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
+            session: transactionSession
+          }
+        )
+        .toArray();
 
-        if (
-          recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME
-        ) {
-          // ! TODO: Log attempt
-          res.status(403).json({
-            message:
-              "You have requested too many login codes recently, please try again in a bit."
-          });
-          respondedInTransaction = true;
-          await transactionSession.abortTransaction();
-          return;
-        }
-
-        totpCodeItem = createTotpCodeItem({
-          userId,
-          email: email as Email
+      if (recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
+        // ! TODO: Log attempt
+        res.status(403).json({
+          message:
+            "You have requested too many login codes recently, please try again in a bit."
         });
-        // Create the code
-        await req.items.insertOne(totpCodeItem, {
-          session: transactionSession
-        });
-
-        shouldSendCode = true;
+        respondedInTransaction = true;
+        await transactionSession.abortTransaction();
+        return;
       }
-    );
+
+      totpCodeItem = createTotpCodeItem({
+        userId,
+        email: email as Email
+      });
+      // Create the code
+      await req.items.insertOne(totpCodeItem, {
+        session: transactionSession
+      });
+
+      shouldSendCode = true;
+    });
   } catch (error) {
     // TODO: Logging
     if (!respondedInTransaction) {
