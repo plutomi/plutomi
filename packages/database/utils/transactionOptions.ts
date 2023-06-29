@@ -1,9 +1,13 @@
-import type { ClientSessionOptions } from "mongodb";
+import {
+  ReadConcernLevel,
+  type ClientSessionOptions,
+  ReadPreferenceMode
+} from "mongodb";
 
 export const transactionOptions: ClientSessionOptions = {
   defaultTransactionOptions: {
-    readPreference: "primary",
-    readConcern: { level: "majority" },
+    readPreference: ReadPreferenceMode.primary,
+    readConcern: { level: ReadConcernLevel.majority },
     writeConcern: { w: "majority" }
   }
 };
