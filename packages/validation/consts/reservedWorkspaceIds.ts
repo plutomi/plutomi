@@ -86,8 +86,7 @@ export const reservedWorkspaceIds = [
 
   // Misc
 
-  "opening",
-  "openings",
+
 
   "apply",
   "join",
@@ -100,7 +99,16 @@ export const reservedWorkspaceIds = [
   "position",
   "positions",
 
-  "open",
+  "open", // Open Startup
+  "investors",
+  "ir",
+  "faq",
+  "support",
+  "help",
+  
+
+  "opening",
+  "openings",
   "funnel",
   "funnels",
 
@@ -243,6 +251,7 @@ export const reservedWorkspaceIds = [
   "place",
   "followups",
   "invites",
+  "invoices",
   "assessments",
 
   "verification",
