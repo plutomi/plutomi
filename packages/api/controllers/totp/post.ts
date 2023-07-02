@@ -29,6 +29,11 @@ import {
   createUser
 } from "../../utils";
 
+/**
+ *
+ * Creates a user if they don't exist, and sends them a TOTP code via email.
+ * Prevents sending multiple emails in a short period of time.
+ */
 export const post: RequestHandler = async (req, res) => {
   const cookieJar = getCookieJar({ req, res });
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
@@ -83,7 +88,7 @@ export const post: RequestHandler = async (req, res) => {
     // 2. Get the recent login codes for this user, and see if they're allowed to request another one at this time
     // 3. Create a new login code for this user
     await transactionSession.withTransaction(async () => {
-      // 1. Get & lock the user if they exist with that email, and if not, create them
+      // 1. Get & lock the user if they exist with that email, and if not, create them.
       const { value } = (await req.items.findOneAndUpdate(
         { email: email as Email },
         {

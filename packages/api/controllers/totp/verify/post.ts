@@ -3,22 +3,27 @@ import {
   TOTPCodeStatus,
   type Email,
   type User,
-  type TOTPCode,
-  delay
+  type TOTPCode
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
-import dayjs from "dayjs";
 import type { RequestHandler } from "express";
 import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
 import { type ModifyResult, ReturnDocument } from "mongodb";
 import {
+  codeIsValid,
   createSessionItem,
   getCookieJar,
   getCookieSettings,
   getSessionCookieName
 } from "../../../utils";
 
+/**
+ *
+ * Get the most recent code for a user and see if it is valid.
+ * If it is, mark it as used and invalidate all other codes.
+ * Verify the user's email address and update the user's session with their default workspace.
+ */
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
     req,
@@ -36,16 +41,10 @@ export const post: RequestHandler = async (req, res) => {
   let respondedInTransaction = false;
 
   try {
-    // 1. Lock the user for concurrent requests
-    // 2. Get the most recent login code for this user, see if it is valid
-    // 3. Mark code as used
-    // 4. Invalidate all other active codes
-    // 5. Verify the user's email address if they haven't already
-    // 6. Update the user's session with their default workspace
     await transactionSession.withTransaction(async () => {
       const now = new Date();
 
-      // 1. Lock the user
+      // 1. Lock the user to prevent concurrent requests
       const { value: user } = (await req.items.findOneAndUpdate(
         { email: email as Email },
         {
@@ -55,12 +54,10 @@ export const post: RequestHandler = async (req, res) => {
           }
         },
         {
-          upsert: true,
           returnDocument: ReturnDocument.AFTER,
           session: transactionSession
         }
       )) as ModifyResult<User>;
-      await delay({ ms: 5000 });
 
       if (user === null) {
         // Concurrent request, return an error
@@ -73,31 +70,28 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
       // 2. Get the most recent code for this user
-      const mostRecentCodes = await req.items
-        .find<TOTPCode>({
-          related_to: {
-            $elemMatch: {
-              id: email,
-              type: RelatedToType.TOTPS
-            }
-          }
-        })
-        .sort({ created_at: -1 })
-        .limit(1)
-        .toArray();
+      const mostRecentCode = (
+        await req.items
+          .find<TOTPCode>(
+            {
+              related_to: {
+                $elemMatch: {
+                  id: email,
+                  type: RelatedToType.TOTPS
+                }
+              }
+            },
+            { session: transactionSession, sort: { created_at: -1 }, limit: 1 }
+          )
+          .toArray()
+      )[0];
 
-      const mostRecentCode = mostRecentCodes[0];
-
+      // Check if the code is valid - // ! TODO: Extract to it's own function
       if (
-        // Code not found
-        mostRecentCode === undefined ||
-        // No longer active
-        mostRecentCode.status !== TOTPCodeStatus.ACTIVE ||
-        // Expired by date exhaustive check
-        // TODO: Can remove when scheduled events are in
-        dayjs(mostRecentCode.expires_at).isBefore(now) ||
-        // Code is wrong
-        mostRecentCode.code !== totpCode
+        !codeIsValid({
+          mostRecentCode,
+          codeFromClient: totpCode
+        })
       ) {
         // TODO: Logging
         // ! TODO: Increment attempts here, block email if too many attempts
@@ -109,6 +103,7 @@ export const post: RequestHandler = async (req, res) => {
 
       // 3. Mark the code that was just used as used
       const { _id: mostRecentCodeId } = mostRecentCode;
+
       await req.items.updateOne(
         {
           _id: mostRecentCodeId
@@ -117,9 +112,8 @@ export const post: RequestHandler = async (req, res) => {
           $set: {
             status: TOTPCodeStatus.USED,
             updated_at: now,
-            used_at: now,
-            // Lock the code
-            _locked_at: KSUID.randomSync().string
+            locked_at: KSUID.randomSync().string,
+            used_at: now
           }
         },
         { session: transactionSession }
@@ -142,7 +136,7 @@ export const post: RequestHandler = async (req, res) => {
             status: TOTPCodeStatus.INVALIDATED,
             updated_at: now,
             invalidated_at: now,
-            _locked_at: KSUID.randomSync().string
+            locked_at: KSUID.randomSync().string
           }
         },
         { session: transactionSession }
@@ -160,8 +154,7 @@ export const post: RequestHandler = async (req, res) => {
             $set: {
               email_verified: true,
               email_verified_at: now,
-              updated_at: now,
-              _locked_at: KSUID.randomSync().string
+              updated_at: now
             }
           },
           { session: transactionSession }
