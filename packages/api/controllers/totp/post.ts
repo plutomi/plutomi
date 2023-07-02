@@ -15,7 +15,7 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import { type ModifyResult, ReturnDocument, StrictFilter } from "mongodb";
+import { type ModifyResult, ReturnDocument } from "mongodb";
 import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
 import {
@@ -25,14 +25,13 @@ import {
   getSessionCookieName,
   sendEmail,
   sessionIsActive,
-  createTotpCodeItem,
+  createTotpCode,
   createUser
 } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
   const cookieJar = getCookieJar({ req, res });
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
-
   const totpCode = generateTOTP();
 
   if (sessionId !== undefined) {
@@ -84,17 +83,18 @@ export const post: RequestHandler = async (req, res) => {
     // 2. Get the recent login codes for this user, and see if they're allowed to request another one at this time
     // 3. Create a new login code for this user
     await transactionSession.withTransaction(async () => {
-      // 1. Get & LOCK the user if they exist with that email, and if not, create them
+      // 1. Get & lock the user if they exist with that email, and if not, create them
       const { value } = (await req.items.findOneAndUpdate(
         { email: email as Email },
         {
           $set: {
-            // Note: This runs after $setOnInsert, so we can use the user object here
+            // Note: This runs after $setOnInsert
             _locked_at: KSUID.randomSync().string,
             updated_at: new Date()
           },
           $setOnInsert: createUser({
             email: email as Email,
+            // The $set above will update these
             removedKeys: ["_locked_at", "updated_at"]
           })
         },
@@ -119,6 +119,7 @@ export const post: RequestHandler = async (req, res) => {
       user = value;
 
       if (!user.can_receive_emails) {
+        // Don't even attempt to create a new code if the user can't receive emails
         // TODO: Logging
         res.status(403).json({
           message: `You have unsubscribed from emails from Plutomi. Please reach out to ${PlutomiEmails.JOSE} if you would like to resubscribe.`
@@ -130,38 +131,28 @@ export const post: RequestHandler = async (req, res) => {
 
       const { _id: userId } = user;
 
-      const recentTotpCodesFilter: StrictFilter<TOTPCode> = {
-        status: TOTPCodeStatus.ACTIVE,
-        related_to: {
-          $elemMatch: {
-            id: userId,
-            type: 
-      };
-      const recentTotpCodes: TOTPCode[] = await req.items
-        // Get N active codes for this user in the last N minutes
-        .find<TOTPCode>(
-          {
-            status: TOTPCodeStatus.ACTIVE,
-            related_to: {
-              $elemMatch: {
-                id: userId,
-                type: RelatedToType.TOTPS
-              }
-            },
-            created_at: {
-              $gte: dayjs()
-                .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
-                .toDate()
+      const countOfActiveCodes = await req.items.countDocuments(
+        {
+          status: TOTPCodeStatus.ACTIVE,
+          related_to: {
+            $elemMatch: {
+              id: userId,
+              type: RelatedToType.TOTPS
             }
           },
-          {
-            limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
-            session: transactionSession
+          created_at: {
+            $gte: dayjs()
+              .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+              .toDate()
           }
-        )
-        .toArray();
+        },
+        {
+          limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
+          session: transactionSession
+        }
+      );
 
-      if (recentTotpCodes.length >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
+      if (countOfActiveCodes >= MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME) {
         // ! TODO: Log attempt
         res.status(403).json({
           message:
@@ -172,7 +163,7 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
 
-      totpCodeItem = createTotpCodeItem({
+      totpCodeItem = createTotpCode({
         userId,
         email: email as Email
       });
@@ -203,7 +194,6 @@ export const post: RequestHandler = async (req, res) => {
 
   // Send code to user
   try {
-    console.log("Sending mail");
     await sendEmail({
       to: email as Email,
       subject: `Your Plutomi Code - ${totpCode}`,
@@ -214,12 +204,10 @@ export const post: RequestHandler = async (req, res) => {
       bodyHtml: EMAIL_TEMPLATES.TOTPTemplate({ code: totpCode })
     });
 
-    console.log("Mail sent!");
     res.status(201).json({
       message: "A login code has been sent to your email"
     });
   } catch (error) {
-    console.log(`DOUBLE SEND HAPPEND?!?!?`);
     // ! TODO: Possible double send? How
     res.status(500).json({
       message: "An error ocurred sending your login code",
