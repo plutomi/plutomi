@@ -23,6 +23,11 @@ export type Session = BaseEntity<IdPrefix.SESSION> & {
   expires_at: string;
   user_agent: string;
   related_to: SessionRelatedToArray;
+  logged_out_at: Date | null;
+  expired_at: Date | null;
+  revoked_at: Date | null;
+  workspace_switched_at: Date | null;
+  active_at: Date | null;
   status: SessionStatus;
   org: PlutomiId<IdPrefix.ORG> | EmptyValues.NO_ORG;
   workspace: PlutomiId<IdPrefix.WORKSPACE> | EmptyValues.NO_WORKSPACE;

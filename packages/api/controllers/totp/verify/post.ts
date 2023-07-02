@@ -61,6 +61,7 @@ export const post: RequestHandler = async (req, res) => {
 
       if (user === null) {
         // Concurrent request, return an error
+        // User guaranteed to exist at this point as they are created when a code is sent
         res.status(409).json({
           message: "An error ocurred logging you in, please try again."
         });
@@ -112,7 +113,7 @@ export const post: RequestHandler = async (req, res) => {
             status: TOTPCodeStatus.USED,
             used_at: now,
             updated_at: now,
-            locked_at: KSUID.randomSync().string
+            _locked_at: KSUID.randomSync().string
           }
         },
         { session: transactionSession }
@@ -135,7 +136,7 @@ export const post: RequestHandler = async (req, res) => {
             status: TOTPCodeStatus.INVALIDATED,
             updated_at: now,
             invalidated_at: now,
-            locked_at: KSUID.randomSync().string
+            _locked_at: KSUID.randomSync().string
           }
         },
         { session: transactionSession }

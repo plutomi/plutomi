@@ -53,6 +53,11 @@ export const createSessionItem = async ({
     workspace: workspaceForSession,
     created_at: now,
     updated_at: now,
+    active_at: now,
+    logged_out_at: null,
+    revoked_at: null,
+    workspace_switched_at: null,
+    expired_at: null,
     // ! TODO: Schedule an event to mark this as expired
     expires_at: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")

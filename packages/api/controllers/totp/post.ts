@@ -89,16 +89,16 @@ export const post: RequestHandler = async (req, res) => {
       const { value } = (await req.items.findOneAndUpdate(
         { email: email as Email },
         {
-          $set: {
-            // Note: This runs after $setOnInsert
-            _locked_at: KSUID.randomSync().string,
-            updated_at: new Date()
-          },
           $setOnInsert: createUser({
             email: email as Email,
             // The $set above will update these
             removedKeys: ["_locked_at", "updated_at"]
-          })
+          }),
+          $set: {
+            // Note: This runs after $setOnInsert
+            _locked_at: KSUID.randomSync().string,
+            updated_at: new Date()
+          }
         },
         {
           upsert: true,
@@ -108,7 +108,8 @@ export const post: RequestHandler = async (req, res) => {
       )) as ModifyResult<User>;
 
       if (value === null) {
-        // Concurrent request, return an error
+        // Concurrent request, return an error.
+        // User guaranteed to exist at this point due to upsert above
         res.status(409).json({
           message: "An error ocurred logging you in, please try again."
         });
@@ -165,11 +166,11 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
 
+      // Create the code
       totpCodeItem = createTotpCode({
         userId,
         email: email as Email
       });
-      // Create the code
       await req.items.insertOne(totpCodeItem, {
         session: transactionSession
       });
@@ -179,7 +180,7 @@ export const post: RequestHandler = async (req, res) => {
     if (!respondedInTransaction) {
       // Generic error
       res.status(500).json({
-        message: "An error ocurred creating your TOTP code, please try again.",
+        message: "An error ocurred creating your login code, please try again.",
         error
       });
     }

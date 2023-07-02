@@ -1,5 +1,4 @@
 import type { RequestHandler } from "express";
-import dayjs from "dayjs";
 import { SessionStatus } from "@plutomi/shared";
 import { clearCookie, getCookieJar } from "../../utils";
 
@@ -11,9 +10,9 @@ export const get: RequestHandler = async (req, res) => {
   clearCookie({ cookieJar });
 
   res.sendStatus(204);
-
   const { _id: sessionId } = req.session;
-
+  const now = new Date();
+  
   try {
     // Log out the session in the DB
     await req.items.updateOne(
@@ -23,7 +22,8 @@ export const get: RequestHandler = async (req, res) => {
       {
         $set: {
           status: SessionStatus.LOGGED_OUT,
-          updated_at: dayjs().toISOString()
+          updated_at: now,
+          logged_out_at: now
         }
       }
     );
