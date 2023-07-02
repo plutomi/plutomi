@@ -24,7 +24,7 @@ type CreateTOTPCodeProps = {
 export const createTotpCode = ({
   userId,
   email
-}: createTotpCodeItemProps): TOTPCode => {
+}: CreateTOTPCodeProps): TOTPCode => {
   const now = new Date();
   const totpCodeId = generatePlutomiId({
     date: now,

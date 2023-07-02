@@ -86,7 +86,7 @@ export const post: RequestHandler = async (req, res) => {
           .toArray()
       )[0];
 
-      // Check if the code is valid - // ! TODO: Extract to it's own function
+      // Check if the code is valid
       if (
         !codeIsValid({
           mostRecentCode,
@@ -103,7 +103,6 @@ export const post: RequestHandler = async (req, res) => {
 
       // 3. Mark the code that was just used as used
       const { _id: mostRecentCodeId } = mostRecentCode;
-
       await req.items.updateOne(
         {
           _id: mostRecentCodeId
@@ -111,9 +110,9 @@ export const post: RequestHandler = async (req, res) => {
         {
           $set: {
             status: TOTPCodeStatus.USED,
+            used_at: now,
             updated_at: now,
-            locked_at: KSUID.randomSync().string,
-            used_at: now
+            locked_at: KSUID.randomSync().string
           }
         },
         { session: transactionSession }

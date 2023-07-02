@@ -1,7 +1,6 @@
 import {
   type IdPrefix,
   RelatedToType,
-  generateTOTP,
   type User,
   type Email,
   type TOTPCode,
@@ -37,7 +36,6 @@ import {
 export const post: RequestHandler = async (req, res) => {
   const cookieJar = getCookieJar({ req, res });
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
-  const totpCode = generateTOTP();
 
   if (sessionId !== undefined) {
     try {
@@ -77,7 +75,6 @@ export const post: RequestHandler = async (req, res) => {
   const { email } = data;
 
   let user: User | null = null;
-  let shouldSendCode = false;
   let respondedInTransaction = false;
 
   const transactionSession = req.client.startSession(transactionOptions);
@@ -176,8 +173,6 @@ export const post: RequestHandler = async (req, res) => {
       await req.items.insertOne(totpCodeItem, {
         session: transactionSession
       });
-
-      shouldSendCode = true;
     });
   } catch (error) {
     // TODO: Logging
@@ -193,20 +188,22 @@ export const post: RequestHandler = async (req, res) => {
     await transactionSession.endSession();
   }
 
-  if (!shouldSendCode) {
+  if (totpCodeItem === undefined) {
+    // Something failed up above
     return;
   }
 
   // Send code to user
+  const { code } = totpCodeItem;
   try {
     await sendEmail({
       to: email as Email,
-      subject: `Your Plutomi Code - ${totpCode}`,
+      subject: `Your Plutomi Code - ${code}`,
       from: {
         header: "Plutomi",
         email: PlutomiEmails.NO_REPLY
       },
-      bodyHtml: EMAIL_TEMPLATES.TOTPTemplate({ code: totpCode })
+      bodyHtml: EMAIL_TEMPLATES.TOTPTemplate({ code })
     });
 
     res.status(201).json({
