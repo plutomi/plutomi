@@ -45,10 +45,12 @@ export const WaitListCard: React.FC = () => {
                   aria-hidden="true"
                 />
               </div>
-              <dt className="mt-4 font-semibold text-white">Weekly articles</dt>
+              <dt className="mt-4 font-semibold text-white">
+                Plutomi on GitHub
+              </dt>
               <dd className="mt-2 leading-7 text-gray-400">
-                Non laboris consequat cupidatat laborum magna. Eiusmod non irure
-                cupidatat duis commodo amet.
+                The entire codebase for Plutomi is free on GitHub! Feel free to
+                contribute, open issues, or use or something TODO!
               </dd>
             </div>
             <div className="flex flex-col items-start">
@@ -58,10 +60,9 @@ export const WaitListCard: React.FC = () => {
                   aria-hidden="true"
                 />
               </div>
-              <dt className="mt-4 font-semibold text-white">No spam</dt>
+              <dt className="mt-4 font-semibold text-white">Jose on Twitter</dt>
               <dd className="mt-2 leading-7 text-gray-400">
-                Officia excepteur ullamco ut sint duis proident non adipisicing.
-                Voluptate incididunt anim.
+                Jose is the owner of Plutomi - check him out on Twitter!
               </dd>
             </div>
           </dl>
