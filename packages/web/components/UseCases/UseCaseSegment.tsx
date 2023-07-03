@@ -1,10 +1,3 @@
-import {
-  SegmentedControl,
-  Flex,
-  MediaQuery,
-  createStyles,
-  rem
-} from "@mantine/core";
 import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 const useCases: UseCase[] = [
@@ -13,65 +6,31 @@ const useCases: UseCase[] = [
   "Social Services"
 ];
 
-const useStyles = createStyles((theme) => ({
-  root: {
-    backgroundColor: theme.white,
-    boxShadow: theme.shadows.md,
-    border: `${rem(1)} solid ${theme.colors.gray[1]}`
-  },
-
-  indicator: {
-    backgroundImage: theme.fn.gradient({
-      from: "brand.5",
-      to: "brand.3",
-      deg: 20
-    })
-  },
-
-  control: {
-    border: "0 !important"
-  },
-
-  label: {
-    "&, &:hover": {
-      "&[data-active]": {
-        color: theme.white
-      }
-    }
-  }
-}));
-
 export const UseCaseSegment: React.FC = () => {
   const { useCase, setUseCase } = useUseCaseStore();
-  const { classes } = useStyles();
 
+  const isSelected = (title: UseCase) => useCase === title;
   return (
-    <Flex justify="center">
-      <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-        <SegmentedControl
-          radius="lg"
-          size="xl"
-          value={useCase}
-          onChange={(value: UseCase) => {
-            setUseCase(value);
+    <div
+      className="flex space-x-1 rounded-lg bg-slate-200 p-0.5"
+      role="tablist"
+      aria-orientation="horizontal"
+    >
+      {useCases.map((title) => (
+        <button
+          onClick={() => {
+            setUseCase(title);
           }}
-          data={useCases}
-          classNames={classes}
-        />
-      </MediaQuery>
-      <MediaQuery largerThan="md" styles={{ display: "none" }}>
-        <SegmentedControl
-          radius="lg"
-          size="lg"
-          orientation="vertical"
-          value={useCase}
-          onChange={(value: UseCase) => {
-            setUseCase(value);
-          }}
-          data={useCases}
-          classNames={classes}
-        />
-      </MediaQuery>
-    </Flex>
+          className={`flex items-center rounded-md py-[0.4375rem] px-4 text-lg text-slate-500 font-medium ${
+            isSelected(title) ? "bg-white shadow text-slate-900 " : ""
+          }`}
+          role="tab"
+          type="button"
+          aria-selected="true"
+        >
+          <span>{title}</span>
+        </button>
+      ))}
+    </div>
   );
 };

@@ -134,7 +134,7 @@ export const UseCaseCards: React.FC = () => {
     <div className=" rounded-lg bg-white drop-shadow-md" key={item.title}>
       <div className="flex flex-col items-center px-5 py-2">
         <item.icon size="2rem" className={`${item.color}`} />
-        <p className="text-md font-semibold text-slate-700">{item.title}</p>
+        <p className="text-md font-medium text-slate-700">{item.title}</p>
       </div>
 
       <div className="flex border-t py-1 justify-center space-x-2 text-slate-400 items-center">

@@ -23,7 +23,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => {
         </div>
 
         <div className="mt-24">
-          <LatestCommits commits={commits} />d
+          <LatestCommits commits={commits} />
         </div>
       </div>
     </div>
