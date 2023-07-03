@@ -1,6 +1,38 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
-import { FiExternalLink } from "react-icons/fi";
+import { FiExternalLink, FiMail } from "react-icons/fi";
 
+const cards = [
+  {
+    icon: <BsGithub className="h-16 w-16" aria-hidden="true" color="#333" />,
+    href: "https://github.com/plutomi/plutomi",
+    innerContent: (
+      <dd className="mt-2 leading-7 text-slate-500">
+        The entire codebase for Plutomi is available for{" "}
+        <span className="font-bold">free</span> on GitHub under an Apache 2
+        license :)
+      </dd>
+    )
+  },
+  {
+    icon: (
+      <BsTwitter className="h-16 w-16" aria-hidden="true" color="#00acee" />
+    ),
+    href: "https://twitter.com/notjoswayski",
+    innerContent: (
+      <dd className="mt-2 leading-7 text-slate-500">
+        <a
+          target="_blank"
+          href="https://linkedin.com/in/joswayski"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-600 hover:underline "
+        >
+          Jose Valerio (me!)
+        </a>{" "}
+        is the maintainer of Plutomi - you can follow him on Twitter.
+      </dd>
+    )
+  }
+];
 export const WaitListCard: React.FC = () => {
   const x = "";
   return (
@@ -17,19 +49,23 @@ export const WaitListCard: React.FC = () => {
               interested in being notified when Plutomi is ready for use, please
               join our wait list!
             </p>
-            <div className="mt-6 flex max-w-md gap-x-4">
+            <div className="relative mt-6 flex max-w-md gap-x-4">
               <label htmlFor="email-address" className="sr-only">
                 Email address
               </label>
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <FiMail className="h-5 w-5 text-slate-400" aria-hidden="true" />
+              </div>
               <input
                 id="email-address"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                className=" placeholder-slate-400 min-w-0 pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                 placeholder="Enter your email"
               />
+
               <button
                 type="submit"
                 className="rounded-md flex-none transition  ease-in-out duration-200 bg-blue-500 hover:bg-blue-600  px-6 py-2.5  font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
@@ -39,58 +75,32 @@ export const WaitListCard: React.FC = () => {
             </div>
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
-          <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 ">
-              <div className="flex flex-end w-full justify-end">
-                <button
-                  className="inline-block text-slate-500 p-1.5"
-                  type="button"
-                >
-                  <FiExternalLink className="h-6 w-6 text-slate-500" />
-                </button>
-              </div>
+            {cards.map((card) => (
+              <a
+                target="_blank"
+                href={card.href}
+                rel="noopener noreferrer"
+                className="transition ease-in-out duration-300  cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 "
+              >
+                <div>
+                  <div className="flex flex-end w-full justify-end">
+                    <button
+                      className="inline-block text-slate-500 p-1.5"
+                      type="button"
+                    >
+                      <FiExternalLink className="h-6 w-6 text-slate-500" />
+                    </button>
+                  </div>
 
-              <div className="flex flex-col justify-center items-center ">
-                <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
-                  <BsGithub
-                    className="h-16 w-16"
-                    aria-hidden="true"
-                    color="#333"
-                  />
+                  <div className="flex flex-col justify-center items-center ">
+                    <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
+                      {card.icon}
+                    </div>
+                    {card.innerContent}
+                  </div>
                 </div>
-
-                <dd className="mt-2 leading-7 text-slate-500">
-                  The entire codebase for Plutomi is available for{" "}
-                  <span className="font-bold">free</span> on GitHub :)
-                </dd>
-              </div>
-            </div>
-
-            <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 ">
-              <div className="flex flex-end w-full justify-end">
-                <button
-                  className="inline-block text-slate-500 p-1.5"
-                  type="button"
-                >
-                  <FiExternalLink className="h-6 w-6 text-slate-500" />
-                </button>
-              </div>
-
-              <div className="flex flex-col justify-center items-center ">
-                <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
-                  <BsTwitter
-                    className="h-16 w-16"
-                    aria-hidden="true"
-                    color="#00acee"
-                  />
-                </div>
-                <dd className="mt-2 leading-7 text-slate-500">
-                  <span className="text-blue-500 hover:text-blue-600 hover:underline ">
-                    Jose Valerio
-                  </span>{" "}
-                  is the maintainer of Plutomi - you can follow him on Twitter!
-                </dd>
-              </div>
-            </div>
+              </a>
+            ))}
           </dl>
         </div>
       </div>

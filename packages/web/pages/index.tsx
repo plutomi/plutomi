@@ -26,7 +26,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => {
         <div className="mt-12">
           <WaitListCard />
         </div>
-        <div className="mt-24">
+        <div className="mt-12">
           <LatestCommits commits={commits} />
         </div>
       </div>

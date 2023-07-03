@@ -40,9 +40,14 @@ export const Commit: React.FC<CommitType> = ({
           </p>
           <p className="text-lg font-semibold text-slate-700 ">
             {name} -{" "}
-            <span className="text-blue-500 hover:text-blue-600 hover:underline ">
+            <a
+              target="_blank"
+              href={`https://github.com/${username}`}
+              rel="noopener noreferrer"
+              className="transition ease-in-out duration-200 text-blue-500 hover:text-blue-600 hover:underline "
+            >
               @{username}
-            </span>
+            </a>
           </p>
 
           <p className="text-slate-500 line-clamp-2">{message}</p>
