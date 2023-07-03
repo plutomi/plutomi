@@ -9,9 +9,8 @@ import { generatePlutomiId } from "../generatePlutomiId";
 
 type CreateUserProps = {
   email: Email;
-  removedKeys?: Array<keyof User>;
 };
-export const createUser = ({ email, removedKeys }: CreateUserProps): User => {
+export const createUser = ({ email }: CreateUserProps): User => {
   const now = new Date();
   const userId = generatePlutomiId({
     date: now,
@@ -38,13 +37,6 @@ export const createUser = ({ email, removedKeys }: CreateUserProps): User => {
       }
     ]
   };
-
-  if (removedKeys !== undefined) {
-    removedKeys.forEach((key) => {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete newUser[key];
-    });
-  }
 
   return newUser;
 };

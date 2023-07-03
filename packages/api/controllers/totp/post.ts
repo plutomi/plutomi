@@ -102,9 +102,7 @@ export const post: RequestHandler = async (req, res) => {
 
       const createOrLockUserUpdateFilter: StrictUpdateFilter<User> = {
         $setOnInsert: createUser({
-          email: email as Email,
-          // The $set will update these
-          removedKeys: ["_locked_at", "updated_at"]
+          email: email as Email
         }),
         $set: {
           // Note: This runs after $setOnInsert
