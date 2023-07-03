@@ -16,7 +16,9 @@ export const get: RequestHandler = async (req, res) => {
 
   try {
     const findSessionByIdFilter: StrictFilter<Session> = {
-      _id: sessionId
+      _id: sessionId,
+      // Only mark as logged out if the session is active
+      status: SessionStatus.ACTIVE
     };
 
     const logOutSessionUpdateFilter: StrictUpdateFilter<Session> = {
@@ -28,7 +30,7 @@ export const get: RequestHandler = async (req, res) => {
     };
 
     // Log out the session in the DB
-    await req.items.updateOne(
+    await req.items.findOneAndUpdate(
       findSessionByIdFilter as Filter<AllEntities>,
       logOutSessionUpdateFilter
     );
