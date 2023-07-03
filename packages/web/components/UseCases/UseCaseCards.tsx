@@ -135,13 +135,13 @@ export const UseCaseCards: React.FC = () => {
         <p className="text-md font-medium text-slate-700">{item.title}</p>
       </div>
 
-      <div className="flex border-t py-1 justify-center space-x-2 text-slate-400 items-center ">
-        <div className="">
+      <div className="flex border-t py-1 justify-center space-x-2 text-slate-500 font-light items-center ">
+        <div className="text-slate-400">
           <HiUserGroup />
         </div>
 
         <div className="">
-          <p className="t">{item.amount.toLocaleString()} </p>
+          <p className="">{item.amount.toLocaleString()} </p>
         </div>
       </div>
     </div>

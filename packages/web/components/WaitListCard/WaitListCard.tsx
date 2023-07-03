@@ -7,7 +7,7 @@ export const WaitListCard: React.FC = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
           <div className="max-w-xl lg:max-w-2xl">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className="text-3xl font-medium tracking-tight text-slate-700 sm:text-4xl">
               Hi there! Thank&apos;s for checking us out.
             </h2>
 
@@ -26,14 +26,14 @@ export const WaitListCard: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                className="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                 placeholder="Enter your email"
               />
               <button
                 type="submit"
-                className="flex-none transition ease-in-out duration-300 rounded-md bg-gradient-to-r from-indigo-500 to-blue-500 hover:bg-gradient-to-r hover:from-indigo-400  hover:to-blue-400  px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className="rounded-md flex-none transition  ease-in-out duration-200 bg-blue-500 hover:bg-blue-600  px-6 py-2.5  font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
               >
-                Notify Me
+                Join
               </button>
             </div>
           </div>
