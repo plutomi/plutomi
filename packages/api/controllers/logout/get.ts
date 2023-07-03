@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
-import { SessionStatus } from "@plutomi/shared";
+import { type Session, SessionStatus, type AllEntities } from "@plutomi/shared";
+import type { Filter, StrictFilter, StrictUpdateFilter } from "mongodb";
 import { clearCookie, getCookieJar } from "../../utils";
 
 // TODO Handle query param to log out of all sessions
@@ -12,20 +13,24 @@ export const get: RequestHandler = async (req, res) => {
   res.sendStatus(204);
   const { _id: sessionId } = req.session;
   const now = new Date();
-  
+
   try {
+    const findSessionByIdFilter: StrictFilter<Session> = {
+      _id: sessionId
+    };
+
+    const logOutSessionUpdateFilter: StrictUpdateFilter<Session> = {
+      $set: {
+        logged_out_at: now,
+        updated_at: now,
+        status: SessionStatus.LOGGED_OUT
+      }
+    };
+
     // Log out the session in the DB
     await req.items.updateOne(
-      {
-        _id: sessionId
-      },
-      {
-        $set: {
-          status: SessionStatus.LOGGED_OUT,
-          updated_at: now,
-          logged_out_at: now
-        }
-      }
+      findSessionByIdFilter as Filter<AllEntities>,
+      logOutSessionUpdateFilter
     );
   } catch (error) {
     // ! TODO: Logging
