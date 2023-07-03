@@ -14,6 +14,7 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
 import dayjs from "dayjs";
+import KSUID from "ksuid";
 import {
   generatePlutomiId,
   getCookieJar,
@@ -49,7 +50,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
           type: RelatedToType.MEMBERSHIPS
         }
       },
-      orgRole: OrgRole.OWNER
+      org_role: OrgRole.OWNER
     });
 
     if (userAlreadyOwnsAnOrg !== null) {
@@ -74,7 +75,6 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   // 5. Expire the old session
 
   const now = new Date();
-  const nowIso = now.toISOString();
 
   // 1. Create an org entity
   const orgId = generatePlutomiId({
@@ -84,19 +84,20 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const newOrg: Org = {
     _id: orgId,
-    entityType: IdPrefix.ORG,
+    _type: IdPrefix.ORG,
+    _locked_at: KSUID.randomSync().string,
     name: orgName,
-    created_at: nowIso,
-    updated_at: nowIso,
+    created_at: now,
+    updated_at: now,
     createdBy: userId,
     related_to: [
       {
-        id: IdPrefix.ORG,
-        type: RelatedToType.ENTITY
-      },
-      {
         id: orgId,
         type: RelatedToType.SELF
+      },
+      {
+        id: IdPrefix.ORG,
+        type: RelatedToType.ENTITY
       }
     ]
   };
@@ -113,8 +114,8 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     customWorkspaceId,
     // We will prompt the user to update it after / later
     name: defaultWorkspaceName,
-    created_at: nowIso,
-    updated_at: nowIso,
+    created_at: now,
+    updated_at: now,
     org: orgId,
     createdBy: userId,
     related_to: [
@@ -142,8 +143,8 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newMembership: Membership = {
     _id: memberShipId,
     entityType: IdPrefix.MEMBERSHIP,
-    created_at: nowIso,
-    updated_at: nowIso,
+    created_at: now,
+    updated_at: now,
     isDefault: true,
     status: MembershipStatus.ACTIVE,
     org: orgId,
@@ -184,8 +185,8 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newUserSession: Session = {
     _id: newUserSessionId,
     entityType: IdPrefix.SESSION,
-    created_at: nowIso,
-    updated_at: nowIso,
+    created_at: now,
+    updated_at: now,
     status: SessionStatus.ACTIVE,
     expiresAt: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
@@ -246,7 +247,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
         {
           $set: {
             status: SessionStatus.SWITCHED_WORKSPACE,
-            updated_at: nowIso
+            updated_at: now
           }
         },
         { session: transactionSession }
