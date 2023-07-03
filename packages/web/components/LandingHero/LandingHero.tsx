@@ -1,11 +1,14 @@
 export const LandingHero: React.FC = () => {
   const x = "";
   return (
-    <div className="border border-red-400">
-      <h1 className=" text-4xl  tracking-tight  font-extrabold text-slate-900 sm:text-6xl">
-        Applicant management at any scale
+    <div className="border border-red-400 text-center">
+      <h1 className="text-7xl   font-extrabold text-slate-900 ">
+        Applicant management at{" "}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-blue-400">
+          any scale
+        </span>
       </h1>
-      <p>
+      <p className="mt-6 text-3xl text-slate-600 ">
         Plutomi streamlines your application process with automated workflows
       </p>
     </div>

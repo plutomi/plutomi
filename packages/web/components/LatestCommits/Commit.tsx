@@ -69,7 +69,7 @@ export const Commit: React.FC<CommitType> = ({
           </p>
           <p className="text-lg font-medium text-slate-700 group-hover:text-slate-900">
             {name} -{" "}
-            <span className="text-md  font-medium text-blue-400 hover:text-blue-600  ">
+            <span className="text-md  font-medium text-blue-400 hover:text-blue-600 hover:underline ">
               @{username}
             </span>
           </p>

@@ -1,4 +1,9 @@
-import { type CommitType, LatestCommits, LandingHero } from "@/components";
+import {
+  type CommitType,
+  LatestCommits,
+  LandingHero,
+  UseCaseSection
+} from "@/components";
 import axios from "axios";
 import _ from "lodash";
 import type { GetStaticProps, NextPage } from "next";
@@ -11,10 +16,14 @@ const Home: NextPage<HomeProps> = ({ commits }) => {
   const x = "";
   return (
     <div className="w-full h-full flex justify-center">
-      <div className="flex flex-col my-32 border border-blue-500 ">
+      <div className="flex flex-col my-32 border border-blue-500 items-center">
         <LandingHero />
+        <div>
+          <UseCaseSection />
+        </div>
+
         <div className="mt-24">
-          <LatestCommits commits={commits} />
+          <LatestCommits commits={commits} />d
         </div>
       </div>
     </div>
