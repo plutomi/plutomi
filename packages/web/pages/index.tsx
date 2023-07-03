@@ -2,7 +2,8 @@ import {
   type CommitType,
   LatestCommits,
   LandingHero,
-  UseCaseSection
+  UseCaseSection,
+  WaitListCard
 } from "@/components";
 import axios from "axios";
 import _ from "lodash";
@@ -22,8 +23,11 @@ const Home: NextPage<HomeProps> = ({ commits }) => {
           <UseCaseSection />
         </div>
 
+        <div className="mt-12">
+          <WaitListCard />
+        </div>
         <div className="mt-24">
-          <LatestCommits commits={commits} />
+          <LatestCommits commits={commits} />d
         </div>
       </div>
     </div>

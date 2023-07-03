@@ -11,22 +11,16 @@ export const UseCaseSegment: React.FC = () => {
 
   const isSelected = (title: UseCase) => useCase === title;
   return (
-    <div
-      className="flex space-x-1 rounded-lg bg-slate-200 p-0.5"
-      role="tablist"
-      aria-orientation="horizontal"
-    >
+    <div className="flex flex-col lg:flex-row text-center space-x-0 lg:space-x-1 space-y-1 lg:space-y-0 rounded-lg bg-slate-200 p-1">
       {useCases.map((title) => (
         <button
           onClick={() => {
             setUseCase(title);
           }}
-          className={`flex items-center rounded-md py-[0.4375rem] px-4 text-lg text-slate-500 font-medium ${
+          className={`rounded-md py-3 px-4 text-lg text-slate-500 font-medium ${
             isSelected(title) ? "bg-white shadow text-slate-800 " : ""
           }`}
-          role="tab"
           type="button"
-          aria-selected="true"
         >
           <span>{title}</span>
         </button>

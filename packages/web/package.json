@@ -27,6 +27,7 @@
     "@plutomi/shared": "^0.1.0",
     "@plutomi/validation": "^0.1.0",
     "@tabler/icons-react": "^2.17.0",
+    "@tailwindcss/forms": "^0.5.3",
     "@tanstack/react-query": "^4.29.7",
     "@tanstack/react-query-devtools": "^4.29.7",
     "@tiptap/extension-link": "^2.0.3",
