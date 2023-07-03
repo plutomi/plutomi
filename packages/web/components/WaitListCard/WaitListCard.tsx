@@ -76,30 +76,30 @@ export const WaitListCard: React.FC = () => {
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
             {cards.map((card) => (
-              <a
-                target="_blank"
-                href={card.href}
-                rel="noopener noreferrer"
+              <div
+                aria-hidden="true"
+                key={card.href}
+                onClick={() =>
+                  window.open(card.href, "_blank", "noopener noreferrer")
+                }
                 className="transition ease-in-out duration-300  cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 "
               >
-                <div>
-                  <div className="flex flex-end w-full justify-end">
-                    <button
-                      className="inline-block text-slate-500 p-1.5"
-                      type="button"
-                    >
-                      <FiExternalLink className="h-6 w-6 text-slate-500" />
-                    </button>
-                  </div>
-
-                  <div className="flex flex-col justify-center items-center ">
-                    <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
-                      {card.icon}
-                    </div>
-                    {card.innerContent}
-                  </div>
+                <div className="flex flex-end w-full justify-end">
+                  <button
+                    className="inline-block text-slate-500 p-1.5"
+                    type="button"
+                  >
+                    <FiExternalLink className="h-6 w-6 text-slate-500" />
+                  </button>
                 </div>
-              </a>
+
+                <div className="flex flex-col justify-center items-center ">
+                  <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
+                    {card.icon}
+                  </div>
+                  {card.innerContent}
+                </div>
+              </div>
             ))}
           </dl>
         </div>

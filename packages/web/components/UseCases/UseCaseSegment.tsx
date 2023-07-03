@@ -14,6 +14,7 @@ export const UseCaseSegment: React.FC = () => {
     <div className="flex flex-col lg:flex-row text-center space-x-0 lg:space-x-1 space-y-1 lg:space-y-0 rounded-lg bg-slate-200 p-1 shadow-sm">
       {useCases.map((title) => (
         <button
+          key={title}
           onClick={() => {
             setUseCase(title);
           }}
