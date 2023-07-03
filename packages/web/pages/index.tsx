@@ -16,9 +16,9 @@ const Home: NextPage<HomeProps> = ({ commits }) => {
   const x = "";
   return (
     <div className="w-full h-full flex justify-center">
-      <div className="flex flex-col my-32 border border-blue-500 items-center">
+      <div className="flex flex-col my-32  items-center">
         <LandingHero />
-        <div>
+        <div className="w-full flex justify-center">
           <UseCaseSection />
         </div>
 

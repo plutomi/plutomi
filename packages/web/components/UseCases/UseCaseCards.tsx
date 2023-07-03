@@ -131,18 +131,18 @@ export const UseCaseCards: React.FC = () => {
   const { useCase } = useUseCaseStore();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <div className="border rounded-lg bg-white drop-shadow-md" key={item.title}>
+    <div className=" rounded-lg bg-white drop-shadow-md" key={item.title}>
       <div className="flex flex-col items-center px-5 py-2">
         <item.icon size="2rem" className={`${item.color}`} />
-        <p className="text-md font-semibold">{item.title}</p>
+        <p className="text-md font-semibold text-slate-700">{item.title}</p>
       </div>
 
-      <div className="flex border border-red-400 justify-center space-x-2 text-slate-400 items-center">
-        <div className="border border-blue-400">
+      <div className="flex border-t py-1 justify-center space-x-2 text-slate-400 items-center">
+        <div className="">
           <HiUserGroup />
         </div>
 
-        <div className="border border-green-400">
+        <div className="">
           <p className="text-sm">{item.amount.toLocaleString()} </p>
         </div>
       </div>
@@ -150,7 +150,7 @@ export const UseCaseCards: React.FC = () => {
   ));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 border border-red-500 w-full">
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 w-full">
       {items}
     </div>
   );

@@ -1,7 +1,7 @@
 export const LandingHero: React.FC = () => {
   const x = "";
   return (
-    <div className="border border-red-400 text-center">
+    <div className=" text-center">
       <h1 className="text-7xl   font-extrabold text-slate-900 ">
         Applicant management at{" "}
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-blue-400">
