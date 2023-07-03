@@ -1,13 +1,12 @@
-import { CalendarDaysIcon, HandRaisedIcon } from "@heroicons/react/24/outline";
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink } from "react-icons/fi";
 
 export const WaitListCard: React.FC = () => {
   const x = "";
   return (
-    <div className="relative isolate overflow-hidden bg-white py-16 sm:py-24 lg:py-32 drop-shadow-sm border rounded-lg">
+    <div className="relative isolate overflow-hidden bg-white py-16 sm:py-12 lg:py-18 drop-shadow-sm border rounded-lg">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
+        <div className="  items-center border-red-500 mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
           <div className="max-w-xl lg:max-w-2xl">
             <h2 className="text-3xl font-medium tracking-tight text-slate-700 sm:text-4xl">
               Hi there! Thank&apos;s for checking us out.
@@ -40,62 +39,55 @@ export const WaitListCard: React.FC = () => {
             </div>
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
-            <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-100 rounded-xl p-4  hover:bg-slate-50">
+          <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 ">
               <div className="flex flex-end w-full justify-end">
                 <button
                   className="inline-block text-slate-500 p-1.5"
                   type="button"
                 >
-                  <FiExternalLink className="h-6 w-6 text-slate-700" />
+                  <FiExternalLink className="h-6 w-6 text-slate-500" />
                 </button>
               </div>
 
               <div className="flex flex-col justify-center items-center ">
                 <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
                   <BsGithub
-                    className="h-24 w-24"
+                    className="h-16 w-16"
                     aria-hidden="true"
                     color="#333"
                   />
                 </div>
-                <dt className="mt-4 font-semibold text-slate-700">
-                  Plutomi on GitHub
-                </dt>
+
                 <dd className="mt-2 leading-7 text-slate-500">
-                  The entire codebase for Plutomi is <span className="font-bold">free</span> on GitHub
-                  under an Apache 2 license. Feel free to open issues or
-                  contribute there :)
+                  The entire codebase for Plutomi is available for{" "}
+                  <span className="font-bold">free</span> on GitHub :)
                 </dd>
               </div>
             </div>
 
-            <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-100 rounded-xl p-4  hover:bg-slate-50">
+            <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 ">
               <div className="flex flex-end w-full justify-end">
                 <button
                   className="inline-block text-slate-500 p-1.5"
                   type="button"
                 >
-                  <FiExternalLink className="h-6 w-6 text-slate-700" />
+                  <FiExternalLink className="h-6 w-6 text-slate-500" />
                 </button>
               </div>
 
               <div className="flex flex-col justify-center items-center ">
                 <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
                   <BsTwitter
-                    className="h-24 w-24"
+                    className="h-16 w-16"
                     aria-hidden="true"
                     color="#00acee"
                   />
                 </div>
-                <dt className="mt-4 font-semibold text-slate-700">
-                  Jose on Twitter
-                </dt>
                 <dd className="mt-2 leading-7 text-slate-500">
                   <span className="text-blue-500 hover:text-blue-600 hover:underline ">
                     Jose Valerio
                   </span>{" "}
-                  is the maintainer of Plutomi. Feel free to follow him on
-                  Twitter :)
+                  is the maintainer of Plutomi - you can follow him on Twitter!
                 </dd>
               </div>
             </div>
