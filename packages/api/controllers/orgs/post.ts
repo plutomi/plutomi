@@ -110,19 +110,16 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const newWorkspace: Workspace = {
     _id: workspaceId,
-    entityType: IdPrefix.WORKSPACE,
-    customWorkspaceId,
+    _type: IdPrefix.WORKSPACE,
+    _locked_at: KSUID.randomSync().string,
+    custom_workspace_id: customWorkspaceId,
     // We will prompt the user to update it after / later
     name: defaultWorkspaceName,
     created_at: now,
     updated_at: now,
     org: orgId,
-    createdBy: userId,
+    created_by: userId,
     related_to: [
-      {
-        id: IdPrefix.WORKSPACE,
-        type: RelatedToType.ENTITY
-      },
       {
         id: workspaceId,
         type: RelatedToType.SELF
@@ -142,21 +139,18 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const newMembership: Membership = {
     _id: memberShipId,
-    entityType: IdPrefix.MEMBERSHIP,
+    _type: IdPrefix.MEMBERSHIP,
+    _locked_at: KSUID.randomSync().string,
     created_at: now,
     updated_at: now,
-    isDefault: true,
+    is_default: true,
     status: MembershipStatus.ACTIVE,
     org: orgId,
     workspace: workspaceId,
-    orgRole: OrgRole.OWNER,
-    workspaceRole: WorkspaceRole.OWNER,
+    org_role: OrgRole.OWNER,
+    workspace_role: WorkspaceRole.OWNER,
     user: userId,
     related_to: [
-      {
-        id: IdPrefix.MEMBERSHIP,
-        type: RelatedToType.ENTITY
-      },
       {
         id: memberShipId,
         type: RelatedToType.SELF
@@ -184,33 +178,31 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   // ! TODO: Wrap this in a util function as it's used in multiple places
   const newUserSession: Session = {
     _id: newUserSessionId,
-    entityType: IdPrefix.SESSION,
+    _type: IdPrefix.SESSION,
+    _locked_at: KSUID.randomSync().string,
     created_at: now,
     updated_at: now,
+    active_at: now,
+    revoked_at: null,
+    expired_at: null,
+    logged_out_at: null,
+    workspace_switched_at: null,
     status: SessionStatus.ACTIVE,
-    expiresAt: dayjs(now)
+    expires_at: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
       .toISOString(),
     org: orgId,
     ip: req.clientIp ?? "unknown",
-    userAgent: req.get("User-Agent") ?? "unknown",
+    user_agent: req.get("User-Agent") ?? "unknown",
     workspace: workspaceId,
     user: userId,
     related_to: [
-      {
-        id: IdPrefix.SESSION,
-        type: RelatedToType.ENTITY
-      },
       {
         id: newUserSessionId,
         type: RelatedToType.SELF
       },
       {
         id: userId,
-        type: RelatedToType.SESSIONS
-      },
-      {
-        id: orgId,
         type: RelatedToType.SESSIONS
       },
       {
