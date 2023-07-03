@@ -22,7 +22,7 @@ export const UseCaseSegment: React.FC = () => {
             setUseCase(title);
           }}
           className={`flex items-center rounded-md py-[0.4375rem] px-4 text-lg text-slate-500 font-medium ${
-            isSelected(title) ? "bg-white shadow text-slate-900 " : ""
+            isSelected(title) ? "bg-white shadow text-slate-800 " : ""
           }`}
           role="tab"
           type="button"

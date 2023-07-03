@@ -25,8 +25,6 @@ type UseCaseCard = {
   amount: number;
 };
 
-const iconColorWeight = "300"
-
 const hiringUseCase: UseCaseCard[] = [
   {
     title: "Resume Upload",
@@ -137,21 +135,19 @@ export const UseCaseCards: React.FC = () => {
         <p className="text-md font-medium text-slate-700">{item.title}</p>
       </div>
 
-      <div className="flex border-t py-1 justify-center space-x-2 text-slate-400 items-center">
+      <div className="flex border-t py-1 justify-center space-x-2 text-slate-400 items-center ">
         <div className="">
           <HiUserGroup />
         </div>
 
         <div className="">
-          <p className="text-sm">{item.amount.toLocaleString()} </p>
+          <p className="t">{item.amount.toLocaleString()} </p>
         </div>
       </div>
     </div>
   ));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 w-full">
-      {items}
-    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 w-full">{items}</div>
   );
 };
