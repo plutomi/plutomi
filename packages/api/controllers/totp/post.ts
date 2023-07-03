@@ -45,15 +45,15 @@ export const post: RequestHandler = async (req, res) => {
   const sessionId = cookieJar.get(getSessionCookieName(), { signed: true });
 
   if (sessionId !== undefined) {
+    // If a user already has a session, and it is valid, send a 302 and let the FE redirect
     try {
-      const findSessionFilter: StrictFilter<Session> = {
+      const findSessionByIdFilter: StrictFilter<Session> = {
         _id: sessionId as PlutomiId<IdPrefix.SESSION>
       };
       const session = await req.items.findOne<Session>(
-        findSessionFilter as Filter<AllEntities>
+        findSessionByIdFilter as Filter<AllEntities>
       );
 
-      // If a user already has a session, and it is valid, send a 302 and let the FE redirect
       if (session !== null && sessionIsActive({ session })) {
         res.status(302).json({
           message: "You already have an active session!"
@@ -96,11 +96,11 @@ export const post: RequestHandler = async (req, res) => {
     // 3. Create a new login code for this user
     await transactionSession.withTransaction(async () => {
       // 1. Get & lock the user if they exist with that email, and if not, create them.
-      const findUserFilter: StrictFilter<User> = {
+      const findUserByEmailFilter: StrictFilter<User> = {
         email: email as Email
       };
 
-      const findUserUpdateFilter: StrictUpdateFilter<User> = {
+      const createOrLockUserUpdateFilter: StrictUpdateFilter<User> = {
         $setOnInsert: createUser({
           email: email as Email,
           // The $set will update these
@@ -114,8 +114,8 @@ export const post: RequestHandler = async (req, res) => {
       };
 
       const { value } = (await req.items.findOneAndUpdate(
-        findUserFilter as Filter<AllEntities>,
-        findUserUpdateFilter,
+        findUserByEmailFilter as Filter<AllEntities>,
+        createOrLockUserUpdateFilter,
         {
           upsert: true,
           returnDocument: ReturnDocument.AFTER,
@@ -150,7 +150,7 @@ export const post: RequestHandler = async (req, res) => {
 
       const { _id: userId } = user;
 
-      const countDocumentsFilter: StrictFilter<TOTPCode> = {
+      const getCountOfActiveCodesFilter: StrictFilter<TOTPCode> = {
         status: TOTPCodeStatus.ACTIVE,
         related_to: {
           $elemMatch: {
@@ -166,7 +166,7 @@ export const post: RequestHandler = async (req, res) => {
       };
 
       const countOfActiveCodes = await req.items.countDocuments(
-        countDocumentsFilter,
+        getCountOfActiveCodesFilter,
         {
           limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
           session: transactionSession

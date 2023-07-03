@@ -52,19 +52,19 @@ export const post: RequestHandler = async (req, res) => {
       const now = new Date();
 
       // 1. Lock the user to prevent concurrent requests
-      const findUserFilter: StrictFilter<User> = {
+      const findUserByEmailFilter: StrictFilter<User> = {
         email: email as Email
       };
 
-      const findUserUpdateFilter: StrictUpdateFilter<User> = {
+      const lockUserUpdateFilter: StrictUpdateFilter<User> = {
         $set: {
           _locked_at: KSUID.randomSync().string,
           updated_at: now
         }
       };
       const { value: user } = (await req.items.findOneAndUpdate(
-        findUserFilter as Filter<AllEntities>,
-        findUserUpdateFilter,
+        findUserByEmailFilter as Filter<AllEntities>,
+        lockUserUpdateFilter,
         {
           returnDocument: ReturnDocument.AFTER,
           session: transactionSession
@@ -83,7 +83,7 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
       // 2. Get the most recent code for this user
-      const mostRecentCodeFilter: StrictFilter<TOTPCode> = {
+      const getMostRecentCodeFilter: StrictFilter<TOTPCode> = {
         related_to: {
           $elemMatch: {
             id: email,
@@ -93,7 +93,7 @@ export const post: RequestHandler = async (req, res) => {
       };
       const mostRecentCode = (
         await req.items
-          .find<TOTPCode>(mostRecentCodeFilter as Filter<AllEntities>, {
+          .find<TOTPCode>(getMostRecentCodeFilter as Filter<AllEntities>, {
             session: transactionSession,
             sort: { created_at: -1 },
             limit: 1
@@ -136,7 +136,7 @@ export const post: RequestHandler = async (req, res) => {
       );
 
       // 4. Invalidate all other active codes
-      const otherActiveCodesFilter: StrictFilter<TOTPCode> = {
+      const getOtherActiveCodesFilter: StrictFilter<TOTPCode> = {
         _id: { $ne: mostRecentCodeId },
         status: TOTPCodeStatus.ACTIVE,
         related_to: {
@@ -147,17 +147,18 @@ export const post: RequestHandler = async (req, res) => {
         }
       };
 
-      const otherActiveCodesUpdateFilter: StrictUpdateFilter<TOTPCode> = {
-        $set: {
-          status: TOTPCodeStatus.INVALIDATED,
-          updated_at: now,
-          invalidated_at: now,
-          _locked_at: KSUID.randomSync().string
-        }
-      };
+      const invalidateOtherActiveCodesUpdateFilter: StrictUpdateFilter<TOTPCode> =
+        {
+          $set: {
+            status: TOTPCodeStatus.INVALIDATED,
+            updated_at: now,
+            invalidated_at: now,
+            _locked_at: KSUID.randomSync().string
+          }
+        };
       await req.items.updateMany(
-        otherActiveCodesFilter as Filter<AllEntities>,
-        otherActiveCodesUpdateFilter,
+        getOtherActiveCodesFilter as Filter<AllEntities>,
+        invalidateOtherActiveCodesUpdateFilter,
         { session: transactionSession }
       );
 
@@ -165,10 +166,10 @@ export const post: RequestHandler = async (req, res) => {
 
       if (!user.email_verified) {
         // 5. Update the user's verified email status if needed
-        const getUserFilter: StrictFilter<User> = {
+        const getUserByIdFilter: StrictFilter<User> = {
           _id: userId
         };
-        const updateUserFilter: StrictUpdateFilter<User> = {
+        const verifyUserEmailUpdateFilter: StrictUpdateFilter<User> = {
           $set: {
             updated_at: now,
             _locked_at: KSUID.randomSync().string,
@@ -177,8 +178,8 @@ export const post: RequestHandler = async (req, res) => {
           }
         };
         await req.items.updateOne(
-          getUserFilter as Filter<AllEntities>,
-          updateUserFilter,
+          getUserByIdFilter as Filter<AllEntities>,
+          verifyUserEmailUpdateFilter,
           { session: transactionSession }
         );
       }

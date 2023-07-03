@@ -5,11 +5,13 @@ import {
   EmptyValues,
   type PlutomiId,
   type Session,
-  type Membership
+  type Membership,
+  type AllEntities
 } from "@plutomi/shared";
 import type { Request } from "express";
 import dayjs from "dayjs";
 import KSUID from "ksuid";
+import type { Filter, StrictFilter } from "mongodb";
 import { generatePlutomiId } from "../generatePlutomiId";
 import { MAX_SESSION_AGE_IN_MS } from "../../consts";
 
@@ -29,16 +31,19 @@ export const createSessionItem = async ({
     idPrefix: IdPrefix.SESSION
   });
 
-  // Check if a user already is a member of a workspace
-  const defaultMembershipForUser = await req.items.findOne<Membership>({
+  const getDefaultMembershipFilter: StrictFilter<Membership> = {
+    is_default: true,
     related_to: {
       $elemMatch: {
         id: userId,
         type: RelatedToType.MEMBERSHIPS
       }
-    },
-    is_default: true
-  });
+    }
+  };
+  // Check if a user already is a member of a workspace
+  const defaultMembershipForUser = await req.items.findOne<Membership>(
+    getDefaultMembershipFilter as Filter<AllEntities>
+  );
 
   const orgForSession = defaultMembershipForUser?.org ?? EmptyValues.NO_ORG;
   const workspaceForSession =
