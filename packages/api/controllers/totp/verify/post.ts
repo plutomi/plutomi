@@ -3,13 +3,20 @@ import {
   TOTPCodeStatus,
   type Email,
   type User,
-  type TOTPCode
+  type TOTPCode,
+  type AllEntities
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
-import { type ModifyResult, ReturnDocument } from "mongodb";
+import {
+  type ModifyResult,
+  ReturnDocument,
+  type StrictFilter,
+  type Filter,
+  type StrictUpdateFilter
+} from "mongodb";
 import {
   codeIsValid,
   createSessionItem,
@@ -45,14 +52,19 @@ export const post: RequestHandler = async (req, res) => {
       const now = new Date();
 
       // 1. Lock the user to prevent concurrent requests
+      const findUserFilter: StrictFilter<User> = {
+        email: email as Email
+      };
+
+      const findUserUpdateFilter: StrictUpdateFilter<User> = {
+        $set: {
+          _locked_at: KSUID.randomSync().string,
+          updated_at: now
+        }
+      };
       const { value: user } = (await req.items.findOneAndUpdate(
-        { email: email as Email },
-        {
-          $set: {
-            _locked_at: KSUID.randomSync().string,
-            updated_at: now
-          }
-        },
+        findUserFilter as Filter<AllEntities>,
+        findUserUpdateFilter,
         {
           returnDocument: ReturnDocument.AFTER,
           session: transactionSession
@@ -71,19 +83,21 @@ export const post: RequestHandler = async (req, res) => {
         return;
       }
       // 2. Get the most recent code for this user
+      const mostRecentCodeFilter: StrictFilter<TOTPCode> = {
+        related_to: {
+          $elemMatch: {
+            id: email,
+            type: RelatedToType.TOTPS
+          }
+        }
+      };
       const mostRecentCode = (
         await req.items
-          .find<TOTPCode>(
-            {
-              related_to: {
-                $elemMatch: {
-                  id: email,
-                  type: RelatedToType.TOTPS
-                }
-              }
-            },
-            { session: transactionSession, sort: { created_at: -1 }, limit: 1 }
-          )
+          .find<TOTPCode>(mostRecentCodeFilter as Filter<AllEntities>, {
+            session: transactionSession,
+            sort: { created_at: -1 },
+            limit: 1
+          })
           .toArray()
       )[0];
 
@@ -104,59 +118,67 @@ export const post: RequestHandler = async (req, res) => {
 
       // 3. Mark the code that was just used as used
       const { _id: mostRecentCodeId } = mostRecentCode;
+      const findMostRecentCodeByIdFilter: StrictFilter<TOTPCode> = {
+        _id: mostRecentCodeId
+      };
+      const updateMostRecentCodeByIdFilter: StrictUpdateFilter<TOTPCode> = {
+        $set: {
+          status: TOTPCodeStatus.USED,
+          used_at: now,
+          updated_at: now,
+          _locked_at: KSUID.randomSync().string
+        }
+      };
       await req.items.updateOne(
-        {
-          _id: mostRecentCodeId
-        },
-        {
-          $set: {
-            status: TOTPCodeStatus.USED,
-            used_at: now,
-            updated_at: now,
-            _locked_at: KSUID.randomSync().string
-          }
-        },
+        findMostRecentCodeByIdFilter as Filter<AllEntities>,
+        updateMostRecentCodeByIdFilter,
         { session: transactionSession }
       );
 
       // 4. Invalidate all other active codes
+      const otherActiveCodesFilter: StrictFilter<TOTPCode> = {
+        _id: { $ne: mostRecentCodeId },
+        status: TOTPCodeStatus.ACTIVE,
+        related_to: {
+          $elemMatch: {
+            id: email,
+            type: RelatedToType.TOTPS
+          }
+        }
+      };
+
+      const otherActiveCodesUpdateFilter: StrictUpdateFilter<TOTPCode> = {
+        $set: {
+          status: TOTPCodeStatus.INVALIDATED,
+          updated_at: now,
+          invalidated_at: now,
+          _locked_at: KSUID.randomSync().string
+        }
+      };
       await req.items.updateMany(
-        {
-          _id: { $ne: mostRecentCodeId },
-          status: TOTPCodeStatus.ACTIVE,
-          related_to: {
-            $elemMatch: {
-              id: email,
-              type: RelatedToType.TOTPS
-            }
-          }
-        },
-        {
-          $set: {
-            status: TOTPCodeStatus.INVALIDATED,
-            updated_at: now,
-            invalidated_at: now,
-            _locked_at: KSUID.randomSync().string
-          }
-        },
+        otherActiveCodesFilter as Filter<AllEntities>,
+        otherActiveCodesUpdateFilter,
         { session: transactionSession }
       );
 
       const { _id: userId } = user;
 
-      // 5. Update the user's verified email status if needed
       if (!user.email_verified) {
+        // 5. Update the user's verified email status if needed
+        const getUserFilter: StrictFilter<User> = {
+          _id: userId
+        };
+        const updateUserFilter: StrictUpdateFilter<User> = {
+          $set: {
+            updated_at: now,
+            _locked_at: KSUID.randomSync().string,
+            email_verified_at: now,
+            email_verified: true
+          }
+        };
         await req.items.updateOne(
-          {
-            _id: userId
-          },
-          {
-            $set: {
-              email_verified: true,
-              email_verified_at: now,
-              updated_at: now
-            }
-          },
+          getUserFilter as Filter<AllEntities>,
+          updateUserFilter,
           { session: transactionSession }
         );
       }

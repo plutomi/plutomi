@@ -1,20 +1,27 @@
 import {
   type IdPrefix,
   RelatedToType,
-  type User,
-  type Email,
-  type TOTPCode,
   TOTPCodeStatus,
   PlutomiEmails,
   MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES,
   MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
+  type User,
+  type Email,
+  type TOTPCode,
   type Session,
-  type PlutomiId
+  type PlutomiId,
+  type AllEntities
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
 import dayjs from "dayjs";
-import { type ModifyResult, ReturnDocument } from "mongodb";
+import {
+  type ModifyResult,
+  ReturnDocument,
+  type StrictFilter,
+  type Filter,
+  type StrictUpdateFilter
+} from "mongodb";
 import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
 import {
@@ -39,11 +46,14 @@ export const post: RequestHandler = async (req, res) => {
 
   if (sessionId !== undefined) {
     try {
-      // If a user already has a session, and it is valid, send a 302 and let the FE redirect
-      const session = await req.items.findOne<Session>({
+      const findSessionFilter: StrictFilter<Session> = {
         _id: sessionId as PlutomiId<IdPrefix.SESSION>
-      });
+      };
+      const session = await req.items.findOne<Session>(
+        findSessionFilter as Filter<AllEntities>
+      );
 
+      // If a user already has a session, and it is valid, send a 302 and let the FE redirect
       if (session !== null && sessionIsActive({ session })) {
         res.status(302).json({
           message: "You already have an active session!"
@@ -86,20 +96,26 @@ export const post: RequestHandler = async (req, res) => {
     // 3. Create a new login code for this user
     await transactionSession.withTransaction(async () => {
       // 1. Get & lock the user if they exist with that email, and if not, create them.
+      const findUserFilter: StrictFilter<User> = {
+        email: email as Email
+      };
+
+      const findUserUpdateFilter: StrictUpdateFilter<User> = {
+        $setOnInsert: createUser({
+          email: email as Email,
+          // The $set will update these
+          removedKeys: ["_locked_at", "updated_at"]
+        }),
+        $set: {
+          // Note: This runs after $setOnInsert
+          _locked_at: KSUID.randomSync().string,
+          updated_at: new Date()
+        }
+      };
+
       const { value } = (await req.items.findOneAndUpdate(
-        { email: email as Email },
-        {
-          $setOnInsert: createUser({
-            email: email as Email,
-            // The $set above will update these
-            removedKeys: ["_locked_at", "updated_at"]
-          }),
-          $set: {
-            // Note: This runs after $setOnInsert
-            _locked_at: KSUID.randomSync().string,
-            updated_at: new Date()
-          }
-        },
+        findUserFilter as Filter<AllEntities>,
+        findUserUpdateFilter,
         {
           upsert: true,
           returnDocument: ReturnDocument.AFTER,
@@ -134,21 +150,23 @@ export const post: RequestHandler = async (req, res) => {
 
       const { _id: userId } = user;
 
-      const countOfActiveCodes = await req.items.countDocuments(
-        {
-          status: TOTPCodeStatus.ACTIVE,
-          related_to: {
-            $elemMatch: {
-              id: userId,
-              type: RelatedToType.TOTPS
-            }
-          },
-          created_at: {
-            $gte: dayjs()
-              .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
-              .toDate()
+      const countDocumentsFilter: StrictFilter<TOTPCode> = {
+        status: TOTPCodeStatus.ACTIVE,
+        related_to: {
+          $elemMatch: {
+            id: userId,
+            type: RelatedToType.TOTPS
           }
         },
+        created_at: {
+          $gte: dayjs()
+            .subtract(MAX_TOTP_LOOK_BACK_TIME_IN_MINUTES, "minutes")
+            .toDate()
+        }
+      };
+
+      const countOfActiveCodes = await req.items.countDocuments(
+        countDocumentsFilter,
         {
           limit: MAX_TOTP_COUNT_ALLOWED_IN_LOOK_BACK_TIME,
           session: transactionSession
@@ -190,7 +208,7 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   if (totpCodeItem === undefined) {
-    // Something failed up above
+    // Something failed up above and we already responded
     return;
   }
 
