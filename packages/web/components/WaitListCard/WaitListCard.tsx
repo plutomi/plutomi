@@ -28,7 +28,7 @@ const cards = [
         >
           Jose Valerio (me!)
         </a>{" "}
-        is the maintainer of Plutomi - you can follow him on Twitter.
+        is the owner of Plutomi - you can follow him on Twitter.
       </dd>
     )
   }
@@ -84,9 +84,9 @@ export const WaitListCard: React.FC = () => {
                 }
                 className="transition ease-in-out duration-300  cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 "
               >
-                <div className="flex flex-end w-full justify-end">
+                <div className="flex flex-end w-full justify-end border">
                   <button
-                    className="inline-block text-slate-500 p-1.5"
+                    className="inline-block text-slate-500 px-2 py-0"
                     type="button"
                   >
                     <FiExternalLink className="h-6 w-6 text-slate-500" />
