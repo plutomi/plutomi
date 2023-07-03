@@ -1,4 +1,6 @@
 import { CalendarDaysIcon, HandRaisedIcon } from "@heroicons/react/24/outline";
+import { BsGithub, BsTwitter } from "react-icons/bs";
+import { FiExternalLink } from "react-icons/fi";
 
 export const WaitListCard: React.FC = () => {
   const x = "";
@@ -38,47 +40,87 @@ export const WaitListCard: React.FC = () => {
             </div>
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
-            <div className="flex flex-col items-start">
-              <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10">
-                <CalendarDaysIcon
-                  className="h-6 w-6 text-white"
-                  aria-hidden="true"
-                />
+            <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-100 rounded-xl p-4  hover:bg-slate-50">
+              <div className="flex flex-end w-full justify-end">
+                <button
+                  className="inline-block text-slate-500 p-1.5"
+                  type="button"
+                >
+                  <FiExternalLink className="h-6 w-6 text-slate-700" />
+                </button>
               </div>
-              <dt className="mt-4 font-semibold text-white">
-                Plutomi on GitHub
-              </dt>
-              <dd className="mt-2 leading-7 text-gray-400">
-                The entire codebase for Plutomi is free on GitHub! Feel free to
-                contribute, open issues, or use or something TODO!
-              </dd>
+
+              <div className="flex flex-col justify-center items-center ">
+                <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
+                  <BsGithub
+                    className="h-24 w-24"
+                    aria-hidden="true"
+                    color="#333"
+                  />
+                </div>
+                <dt className="mt-4 font-semibold text-slate-700">
+                  Plutomi on GitHub
+                </dt>
+                <dd className="mt-2 leading-7 text-slate-500">
+                  The entire codebase for Plutomi is <span className="font-bold">free</span> on GitHub
+                  under an Apache 2 license. Feel free to open issues or
+                  contribute there :)
+                </dd>
+              </div>
             </div>
-            <div className="flex flex-col items-start">
-              <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10">
-                <HandRaisedIcon
-                  className="h-6 w-6 text-white"
-                  aria-hidden="true"
-                />
+
+            <div className="transition ease-in-out duration-300  hover:cursor-pointer flex flex-col items-start bg-slate-100 rounded-xl p-4  hover:bg-slate-50">
+              <div className="flex flex-end w-full justify-end">
+                <button
+                  className="inline-block text-slate-500 p-1.5"
+                  type="button"
+                >
+                  <FiExternalLink className="h-6 w-6 text-slate-700" />
+                </button>
               </div>
-              <dt className="mt-4 font-semibold text-white">Jose on Twitter</dt>
-              <dd className="mt-2 leading-7 text-gray-400">
-                Jose is the owner of Plutomi - check him out on Twitter!
-              </dd>
+
+              <div className="flex flex-col justify-center items-center ">
+                <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10 ">
+                  <BsTwitter
+                    className="h-24 w-24"
+                    aria-hidden="true"
+                    color="#00acee"
+                  />
+                </div>
+                <dt className="mt-4 font-semibold text-slate-700">
+                  Jose on Twitter
+                </dt>
+                <dd className="mt-2 leading-7 text-slate-500">
+                  <span className="text-blue-500 hover:text-blue-600 hover:underline ">
+                    Jose Valerio
+                  </span>{" "}
+                  is the maintainer of Plutomi. Feel free to follow him on
+                  Twitter :)
+                </dd>
+              </div>
             </div>
           </dl>
         </div>
       </div>
       <div
-        className="absolute left-1/2 top-0 -z-10 -translate-x-1/2 blur-3xl xl:-top-6"
+        className="absolute left-1/2 top-0 -z-10 -translate-x-1/2  xl:-top-6"
         aria-hidden="true"
       >
-        <div
+        {/* <div
           className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30"
           style={{
             clipPath:
               "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"
           }}
-        />
+        /> */}
+
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill="#8A3FFC"
+            d="M49.7,-49.6C56.6,-42.9,48.8,-21.5,49,0.3C49.3,22,57.6,43.9,50.8,58.5C43.9,73.1,22,80.3,0.1,80.1C-21.7,80,-43.4,72.6,-55.1,58C-66.7,43.4,-68.3,21.7,-62.9,5.4C-57.4,-10.8,-45,-21.7,-33.3,-28.4C-21.7,-35.1,-10.8,-37.7,5.3,-43C21.5,-48.3,42.9,-56.3,49.7,-49.6Z"
+            transform="translate(100 100)"
+          />
+        </svg>
       </div>
     </div>
   );

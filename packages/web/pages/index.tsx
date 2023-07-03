@@ -27,7 +27,7 @@ const Home: NextPage<HomeProps> = ({ commits }) => {
           <WaitListCard />
         </div>
         <div className="mt-24">
-          <LatestCommits commits={commits} />d
+          <LatestCommits commits={commits} />
         </div>
       </div>
     </div>
@@ -42,6 +42,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const allCommits: CommitType[] = [];
 
   const { data } = await axios.get(
+    // TODO: Remove joswayski username
     `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
     {
       // headers: {
