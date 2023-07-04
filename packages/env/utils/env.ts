@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { DeploymentEnvironment, NodeEnvironment } from "../consts";
-import { awsRegionSchema, portSchema } from "../customSchemas";
+import { awsRegionSchema } from "../customSchemas";
 
 /**
  * All environment variables in the app. Each package then picks the ones it needs.
@@ -10,9 +10,18 @@ import { awsRegionSchema, portSchema } from "../customSchemas";
  * point of entry for the app. This way, we can validate all env vars before we do anything else.
  */
 export const allEnvVariablesSchema = z.object({
-  PORT: portSchema,
-  NODE_ENV: z.nativeEnum(NodeEnvironment),
-  DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
+  PORT: z
+    .number()
+    .int()
+    .gte(3000)
+    .lte(10000)
+    .default(3000)
+    // CDK Requires this to be a string in the task definition port mappings because of reasons
+    .transform((val) => val.toString()),
+  NODE_ENV: z.nativeEnum(NodeEnvironment).default(NodeEnvironment.DEVELOPMENT),
+  DEPLOYMENT_ENVIRONMENT: z
+    .nativeEnum(DeploymentEnvironment)
+    .default(DeploymentEnvironment.DEV),
   // ! For NextJS, make sure to add to packages/web/env.ts as well as the Dockerfile
   NEXT_PUBLIC_BASE_URL: z.string().url(), // Used by API and web
   // WAF Will block requests that don't include this header
