@@ -84,7 +84,7 @@ export const WaitListCard: React.FC = () => {
                 }
                 className="transition ease-in-out duration-300  cursor-pointer flex flex-col items-start bg-slate-50 shadow-inner rounded-xl p-4  hover:bg-slate-100 "
               >
-                <div className="flex flex-end w-full justify-end border">
+                <div className="flex flex-end w-full justify-end">
                   <button
                     className="inline-block text-slate-500 px-2 py-0"
                     type="button"

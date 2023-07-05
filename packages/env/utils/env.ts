@@ -10,7 +10,7 @@ import { awsRegionSchema } from "../customSchemas";
  * point of entry for the app. This way, we can validate all env vars before we do anything else.
  */
 export const allEnvVariablesSchema = z.object({
-  PORT: z
+  PORT: z.coerce
     .number()
     .int()
     .gte(3000)
