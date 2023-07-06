@@ -1,5 +1,6 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
+import { Button } from "../Button";
 
 const cards = [
   {
@@ -20,15 +21,8 @@ const cards = [
     href: "https://twitter.com/notjoswayski",
     innerContent: (
       <dd className="mt-2 leading-7 text-slate-500">
-        <a
-          target="_blank"
-          href="https://linkedin.com/in/joswayski"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:text-blue-600 hover:underline "
-        >
-          Jose Valerio (me!)
-        </a>{" "}
-        is the owner of Plutomi - you can follow him on Twitter.
+        <span className="font-bold">Jose Valerio</span> is the owner of Plutomi
+        - you can follow him on Twitter.
       </dd>
     )
   }
@@ -66,12 +60,11 @@ export const WaitListCard: React.FC = () => {
                 placeholder="Enter your email"
               />
 
-              <button
-                type="submit"
-                className="rounded-md flex-none transition  ease-in-out duration-200 bg-blue-500 hover:bg-blue-600  px-6 py-2.5  font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              >
-                Join
-              </button>
+              <Button>Create</Button>
+              <Button variant="secondary-outline">Cancel</Button>
+              <Button variant="secondary-text">Cancel</Button>
+              <Button variant="danger">Delete</Button>
+              {/* <Button variant="success">Success</Button> */}
             </div>
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">

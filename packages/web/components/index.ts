@@ -8,3 +8,4 @@ export * from "./PageLoader";
 export * from "./PageShell";
 export * from "./UseCases";
 export * from "./WaitListCard";
+export * from "./Button";
