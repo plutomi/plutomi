@@ -33,15 +33,15 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const getSizeClasses = () => {
     if (size === "small") {
-      return "py-4 px-1.5 text-sm";
+      return "py-1 px-2 text-sm";
     }
 
     if (size === "large") {
-      return "py-8 px-4 text-lg";
+      return "py-3 px-6 text-lg";
     }
 
     // Default
-    return "px-6 py-2.5 text-md";
+    return "px-2 py-4 text-md";
   };
 
   const getVariantClasses = () => {

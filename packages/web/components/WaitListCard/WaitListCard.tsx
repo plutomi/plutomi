@@ -54,13 +54,13 @@ export const WaitListCard: React.FC = () => {
               join our wait list!
             </p>
             <div className="relative mt-6 flex max-w-md gap-x-4">
-              <label htmlFor="email-address" className="sr-only">
+              {/* <label htmlFor="email-address" className="sr-only">
                 Email address
               </label>
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <FiMail className="h-5 w-5 text-slate-400" aria-hidden="true" />
-              </div>
-              <input
+              </div> */}
+              {/* <input
                 id="email-address"
                 name="email"
                 type="email"
@@ -68,11 +68,29 @@ export const WaitListCard: React.FC = () => {
                 required
                 className=" placeholder-slate-400 min-w-0 pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                 placeholder="Enter your email"
-              />
+              /> */}
 
               {/* <Button isLoading>Disabled</Button> */}
               <Button
                 size="small"
+                onClick={() => {
+                  void handleClick();
+                }}
+                isLoading={isLoading}
+              >
+                {isLoading ? "Joining..." : "Join"}
+              </Button>
+              <Button
+                size="medium"
+                onClick={() => {
+                  void handleClick();
+                }}
+                isLoading={isLoading}
+              >
+                {isLoading ? "Joining..." : "Join"}
+              </Button>
+              <Button
+                size="large"
                 onClick={() => {
                   void handleClick();
                 }}
