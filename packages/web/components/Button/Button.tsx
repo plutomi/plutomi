@@ -2,13 +2,21 @@ import type { ButtonHTMLAttributes } from "react";
 import { Spinner, type SpinnerColors } from "../Spinner";
 
 type ButtonProps = {
-  // @default false
+  /**
+   * @default false
+   */
   isDisabled?: boolean;
-  // @default false
+  /**
+   * @default false
+   */
   isLoading?: boolean;
-  // @default medium
+  /**
+   * @default medium
+   */
   size?: "small" | "medium" | "large";
-  // @default primary
+  /**
+   * @default primary
+   */
   variant?: "primary" | "secondary-outline" | "secondary-text" | "danger";
   className?: string;
   children: React.ReactNode;

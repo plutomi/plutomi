@@ -72,6 +72,7 @@ export const WaitListCard: React.FC = () => {
 
               {/* <Button isLoading>Disabled</Button> */}
               <Button
+                size="small"
                 onClick={() => {
                   void handleClick();
                 }}
