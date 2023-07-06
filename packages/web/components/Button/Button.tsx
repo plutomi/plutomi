@@ -35,11 +35,24 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getVariantClasses = () => {
     if (variant === "secondary-outline") {
-      return "bg-white  disabled:bg-slate-50 disabled:text-slate-300 disabled:border-slate-300 hover:bg-slate-100  active:bg-slate-200  focus:ring-slate-100 focus-visible:outline-slate-300 border border-slate-400 text-slate-700 shadow-sm";
+      const defaultClasses =
+        "bg-white border text-slate-700 border-slate-400 shadow-sm";
+
+      const onlyWhenEnabledClasses =
+        "enabled:hover:bg-slate-100 enabled:active:bg-slate-200  enabled:focus:ring-slate-100 enabled:focus-visible:outline-slate-300";
+
+      const onlyWhenDisabledClasses =
+        "disabled:bg-slate-50 disabled:text-slate-300 disabled:border-slate-300";
+
+      return [
+        defaultClasses,
+        onlyWhenEnabledClasses,
+        onlyWhenDisabledClasses
+      ].join(" ");
     }
 
     if (variant === "secondary-text") {
-      return "bg-white disabled:text-slate-300 disabled:bg-white hover:bg-slate-100  active:bg-slate-200  focus:ring-slate-100 focus-visible:outline-slate-300 text-slate-700";
+      return "bg-white hover:bg-slate-100  active:bg-slate-200  focus:ring-slate-100 focus-visible:outline-slate-300 text-slate-700";
     }
 
     if (variant === "danger") {
@@ -68,7 +81,19 @@ export const Button: React.FC<ButtonProps> = ({
   ].join(" ");
 
   return (
-    <button type="button" className={classes} disabled={isDisabled} {...props}>
+    <button
+      type="button"
+      className={classes}
+      disabled={isDisabled || isLoading}
+      {...props}
+      onClick={() => {
+        if (isLoading) {
+          return;
+        }
+
+        console.log("Clicked");
+      }}
+    >
       {children}
     </button>
   );
