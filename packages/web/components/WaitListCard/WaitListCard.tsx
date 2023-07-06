@@ -1,6 +1,7 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
 import { Button } from "../Button";
+import { Spinner } from "../Spinner";
 
 const cards = [
   {
@@ -61,7 +62,10 @@ export const WaitListCard: React.FC = () => {
               />
 
               {/* <Button isLoading>Disabled</Button> */}
-              <Button variant="secondary-outline" isLoading>
+              <Button variant="secondary-outline" isDisabled>
+                Disabled Secondary{" "}
+              </Button>
+              <Button variant="secondary-outline"  isLoading>
                 Loading Secondary{" "}
               </Button>
               {/* <Button variant="secondary-text" isDisabled>

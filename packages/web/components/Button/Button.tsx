@@ -1,8 +1,12 @@
+import { Spinner } from "../Spinner";
+
 type ButtonProps = {
   // @default false
   isLoading?: boolean;
   // @default false
   isDisabled?: boolean;
+  // @default false
+  isLoading?: boolean;
   // @default medium
   size?: "small" | "medium" | "large";
   // @default primary
@@ -12,8 +16,8 @@ type ButtonProps = {
 };
 
 export const Button: React.FC<ButtonProps> = ({
-  isLoading = false,
   isDisabled = false,
+  isLoading = false,
   size,
   variant,
   children,
@@ -87,13 +91,11 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={isDisabled || isLoading}
       {...props}
       onClick={() => {
-        if (isLoading) {
-          return;
-        }
-
         console.log("Clicked");
       }}
     >
+      {isLoading ? <Spinner /> : null}
+
       {children}
     </button>
   );
