@@ -1,3 +1,4 @@
+import type { ButtonHTMLAttributes } from "react";
 import { Spinner, type SpinnerColors } from "../Spinner";
 
 type ButtonProps = {
@@ -11,7 +12,7 @@ type ButtonProps = {
   variant?: "primary" | "secondary-outline" | "secondary-text" | "danger";
   className?: string;
   children: React.ReactNode;
-};
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const Button: React.FC<ButtonProps> = ({
   isDisabled = false,
@@ -92,12 +93,9 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getCursorClasses = () => {
-    if (isDisabled) {
+    if (isDisabled || isLoading) {
+      // "cursor-wait" is too distracting with our custom spinner for loading states
       return "cursor-not-allowed";
-    }
-
-    if (isLoading) {
-      return "cursor-wait";
     }
 
     return "cursor-default hover:cursor-pointer";
@@ -147,9 +145,6 @@ export const Button: React.FC<ButtonProps> = ({
       className={classes}
       disabled={isDisabled || isLoading}
       {...props}
-      onClick={() => {
-        console.log("Clicked");
-      }}
     >
       {isLoading ? (
         <Spinner

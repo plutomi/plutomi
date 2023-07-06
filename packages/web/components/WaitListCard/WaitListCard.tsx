@@ -1,7 +1,8 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
+import { useState } from "react";
 import { Button } from "../Button";
-import { Spinner } from "../Spinner";
+import { delay } from "@plutomi/shared";
 
 const cards = [
   {
@@ -28,8 +29,16 @@ const cards = [
     )
   }
 ];
+
 export const WaitListCard: React.FC = () => {
-  const x = "";
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    await delay({ ms: 1500 });
+    setIsLoading(false);
+  };
+
   return (
     <div className="relative isolate overflow-hidden bg-white py-16 sm:py-12 lg:py-18 drop-shadow-sm border rounded-lg">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -62,9 +71,14 @@ export const WaitListCard: React.FC = () => {
               />
 
               {/* <Button isLoading>Disabled</Button> */}
-              <Button>Danger </Button>
-              <Button isDisabled>Danger </Button>
-              <Button isLoading>Danger </Button>
+              <Button
+                onClick={() => {
+                  void handleClick();
+                }}
+                isLoading={isLoading}
+              >
+                {isLoading ? "Joining..." : "Join"}
+              </Button>
             </div>
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
