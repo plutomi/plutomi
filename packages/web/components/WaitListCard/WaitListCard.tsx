@@ -60,11 +60,16 @@ export const WaitListCard: React.FC = () => {
                 placeholder="Enter your email"
               />
 
-              <Button>Create</Button>
-              <Button variant="secondary-outline">Cancel</Button>
-              <Button variant="secondary-text">Cancel</Button>
-              <Button variant="danger">Delete</Button>
-              {/* <Button variant="success">Success</Button> */}
+              <Button isDisabled>Disabled</Button>
+              <Button variant="secondary-outline" isDisabled>
+                Loading{" "}
+              </Button>
+              <Button variant="secondary-text" isDisabled>
+                Disabled
+              </Button>
+              <Button variant="danger" isDisabled>
+                Delete
+              </Button>
             </div>
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
