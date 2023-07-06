@@ -1,8 +1,6 @@
-import { Spinner } from "../Spinner";
+import { Spinner, type SpinnerColors } from "../Spinner";
 
 type ButtonProps = {
-  // @default false
-  isLoading?: boolean;
   // @default false
   isDisabled?: boolean;
   // @default false
@@ -56,7 +54,16 @@ export const Button: React.FC<ButtonProps> = ({
     }
 
     if (variant === "secondary-text") {
-      return "bg-white hover:bg-slate-100  active:bg-slate-200  focus:ring-slate-100 focus-visible:outline-slate-300 text-slate-700";
+      const defaultClasses = "bg-white text-slate-700";
+      const onlyWhenEnabledClasses =
+        "enabled:hover:bg-slate-100 enabled:focus:ring-slate-100 enabled:focus-visible:outline-slate-300 enabled:active:bg-slate-200";
+      const onlyWhenDisabledClasses = "disabled:text-slate-300";
+
+      return [
+        defaultClasses,
+        onlyWhenEnabledClasses,
+        onlyWhenDisabledClasses
+      ].join(" ");
     }
 
     if (variant === "danger") {
@@ -68,8 +75,12 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getCursorClasses = () => {
-    if (isDisabled || isLoading) {
+    if (isDisabled) {
       return "cursor-not-allowed";
+    }
+
+    if (isLoading) {
+      return "cursor-wait";
     }
 
     return "cursor-default hover:cursor-pointer";
@@ -77,13 +88,42 @@ export const Button: React.FC<ButtonProps> = ({
 
   const classes = [
     // common classes
-    "rounded-md flex-none transition  ease-in-out duration-200 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-none focus:ring",
+    "rounded-md flex items-center flex-none transition  ease-in-out duration-200 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-none focus:ring",
     getCursorClasses(),
     getSizeClasses(),
     getVariantClasses(),
     className // Additional classes from parent
   ].join(" ");
 
+  const getSpinnerColor = (): SpinnerColors => {
+    if (variant === "danger") {
+      return {
+        fillColor: "fill-red-500",
+        bgColor: "text-white"
+      };
+    }
+
+    if (variant === "primary") {
+      return {
+        fillColor: "fill-blue-500",
+        bgColor: "text-white"
+      };
+    }
+
+    if (variant === "secondary-outline" || variant === "secondary-text") {
+      return {
+        fillColor: "fill-slate-500",
+        bgColor: "text-white"
+      };
+    }
+
+    return {
+      fillColor: "fill-blue-500",
+      bgColor: "text-white"
+    };
+  };
+
+  const spinnerColor = getSpinnerColor();
   return (
     <button
       type="button"
@@ -94,7 +134,13 @@ export const Button: React.FC<ButtonProps> = ({
         console.log("Clicked");
       }}
     >
-      {isLoading ? <Spinner /> : null}
+      {isLoading ? (
+        <Spinner
+          size="small"
+          fillColor={spinnerColor.fillColor}
+          bgColor={spinnerColor.bgColor}
+        />
+      ) : null}
 
       {children}
     </button>

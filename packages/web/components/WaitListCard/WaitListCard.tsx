@@ -62,12 +62,10 @@ export const WaitListCard: React.FC = () => {
               />
 
               {/* <Button isLoading>Disabled</Button> */}
-              <Button variant="secondary-outline" isDisabled>
-                Disabled Secondary{" "}
-              </Button>
-              <Button variant="secondary-outline"  isLoading>
-                Loading Secondary{" "}
-              </Button>
+              <Button variant="secondary-text">Secondary </Button>
+              <Button variant="secondary-text" isDisabled>Secondary </Button>
+              <Button variant="secondary-text" isLoading>Secondary </Button>
+
               {/* <Button variant="secondary-text" isDisabled>
                 Disabled
               </Button>

@@ -1,7 +1,10 @@
-type SpinnerProps = {
+export type SpinnerColors = {
+  fillColor: `fill-${string}-${number}`;
+  bgColor: `text-${string}-${number}` | `text-${string}`;
+};
+
+type SpinnerProps = Partial<SpinnerColors> & {
   size?: "small" | "medium" | "large" | "extra-large" | "giant";
-  bgColor?: `text-${string}-${number}`;
-  fillColor?: `fill-${string}-${number}`;
 };
 
 export const Spinner: React.FC<SpinnerProps> = ({
