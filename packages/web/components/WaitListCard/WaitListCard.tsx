@@ -62,16 +62,9 @@ export const WaitListCard: React.FC = () => {
               />
 
               {/* <Button isLoading>Disabled</Button> */}
-              <Button variant="secondary-text">Secondary </Button>
-              <Button variant="secondary-text" isDisabled>Secondary </Button>
-              <Button variant="secondary-text" isLoading>Secondary </Button>
-
-              {/* <Button variant="secondary-text" isDisabled>
-                Disabled
-              </Button>
-              <Button variant="danger" isDisabled>
-                Delete
-              </Button> */}
+              <Button>Danger </Button>
+              <Button isDisabled>Danger </Button>
+              <Button isLoading>Danger </Button>
             </div>
           </div>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">

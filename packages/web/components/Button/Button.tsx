@@ -67,11 +67,28 @@ export const Button: React.FC<ButtonProps> = ({
     }
 
     if (variant === "danger") {
-      return "text-white bg-red-500 disabled:bg-red-100 hover:bg-red-600 active:bg-red-700  focus:ring-red-300 focus-visible:outline-red-600 shadow-sm";
+      const defaultClasses = "bg-red-500 text-white shadow-sm";
+      const onlyWhenEnabledClasses =
+        "enabled:hover:bg-red-600 enabled:active:bg-red-700 enabled:focus:ring-red-300 enabled:focus-visible:outline-red-600";
+      const onlyWhenDisabledClasses = "disabled:bg-red-100";
+      return [
+        defaultClasses,
+        onlyWhenEnabledClasses,
+        onlyWhenDisabledClasses
+      ].join(" ");
     }
 
     // Default - Primary
-    return "text-white bg-blue-500 disabled:bg-blue-100 hover:bg-blue-600 active:bg-blue-700  focus:ring-blue-300 focus-visible:outline-blue-600 shadow-sm";
+    const defaultClasses = "text-white bg-blue-500 shadow-sm";
+    const onlyWhenEnabledClasses =
+      "enabled:hover:bg-blue-600 enabled:active:bg-blue-700 enabled:focus:ring-blue-300 enabled:focus-visible:outline-blue-600";
+    const onlyWhenDisabledClasses = "disabled:bg-blue-100";
+
+    return [
+      defaultClasses,
+      onlyWhenEnabledClasses,
+      onlyWhenDisabledClasses
+    ].join(" ");
   };
 
   const getCursorClasses = () => {
