@@ -78,7 +78,7 @@ export const WaitListCard: React.FC = () => {
                 }}
                 isLoading={isLoading}
               >
-                {isLoading ? "Joining..." : "Join"}
+                {isLoading ? "Joining..." : "Small"}
               </Button>
               <Button
                 size="medium"
@@ -87,7 +87,7 @@ export const WaitListCard: React.FC = () => {
                 }}
                 isLoading={isLoading}
               >
-                {isLoading ? "Joining..." : "Join"}
+                {isLoading ? "Joining..." : "Medium"}
               </Button>
               <Button
                 size="large"
@@ -96,7 +96,7 @@ export const WaitListCard: React.FC = () => {
                 }}
                 isLoading={isLoading}
               >
-                {isLoading ? "Joining..." : "Join"}
+                {isLoading ? "Joining..." : "Large"}
               </Button>
             </div>
           </div>

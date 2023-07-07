@@ -33,15 +33,15 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const getSizeClasses = () => {
     if (size === "small") {
-      return "py-1 px-2 text-sm";
+      return "py-0 px-2 text-sm";
     }
 
     if (size === "large") {
-      return "py-3 px-6 text-lg";
+      return "py-2 px-6 text-lg";
     }
 
     // Default
-    return "px-2 py-4 text-md";
+    return "py-4 px-4 text-md";
   };
 
   const getVariantClasses = () => {
@@ -111,7 +111,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const classes = [
     // common classes
-    "rounded-md flex items-center flex-none transition  ease-in-out duration-200 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-none focus:ring",
+    "rounded-md flex flex-grow-0 items-center flex-none transition  ease-in-out duration-200 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-none focus:ring",
     getCursorClasses(),
     getSizeClasses(),
     getVariantClasses(),
