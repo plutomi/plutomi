@@ -1,8 +1,11 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Button } from "../Button";
 import { delay } from "@plutomi/shared";
+import { Button } from "../Button";
+import { Schema } from "@plutomi/validation";
 
 const cards = [
   {
@@ -30,10 +33,24 @@ const cards = [
   }
 ];
 
+type WaitlistFormValues = {
+  email: string;
+};
+
 export const WaitListCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = async () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm<WaitlistFormValues>({
+    resolver: zodResolver(Schema.Subscribe.UISchema)
+  });
+
+  const onSubmit: SubmitHandler<WaitlistFormValues> = async (data, event) => {
+    console.log(data);
     setIsLoading(true);
     await delay({ ms: 1500 });
     setIsLoading(false);
@@ -42,7 +59,7 @@ export const WaitListCard: React.FC = () => {
   return (
     <div className="relative isolate overflow-hidden bg-white py-16 sm:py-12 lg:py-18 drop-shadow-sm border rounded-lg">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="  items-center border-red-500 mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
+        <div className="  items-center  mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
           <div className="max-w-xl lg:max-w-2xl">
             <h2 className="text-3xl font-medium tracking-tight text-slate-700 sm:text-4xl">
               Hi there! Thank&apos;s for checking us out.
@@ -53,53 +70,40 @@ export const WaitListCard: React.FC = () => {
               interested in being notified when Plutomi is ready for use, please
               join our wait list!
             </p>
-            <div className="relative mt-6 flex max-w-md gap-x-4">
-              {/* <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <FiMail className="h-5 w-5 text-slate-400" aria-hidden="true" />
-              </div> */}
-              {/* <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className=" placeholder-slate-400 min-w-0 pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
-                placeholder="Enter your email"
-              /> */}
 
-              {/* <Button isLoading>Disabled</Button> */}
-              <Button
-                size="small"
-                onClick={() => {
-                  void handleClick();
-                }}
-                isLoading={isLoading}
-              >
-                {isLoading ? "Joining..." : "Small"}
-              </Button>
-              <Button
-                size="medium"
-                onClick={() => {
-                  void handleClick();
-                }}
-                isLoading={isLoading}
-              >
-                {isLoading ? "Joining..." : "Medium"}
-              </Button>
-              <Button
-                size="large"
-                onClick={() => {
-                  void handleClick();
-                }}
-                isLoading={isLoading}
-              >
-                {isLoading ? "Joining..." : "Large"}
-              </Button>
+            <div className="relative mt-6 flex  gap-x-4 space-between">
+              {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+              <form className="w-full " onSubmit={handleSubmit(onSubmit)}>
+                {/*  eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                <label htmlFor="email" className="sr-only">
+                  Email address
+                </label>
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <FiMail
+                    className="h-5 w-5 text-slate-400"
+                    aria-hidden="true"
+                  />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  disabled={isLoading}
+                  {...register("email")}
+                  className="flex flex-shrink-0 placeholder-slate-400 disabled:bg-slate-100 disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                  placeholder="Enter your email"
+                />
+                {errors.email?.message !== undefined ? (
+                  <p>{errors.email.message}</p>
+                ) : null}
+
+                <Button size="medium" isLoading={isLoading}>
+                  {isLoading ? "Joining..." : "Join"}
+                </Button>
+              </form>
             </div>
           </div>
+
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
             {cards.map((card) => (
               <div
