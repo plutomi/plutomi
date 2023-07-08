@@ -103,7 +103,7 @@
 //         totalQuestions: 0,
 //         totalUsers: 1,
 //         totalWebhooks: 0,
-//         createdBy: user.id,
+//         created_by: user.id,
 //         relatedTo: [],
 //         displayName,
 //       };

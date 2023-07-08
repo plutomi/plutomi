@@ -25,7 +25,7 @@ import {
 import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
 import {
-  EMAIL_TEMPLATES,
+  EmailTemplates,
   clearCookie,
   getCookieJar,
   getSessionCookieName,
@@ -207,6 +207,7 @@ export const post: RequestHandler = async (req, res) => {
 
   if (totpCodeItem === undefined) {
     // Something failed up above and we already responded
+    // Also acts as a type guard
     return;
   }
 
@@ -220,14 +221,13 @@ export const post: RequestHandler = async (req, res) => {
         header: "Plutomi",
         email: PlutomiEmails.NO_REPLY
       },
-      bodyHtml: EMAIL_TEMPLATES.TOTPTemplate({ code })
+      bodyHtml: EmailTemplates.TOTPTemplate({ code })
     });
 
     res.status(201).json({
       message: "A login code has been sent to your email"
     });
   } catch (error) {
-    // ! TODO: Possible double send? How
     res.status(500).json({
       message: "An error ocurred sending your login code",
       error

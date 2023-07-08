@@ -14,7 +14,7 @@ const baseSchema = z.object({
       .min(1, "Organization name must be at least 1 character long.")
       .max(100, "Organization name must be at most 100 characters long.")
   ),
-  customWorkspaceId: z.preprocess(
+  custom_workspace_id: z.preprocess(
     trimAndLowerCase,
     z
       .string({
@@ -39,7 +39,7 @@ const baseSchema = z.object({
 // Note: This is a multi-step form on the FE
 export const UIOrgStepSchema = baseSchema.pick({ name: true });
 export const UIWorkspaceIdStepSchema = baseSchema.pick({
-  customWorkspaceId: true
+  custom_workspace_id: true
 });
 
 export const UISchema = baseSchema;

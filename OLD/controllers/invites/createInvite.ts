@@ -128,7 +128,7 @@
 //     createdAt: now,
 //     updatedAt: now,
 //     recipientName: recipientHasBothNames ? `${recipient.firstName} ${recipient.lastName}` : null,
-//     createdBy: {
+//     created_by: {
 //       name: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
 //       email: userEmail,
 //     },

@@ -26,7 +26,7 @@ export enum TOTPCodeStatus {
    */
   EXPIRED = "EXPIRED",
   /**
-   * Code was invalidated due to a new code being sent
+   * Code was invalidated due to a new code being used
    */
   INVALIDATED = "INVALIDATED"
 }

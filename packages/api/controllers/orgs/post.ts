@@ -36,7 +36,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const { user } = req;
   const { _id: userId } = user;
-  const { name: orgName, customWorkspaceId } = data;
+  const { name: orgName, custom_workspace_id: customWorkspaceId } = data;
 
   // ! TODO: Do not allow org creation until all invites have been accepted / rejected
 
@@ -89,7 +89,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     name: orgName,
     created_at: now,
     updated_at: now,
-    createdBy: userId,
+    created_by: userId,
     related_to: [
       {
         id: orgId,

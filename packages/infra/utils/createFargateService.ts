@@ -76,17 +76,21 @@ export const createFargateService = ({
     scaleOutCooldown: Duration.seconds(60)
   });
 
-  // Outbound HTTPS from tasks
-  natGatewayProvider.connections.allowFrom(
-    fargateService.service,
-    Port.tcp(443)
-  );
+  const ports = [
+    // Outbound HTTPS from tasks
+    443,
+    // Outbound MongoDB from tasks
+    27017
+  ];
 
-  // Outbound MongoDB from tasks
-  natGatewayProvider.connections.allowFrom(
-    fargateService.service,
-    Port.tcp(27017)
-  );
+  // Allow outbound traffic from tasks to the internet
+  // TODO: Mongo PrivateLink
+  ports.forEach((port) => {
+    natGatewayProvider.connections.allowFrom(
+      fargateService.service,
+      Port.tcp(port)
+    );
+  });
 
   return fargateService;
 };

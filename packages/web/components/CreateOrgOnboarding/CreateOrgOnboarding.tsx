@@ -10,7 +10,7 @@ export const CreateOrgOnboarding: React.FC = () => {
   const form = useForm<Schema.Orgs.post.UIValues>({
     initialValues: {
       name: "",
-      customWorkspaceId: ""
+      custom_workspace_id: ""
     },
     validate: zodResolver(Schema.Orgs.post.UISchema)
   });
@@ -29,7 +29,7 @@ export const CreateOrgOnboarding: React.FC = () => {
               label="Workspace ID"
               placeholder="plutomi.com/your-workspace-id"
               description="Create a custom ID where your applicants can apply to."
-              {...form.getInputProps("customWorkspaceId")}
+              {...form.getInputProps("custom_workspace_id")}
             />
           ) : null} */}
         {/* <Stepper active={active} breakpoint="sm" orientation="horizontal">

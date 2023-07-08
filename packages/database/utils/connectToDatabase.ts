@@ -91,14 +91,14 @@ export const connectToDatabase = async ({
     indexSpec: {
       // Order doesn't *really* matter here
       _type: 1,
-      customId: 1
+      custom_workspace_id: 1
     },
     unique: true,
     items,
     partialFilterExpression: {
       $and: [
         {
-          customId: { $exists: true }
+          custom_workspace_id: { $exists: true }
         },
         {
           _type: IdPrefix.WORKSPACE
