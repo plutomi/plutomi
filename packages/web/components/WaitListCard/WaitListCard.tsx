@@ -48,8 +48,6 @@ export const WaitListCard: React.FC = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    getValues,
     formState: { errors }
   } = useForm<WaitlistFormValues>({
     resolver: zodResolver(Schema.Subscribe.UISchema)
@@ -90,33 +88,42 @@ export const WaitListCard: React.FC = () => {
               join our wait list!
             </p>
 
-            <form
-              className=" relative mt-6 flex  gap-x-4 space-between w-full"
-              onSubmit={(e) => void handleSubmit(onSubmit)(e)}
-            >
-              <label htmlFor="waitlist-email" className="sr-only">
-                Email address
-              </label>
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <FiMail className="h-5 w-5 text-slate-400" aria-hidden="true" />
-              </div>
-              <input
-                id="beans"
-                type="waitlist-email"
-                autoComplete="email"
-                disabled={subscribe.isLoading}
-                {...register("email")}
-                className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
-                placeholder="Enter your email"
-              />
+            {subscribe.isSuccess ? (
+              <p className="text-green-400">YEEEHAW</p>
+            ) : (
+              <>
+                <form
+                  className=" relative mt-6 flex  gap-x-4 space-between w-full"
+                  onSubmit={(e) => void handleSubmit(onSubmit)(e)}
+                >
+                  <label htmlFor="waitlist-email" className="sr-only">
+                    Email address
+                  </label>
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <FiMail
+                      className="h-5 w-5 text-slate-400"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <input
+                    id="beans"
+                    type="waitlist-email"
+                    autoComplete="email"
+                    disabled={subscribe.isLoading}
+                    {...register("email")}
+                    className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                    placeholder="Enter your email"
+                  />
 
-              <Button size="medium" isLoading={subscribe.isLoading}>
-                {subscribe.isLoading ? "Joining..." : "Join"}
-              </Button>
-            </form>
-            {errors.email?.message !== undefined ? (
-              <p className="text-red-500">{errors.email.message}</p>
-            ) : null}
+                  <Button size="medium" isLoading={subscribe.isLoading}>
+                    {subscribe.isLoading ? "Joining..." : "Join"}
+                  </Button>
+                </form>
+                {errors.email?.message !== undefined ? (
+                  <p className="text-red-500">{errors.email.message}</p>
+                ) : null}
+              </>
+            )}
           </div>
 
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
