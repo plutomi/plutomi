@@ -1,13 +1,17 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
-import { useForm, type SubmitHandler } from "react-hook-form";
+
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { delay } from "@plutomi/shared";
 import { Schema } from "@plutomi/validation";
 
 // TODO: Eslint labels htgmlFor
 // TODO:: FORM ESLINGT function voids
+import { useMutation } from "@tanstack/react-query";
+import { handleAxiosError } from "@/utils/handleAxiosResponse";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle } from "@tabler/icons-react";
+import axios from "axios";
 import { Button } from "../Button";
 
 const cards = [
@@ -41,21 +45,36 @@ type WaitlistFormValues = {
 };
 
 export const WaitListCard: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const {
     register,
     handleSubmit,
     watch,
+    getValues,
     formState: { errors }
   } = useForm<WaitlistFormValues>({
     resolver: zodResolver(Schema.Subscribe.UISchema)
   });
 
+  const subscribe = useMutation({
+    mutationFn: async () =>
+      axios.post("/api/waitlist", {
+        email: EMAIL_FROM_FORM_DATA
+      }),
+
+    onError: (error) => {
+      const message = handleAxiosError(error);
+      notifications.show({
+        id: "wl-error",
+        title: "An error ocurred 😢",
+        message,
+        color: "red",
+        icon: <IconAlertCircle size={24} />
+      });
+    }
+  });
+
   const onSubmit: SubmitHandler<WaitlistFormValues> = async (data) => {
-    setIsLoading(true);
-    await delay({ ms: 1500 });
-    setIsLoading(false);
+    await subscribe.mutateAsync();
   };
 
   return (
@@ -87,14 +106,14 @@ export const WaitListCard: React.FC = () => {
                 id="beans"
                 type="waitlist-email"
                 autoComplete="email"
-                disabled={isLoading}
+                disabled={subscribe.isLoading}
                 {...register("email")}
                 className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                 placeholder="Enter your email"
               />
 
-              <Button size="medium" isLoading={isLoading}>
-                {isLoading ? "Joining..." : "Join"}
+              <Button size="medium" isLoading={subscribe.isLoading}>
+                {subscribe.isLoading ? "Joining..." : "Join"}
               </Button>
             </form>
             {errors.email?.message !== undefined ? (
