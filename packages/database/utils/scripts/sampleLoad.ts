@@ -237,6 +237,8 @@
 //             console.log("Done inserting applicant data");
 //             // console.log(`inserting applicant`);
 //           } catch (error) {
+
+// cspell:disable-next-line
 //             console.error(`ERROR INSERTIN GAPPLINGATNS ${error}`);
 //           }
 //         }
