@@ -1,17 +1,13 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
-
-import { SubmitHandler, useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Schema } from "@plutomi/validation";
-
-// TODO: Eslint labels htgmlFor
-// TODO:: FORM ESLINGT function voids
 import { useMutation } from "@tanstack/react-query";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle } from "@tabler/icons-react";
 import axios from "axios";
+import toast from "react-hot-toast";
+
 import { Button } from "../Button";
 
 const cards = [
@@ -59,88 +55,79 @@ export const WaitListCard: React.FC = () => {
 
     onError: (error) => {
       const message = handleAxiosError(error);
-      notifications.show({
-        id: "wl-error",
-        title: "An error ocurred 😢",
-        message,
-        color: "red",
-        icon: <IconAlertCircle size={24} />
-      });
+      toast.error(message);
     }
   });
 
   const onSubmit: SubmitHandler<WaitlistFormValues> = async (data) => {
-    await subscribe.mutateAsync(data);
+    subscribe.mutate(data);
   };
 
   return (
-    <div className="relative isolate overflow-hidden bg-white py-16 sm:py-12 lg:py-18 drop-shadow-sm border rounded-lg">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="relative isolate overflow-hidden bg-white py-16 sm:py-12 lg:py-18   drop-shadow-sm border rounded-lg">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 ">
         <div className="  items-center  mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
-          <div className="max-w-xl lg:max-w-2xl">
-            <h2 className="text-3xl font-medium tracking-tight text-slate-700 sm:text-4xl">
-              Hi there! Thank&apos;s for checking us out.
-            </h2>
+          <div className="max-w-xl lg:max-w-2xl  h-full space-y-5 ">
+            <div className="">
+              <h2 className="text-3xl font-medium tracking-tight text-slate-700 sm:text-4xl">
+                Hi there! Thank&apos;s for checking us out.
+              </h2>
 
-            <p className="mt-4 text-lg leading-8 text-slate-500">
-              This site is still under construction, but if you&apos;re
-              interested in being notified when Plutomi is ready for use, please
-              join our wait list!
-            </p>
-
-            {subscribe.isSuccess ? (
-              <div className="rounded-md bg-green-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    {/* <CheckCircleIcon
-                      className="h-5 w-5 text-green-400"
-                      aria-hidden="true"
-                    /> */}
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-green-800">
-                      Awesome, you&apos;ve been added to our waitlist! 🚀
-                    </p>
+              <p className="mt-4 text-lg leading-8 text-slate-500">
+                This site is still under construction, but if you&apos;re
+                interested in being notified when Plutomi is ready for use,
+                please join our wait list!
+              </p>
+            </div>
+            <div className="">
+              {subscribe.isSuccess ? (
+                <div className="rounded-md bg-green-50 p-4">
+                  <div className="flex">
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-green-800">
+                        Awesome, we&apos;ll let you know when things are ready!
+                        🚀
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <>
-                <form
-                  className=" relative mt-6 flex  gap-x-4 space-between w-full"
-                  onSubmit={(e) => void handleSubmit(onSubmit)(e)}
-                >
-                  <label htmlFor="waitlist-email" className="sr-only">
-                    Email address
-                  </label>
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <FiMail
-                      className="h-5 w-5 text-slate-400"
-                      aria-hidden="true"
+              ) : (
+                <>
+                  <form
+                    className="relative flex  gap-x-4 space-between w-full"
+                    onSubmit={(e) => void handleSubmit(onSubmit)(e)}
+                  >
+                    <label htmlFor="waitlist-email" className="sr-only">
+                      Email address
+                    </label>
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <FiMail
+                        className="h-5 w-5 text-slate-400"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <input
+                      id="beans"
+                      type="waitlist-email"
+                      autoComplete="email"
+                      disabled={subscribe.isLoading}
+                      {...register("email")}
+                      className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                      placeholder="Enter your email"
                     />
-                  </div>
-                  <input
-                    id="beans"
-                    type="waitlist-email"
-                    autoComplete="email"
-                    disabled={subscribe.isLoading}
-                    {...register("email")}
-                    className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
-                    placeholder="Enter your email"
-                  />
 
-                  <Button size="medium" isLoading={subscribe.isLoading}>
-                    {subscribe.isLoading ? "Joining..." : "Join"}
-                  </Button>
-                </form>
-                {errors.email?.message !== undefined ? (
-                  <p className="text-red-500">{errors.email.message}</p>
-                ) : null}
-              </>
-            )}
+                    <Button size="medium" isLoading={subscribe.isLoading}>
+                      {subscribe.isLoading ? "Joining..." : "Join"}
+                    </Button>
+                  </form>
+                  {errors.email?.message !== undefined ? (
+                    <p className="text-red-500">{errors.email.message}</p>
+                  ) : null}
+                </>
+              )}
+            </div>
           </div>
-
-          <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
+          <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 ">
             {cards.map((card) => (
               <div
                 aria-hidden="true"

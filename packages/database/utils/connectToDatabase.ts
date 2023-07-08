@@ -129,6 +129,54 @@ export const connectToDatabase = async ({
     }
   });
 
+  await createIndex({
+    // Waitlist emails are globally unique
+    name: "unique_waitlist_email",
+    indexSpec: {
+      // Order doesn't *really* matter here
+      _type: 1,
+      email: 1
+    },
+    unique: true,
+    items,
+    partialFilterExpression: {
+      $and: [
+        {
+          email: { $exists: true }
+        },
+        {
+          _type: IdPrefix.WAIT_LIST_USER
+        }
+      ]
+    }
+  });
+
+  await createIndex({
+    // Ensure a user has one default workspace / membership
+    name: "one_default_workspace",
+    indexSpec: {
+      // Order doesn't *really* matter here
+      _type: 1,
+      user: 1,
+      is_default: 1
+    },
+    unique: true,
+    items,
+    partialFilterExpression: {
+      $and: [
+        {
+          user: { $exists: true }
+        },
+        {
+          _type: IdPrefix.MEMBERSHIP
+        },
+        {
+          is_default: { $eq: true }
+        }
+      ]
+    }
+  });
+
   console.log("Done.");
   return { client, items, database };
 };

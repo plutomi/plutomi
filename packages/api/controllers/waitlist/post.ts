@@ -7,6 +7,7 @@ import {
   type Email
 } from "@plutomi/shared";
 import KSUID from "ksuid";
+import { MongoError } from "mongodb";
 import { generatePlutomiId } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
@@ -51,6 +52,13 @@ export const post: RequestHandler = async (req, res) => {
         "Thanks for your interest! Make sure to check out Plutomi on GitHub!"
     });
   } catch (error) {
+    if (error instanceof MongoError && error.code === 11000) {
+      res.status(409).json({
+        message: "You are already on the wait list! 😅"
+      });
+      return;
+    }
+
     res.status(500).json({
       message: "An error ocurred adding you to our wait list!"
     });
