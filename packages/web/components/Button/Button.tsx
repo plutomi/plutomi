@@ -153,8 +153,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const spinnerColor = getSpinnerColor();
     return (
       <button
-        // eslint-disable-next-line react/button-has-type
-        type="button"
+        type="submit"
         ref={ref}
         className={classes}
         disabled={isDisabled || isLoading}

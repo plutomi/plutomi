@@ -18,7 +18,9 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "react/prop-types": "off",
     "react/require-default-props": "off",
-    "react/no-array-index-key": ["error"]
+    "react/no-array-index-key": ["error"],
+    // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues/718
+    "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }]
   },
 
   "ignorePatterns": [

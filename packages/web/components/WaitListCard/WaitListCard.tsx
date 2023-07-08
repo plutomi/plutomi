@@ -4,8 +4,11 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { delay } from "@plutomi/shared";
-import { Button } from "../Button";
 import { Schema } from "@plutomi/validation";
+
+// TODO: Eslint labels htgmlFor
+// TODO:: FORM ESLINGT function voids
+import { Button } from "../Button";
 
 const cards = [
   {
@@ -49,8 +52,7 @@ export const WaitListCard: React.FC = () => {
     resolver: zodResolver(Schema.Subscribe.UISchema)
   });
 
-  const onSubmit: SubmitHandler<WaitlistFormValues> = async (data, event) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<WaitlistFormValues> = async (data) => {
     setIsLoading(true);
     await delay({ ms: 1500 });
     setIsLoading(false);
@@ -71,37 +73,33 @@ export const WaitListCard: React.FC = () => {
               join our wait list!
             </p>
 
-            <div className="relative mt-6 flex  gap-x-4 space-between">
-              {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-              <form className="w-full " onSubmit={handleSubmit(onSubmit)}>
-                {/*  eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                <label htmlFor="email" className="sr-only">
-                  Email address
-                </label>
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <FiMail
-                    className="h-5 w-5 text-slate-400"
-                    aria-hidden="true"
-                  />
-                </div>
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  disabled={isLoading}
-                  {...register("email")}
-                  className="flex flex-shrink-0 placeholder-slate-400 disabled:bg-slate-100 disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
-                  placeholder="Enter your email"
-                />
-                {errors.email?.message !== undefined ? (
-                  <p>{errors.email.message}</p>
-                ) : null}
+            <form
+              className=" relative mt-6 flex  gap-x-4 space-between w-full"
+              onSubmit={(e) => void handleSubmit(onSubmit)(e)}
+            >
+              <label htmlFor="waitlist-email" className="sr-only">
+                Email address
+              </label>
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <FiMail className="h-5 w-5 text-slate-400" aria-hidden="true" />
+              </div>
+              <input
+                id="beans"
+                type="waitlist-email"
+                autoComplete="email"
+                disabled={isLoading}
+                {...register("email")}
+                className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                placeholder="Enter your email"
+              />
 
-                <Button size="medium" isLoading={isLoading}>
-                  {isLoading ? "Joining..." : "Join"}
-                </Button>
-              </form>
-            </div>
+              <Button size="medium" isLoading={isLoading}>
+                {isLoading ? "Joining..." : "Join"}
+              </Button>
+            </form>
+            {errors.email?.message !== undefined ? (
+              <p className="text-red-500">{errors.email.message}</p>
+            ) : null}
           </div>
 
           <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2">
