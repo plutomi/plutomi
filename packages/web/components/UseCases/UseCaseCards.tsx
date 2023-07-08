@@ -1,12 +1,3 @@
-import {
-  createStyles,
-  Text,
-  SimpleGrid,
-  rem,
-  Card,
-  Group,
-  Center
-} from "@mantine/core";
 import { IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
@@ -35,37 +26,62 @@ type UseCaseCard = {
 };
 
 const hiringUseCase: UseCaseCard[] = [
-  { title: "Resume Upload", icon: IconFileUpload, color: "gray", amount: 6 },
-  { title: "Resume Review", icon: SiCodereview, color: "yellow", amount: 24 },
-  { title: "Interviewing", icon: FaPeopleArrows, color: "blue", amount: 5 },
-  { title: "Rejected", icon: AiFillCloseCircle, color: "red", amount: 59 },
-  { title: "Hired", icon: MdOutlineWork, color: "green", amount: 2 }
+  {
+    title: "Resume Upload",
+    icon: IconFileUpload,
+    color: "text-slate-400",
+    amount: 6
+  },
+  {
+    title: "Resume Review",
+    icon: SiCodereview,
+    color: "text-yellow-400",
+    amount: 24
+  },
+  {
+    title: "Interviewing",
+    icon: FaPeopleArrows,
+    color: "text-blue-500",
+    amount: 5
+  },
+  {
+    title: "Rejected",
+    icon: AiFillCloseCircle,
+    color: "text-red-500",
+    amount: 59
+  },
+  { title: "Hired", icon: MdOutlineWork, color: "text-green-500", amount: 2 }
 ];
 
 const socialServicesUseCase: UseCaseCard[] = [
-  { title: "Registration", icon: FaWpforms, color: "gray", amount: 89 },
+  {
+    title: "Registration",
+    icon: FaWpforms,
+    color: "text-slate-400",
+    amount: 89
+  },
   {
     title: "ID Verification",
     icon: BsFillPersonVcardFill,
-    color: "yellow",
+    color: "text-yellow-400",
     amount: 174
   },
   {
     title: "Income Verification",
     icon: AiFillDollarCircle,
-    color: "yellow",
+    color: "text-yellow-400",
     amount: 220
   },
   {
     title: "Did Not Qualify",
     icon: BsPersonFillExclamation,
-    color: "red",
+    color: "text-red-500",
     amount: 27
   },
   {
     title: "Funds Disbursed",
     icon: GiReceiveMoney,
-    color: "green",
+    color: "text-green-500",
     amount: 740
   }
 ];
@@ -74,18 +90,33 @@ const largeScaleContractingUseCase: UseCaseCard[] = [
   {
     title: "Wait List",
     icon: AiOutlineFieldTime,
-    color: "gray",
+    color: "text-slate-400",
     amount: 89587
   },
-  { title: "Setup Profile", icon: ImProfile, color: "yellow", amount: 12615 },
+  {
+    title: "Setup Profile",
+    icon: ImProfile,
+    color: "text-yellow-400",
+    amount: 12615
+  },
   {
     title: "Background Check",
     icon: BsPersonBoundingBox,
-    color: "orange",
+    color: "text-orange-400",
     amount: 948
   },
-  { title: "Failed Check ", icon: BsPersonXFill, color: "red", amount: 27 },
-  { title: "Ready to Drive", icon: FaCarSide, color: "green", amount: 3926 }
+  {
+    title: "Failed Check ",
+    icon: BsPersonXFill,
+    color: "text-red-500",
+    amount: 27
+  },
+  {
+    title: "Ready to Drive",
+    icon: FaCarSide,
+    color: "text-green-500",
+    amount: 3926
+  }
 ];
 
 const useCases = new Map<UseCase, UseCaseCard[]>([
@@ -94,80 +125,32 @@ const useCases = new Map<UseCase, UseCaseCard[]>([
   ["Social Services", socialServicesUseCase]
 ]);
 
-const useStyles = createStyles((theme) => ({
-  card: {
-    boxShadow: theme.shadows.sm,
-
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white
-  },
-  section: {
-    borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`
-  },
-
-  title: {
-    fontWeight: 700
-  },
-
-  item: {
-    display: "flex",
-    borderRadius: theme.radius.md,
-
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-    transition: "box-shadow 150ms ease, transform 100ms ease",
-
-    "&:hover": {
-      boxShadow: theme.shadows.md,
-      transform: "scale(1.05)"
-    }
-  },
-  grid: {
-    width: "70%",
-    [theme.fn.smallerThan("lg")]: {
-      width: "60%"
-    }
-  }
-}));
-
 export const UseCaseCards: React.FC = () => {
   const { useCase } = useUseCaseStore();
-  const { classes, theme } = useStyles();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <Card key={item.title} className={classes.card} radius="md">
-      <Card.Section py="xs">
-        <Center>
-          <item.icon color={theme.colors[item.color][5]} size="2rem" />
-        </Center>
-        <Text fz="lg" mt={4} ta="center" fw={400}>
-          {item.title}
-        </Text>
-      </Card.Section>
-      <Card.Section withBorder py="1">
-        <Group spacing="xs" position="center" c="dimmed">
-          <Center>
-            <HiUserGroup />
-          </Center>
-          <Text fz="md" fw={500} py={4}>
-            {item.amount.toLocaleString()}{" "}
-          </Text>
-        </Group>
-      </Card.Section>
-    </Card>
+    <div
+      className=" rounded-lg bg-white drop-shadow-sm border"
+      key={item.title}
+    >
+      <div className="flex flex-col items-center px-5 py-2">
+        <item.icon size="2rem" className={`${item.color}`} />
+        <p className="text-md font-medium text-slate-700">{item.title}</p>
+      </div>
+
+      <div className="flex border-t py-1 justify-center space-x-2 text-slate-500 font-light items-center ">
+        <div className="text-slate-400">
+          <HiUserGroup />
+        </div>
+
+        <div className="">
+          <p className="">{item.amount.toLocaleString()} </p>
+        </div>
+      </div>
+    </div>
   ));
 
   return (
-    <SimpleGrid
-      breakpoints={[
-        { maxWidth: "sm", cols: 1, spacing: "xs" },
-        { minWidth: "lg", cols: 5, spacing: "xs" }
-      ]}
-      className={classes.grid}
-    >
-      {items}
-    </SimpleGrid>
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 w-full">{items}</div>
   );
 };

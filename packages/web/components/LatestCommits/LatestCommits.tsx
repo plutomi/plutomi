@@ -1,4 +1,3 @@
-import { Container, Stack } from "@mantine/core";
 import { Commit, type CommitType } from "./Commit";
 
 type LatestCommitsProps = {
@@ -6,11 +5,14 @@ type LatestCommitsProps = {
 };
 
 export const LatestCommits: React.FC<LatestCommitsProps> = ({ commits }) => (
-  <Container size="md">
-    <Stack spacing="md">
-      {(commits ?? []).map((commit) => (
-        <Commit key={commit.message} {...commit} />
-      ))}
-    </Stack>
-  </Container>
+  <div className="w-full max-w-3xl space-y-3 flex flex-col justify-center px-4 lg:px-0">
+    <div className="border-b border-slate-200 pb-5">
+      <h3 className="text-3xl font-semibold leading-6 text-slate-900">
+        Latest Changes
+      </h3>
+    </div>
+    {(commits ?? []).map((commit) => (
+      <Commit key={commit.message} {...commit} />
+    ))}
+  </div>
 );

@@ -17,7 +17,10 @@
     "react/no-jsx-props-no-spreading": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "react/prop-types": "off",
-    "react/no-array-index-key": ["error"]
+    "react/require-default-props": "off",
+    "react/no-array-index-key": ["error"],
+    // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues/718
+    "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }]
   },
 
   "ignorePatterns": [
@@ -27,6 +30,7 @@
     "coverage/",
     "next-env.d.ts",
     "next.config.js",
+    "tailwind.config.js",
     "postcss.config.js"
   ]
 }

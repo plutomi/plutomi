@@ -13,17 +13,32 @@ type TOTPCodeRelatedToArray = [
 ];
 
 export enum TOTPCodeStatus {
+  /**
+   * Code was sent, and is awaiting use
+   */
   ACTIVE = "ACTIVE",
+  /**
+   * Code was used
+   */
   USED = "USED",
-  EXPIRED = "EXPIRED"
+  /**
+   * Code expired due to time
+   */
+  EXPIRED = "EXPIRED",
+  /**
+   * Code was invalidated due to a new code being used
+   */
+  INVALIDATED = "INVALIDATED"
 }
 
 export type TOTPCode = BaseEntity<IdPrefix.TOTP> & {
   code: string;
   user: PlutomiId<IdPrefix.USER>;
   email: Email;
-  // ISO Timestamp
-  expiresAt: string;
-  relatedTo: TOTPCodeRelatedToArray;
   status: TOTPCodeStatus;
+  expires_at: Date;
+  expired_at: Date | null;
+  used_at: Date | null;
+  invalidated_at: Date | null;
+  related_to: TOTPCodeRelatedToArray;
 };

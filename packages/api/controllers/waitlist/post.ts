@@ -1,12 +1,13 @@
 import type { RequestHandler } from "express";
 import { Schema, validate } from "@plutomi/validation";
-import dayjs from "dayjs";
 import {
   IdPrefix,
   RelatedToType,
   type WaitListUser,
   type Email
 } from "@plutomi/shared";
+import KSUID from "ksuid";
+import { MongoError } from "mongodb";
 import { generatePlutomiId } from "../../utils";
 
 export const post: RequestHandler = async (req, res) => {
@@ -22,25 +23,22 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email } = data;
 
+  const now = new Date();
+
   try {
-    const now = dayjs();
-    const nowIso = now.toISOString();
     const userId = generatePlutomiId({
-      date: now.toDate(),
+      date: now,
       idPrefix: IdPrefix.WAIT_LIST_USER
     });
 
     const waitListUser: WaitListUser = {
       _id: userId,
-      entityType: IdPrefix.WAIT_LIST_USER,
+      _type: IdPrefix.WAIT_LIST_USER,
+      _locked_at: KSUID.randomSync().string,
       email: email as Email,
-      createdAt: nowIso,
-      updatedAt: nowIso,
-      relatedTo: [
-        {
-          id: IdPrefix.WAIT_LIST_USER,
-          type: RelatedToType.ENTITY
-        },
+      created_at: now,
+      updated_at: now,
+      related_to: [
         {
           id: userId,
           type: RelatedToType.SELF
@@ -54,6 +52,13 @@ export const post: RequestHandler = async (req, res) => {
         "Thanks for your interest! Make sure to check out Plutomi on GitHub!"
     });
   } catch (error) {
+    if (error instanceof MongoError && error.code === 11000) {
+      res.status(409).json({
+        message: "You are already on the wait list! 😅"
+      });
+      return;
+    }
+
     res.status(500).json({
       message: "An error ocurred adding you to our wait list!"
     });

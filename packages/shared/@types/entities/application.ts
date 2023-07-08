@@ -21,5 +21,5 @@
 //   org: string;
 //   workspace: string;
 //   totals: ApplicationTotals;
-//   relatedTo: ApplicationRelatedToArray;
+//   related_to: ApplicationRelatedToArray;
 // };

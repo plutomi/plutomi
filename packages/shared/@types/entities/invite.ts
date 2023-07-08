@@ -20,7 +20,7 @@
 //     id: string;
 //     name: string;
 //   };
-//   createdBy: {
+//   created_by: {
 //     // Null incase that user hasn't setup their name,
 //     // we show on the invite that "You have been invited" instead of by <name>
 //     id: string;
@@ -33,5 +33,5 @@
 //     email: string;
 //   };
 //   expiresAt: Date;
-//   relatedTo: InviteRelatedToArray;
+//   related_to: InviteRelatedToArray;
 // };

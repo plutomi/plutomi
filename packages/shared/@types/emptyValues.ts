@@ -4,7 +4,7 @@
  * 
  *   const userData: User = {
       _id: userId,
-      relatedTo: [
+      related_to: [
         {
           id: userId,
           type: RelatedToType.SELF

@@ -8,7 +8,9 @@
   "dependencies": {
     "@plutomi/env": "^0.1.0",
     "@plutomi/shared": "^0.1.0",
+    "dotenv": "^16.1.4",
     "mongodb": "^5.6.0",
+    "nanoid": "3.3.4",
     "zod": "^3.21.4"
   },
   "scripts": {
@@ -17,9 +19,9 @@
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@types/node": "^18.15.11",
     "rimraf": "^4.4.1",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.4"
+    "ts-node-dev": "^2.0.0"
   }
 }

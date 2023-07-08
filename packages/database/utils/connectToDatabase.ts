@@ -5,7 +5,7 @@ import {
   type Db,
   ServerApiVersion
 } from "mongodb";
-import type { AllEntities } from "@plutomi/shared";
+import { type AllEntities, IdPrefix } from "@plutomi/shared";
 import { createIndex } from "./createIndex";
 import { env } from "./env";
 
@@ -33,6 +33,7 @@ type ConnectToDatabaseProps = {
 export const connectToDatabase = async ({
   databaseName
 }: ConnectToDatabaseProps): Promise<ConnectToDatabaseResponse> => {
+  console.log("Connecting to MongoDB...");
   client = new MongoClient(env.MONGO_URL, {
     serverApi: {
       version: ServerApiVersion.v1,
@@ -74,25 +75,105 @@ export const connectToDatabase = async ({
   }
 
   await createIndex({
-    name: "relatedToArray",
+    // Our main indexed array
+    name: "related_to_array",
     indexSpec: {
       "relatedTo.id": 1,
       "relatedTo.type": 1
     },
     items,
-    unique: false,
-    sparse: false
+    partialFilterExpression: { related_to: { $exists: true } }
   });
 
   await createIndex({
-    name: "customWorkspaceIdUnique",
+    // Workspaces are globally unique
+    name: "unique_workspace_id",
     indexSpec: {
-      customWorkspaceId: 1
+      // Order doesn't *really* matter here
+      _type: 1,
+      custom_workspace_id: 1
     },
     unique: true,
     items,
     partialFilterExpression: {
-      customWorkspaceId: { $exists: true }
+      $and: [
+        {
+          custom_workspace_id: { $exists: true }
+        },
+        {
+          _type: IdPrefix.WORKSPACE
+        }
+      ]
+    }
+  });
+
+  await createIndex({
+    // User emails are globally unique
+    name: "unique_user_email",
+    indexSpec: {
+      // Order doesn't *really* matter here
+      _type: 1,
+      email: 1
+    },
+    unique: true,
+    items,
+    partialFilterExpression: {
+      $and: [
+        {
+          email: { $exists: true }
+        },
+        {
+          _type: IdPrefix.USER
+        }
+      ]
+    }
+  });
+
+  await createIndex({
+    // Waitlist emails are globally unique
+    name: "unique_waitlist_email",
+    indexSpec: {
+      // Order doesn't *really* matter here
+      _type: 1,
+      email: 1
+    },
+    unique: true,
+    items,
+    partialFilterExpression: {
+      $and: [
+        {
+          email: { $exists: true }
+        },
+        {
+          _type: IdPrefix.WAIT_LIST_USER
+        }
+      ]
+    }
+  });
+
+  await createIndex({
+    // Ensure a user has one default workspace / membership
+    name: "one_default_workspace",
+    indexSpec: {
+      // Order doesn't *really* matter here
+      _type: 1,
+      user: 1,
+      is_default: 1
+    },
+    unique: true,
+    items,
+    partialFilterExpression: {
+      $and: [
+        {
+          user: { $exists: true }
+        },
+        {
+          _type: IdPrefix.MEMBERSHIP
+        },
+        {
+          is_default: { $eq: true }
+        }
+      ]
     }
   });
 

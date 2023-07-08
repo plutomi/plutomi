@@ -1,4 +1,4 @@
-import { Container, AppShell } from "@mantine/core";
+import { AppShell, type AppShellProps } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -7,11 +7,11 @@ import { LogInOrSignUpForm } from "../LogInOrSignUp";
 import { PageLoader } from "../PageLoader";
 import { getLoggedOutPageHeader } from "./utils";
 
-type PageShellProps = {
-  children: React.ReactNode;
-};
-
-export const PageShell: React.FC<PageShellProps> = ({ children }) => {
+export const PageShell: React.FC<AppShellProps> = ({
+  navbarOffsetBreakpoint = "sm",
+  asideOffsetBreakpoint = "sm",
+  ...props
+}) => {
   const router = useRouter();
   const loggedOutPageHeader = getLoggedOutPageHeader(router.pathname);
 
@@ -38,5 +38,11 @@ export const PageShell: React.FC<PageShellProps> = ({ children }) => {
     );
   }
 
-  return <Container>{children}</Container>;
+  return (
+    <AppShell
+      navbarOffsetBreakpoint={navbarOffsetBreakpoint}
+      asideOffsetBreakpoint={asideOffsetBreakpoint}
+      {...props}
+    />
+  );
 };

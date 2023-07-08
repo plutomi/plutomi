@@ -25,5 +25,5 @@
 //   org: string;
 //   workspace: string;
 //   totals: QuestionTotals;
-//   relatedTo: QuestionRelatedToArray;
+//   related_to: QuestionRelatedToArray;
 // };

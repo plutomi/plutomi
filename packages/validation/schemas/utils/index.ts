@@ -1,1 +1,3 @@
-export * from "./trimAndLowerCase";
+export * from "./lowercase";
+export * from "./trimAndLowercase";
+export * from "./trim";

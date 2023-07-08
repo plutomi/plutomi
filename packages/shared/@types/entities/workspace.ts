@@ -12,12 +12,12 @@ type WorkspaceRelatedToArray = [
 
 export type Workspace = BaseEntity<IdPrefix.WORKSPACE> & {
   name: string;
-  relatedTo: WorkspaceRelatedToArray;
+  related_to: WorkspaceRelatedToArray;
   org: PlutomiId<IdPrefix.ORG>;
-  createdBy: PlutomiId<IdPrefix.USER>;
+  created_by: PlutomiId<IdPrefix.USER>;
   /**
    * This is used for public applications like plutomi.com/plutomi/apply
    * That will hit a middleware that will retrieve the real workspaceId for downstream calls
    */
-  customWorkspaceId: string; // ^[a-z0-9\-]*$ -> "plutomi"
+  custom_workspace_id: string; // ^[a-z0-9\-]*$ -> "plutomi"
 };

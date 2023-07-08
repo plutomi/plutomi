@@ -14,6 +14,7 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
 import dayjs from "dayjs";
+import KSUID from "ksuid";
 import {
   generatePlutomiId,
   getCookieJar,
@@ -35,7 +36,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const { user } = req;
   const { _id: userId } = user;
-  const { name: orgName, customWorkspaceId } = data;
+  const { name: orgName, custom_workspace_id: customWorkspaceId } = data;
 
   // ! TODO: Do not allow org creation until all invites have been accepted / rejected
 
@@ -43,13 +44,13 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
     // Don't allow org creation if user already owns an org
     // Remember: Orgs are top level entities. They can create more workspaces if needed!
     const userAlreadyOwnsAnOrg = await req.items.findOne<Membership>({
-      relatedTo: {
+      related_to: {
         $elemMatch: {
           id: userId,
           type: RelatedToType.MEMBERSHIPS
         }
       },
-      orgRole: OrgRole.OWNER
+      org_role: OrgRole.OWNER
     });
 
     if (userAlreadyOwnsAnOrg !== null) {
@@ -74,7 +75,6 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   // 5. Expire the old session
 
   const now = new Date();
-  const nowIso = now.toISOString();
 
   // 1. Create an org entity
   const orgId = generatePlutomiId({
@@ -84,19 +84,20 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const newOrg: Org = {
     _id: orgId,
-    entityType: IdPrefix.ORG,
+    _type: IdPrefix.ORG,
+    _locked_at: KSUID.randomSync().string,
     name: orgName,
-    createdAt: nowIso,
-    updatedAt: nowIso,
-    createdBy: userId,
-    relatedTo: [
-      {
-        id: IdPrefix.ORG,
-        type: RelatedToType.ENTITY
-      },
+    created_at: now,
+    updated_at: now,
+    created_by: userId,
+    related_to: [
       {
         id: orgId,
         type: RelatedToType.SELF
+      },
+      {
+        id: IdPrefix.ORG,
+        type: RelatedToType.ENTITY
       }
     ]
   };
@@ -109,19 +110,16 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const newWorkspace: Workspace = {
     _id: workspaceId,
-    entityType: IdPrefix.WORKSPACE,
-    customWorkspaceId,
+    _type: IdPrefix.WORKSPACE,
+    _locked_at: KSUID.randomSync().string,
+    custom_workspace_id: customWorkspaceId,
     // We will prompt the user to update it after / later
     name: defaultWorkspaceName,
-    createdAt: nowIso,
-    updatedAt: nowIso,
+    created_at: now,
+    updated_at: now,
     org: orgId,
-    createdBy: userId,
-    relatedTo: [
-      {
-        id: IdPrefix.WORKSPACE,
-        type: RelatedToType.ENTITY
-      },
+    created_by: userId,
+    related_to: [
       {
         id: workspaceId,
         type: RelatedToType.SELF
@@ -141,21 +139,18 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
 
   const newMembership: Membership = {
     _id: memberShipId,
-    entityType: IdPrefix.MEMBERSHIP,
-    createdAt: nowIso,
-    updatedAt: nowIso,
-    isDefault: true,
+    _type: IdPrefix.MEMBERSHIP,
+    _locked_at: KSUID.randomSync().string,
+    created_at: now,
+    updated_at: now,
+    is_default: true,
     status: MembershipStatus.ACTIVE,
     org: orgId,
     workspace: workspaceId,
-    orgRole: OrgRole.OWNER,
-    workspaceRole: WorkspaceRole.OWNER,
+    org_role: OrgRole.OWNER,
+    workspace_role: WorkspaceRole.OWNER,
     user: userId,
-    relatedTo: [
-      {
-        id: IdPrefix.MEMBERSHIP,
-        type: RelatedToType.ENTITY
-      },
+    related_to: [
       {
         id: memberShipId,
         type: RelatedToType.SELF
@@ -183,33 +178,31 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   // ! TODO: Wrap this in a util function as it's used in multiple places
   const newUserSession: Session = {
     _id: newUserSessionId,
-    entityType: IdPrefix.SESSION,
-    createdAt: nowIso,
-    updatedAt: nowIso,
+    _type: IdPrefix.SESSION,
+    _locked_at: KSUID.randomSync().string,
+    created_at: now,
+    updated_at: now,
+    active_at: now,
+    revoked_at: null,
+    expired_at: null,
+    logged_out_at: null,
+    workspace_switched_at: null,
     status: SessionStatus.ACTIVE,
-    expiresAt: dayjs(now)
+    expires_at: dayjs(now)
       .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
       .toISOString(),
     org: orgId,
     ip: req.clientIp ?? "unknown",
-    userAgent: req.get("User-Agent") ?? "unknown",
+    user_agent: req.get("User-Agent") ?? "unknown",
     workspace: workspaceId,
     user: userId,
-    relatedTo: [
-      {
-        id: IdPrefix.SESSION,
-        type: RelatedToType.ENTITY
-      },
+    related_to: [
       {
         id: newUserSessionId,
         type: RelatedToType.SELF
       },
       {
         id: userId,
-        type: RelatedToType.SESSIONS
-      },
-      {
-        id: orgId,
         type: RelatedToType.SESSIONS
       },
       {
@@ -246,7 +239,7 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
         {
           $set: {
             status: SessionStatus.SWITCHED_WORKSPACE,
-            updatedAt: nowIso
+            updated_at: now
           }
         },
         { session: transactionSession }

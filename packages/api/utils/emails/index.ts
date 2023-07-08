@@ -1,4 +1,4 @@
-import * as EMAIL_TEMPLATES from "./templates";
+import * as EmailTemplates from "./templates";
 
 export * from "./sendEmail";
-export { EMAIL_TEMPLATES };
+export { EmailTemplates };

@@ -1,34 +1,17 @@
 import type { Email } from "../email";
-import type { RelatedToType, RelatedToArray } from "../indexableProperties";
-// import type { PlutomiId } from "../plutomiId";
+import type { RelatedToArray } from "../indexableProperties";
 import type { IdPrefix } from "./idPrefix";
 import type { BaseEntity } from "./baseEntity";
 
-// type UserTotals = {
-//   invites: number;
-//   memberships: number;
-//   workspaces: number;
-// };
-
-// type UserOrgId = PlutomiId<IdPrefix.Org> | null;
-// type UserWorkspaceId = PlutomiId<IdPrefix.Workspace> | null;
-
-type UserRelatedToArray = [
-  ...RelatedToArray<IdPrefix.USER>,
-  // Get a user by email
-  { id: Email; type: RelatedToType.USERS }
-  // // Get all users in an org
-  // { id: UserOrgId; type: RelatedToType.USERS },
-  // // Get all users in a workspace
-  // { id: UserWorkspaceId; type: RelatedToType.USERS },
-];
+type UserRelatedToArray = [...RelatedToArray<IdPrefix.USER>];
 
 export type User = BaseEntity<IdPrefix.USER> & {
-  firstName: string | null;
-  lastName: string | null;
+  first_name: string | null;
+  last_name: string | null;
   email: Email;
-  emailVerified: boolean;
-  emailVerifiedAt: string | null;
-  canReceiveEmails: boolean;
-  relatedTo: UserRelatedToArray;
+  email_verified: boolean;
+  email_verified_at: Date | null;
+  can_receive_emails: boolean;
+  unsubscribed_from_emails_at: Date | null;
+  related_to: UserRelatedToArray;
 };

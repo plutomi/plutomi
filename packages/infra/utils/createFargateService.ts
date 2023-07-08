@@ -29,6 +29,7 @@ export const createFargateService = ({
     serviceName,
     {
       vpc,
+
       certificate,
       taskDefinition,
       // The load balancer will be public, but our tasks will not.
@@ -75,13 +76,20 @@ export const createFargateService = ({
     scaleOutCooldown: Duration.seconds(60)
   });
 
-  /**
-   * Allows our servers to connect to the NAT gateway / internet & MongoDB.
-   */
-  fargateService.service.connections.securityGroups.forEach((sg) => {
-    [443, 27017].forEach((port) => {
-      natGatewayProvider.securityGroup.addIngressRule(sg, Port.tcp(port));
-    });
+  const ports = [
+    // Outbound HTTPS from tasks
+    443,
+    // Outbound MongoDB from tasks
+    27017
+  ];
+
+  // Allow outbound traffic from tasks to the internet
+  // TODO: Mongo PrivateLink
+  ports.forEach((port) => {
+    natGatewayProvider.connections.allowFrom(
+      fargateService.service,
+      Port.tcp(port)
+    );
   });
 
   return fargateService;

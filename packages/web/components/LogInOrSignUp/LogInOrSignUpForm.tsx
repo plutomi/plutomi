@@ -160,24 +160,33 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
     }
   };
 
-  const previousStep = () => {
+  const goBackToEmailForm = () => {
     // Reset code form if they go back
     totpCodeForm.reset();
+
+    // Clear the loading / success state from the previous form
+    requestTotp.reset();
     setStep((currentStep) => currentStep - 1);
   };
 
+  const codeIsSending =
+    (requestTotp.isLoading ||
+      requestTotp.isSuccess ||
+      // Redirect due to valid session
+      (requestTotp.error as AxiosError)?.response?.status === 302) &&
+    step === 1;
+  const codeIsVerifying =
+    (verifyTotp.isLoading || verifyTotp.isSuccess) && step === 2;
+
   const buttonText = getButtonText({
     step,
-    requestTotpIsLoading: requestTotp.isLoading || requestTotp.isSuccess,
-    verifyTotpIsLoading: verifyTotp.isLoading || verifyTotp.isSuccess,
+    codeIsSending,
+    codeIsVerifying,
     authContext
   });
   const titleText = getTitleText({ authContext, title });
   const subheaderAction = getSubheaderAction({ subTitle, authContext });
   const subheaderText = getSubheaderText({ step, subheaderAction });
-
-  const nextAndBackButtonsDisabled =
-    requestTotp.isLoading || verifyTotp.isLoading || verifyTotp.isSuccess;
 
   return (
     <Container size="xs" my={40}>
@@ -187,14 +196,11 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
           <Text>{subheaderText}</Text>
           <form>
             {step === 1 ? (
-              <LoginEmailForm
-                form={emailForm}
-                isSubmitting={requestTotp.isLoading}
-              />
+              <LoginEmailForm form={emailForm} isSubmitting={codeIsSending} />
             ) : (
               <TOTPCodeForm
                 form={totpCodeForm}
-                isSubmitting={verifyTotp.isLoading}
+                isSubmitting={codeIsVerifying}
               />
             )}
             <Flex justify={step === 1 ? "end" : "space-between"} mt="md">
@@ -202,8 +208,8 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
                 <Button
                   radius="md"
                   variant="default"
-                  onClick={previousStep}
-                  disabled={nextAndBackButtonsDisabled}
+                  onClick={goBackToEmailForm}
+                  disabled={codeIsSending || codeIsVerifying}
                 >
                   Back
                 </Button>
@@ -213,7 +219,7 @@ export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = ({
                 radius="md"
                 type="submit"
                 onClick={(e) => void nextStep(e)}
-                loading={nextAndBackButtonsDisabled}
+                loading={codeIsSending || codeIsVerifying}
               >
                 {buttonText}
               </Button>

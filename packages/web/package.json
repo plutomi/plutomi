@@ -10,6 +10,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/server": "^11.11.0",
     "@heroicons/react": "^2.0.17",
+    "@hookform/resolvers": "^3.1.1",
     "@mantine/carousel": "^6.0.10",
     "@mantine/core": "^6.0.10",
     "@mantine/dates": "^6.0.10",
@@ -27,6 +28,7 @@
     "@plutomi/shared": "^0.1.0",
     "@plutomi/validation": "^0.1.0",
     "@tabler/icons-react": "^2.17.0",
+    "@tailwindcss/forms": "^0.5.3",
     "@tanstack/react-query": "^4.29.7",
     "@tanstack/react-query-devtools": "^4.29.7",
     "@tiptap/extension-link": "^2.0.3",
@@ -41,6 +43,7 @@
     "next": "13.3.0",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.1",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.8.0",
     "remove": "^0.1.5",
@@ -53,10 +56,12 @@
     "@types/node": "^18.15.10",
     "@types/react": "^18.0.29",
     "@types/react-dom": "^18.0.11",
+    "autoprefixer": "^10.4.14",
     "eslint": "^8.36.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "^13.2.4",
     "eslint-plugin-jsx-a11y": "^6.7.1",
-    "typescript": "^5.0.2"
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2"
   }
 }

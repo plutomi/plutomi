@@ -6,5 +6,5 @@ type SessionIsActiveProps = {
 };
 
 export const sessionIsActive = ({ session }: SessionIsActiveProps) =>
-  dayjs().isBefore(dayjs(session.expiresAt)) &&
+  dayjs().isBefore(dayjs(session.expires_at)) &&
   session.status === SessionStatus.ACTIVE;

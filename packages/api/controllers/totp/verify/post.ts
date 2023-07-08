@@ -1,25 +1,36 @@
 import {
   RelatedToType,
   TOTPCodeStatus,
-  IdPrefix,
+  type Email,
   type User,
-  type Session,
   type TOTPCode,
-  type Membership,
-  SessionStatus,
-  EmptyValues
+  type AllEntities
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
-import dayjs from "dayjs";
 import type { RequestHandler } from "express";
+import KSUID from "ksuid";
+import { transactionOptions } from "@plutomi/database";
 import {
-  generatePlutomiId,
+  type ModifyResult,
+  ReturnDocument,
+  type StrictFilter,
+  type Filter,
+  type StrictUpdateFilter
+} from "mongodb";
+import {
+  codeIsValid,
+  createSessionItem,
   getCookieJar,
   getCookieSettings,
   getSessionCookieName
 } from "../../../utils";
-import { MAX_SESSION_AGE_IN_MS } from "../../../consts";
 
+/**
+ *
+ * Get the most recent code for a user and see if it is valid.
+ * If it is, mark it as used and invalidate all other codes.
+ * Verify the user's email address and update the user's session with their default workspace.
+ */
 export const post: RequestHandler = async (req, res) => {
   const { data, errorHandled } = validate({
     req,
@@ -33,229 +44,173 @@ export const post: RequestHandler = async (req, res) => {
 
   const { email, totpCode } = data;
 
-  let mostRecentCodes: TOTPCode[] = [];
+  const transactionSession = req.client.startSession(transactionOptions);
+  let respondedInTransaction = false;
 
   try {
-    mostRecentCodes = await req.items
-      .find<TOTPCode>({
-        relatedTo: {
+    await transactionSession.withTransaction(async () => {
+      const now = new Date();
+
+      // 1. Lock the user to prevent concurrent requests
+      const findUserByEmailFilter: StrictFilter<User> = {
+        email: email as Email
+      };
+
+      const lockUserUpdateFilter: StrictUpdateFilter<User> = {
+        $set: {
+          _locked_at: KSUID.randomSync().string,
+          updated_at: now
+        }
+      };
+      const { value: user } = (await req.items.findOneAndUpdate(
+        findUserByEmailFilter as Filter<AllEntities>,
+        lockUserUpdateFilter,
+        {
+          returnDocument: ReturnDocument.AFTER,
+          session: transactionSession
+        }
+      )) as ModifyResult<User>;
+
+      if (user === null) {
+        // Concurrent request, return an error
+        // User guaranteed to exist at this point as they are created when a code is sent
+        res.status(409).json({
+          message: "An error ocurred logging you in, please try again."
+        });
+
+        respondedInTransaction = true;
+        await transactionSession.abortTransaction();
+        return;
+      }
+      // 2. Get the most recent code for this user
+      const getMostRecentCodeFilter: StrictFilter<TOTPCode> = {
+        related_to: {
           $elemMatch: {
             id: email,
             type: RelatedToType.TOTPS
           }
         }
-      })
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray();
-  } catch (error) {
-    // TODO: Logging
-    res.status(500).json({
-      message: "An error ocurred getting your most recent login code",
-      error
-    });
-    return;
-  }
+      };
+      const mostRecentCode = (
+        await req.items
+          .find<TOTPCode>(getMostRecentCodeFilter as Filter<AllEntities>, {
+            session: transactionSession,
+            sort: { created_at: -1 },
+            limit: 1
+          })
+          .toArray()
+      )[0];
 
-  const now = new Date();
-  const nowIso = now.toISOString();
-
-  const mostRecentCode = mostRecentCodes[0];
-  if (
-    // Code not found
-    mostRecentCode === undefined ||
-    // Expired by status
-    mostRecentCode.status === TOTPCodeStatus.EXPIRED ||
-    // Code has been used
-    mostRecentCode.status === TOTPCodeStatus.USED ||
-    // Expired by date exhaustive check
-    // TODO: Can remove when scheduled events are in
-    dayjs(mostRecentCode.expiresAt).isBefore(now) ||
-    // Code is invalid
-    mostRecentCode.code !== totpCode
-  ) {
-    // ! TODO: Increment attempts here, block email if too many attempts
-    res.status(403).json({ message: "Invalid login code" });
-    return;
-  }
-
-  // Get the user to set the cookie
-  let user: User | null = null;
-
-  try {
-    user = await req.items.findOne<User>({
-      relatedTo: {
-        $elemMatch: {
-          id: email,
-          type: RelatedToType.USERS
-        }
+      // Check if the code is valid
+      if (
+        !codeIsValid({
+          mostRecentCode,
+          codeFromClient: totpCode
+        })
+      ) {
+        // TODO: Logging
+        // ! TODO: Increment attempts here, block email if too many attempts
+        res.status(403).json({ message: "Invalid login code" });
+        respondedInTransaction = true;
+        await transactionSession.abortTransaction();
+        return;
       }
-    });
-  } catch (error) {
-    // TODO: Logging
-    res
-      .status(500)
-      .json({ message: "An error ocurred logging you in!", error });
-    return;
-  }
 
-  // This shouldn't happen, but just in case
-  if (user === null) {
-    res.status(500).json({ message: "An error ocurred logging you in!" });
-    return;
-  }
-
-  const { _id: userId } = user;
-
-  // Get the default membership for a user, and with it, the org and workspace
-  let defaultUserMembership: Membership | null = null;
-
-  try {
-    defaultUserMembership = await req.items.findOne<Membership>({
-      relatedTo: {
-        $elemMatch: {
-          id: userId,
-          type: RelatedToType.MEMBERSHIPS
-        }
-      },
-      isDefault: true
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "An error ocurred getting your memberships!",
-      error
-    });
-    return;
-  }
-
-  const sessionId = generatePlutomiId({
-    date: now,
-    idPrefix: IdPrefix.SESSION
-  });
-  const orgForSession = defaultUserMembership?.org ?? EmptyValues.NO_ORG;
-  const workspaceForSession =
-    defaultUserMembership?.workspace ?? EmptyValues.NO_WORKSPACE;
-
-  const newSession: Session = {
-    _id: sessionId,
-    user: userId,
-    org: orgForSession,
-    workspace: workspaceForSession,
-    createdAt: nowIso,
-    updatedAt: nowIso,
-    // ! TODO: Schedule an event to mark this as expired
-    expiresAt: dayjs(now)
-      .add(MAX_SESSION_AGE_IN_MS, "milliseconds")
-      .toISOString(),
-    status: SessionStatus.ACTIVE,
-    entityType: IdPrefix.SESSION,
-    ip: req.clientIp ?? "unknown",
-    userAgent: req.get("User-Agent") ?? "unknown",
-    relatedTo: [
-      {
-        id: IdPrefix.SESSION,
-        type: RelatedToType.ENTITY
-      },
-      {
-        id: sessionId,
-        type: RelatedToType.SELF
-      },
-      {
-        id: userId,
-        type: RelatedToType.SESSIONS
-      },
-      {
-        id: orgForSession,
-        type: RelatedToType.SESSIONS
-      },
-      {
-        id: workspaceForSession,
-        type: RelatedToType.SESSIONS
-      }
-    ]
-  };
-
-  try {
-    await req.items.insertOne(newSession);
-  } catch (error) {
-    res.status(500).json({ message: "An error ocurred logging you in!" });
-    return;
-  }
-
-  try {
-    const cookieJar = getCookieJar({ req, res });
-    cookieJar.set(getSessionCookieName(), sessionId, getCookieSettings());
-
-    res.status(200).json({ message: "Logged in successfully!" });
-  } catch (error) {
-    res.status(500).json({ message: "An error ocurred logging you in", error });
-    return;
-  }
-
-  if (!user.emailVerified) {
-    try {
-      await req.items.updateOne(
-        {
-          relatedTo: {
-            $elemMatch: {
-              id: email,
-              type: RelatedToType.USERS
-            }
-          }
-        },
-        {
-          $set: {
-            emailVerified: true,
-            emailVerifiedAt: nowIso,
-            updatedAt: nowIso
-          }
-        }
-      );
-    } catch (error) {
-      // TODO: Logging
-    }
-  }
-
-  const { _id: usedCodeId } = mostRecentCode;
-
-  try {
-    // Mark the code that was just used as used
-    await req.items.updateOne(
-      {
-        _id: usedCodeId
-      },
-      {
+      // 3. Mark the code that was just used as used
+      const { _id: mostRecentCodeId } = mostRecentCode;
+      const findMostRecentCodeByIdFilter: StrictFilter<TOTPCode> = {
+        _id: mostRecentCodeId
+      };
+      const updateMostRecentCodeByIdFilter: StrictUpdateFilter<TOTPCode> = {
         $set: {
           status: TOTPCodeStatus.USED,
-          updatedAt: nowIso
+          used_at: now,
+          updated_at: now,
+          _locked_at: KSUID.randomSync().string
         }
-      }
-    );
-  } catch (error) {
-    // ! TODO: Logging
-  }
+      };
+      await req.items.updateOne(
+        findMostRecentCodeByIdFilter as Filter<AllEntities>,
+        updateMostRecentCodeByIdFilter,
+        { session: transactionSession }
+      );
 
-  // Expire all other active codes
-  try {
-    await req.items.updateMany(
-      {
-        _id: { $ne: usedCodeId },
+      // 4. Invalidate all other active codes
+      const getOtherActiveCodesFilter: StrictFilter<TOTPCode> = {
+        _id: { $ne: mostRecentCodeId },
         status: TOTPCodeStatus.ACTIVE,
-        relatedTo: {
+        related_to: {
           $elemMatch: {
             id: email,
             type: RelatedToType.TOTPS
           }
         }
-      },
-      {
-        $set: {
-          status: TOTPCodeStatus.EXPIRED,
-          updatedAt: nowIso
-        }
+      };
+
+      const invalidateOtherActiveCodesUpdateFilter: StrictUpdateFilter<TOTPCode> =
+        {
+          $set: {
+            status: TOTPCodeStatus.INVALIDATED,
+            updated_at: now,
+            invalidated_at: now,
+            _locked_at: KSUID.randomSync().string
+          }
+        };
+      await req.items.updateMany(
+        getOtherActiveCodesFilter as Filter<AllEntities>,
+        invalidateOtherActiveCodesUpdateFilter,
+        { session: transactionSession }
+      );
+
+      const { _id: userId } = user;
+
+      if (!user.email_verified) {
+        // 5. Update the user's verified email status if needed
+        const getUserByIdFilter: StrictFilter<User> = {
+          _id: userId
+        };
+        const verifyUserEmailUpdateFilter: StrictUpdateFilter<User> = {
+          $set: {
+            updated_at: now,
+            _locked_at: KSUID.randomSync().string,
+            email_verified_at: now,
+            email_verified: true
+          }
+        };
+        await req.items.updateOne(
+          getUserByIdFilter as Filter<AllEntities>,
+          verifyUserEmailUpdateFilter,
+          { session: transactionSession }
+        );
       }
-    );
+
+      const newSession = await createSessionItem({
+        req,
+        now,
+        userId
+      });
+
+      // 6. Create the new session for the user at their default workspace
+      await req.items.insertOne(newSession, { session: transactionSession });
+
+      const { _id: sessionId } = newSession;
+      const cookieJar = getCookieJar({ req, res });
+      cookieJar.set(getSessionCookieName(), sessionId, getCookieSettings());
+
+      res.status(200).json({ message: "Logged in successfully!" });
+      respondedInTransaction = true;
+    });
   } catch (error) {
-    // ! TODO: Logging
+    // TODO: Logging,
+    // Generic error
+    if (!respondedInTransaction) {
+      res.status(500).json({
+        message: "An error ocurred logging you in",
+        error
+      });
+      return;
+    }
+  } finally {
+    await transactionSession.endSession();
   }
 };

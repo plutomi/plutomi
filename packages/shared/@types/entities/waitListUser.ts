@@ -11,6 +11,5 @@ type WaitListUserRelatedToArray = [
 
 export type WaitListUser = BaseEntity<IdPrefix.WAIT_LIST_USER> & {
   email: Email;
-  createdAt: string;
-  relatedTo: WaitListUserRelatedToArray;
+  related_to: WaitListUserRelatedToArray;
 };

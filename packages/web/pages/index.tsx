@@ -1,59 +1,38 @@
-import { LandingHero } from "@/components/LandingHero";
-import { LatestCommits } from "@/components/LatestCommits";
-import type { CommitType } from "@/components/LatestCommits/Commit";
-import { UseCaseSection } from "@/components/UseCases";
-import { Space } from "@mantine/core";
+import {
+  type CommitType,
+  LatestCommits,
+  LandingHero,
+  UseCaseSection,
+  WaitListCard
+} from "@/components";
+import { HomepageFooter } from "@/components/HomepageFooter";
 import axios from "axios";
 import _ from "lodash";
 import type { GetStaticProps, NextPage } from "next";
-import { WaitListCard } from "@/components/WaitListCard";
-import Head from "next/head";
-import { env } from "@/utils";
-import { HomepageNavbar } from "@/components/HomepageNavbar/HomepageNavbar";
 
 type HomeProps = {
   commits: CommitType[];
 };
 
-const title = "Plutomi - Applicant management at any scale";
-const description =
-  "Plutomi helps you streamline your application process with automated workflows";
-const ogImage = `${env.NEXT_PUBLIC_BASE_URL}/og-image.png`;
-
-// const NavLinks = [
-//   // {
-//   //   link: "/pricing",
-//   //   label: "Pricing",
-//   //   links: []
-//   // }
-// ];
-
 const Home: NextPage<HomeProps> = ({ commits }) => (
-  <>
-    <Head>
-      <title>Plutomi</title>
-      <meta name="description" content={description} key="desc" />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={ogImage} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={env.NEXT_PUBLIC_BASE_URL} />
-      <meta property="og:image" content={ogImage} />
+  <div className="w-full h-full flex justify-center">
+    <div className="flex flex-col my-32  items-center">
+      <LandingHero />
+      <div className="w-full flex justify-center">
+        <UseCaseSection />
+      </div>
 
-      <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content={env.NEXT_PUBLIC_BASE_URL} />
-      <meta property="twitter:title" content={title} />
-      <meta property="twitter:description" content={description} />
-      <meta property="twitter:image" content={ogImage} />
-    </Head>
-    <HomepageNavbar />
-    <LandingHero />
-    <UseCaseSection />
-    <Space h="lg" />
-    <WaitListCard />
-    <Space h="lg" />
-    <LatestCommits commits={commits} />
-  </>
+      <div className="mt-12">
+        <WaitListCard />
+      </div>
+      <div className="mt-12">
+        <LatestCommits commits={commits} />
+      </div>
+      <div className=" w-full mt-12 flex justify-center">
+        <HomepageFooter />
+      </div>
+    </div>
+  </div>
 );
 
 // Note: Pages WITHOUT getStaticProps will be server-side rendered
@@ -64,6 +43,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const allCommits: CommitType[] = [];
 
   const { data } = await axios.get(
+    // TODO: Remove joswayski username
     `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
     {
       // headers: {
