@@ -86,8 +86,6 @@ export const reservedWorkspaceIds = [
 
   // Misc
 
-
-
   "apply",
   "join",
 
@@ -105,7 +103,6 @@ export const reservedWorkspaceIds = [
   "faq",
   "support",
   "help",
-  
 
   "opening",
   "openings",

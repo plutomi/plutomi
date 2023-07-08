@@ -129,7 +129,10 @@ export const UseCaseCards: React.FC = () => {
   const { useCase } = useUseCaseStore();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <div className=" rounded-lg bg-white drop-shadow-sm border" key={item.title}>
+    <div
+      className=" rounded-lg bg-white drop-shadow-sm border"
+      key={item.title}
+    >
       <div className="flex flex-col items-center px-5 py-2">
         <item.icon size="2rem" className={`${item.color}`} />
         <p className="text-md font-medium text-slate-700">{item.title}</p>
