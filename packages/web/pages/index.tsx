@@ -5,6 +5,7 @@ import {
   UseCaseSection,
   WaitListCard
 } from "@/components";
+import { HomepageFooter } from "@/components/HomepageFooter";
 import axios from "axios";
 import _ from "lodash";
 import type { GetStaticProps, NextPage } from "next";
@@ -13,26 +14,26 @@ type HomeProps = {
   commits: CommitType[];
 };
 
-const Home: NextPage<HomeProps> = ({ commits }) => {
-  const x = "";
-  return (
-    <div className="w-full h-full flex justify-center">
-      <div className="flex flex-col my-32  items-center">
-        <LandingHero />
-        <div className="w-full flex justify-center">
-          <UseCaseSection />
-        </div>
+const Home: NextPage<HomeProps> = ({ commits }) => (
+  <div className="w-full h-full flex justify-center">
+    <div className="flex flex-col my-32  items-center">
+      <LandingHero />
+      <div className="w-full flex justify-center">
+        <UseCaseSection />
+      </div>
 
-        <div className="mt-12">
-          <WaitListCard />
-        </div>
-        <div className="mt-12">
-          <LatestCommits commits={commits} />
-        </div>
+      <div className="mt-12">
+        <WaitListCard />
+      </div>
+      <div className="mt-12">
+        <LatestCommits commits={commits} />
+      </div>
+      <div className=" w-full mt-12 flex justify-center">
+        <HomepageFooter />
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 // Note: Pages WITHOUT getStaticProps will be server-side rendered
 // Due to _getInitialProps in _document.tsx

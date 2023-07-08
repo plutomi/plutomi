@@ -197,6 +197,7 @@ export const reservedWorkspaceIds = [
   "export",
   "sync",
   "debug",
+  "domains",
   "maintenance",
   "upgrade",
   "release-notes",

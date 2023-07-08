@@ -67,7 +67,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       }
 
       if (variant === "secondary-text") {
-        const defaultClasses = "bg-white text-slate-700";
+        const defaultClasses = "bg-white text-slate-700 border-0";
         const onlyWhenEnabledClasses =
           "enabled:hover:bg-slate-100 enabled:focus:ring-slate-100 enabled:focus-visible:outline-slate-300 enabled:active:bg-slate-200";
         const onlyWhenDisabledClasses = "disabled:text-slate-300";
