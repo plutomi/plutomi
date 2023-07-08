@@ -4,6 +4,14 @@ const nextConfig = {
   experimental: {
     // https://github.com/vercel/next.js/issues/13045
     externalDir: true
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "githubusercontent.com"
+      }
+    ]
   }
 };
 
