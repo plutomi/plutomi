@@ -56,10 +56,8 @@ export const WaitListCard: React.FC = () => {
   });
 
   const subscribe = useMutation({
-    mutationFn: async () =>
-      axios.post("/api/waitlist", {
-        email: EMAIL_FROM_FORM_DATA
-      }),
+    mutationFn: async (data: WaitlistFormValues) =>
+      axios.post("/api/waitlist", data),
 
     onError: (error) => {
       const message = handleAxiosError(error);
@@ -74,7 +72,7 @@ export const WaitListCard: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<WaitlistFormValues> = async (data) => {
-    await subscribe.mutateAsync();
+    await subscribe.mutateAsync(data);
   };
 
   return (
