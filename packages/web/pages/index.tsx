@@ -52,17 +52,16 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   );
 
+  // TODO: Add types
   data.map(
     async (commit: {
       commit: { author: { name: string; email: any; date: any }; message: any };
       author: { login: any; avatar_url: any };
       html_url: any;
     }) => {
-      const author = commit.author.login;
-      const isBot =
-        author === "allcontributors[bot]" || author === "dependabot[bot]";
+      const author: string = commit.author.login;
 
-      if (!isBot) {
+      if (!author.includes("[bot]")) {
         const customCommit = {
           name: author,
           username: commit.author.login,
