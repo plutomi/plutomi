@@ -112,7 +112,7 @@ export const WaitListCard: React.FC = () => {
                       autoComplete="email"
                       disabled={subscribe.isLoading}
                       {...register("email")}
-                      className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 min-w-0 max-w-lg w-full pl-10 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                      className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 max-w-lg w-full pl-10 flex-auto rounded-md border bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 focus:outline-none"
                       placeholder="Enter your email"
                     />
 

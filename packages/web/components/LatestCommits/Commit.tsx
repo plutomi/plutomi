@@ -30,7 +30,7 @@ export const Commit: React.FC<CommitType> = ({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group p-2 bg-white w-full max-w-3xl rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-150 hover:scale-102 cursor-pointer"
+      className="p-2 bg-white w-full max-w-3xl rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-150 hover:scale-102 cursor-pointer"
       onClick={handleCardClick}
     >
       <div className="flex items-center">
@@ -62,7 +62,6 @@ export const Commit: React.FC<CommitType> = ({
               @{username}
             </span>
           </p>
-
           <p className="text-slate-500 line-clamp-2">{message}</p>
         </div>
       </div>
