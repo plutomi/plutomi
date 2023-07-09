@@ -58,16 +58,18 @@ export const getStaticProps: GetStaticProps = async () => {
       author: { login: any; avatar_url: any };
       html_url: any;
     }) => {
-      const isBot = commit.commit.author.name === "allcontributors[bot]";
+      const author = commit.author.login;
+      const isBot =
+        author === "allcontributors[bot]" || author === "dependabot[bot]";
 
       if (!isBot) {
         const customCommit = {
-          name: commit.commit.author.name,
+          name: author,
           username: commit.author.login,
           image: commit.author.avatar_url,
           email: commit.commit.author.email,
           date: commit.commit.author.date,
-          message: commit.commit.message,
+          message: commit.commit.message.substring(0, 250),
           url: commit.html_url
         };
         allCommits.push(customCommit);
