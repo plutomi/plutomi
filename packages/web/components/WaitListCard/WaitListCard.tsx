@@ -10,6 +10,26 @@ import toast from "react-hot-toast";
 
 import { Button } from "../Button";
 
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+
+// Latest commits should use the cards on the use cases?
 const cards = [
   {
     icon: <BsGithub className="h-16 w-16" aria-hidden="true" color="#333" />,
@@ -17,7 +37,7 @@ const cards = [
     innerContent: (
       <dd className="mt-2 leading-7 text-slate-500">
         The entire codebase for Plutomi is available for{" "}
-        <span className="font-bold">free</span> on GitHub under an Apache 2
+        <span className="font-bold">free</span> on GitHub under an Apache2
         license :)
       </dd>
     )
