@@ -13,6 +13,7 @@
   },
   "rules": {
     "react/react-in-jsx-scope": "off",
+    "react/hook-use-state": "error",
     "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
     "react/no-jsx-props-no-spreading": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
