@@ -9,7 +9,6 @@ import {
   createDistribution
 } from "../utils";
 import { getACMCertificate } from "../utils/getAcmCertificate";
-import { createSESPolicy } from "../utils/createSESPolicy";
 
 type PlutomiStackProps = StackProps;
 
@@ -17,9 +16,8 @@ export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: PlutomiStackProps) {
     super(scope, id, props);
 
-    const SESPolicy = createSESPolicy({ stack: this });
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
-    const taskRole = createTaskRole({ stack: this, SESPolicy });
+    const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = getACMCertificate({ stack: this });
