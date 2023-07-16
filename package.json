@@ -32,6 +32,7 @@
     "typescript": "4.9.5"
   },
   "scripts": {
+    "aws:login": "aws sso login --sso-session=plutomi",
     "dev": "nx run-many -t=dev",
     "build": "nx run-many -t=build",
     "start": "yarn workspace @plutomi/api start",

@@ -2,7 +2,6 @@
 
 import * as z from "zod";
 import { DeploymentEnvironment, NodeEnvironment } from "../consts";
-import { awsRegionSchema } from "../customSchemas";
 
 /**
  * All environment variables in the app. Each package then picks the ones it needs.
@@ -29,8 +28,6 @@ export const allEnvVariablesSchema = z.object({
   CF_HEADER_VALUE: z
     .string()
     .min(50, "Value must be at least 50 characters long"),
-  AWS_ACCOUNT_ID: z.string(),
-  AWS_REGION: awsRegionSchema,
   ACM_CERTIFICATE_ID: z.string().uuid(),
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
   SESSION_PASSWORD_1: z.string().min(100)
@@ -64,8 +61,6 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL as string,
   CF_HEADER_KEY: process.env.CF_HEADER_KEY as string,
   CF_HEADER_VALUE: process.env.CF_HEADER_VALUE as string,
-  AWS_ACCOUNT_ID: process.env.AWS_ACCOUNT_ID as string,
-  AWS_REGION: process.env.AWS_REGION as string,
   ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string,
   MONGO_URL: process.env.MONGO_URL as string,
   SESSION_PASSWORD_1: process.env.SESSION_PASSWORD_1 as string

@@ -6,7 +6,7 @@
     "cdk": "cdk",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
-    "deploy:dev": "cdk deploy --require-approval any-change --progress events --verbose"
+    "deploy:dev": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-dev"
   },
   "license": "Apache-2.0",
   "devDependencies": {
