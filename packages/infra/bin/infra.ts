@@ -11,4 +11,4 @@ import { PlutomiStack } from "../lib/plutomiStack";
 
 const plutomiApp = new cdk.App();
 
-void new PlutomiStack(plutomiApp, `${env.DEPLOYMENT_ENVIRONMENT}-plutomi`);
+void new PlutomiStack(plutomiApp, "plutomi");

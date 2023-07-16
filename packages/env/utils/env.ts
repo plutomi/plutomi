@@ -28,9 +28,10 @@ export const allEnvVariablesSchema = z.object({
   CF_HEADER_VALUE: z
     .string()
     .min(50, "Value must be at least 50 characters long"),
-  ACM_CERTIFICATE_ID: z.string().uuid(),
+  ACM_CERTIFICATE_ARN: z.string(),
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
-  SESSION_PASSWORD_1: z.string().min(100)
+  SESSION_PASSWORD_1: z.string().min(100),
+  POSTMARK_API_KEY: z.string().uuid()
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
@@ -43,7 +44,8 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_BASE_URL: true,
   DEPLOYMENT_ENVIRONMENT: true,
   MONGO_URL: true,
-  SESSION_PASSWORD_1: true
+  SESSION_PASSWORD_1: true,
+  POSTMARK_API_KEY: true
 });
 
 export const databaseEnvSchema = allEnvVariablesSchema.pick({
@@ -61,7 +63,8 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL as string,
   CF_HEADER_KEY: process.env.CF_HEADER_KEY as string,
   CF_HEADER_VALUE: process.env.CF_HEADER_VALUE as string,
-  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID as string,
+  ACM_CERTIFICATE_ARN: process.env.ACM_CERTIFICATE_ARN as string,
   MONGO_URL: process.env.MONGO_URL as string,
+  POSTMARK_API_KEY: process.env.POSTMARK_API_KEY as string,
   SESSION_PASSWORD_1: process.env.SESSION_PASSWORD_1 as string
 };

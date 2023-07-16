@@ -5,14 +5,13 @@ import {
   type Policy
 } from "aws-cdk-lib/aws-iam";
 import type { Stack } from "aws-cdk-lib";
-import { env } from "./env";
 
 type CreateTaskRoleProps = {
   stack: Stack;
   SESPolicy: Policy;
 };
 
-const roleName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-fargate-role`;
+const roleName = "plutomi-fargate-role";
 
 export const createTaskRole = ({
   stack,

@@ -15,7 +15,7 @@ export const getACMCertificate = ({
   const certificate = Certificate.fromCertificateArn(
     stack,
     "PlutomiCertificate",
-    `arn:aws:acm:${stack.region}:${stack.account}:certificate/${env.ACM_CERTIFICATE_ID}`
+    env.ACM_CERTIFICATE_ARN
   );
   return certificate;
 };

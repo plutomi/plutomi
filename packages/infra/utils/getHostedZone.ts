@@ -6,11 +6,11 @@ type GetHostedZoneProps = {
   stack: Stack;
 };
 
-const hostedZoneName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-hosted-zone`;
+const hostedZoneName = "plutomi-hosted-zone";
 
 export const getHostedZone = ({ stack }: GetHostedZoneProps): IHostedZone => {
   const hostedZone = HostedZone.fromLookup(stack, hostedZoneName, {
-    domainName: "plutomi.com"
+    domainName: new URL(env.NEXT_PUBLIC_BASE_URL).hostname
   });
 
   return hostedZone;

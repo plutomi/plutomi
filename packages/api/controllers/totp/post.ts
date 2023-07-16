@@ -1,5 +1,5 @@
 import {
-  type IdPrefix,
+  IdPrefix,
   RelatedToType,
   TOTPCodeStatus,
   PlutomiEmails,
@@ -22,17 +22,16 @@ import {
   type Filter,
   type StrictUpdateFilter
 } from "mongodb";
-import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
+import KSUID from "ksuid";
 import {
-  EmailTemplates,
   clearCookie,
   getCookieJar,
   getSessionCookieName,
-  sendEmail,
   sessionIsActive,
   createTotpCode,
-  createUser
+  postmarkClient,
+  generatePlutomiId
 } from "../../utils";
 
 /**
@@ -89,6 +88,11 @@ export const post: RequestHandler = async (req, res) => {
 
   const transactionSession = req.client.startSession(transactionOptions);
   let totpCodeItem: TOTPCode | undefined;
+  const now = new Date();
+  const userId = generatePlutomiId({
+    date: now,
+    idPrefix: IdPrefix.USER
+  });
 
   try {
     // 1. Lock the user for concurrent requests / create a new user if they doesn't exist
@@ -101,9 +105,25 @@ export const post: RequestHandler = async (req, res) => {
       };
 
       const createOrLockUserUpdateFilter: StrictUpdateFilter<User> = {
-        $setOnInsert: createUser({
-          email: email as Email
-        }),
+        $setOnInsert: {
+          _id: userId,
+          _type: IdPrefix.USER,
+          // _locked_at  & updated_at not set here as $set runs after $setOnInsert
+          first_name: null,
+          last_name: null,
+          email: email as Email,
+          email_verified: false,
+          email_verified_at: null,
+          can_receive_emails: true,
+          unsubscribed_from_emails_at: null,
+          created_at: now,
+          related_to: [
+            {
+              id: userId,
+              type: RelatedToType.SELF
+            }
+          ]
+        },
         $set: {
           // Note: This runs after $setOnInsert
           _locked_at: KSUID.randomSync().string,
@@ -145,8 +165,6 @@ export const post: RequestHandler = async (req, res) => {
         await transactionSession.abortTransaction();
         return;
       }
-
-      const { _id: userId } = user;
 
       const getCountOfActiveCodesFilter: StrictFilter<TOTPCode> = {
         status: TOTPCodeStatus.ACTIVE,
@@ -193,6 +211,7 @@ export const post: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     // TODO: Logging
+    console.error(error);
     if (!respondedInTransaction) {
       // Generic error
       res.status(500).json({
@@ -214,14 +233,15 @@ export const post: RequestHandler = async (req, res) => {
   // Send code to user
   const { code } = totpCodeItem;
   try {
-    await sendEmail({
-      to: email as Email,
-      subject: `Your Plutomi Code - ${code}`,
-      from: {
-        header: "Plutomi",
-        email: PlutomiEmails.NO_REPLY
-      },
-      bodyHtml: EmailTemplates.TOTPTemplate({ code })
+    console.log("Code sent!");
+    // TODO
+    await postmarkClient.sendEmail({
+      From: "postmark@plutomi.com",
+      To: "postmark@plutomi.com",
+      Subject: "Hello from Postmark",
+      HtmlBody: "<strong>Hello</strong> dear Postmark user.",
+      TextBody: "Hello from Postmark!",
+      MessageStream: "outbound"
     });
 
     res.status(201).json({

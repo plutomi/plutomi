@@ -58,7 +58,8 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
           HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
-          ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
+          ACM_CERTIFICATE_ARN: ${{ secrets.ACM_CERTIFICATE_ARN }}
+          POSTMARK_API_KEY: ${{ secrets.POSTMARK_API_KEY }}
           LOGIN_LINKS_SECRET: ${{ secrets.LOGIN_LINKS_SECRET }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
