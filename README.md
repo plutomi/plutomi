@@ -86,9 +86,10 @@ Stages:
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
 - `yarn aws:login` - Login to AWS with your credentials using SSO
+
   - To setup AWS with SSO, you can check [this tutorial](https://docs.sst.dev/setting-up-aws#create-a-management-account)
 
-- `yarn deploy:dev/stage/prod` - Deploy to the specified environment
+- `yarn deploy:dev/stage/prod` - Deploy to the specified environment. TODO: Remove cdk.context.json and make sure that docker is running if deploying locally.
 
 <a name="language-tooling-infra"></a>
 

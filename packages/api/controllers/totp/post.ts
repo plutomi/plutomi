@@ -211,7 +211,6 @@ export const post: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     // TODO: Logging
-    console.error(error);
     if (!respondedInTransaction) {
       // Generic error
       res.status(500).json({
@@ -231,9 +230,8 @@ export const post: RequestHandler = async (req, res) => {
   }
 
   // Send code to user
-  const { code } = totpCodeItem;
+  // const { code } = totpCodeItem;
   try {
-    console.log("Code sent!");
     // TODO
     await postmarkClient.sendEmail({
       From: "postmark@plutomi.com",
