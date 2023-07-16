@@ -85,7 +85,7 @@ Stages:
 <!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
-- `yarn deploy:dev` - Deploy the app to a custom environment (i.e. `DEPLOYMENT_ENVIRONMENT`). This will use whatever variables are in `packages/infra/.env`
+- `yarn aws:login` - Login to AWS with your credentials using SSO, which you can then deploy with `yarn deploy:dev`
 
 <a name="language-tooling-infra"></a>
 
@@ -123,7 +123,7 @@ In **packages/env**, there is an `env.ts` file which has **ALL** of the environm
 export const allEnvVariablesSchema = z.object({
   PORT: portSchema,
   NODE_ENV: z.nativeEnum(NodeEnvironment),
-  DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
   DOMAIN: z.string(),
   NEXT_PUBLIC_BASE_URL: z.string().url()
 });

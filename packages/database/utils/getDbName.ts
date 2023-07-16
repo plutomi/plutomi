@@ -3,15 +3,15 @@ import { env } from "./env";
 
 export const getDatabaseName = () => {
   // Everything is in one cluster because I'm broke ATM :D
-  if (env.DEPLOYMENT_ENVIRONMENT === DeploymentEnvironment.DEV) {
+  if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === DeploymentEnvironment.DEV) {
     return "plutomi-local";
   }
 
-  if (env.DEPLOYMENT_ENVIRONMENT === DeploymentEnvironment.STAGE) {
+  if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === DeploymentEnvironment.STAGE) {
     return "plutomi-stage";
   }
 
-  if (env.DEPLOYMENT_ENVIRONMENT === DeploymentEnvironment.PROD) {
+  if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === DeploymentEnvironment.PROD) {
     return "plutomi-prod";
   }
 

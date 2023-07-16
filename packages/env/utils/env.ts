@@ -18,7 +18,7 @@ export const allEnvVariablesSchema = z.object({
     // CDK Requires this to be a string in the task definition port mappings because of reasons
     .transform((val) => val.toString()),
   NODE_ENV: z.nativeEnum(NodeEnvironment).default(NodeEnvironment.DEVELOPMENT),
-  DEPLOYMENT_ENVIRONMENT: z
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z
     .nativeEnum(DeploymentEnvironment)
     .default(DeploymentEnvironment.DEV),
   // ! For NextJS, make sure to add to packages/web/env.ts as well as the Dockerfile
@@ -42,14 +42,14 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
   PORT: true,
   NODE_ENV: true,
   NEXT_PUBLIC_BASE_URL: true,
-  DEPLOYMENT_ENVIRONMENT: true,
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: true,
   MONGO_URL: true,
   SESSION_PASSWORD_1: true,
   POSTMARK_API_KEY: true
 });
 
 export const databaseEnvSchema = allEnvVariablesSchema.pick({
-  DEPLOYMENT_ENVIRONMENT: true,
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: true,
   MONGO_URL: true
 });
 
@@ -58,8 +58,8 @@ export const databaseEnvSchema = allEnvVariablesSchema.pick({
 export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   PORT: process.env.PORT as string,
   NODE_ENV: process.env.NODE_ENV as NodeEnvironment,
-  DEPLOYMENT_ENVIRONMENT: process.env
-    .DEPLOYMENT_ENVIRONMENT as DeploymentEnvironment,
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env
+    .NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT as DeploymentEnvironment,
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL as string,
   CF_HEADER_KEY: process.env.CF_HEADER_KEY as string,
   CF_HEADER_VALUE: process.env.CF_HEADER_VALUE as string,

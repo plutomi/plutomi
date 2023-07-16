@@ -1,4 +1,5 @@
+import { NodeEnvironment } from "@plutomi/env";
 import { env } from "../env";
 
 export const getSessionCookieName = () =>
-  `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-session`;
+  `${env.NODE_ENV !== NodeEnvironment.PRODUCTION ? "dev-" : ""}plutomi-session`;

@@ -12,6 +12,6 @@ export const env = parseEnv({
   // we can have PRs against the main branch without having to add the env vars to the repo.
   // We should throw while deploying to production, though.
   shouldThrow:
-    process.env.DEPLOYMENT_ENVIRONMENT === DeploymentEnvironment.PROD ||
-    process.env.NODE_ENV === "production"
+    process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ===
+      DeploymentEnvironment.PROD || process.env.NODE_ENV === "production"
 });
