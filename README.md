@@ -64,10 +64,9 @@ Stages:
 - [Docker](https://docs.docker.com/get-docker/)
 - Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global add aws-cdk`
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
+  - If creating a `stage` or `dev` environment, you can use a subdomain like `stage.example.com`. In your `prod` environment, the hosted zone should be for your base domain like `example.com`, and you should add the name servers from your `stage` or `dev` accounts to your `prod` hosted zone.
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
-- Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
-
-<a name="commands"></a>
+  <a name="commands"></a>
 
 ## Useful Commands :computer:
 
@@ -89,7 +88,7 @@ Stages:
 
   - To setup AWS with SSO, you can check [this tutorial](https://docs.sst.dev/setting-up-aws#create-a-management-account)
 
-- `yarn deploy:dev/stage/prod` - Deploy to the specified environment. TODO: Remove cdk.context.json and make sure that docker is running if deploying locally.
+- `yarn deploy:dev/stage/prod` - Deploy to the specified environment
 
 <a name="language-tooling-infra"></a>
 
