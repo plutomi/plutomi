@@ -54,17 +54,14 @@ jobs:
       - name: Deploying to AWS...
         run: cdk deploy --all --verbose --require-approval never
         env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
-          HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
           ACM_CERTIFICATE_ARN: ${{ secrets.ACM_CERTIFICATE_ARN }}
           POSTMARK_API_KEY: ${{ secrets.POSTMARK_API_KEY }}
           LOGIN_LINKS_SECRET: ${{ secrets.LOGIN_LINKS_SECRET }}
-          SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
+          SESSION_PASSWORD_1: ${{ secrets.SESSION_PASSWORD_1 }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
           NODE_ENV: production
           NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: ${{ env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT }}
-          NEXT_PUBLIC_WEBSITE_URL: ${{ secrets.NEXT_PUBLIC_WEBSITE_URL }}
-          
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          # CF_HEADER: ${{ secrets.CF_HEADER }}
+          # CF_HEADER_VALUE: ${{ secrets.CF_HEADER_VALUE }}
 
