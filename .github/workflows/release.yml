@@ -54,7 +54,6 @@ jobs:
       - name: Deploying to AWS...
         run: cdk deploy --all --verbose --require-approval never
         env:
-          ACM_CERTIFICATE_ARN: ${{ secrets.ACM_CERTIFICATE_ARN }}
           POSTMARK_API_KEY: ${{ secrets.POSTMARK_API_KEY }}
           LOGIN_LINKS_SECRET: ${{ secrets.LOGIN_LINKS_SECRET }}
           SESSION_PASSWORD_1: ${{ secrets.SESSION_PASSWORD_1 }}

@@ -6,9 +6,9 @@ import {
   createVpc,
   createFargateService,
   getHostedZone,
-  createDistribution
+  createDistribution,
+  createCertificate
 } from "../utils";
-import { getACMCertificate } from "../utils/getAcmCertificate";
 
 type PlutomiStackProps = StackProps;
 
@@ -20,7 +20,7 @@ export class PlutomiStack extends Stack {
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
     const hostedZone = getHostedZone({ stack: this });
-    const certificate = getACMCertificate({ stack: this });
+    const certificate = createCertificate({ stack: this, hostedZone });
     const fargateService = createFargateService({
       stack: this,
       taskDefinition,
