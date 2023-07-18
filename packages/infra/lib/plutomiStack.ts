@@ -7,7 +7,8 @@ import {
   createFargateService,
   getHostedZone,
   createDistribution,
-  createCertificate
+  createCertificate,
+  createSesConfig
 } from "../utils";
 
 type PlutomiStackProps = StackProps;
@@ -28,6 +29,8 @@ export class PlutomiStack extends Stack {
       vpc,
       natGatewayProvider
     });
+
+    createSesConfig({ stack: this, hostedZone });
 
     createDistribution({
       stack: this,

@@ -5,4 +5,5 @@ export * from "./createTaskRole";
 export * from "./createVpc";
 export * from "./getHostedZone";
 export * from "./createCertificate";
+export * from "./createSesConfig";
 export * from "./env";
