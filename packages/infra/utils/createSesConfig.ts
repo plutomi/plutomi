@@ -1,5 +1,5 @@
 import { Duration, type Stack } from "aws-cdk-lib";
-import type { IHostedZone } from "aws-cdk-lib/aws-route53";
+import { TxtRecord, type IHostedZone } from "aws-cdk-lib/aws-route53";
 import {
   ConfigurationSet,
   ConfigurationSetEventDestination,
@@ -26,6 +26,8 @@ type CreateSesConfigProps = {
 /**
  *
  * Sets up Email from SES with the proper subdomains.
+ * You can read more about this setup here:
+ * https://dev.to/kumo/from-zero-to-hero-send-aws-ses-emails-like-a-pro-4nei#2-make-sure-you-dont-end-up-in-your-users-spams
  */
 export const createSesConfig = ({
   stack,
@@ -81,5 +83,13 @@ export const createSesConfig = ({
         destination: EventDestination.snsTopic(sesEventsTopic)
       }
     );
+  });
+
+  void new TxtRecord(stack, "SES-Txt-Record", {
+    recordName: "_dmarc",
+    zone: hostedZone,
+    values: ["v=DMARC1", "p=none"],
+    comment:
+      "This _dmarc record indicates to your recipients that you properly set up DKIM, and that they are allowed to refuse your email if there is an authentication failure."
   });
 };
