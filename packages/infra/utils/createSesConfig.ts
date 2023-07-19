@@ -1,4 +1,4 @@
-import type { Stack } from "aws-cdk-lib";
+import { Duration, type Stack } from "aws-cdk-lib";
 import type { IHostedZone } from "aws-cdk-lib/aws-route53";
 import {
   ConfigurationSet,
@@ -8,6 +8,8 @@ import {
   Identity
 } from "aws-cdk-lib/aws-ses";
 import { Topic } from "aws-cdk-lib/aws-sns";
+import { Queue } from "aws-cdk-lib/aws-sqs";
+import { SqsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 import { env } from "./env";
 
 enum EmailSubdomains {
@@ -38,6 +40,14 @@ export const createSesConfig = ({
     displayName: "SES Events Topic",
     topicName: "SES-Events-Topic"
   });
+
+  const sesEventsQueue = new Queue(stack, "SES-Events-Queue", {
+    queueName: "SES-Events-Queue",
+    retentionPeriod: Duration.days(14),
+    receiveMessageWaitTime: Duration.seconds(20)
+  });
+
+  sesEventsTopic.addSubscription(new SqsSubscription(sesEventsQueue));
 
   Object.keys(EmailSubdomains).forEach((subdomain) => {
     /**
