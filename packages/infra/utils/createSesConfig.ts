@@ -9,6 +9,10 @@ import {
 import { Topic } from "aws-cdk-lib/aws-sns";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { SqsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { Architecture } from "aws-cdk-lib/aws-lambda";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { env } from "./env";
 
 enum EmailSubdomains {
@@ -38,7 +42,6 @@ export const createSesConfig = ({
    * All events go to one SNS topic which sends them to SQS,
    * which is processed by lambda.
    */
-
   const sesEventsTopic = new Topic(stack, "SES-Events-Topic", {
     displayName: "SES Events Topic",
     topicName: "SES-Events-Topic"
@@ -71,27 +74,37 @@ export const createSesConfig = ({
       destination: EventDestination.snsTopic(sesEventsTopic)
     });
 
-    // Create the SES identity (this will automatically update Route53 records)
+    // Create the SES identity
     const emailIdentityName = `${subdomain}-SES-Identity`;
     void new EmailIdentity(stack, emailIdentityName, {
+      // this will automatically update Route53 records
       identity: Identity.publicHostedZone(hostedZone),
       configurationSet,
-      mailFromDomain: `${EmailSubdomains.Notifications}.${new URL(
-        env.NEXT_PUBLIC_BASE_URL
-      ).hostname
-        // Remove the subdomain from this. All emails will come from EmailSubdomains.plutomi.com.
-        // Note that there is a difference between the SES Identity and the MAIL FROM address.
-        .split(".")
-        .slice(-2)
-        .join(".")}`
+      mailFromDomain: `${subdomain}.${
+        new URL(env.NEXT_PUBLIC_BASE_URL).hostname
+      }`
+      // TODO: Feedback forwarding?
     });
   });
 
-  void new TxtRecord(stack, "SES-Txt-Record", {
+  void new TxtRecord(stack, "SES-Txt-Record-DMARC", {
     recordName: "_dmarc",
     zone: hostedZone,
     values: ["v=DMARC1", "p=none"],
     comment:
       "This _dmarc record indicates to your recipients that you properly set up DKIM, and that they are allowed to refuse your email if there is an authentication failure."
   });
+
+  const functionName = "SES-Event-Processor";
+  const eventProcessor = new NodejsFunction(stack, functionName, {
+    functionName,
+    entry: "../functions/sesEventProcessor/index.ts",
+    logRetention: RetentionDays.ONE_WEEK,
+    memorySize: 128,
+    timeout: Duration.minutes(1),
+    architecture: Architecture.ARM_64,
+    description: "Processes SES events"
+  });
+
+  eventProcessor.addEventSource(new SqsEventSource(sesEventsQueue));
 };

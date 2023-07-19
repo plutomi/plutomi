@@ -21,6 +21,7 @@ type ConnectToDatabaseResponse = {
 };
 
 type ConnectToDatabaseProps = {
+  // TODO Update names
   databaseName: "plutomi-local" | "plutomi-stage" | "plutomi-prod";
 };
 
