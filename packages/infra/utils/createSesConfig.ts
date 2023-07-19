@@ -2,7 +2,6 @@ import { Duration, type Stack } from "aws-cdk-lib";
 import { TxtRecord, type IHostedZone } from "aws-cdk-lib/aws-route53";
 import {
   ConfigurationSet,
-  ConfigurationSetEventDestination,
   EmailIdentity,
   EventDestination,
   Identity
@@ -16,6 +15,8 @@ enum EmailSubdomains {
   // Totp codes
   Notifications = "notifications"
   // TODO: Add billing, marketing, etc.
+
+  // Do not use 
 }
 
 type CreateSesConfigProps = {
@@ -65,24 +66,20 @@ export const createSesConfig = ({
       dedicatedIpPool: undefined
     });
 
+    // Send events to our topic
+    configurationSet.addEventDestination("EventDestination", {
+      destination: EventDestination.snsTopic(sesEventsTopic)
+    });
+
     // Create the SES identity (this will automatically update Route53 records)
-    void new EmailIdentity(stack, `${subdomain}-SES-Identity`, {
+    const emailIdentityName = `${subdomain}-SES-Identity`;
+    void new EmailIdentity(stack, emailIdentityName, {
       identity: Identity.publicHostedZone(hostedZone),
       configurationSet,
       mailFromDomain: `${EmailSubdomains.Notifications}.${
         new URL(env.NEXT_PUBLIC_BASE_URL).hostname
       }`
     });
-
-    // Send events to our SNS topic
-    void new ConfigurationSetEventDestination(
-      stack,
-      `${configurationSetName}-Destination`,
-      {
-        configurationSet,
-        destination: EventDestination.snsTopic(sesEventsTopic)
-      }
-    );
   });
 
   void new TxtRecord(stack, "SES-Txt-Record", {
