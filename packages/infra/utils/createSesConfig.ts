@@ -103,10 +103,14 @@ export const createSesConfig = ({
     entry: path.join(__dirname, "../functions/sesEventProcessor.ts"),
     logRetention: RetentionDays.ONE_WEEK,
     memorySize: 128,
-    timeout: Duration.minutes(1),
+    timeout: Duration.seconds(30),
     architecture: Architecture.ARM_64,
     description: "Processes SES events"
   });
 
-  eventProcessor.addEventSource(new SqsEventSource(sesEventsQueue));
+  eventProcessor.addEventSource(
+    new SqsEventSource(sesEventsQueue, {
+      batchSize: 1
+    })
+  );
 };
