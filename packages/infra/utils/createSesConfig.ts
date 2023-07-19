@@ -11,8 +11,9 @@ import { Queue } from "aws-cdk-lib/aws-sqs";
 import { SqsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { Architecture } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import path from "path";
 import { env } from "./env";
 
 enum EmailSubdomains {
@@ -98,7 +99,8 @@ export const createSesConfig = ({
   const functionName = "SES-Event-Processor";
   const eventProcessor = new NodejsFunction(stack, functionName, {
     functionName,
-    entry: "../functions/sesEventProcessor/index.ts",
+    runtime: Runtime.NODEJS_18_X,
+    entry: path.join(__dirname, "../functions/sesEventProcessor.ts"),
     logRetention: RetentionDays.ONE_WEEK,
     memorySize: 128,
     timeout: Duration.minutes(1),

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-export const sesEventProcessor = async (event: any) => {
+export const handler = async (event: any) => {
   console.log("LAMBDA START");
 
   console.log(event);
