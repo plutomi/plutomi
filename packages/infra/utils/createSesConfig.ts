@@ -72,6 +72,7 @@ export const createSesConfig = ({
 
     // Send events to our topic
     configurationSet.addEventDestination("EventDestination", {
+      configurationSetEventDestinationName: "SES-Event-Destination",
       destination: EventDestination.snsTopic(sesEventsTopic)
     });
 
