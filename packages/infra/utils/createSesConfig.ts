@@ -16,7 +16,7 @@ enum EmailSubdomains {
   Notifications = "notifications"
   // TODO: Add billing, marketing, etc.
 
-  // Do not use 
+  // Do not use
 }
 
 type CreateSesConfigProps = {
@@ -76,9 +76,14 @@ export const createSesConfig = ({
     void new EmailIdentity(stack, emailIdentityName, {
       identity: Identity.publicHostedZone(hostedZone),
       configurationSet,
-      mailFromDomain: `${EmailSubdomains.Notifications}.${
-        new URL(env.NEXT_PUBLIC_BASE_URL).hostname
-      }`
+      mailFromDomain: `${EmailSubdomains.Notifications}.${new URL(
+        env.NEXT_PUBLIC_BASE_URL
+      ).hostname
+        // Remove the subdomain from this. All emails will come from EmailSubdomains.plutomi.com.
+        // Note that there is a difference between the SES Identity and the MAIL FROM address.
+        .split(".")
+        .slice(-2)
+        .join(".")}`
     });
   });
 
