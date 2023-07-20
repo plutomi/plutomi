@@ -18,7 +18,7 @@ import { env } from "./env";
 
 enum EmailSubdomains {
   // Totp codes
-  Notifications = "notifications"
+  NOTIFICATIONS = "notifications"
   // TODO: Add billing, marketing, etc.
 
   // Do not use

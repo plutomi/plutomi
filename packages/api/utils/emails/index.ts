@@ -1,1 +1,1 @@
-export * from "./postmarkClient";
+export * from "./sendEmail";

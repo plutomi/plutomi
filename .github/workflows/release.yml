@@ -54,7 +54,6 @@ jobs:
       - name: Deploying to AWS...
         run: cdk deploy --all --verbose --require-approval never
         env:
-          POSTMARK_API_KEY: ${{ secrets.POSTMARK_API_KEY }}
           LOGIN_LINKS_SECRET: ${{ secrets.LOGIN_LINKS_SECRET }}
           SESSION_PASSWORD_1: ${{ secrets.SESSION_PASSWORD_1 }}
           MONGO_URL: ${{ secrets.MONGO_URL }}

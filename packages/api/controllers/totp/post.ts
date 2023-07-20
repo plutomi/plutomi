@@ -30,7 +30,6 @@ import type { RequestHandler } from "express";
 //   getSessionCookieName,
 //   sessionIsActive,
 //   createTotpCode,
-//   postmarkClient,
 //   generatePlutomiId
 // } from "../../utils";
 
@@ -235,14 +234,6 @@ export const post: RequestHandler = async (_req, res) => {
   // // const { code } = totpCodeItem;
   // try {
   //   // TODO
-  //   await postmarkClient.sendEmail({
-  //     From: "postmark@plutomi.com",
-  //     To: "postmark@plutomi.com",
-  //     Subject: "Hello from Postmark",
-  //     HtmlBody: "<strong>Hello</strong> dear Postmark user.",
-  //     TextBody: "Hello from Postmark!",
-  //     MessageStream: "outbound"
-  //   });
 
   //   res.status(201).json({
   //     message: "A login code has been sent to your email"

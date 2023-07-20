@@ -20,7 +20,7 @@ export const allEnvVariablesSchema = z.object({
   NODE_ENV: z.nativeEnum(NodeEnvironment).default(NodeEnvironment.DEVELOPMENT),
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z
     .nativeEnum(DeploymentEnvironment)
-    .default(DeploymentEnvironment.Development),
+    .default(DeploymentEnvironment.DEVELOPMENT),
   // ! For NextJS, make sure to add to packages/web/env.ts as well as the Dockerfile
   NEXT_PUBLIC_BASE_URL: z.string().url().default("http://localhost:3000"), // Used by API and web
   // WAF Will block requests that don't include this header
@@ -29,8 +29,7 @@ export const allEnvVariablesSchema = z.object({
     .string()
     .min(50, "Value must be at least 50 characters long"),
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
-  SESSION_PASSWORD_1: z.string().min(100),
-  POSTMARK_API_KEY: z.string().uuid()
+  SESSION_PASSWORD_1: z.string().min(100)
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
@@ -43,8 +42,7 @@ export const apiEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_BASE_URL: true,
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: true,
   MONGO_URL: true,
-  SESSION_PASSWORD_1: true,
-  POSTMARK_API_KEY: true
+  SESSION_PASSWORD_1: true
 });
 
 export const databaseEnvSchema = allEnvVariablesSchema.pick({
@@ -63,6 +61,5 @@ export const processEnv: z.infer<typeof allEnvVariablesSchema> = {
   CF_HEADER_KEY: process.env.CF_HEADER_KEY as string,
   CF_HEADER_VALUE: process.env.CF_HEADER_VALUE as string,
   MONGO_URL: process.env.MONGO_URL as string,
-  POSTMARK_API_KEY: process.env.POSTMARK_API_KEY as string,
   SESSION_PASSWORD_1: process.env.SESSION_PASSWORD_1 as string
 };

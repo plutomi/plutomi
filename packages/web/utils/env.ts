@@ -2,7 +2,8 @@ import {
   webEnvSchema,
   parseEnv,
   SchemaEnvironment,
-  DeploymentEnvironment
+  DeploymentEnvironment,
+  NodeEnvironment
 } from "@plutomi/env";
 
 export const env = parseEnv({
@@ -15,5 +16,6 @@ export const env = parseEnv({
    */
   shouldThrow:
     process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ===
-      DeploymentEnvironment.Production || process.env.NODE_ENV === "production"
+      DeploymentEnvironment.PRODUCTION ||
+    process.env.NODE_ENV === NodeEnvironment.PRODUCTION
 });
