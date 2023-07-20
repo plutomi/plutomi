@@ -21,7 +21,9 @@ enum EmailSubdomains {
   NOTIFICATIONS = "notifications"
   // TODO: Add billing, marketing, etc.
 
-  // Do not use
+  // Do not use staging or development for these subdomains,
+  // they should be "domains" or "groups" in the sense of the type of
+  // notification that will be sent out.
 }
 
 type CreateSesConfigProps = {
@@ -59,7 +61,7 @@ export const createSesConfig = ({
   Object.keys(EmailSubdomains).forEach((subdomain) => {
     /**
      * We need this config set so we can capture events like bounces, complaints, etc.
-     * We separate them by subdomain so if we need to shut down one part of our infrastructure,
+     * We separate them by subdomain so if we need to shut down one part of our email infrastructure,
      * we can do so without affecting the other parts.
      */
     const configurationSetName = `${subdomain}-SES-ConfigurationSet`;
