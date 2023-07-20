@@ -60,6 +60,6 @@ jobs:
           NODE_ENV: production
           NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: ${{ env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT }}
           NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
-          CF_HEADER: ${{ secrets.CF_HEADER }}
+          CF_HEADER_KEY: ${{ secrets.CF_HEADER_KEY }}
           CF_HEADER_VALUE: ${{ secrets.CF_HEADER_VALUE }}
 
