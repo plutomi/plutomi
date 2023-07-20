@@ -21,6 +21,7 @@ type ConnectToDatabaseResponse = {
 };
 
 type ConnectToDatabaseProps = {
+  // TODO Update names
   databaseName: "plutomi-local" | "plutomi-stage" | "plutomi-prod";
 };
 
@@ -39,7 +40,9 @@ export const connectToDatabase = async ({
       version: ServerApiVersion.v1,
       strict: true,
       deprecationErrors: true
-    }
+    },
+    minPoolSize: 50,
+    maxPoolSize: 150
   });
 
   const database: Db = client.db(databaseName);

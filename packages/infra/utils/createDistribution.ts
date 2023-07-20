@@ -25,8 +25,8 @@ type CreateDistributionProps = {
   hostedZone: IHostedZone;
 };
 
-const aRecordAlias = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-alias`;
-const distributionName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-distribution`;
+const aRecordAlias = "plutomi-alias";
+const distributionName = "plutomi-distribution";
 
 const domainName = new URL(env.NEXT_PUBLIC_BASE_URL).hostname;
 

@@ -6,7 +6,6 @@ import {
 } from "aws-cdk-lib/aws-ec2";
 import { FckNatInstanceProvider } from "cdk-fck-nat";
 import type { Stack } from "aws-cdk-lib";
-import { env } from "./env";
 
 type CreateVPCProps = {
   stack: Stack;
@@ -17,7 +16,7 @@ type CreateVPCResult = {
   natGatewayProvider: FckNatInstanceProvider;
 };
 
-const vpcName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-vpc`;
+const vpcName = "plutomi-vpc";
 
 export const createVpc = ({ stack }: CreateVPCProps): CreateVPCResult => {
   const natGatewayProvider = new FckNatInstanceProvider({

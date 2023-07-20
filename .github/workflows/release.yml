@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment Environment ("prod" / "stage" / "dev")'
+        description: 'Deployment Environment ("production" / "staging" / "dev")'
         type: environment
         required: true
       notes:
@@ -15,17 +15,17 @@ on:
         type: string
 
 env:
-  DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'stage' }}
+  DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
   NODE_VERSION: 18
 
 concurrency:
-  group: ${{ github.event.inputs.environment || 'stage' }}
+  group: ${{ github.event.inputs.environment || 'staging' }}
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'stage' }}
+    environment: ${{ github.event.inputs.environment || 'staging' }}
     steps:
       - name: Print Deployment Target
         run: |
@@ -54,16 +54,12 @@ jobs:
       - name: Deploying to AWS...
         run: cdk deploy --all --verbose --require-approval never
         env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
-          HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
-          ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
           LOGIN_LINKS_SECRET: ${{ secrets.LOGIN_LINKS_SECRET }}
-          SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
+          SESSION_PASSWORD_1: ${{ secrets.SESSION_PASSWORD_1 }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
           NODE_ENV: production
-          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: ${{ env.DEPLOYMENT_ENVIRONMENT }}
-          NEXT_PUBLIC_WEBSITE_URL: ${{ secrets.NEXT_PUBLIC_WEBSITE_URL }}
-          
+          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: ${{ env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          CF_HEADER_KEY: ${{ secrets.CF_HEADER_KEY }}
+          CF_HEADER_VALUE: ${{ secrets.CF_HEADER_VALUE }}
 

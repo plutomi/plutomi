@@ -27,6 +27,7 @@
     "Cooldown",
     "deregistration",
     "devs",
+    "DMARC",
     "embla",
     "fargate",
     "heroicons",
@@ -64,6 +65,7 @@
     "wafv2",
     "waitlist",
     "Wpforms",
+    "yourdomain",
     "zustand"
   ],
   "overrides": []

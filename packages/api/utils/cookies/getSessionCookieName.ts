@@ -1,4 +1,4 @@
 import { env } from "../env";
 
 export const getSessionCookieName = () =>
-  `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-session`;
+  `${env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-plutomi-session`;

@@ -12,9 +12,9 @@ type CreateTaskDefinitionProps = {
   taskRole: IRole;
 };
 
-const taskDefinitionName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-task-definition`;
-const containerName = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-container`;
-const logStreamPrefix = `${env.DEPLOYMENT_ENVIRONMENT}-plutomi-logs`;
+const taskDefinitionName = "plutomi-task-definition";
+const containerName = "plutomi-container";
+const logStreamPrefix = "plutomi-logs";
 
 export const createTaskDefinition = ({
   stack,
