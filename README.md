@@ -46,7 +46,7 @@ Stages:
 - Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global add aws-cdk`
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
   - If creating a `staging` or `development` environment, you can use a subdomain like `staging.yourdomain.com`. In your `prod` environment, the hosted zone should be for your base domain like `yourdomain.com`, and you should add the name servers from your `staging` or `development` hosted zones to your `production` hosted zone.
-  - Our CDK stack will create the necessary DNS records for the SSL certificate (using ACM) and the necessary records to send emails using SES. We recommend creating an email alias at `staging.yourdomain.com` & `development.yourdomain`, and adding the MX records to the proper hosted zones.
+  - Our CDK stack will create the necessary DNS records for the SSL certificate (using ACM) and the necessary records to send emails using SES. We recommend creating an email alias at `staging.yourdomain.com` & `development.yourdomain.com` on your email provider (ie GSuite or whatever they're calling it these days), and adding the MX records to the proper hosted zones.
 
 ## Useful Commands
 
