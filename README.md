@@ -2,21 +2,7 @@
 
 ---
 
-# Table of Contents :book:
-
-1. [Intro](#intro)
-2. [Motivation](#motivation)
-3. [Summary](#summary)
-4. [Prerequisites](#pre-req)
-5. [Useful Commands](#commands)
-6. [Language, Tooling, and Infrastructure](#language-tooling-infra)
-7. [License](#license)
-8. [Contributing & Contributors](#contributing)
-9. [Questions](#questions)
-
-<a name="intro"></a>
-
-# Plutomi :shipit:
+# Plutomi
 
 ![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
 ![linter badge](https://github.com/plutomi/plutomi/actions/workflows/linter.yml/badge.svg)
@@ -30,19 +16,16 @@
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![infra](images/infra.png)
-<a name="motivation"></a>
 
-## Motivation :bulb:
+## Motivation
 
 Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://www.linkedin.com/in/joswayski/) attempt to do just that.
 
-<a name="summary"></a>
-
-## Summary :tea:
+## Summary
 
 You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
-In these applications, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `answers` or after a certain time period.
+In these applications, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `responses` or after a certain time period.
 
 An application for a delivery company might look like this:
 
@@ -56,19 +39,16 @@ Stages:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
-<a name="pre-req"></a>
-
-## Prerequisites :heavy_exclamation_mark:
+## Prerequisites
 
 - [Node 18](https://nodejs.org/en/download)
 - [Docker](https://docs.docker.com/get-docker/)
 - Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global add aws-cdk`
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
-  - If creating a `stage` or `dev` environment, you can use a subdomain like `stage.example.com`. In your `prod` environment, the hosted zone should be for your base domain like `example.com`, and you should add the name servers from your `stage` or `dev` accounts to your `prod` hosted zone.
-- Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
-  <a name="commands"></a>
+  - If creating a `staging` or `development` environment, you can use a subdomain like `staging.yourdomain.com`. In your `prod` environment, the hosted zone should be for your base domain like `yourdomain.com`, and you should add the name servers from your `staging` or `development` accounts to your `production` hosted zone.
+  - Our CDK stack will create the necessary DNS records for the SSL certificate (using ACM) and the necessary records to send emails using SES. We recommend creating an email alias at `staging.yourdomain.com` & `development.yourdomain`, and adding the MX records to the proper hosted zones.
 
-## Useful Commands :computer:
+## Useful Commands
 
 - `yarn` - Install deps.
   - We are using a Monorepo so shared deps will be at the `root` while workspace specific deps will be installed in the appropriate workspace. Yarn workspaces paired with [nx](https://nx.dev/) is a killer combo
@@ -90,9 +70,7 @@ Stages:
 
 - `yarn deploy:dev/stage/prod` - Deploy to the specified environment
 
-<a name="language-tooling-infra"></a>
-
-## Language, Tooling, & Infrastructure 🛠️
+## Language, Tooling, & Infrastructure
 
 > Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
 
@@ -161,13 +139,11 @@ You can then get type safe environment variables in each package:
 
 ![type-safe-env](images/type-safety-env.png)
 
-<a name="license"></a>
-
-## License 📃
+## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
 
-## Contributing & Contributors ✨ <a name="contributing"></a>
+## Contributing & Contributors
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
@@ -194,6 +170,6 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <a name="questions"></a>
 
-## Questions ❓
+## Questions
 
 Open an issue! Or [DM me on Twitter](https://twitter.com/notjoswayski) or email jose@plutomi.com
