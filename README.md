@@ -168,8 +168,6 @@ Thanks goes to these wonderful people who contributed!
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-<a name="questions"></a>
-
 ## Questions
 
 Open an issue! Or [DM me on Twitter](https://twitter.com/notjoswayski) or email jose@plutomi.com
