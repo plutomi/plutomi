@@ -47,11 +47,11 @@ export const createSesConfig = ({
    */
   const sesEventsTopic = new Topic(stack, "SES-Events-Topic", {
     displayName: "SES Events Topic",
-    topicName: "SES-Events-Topic"
+    topicName: "SES Events Topic"
   });
 
   const sesEventsQueue = new Queue(stack, "SES-Events-Queue", {
-    queueName: "SES-Events-Queue",
+    queueName: "SES Events Queue",
     retentionPeriod: Duration.days(14),
     receiveMessageWaitTime: Duration.seconds(20)
   });
