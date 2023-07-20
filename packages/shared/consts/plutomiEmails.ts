@@ -5,4 +5,4 @@ export enum PlutomiEmails {
   NO_REPLY = "no-reply@plutomi.com"
 }
 
-// TODO: Allow for multipleorgs
+// TODO: Allow for multiple orgs
