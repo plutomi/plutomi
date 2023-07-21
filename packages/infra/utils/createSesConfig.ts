@@ -52,7 +52,6 @@ export const createSesConfig = ({
 
   const sesEventsQueue = new Queue(stack, "SES-Events-Queue", {
     queueName: "SES-Events-Queue",
-    
     retentionPeriod: Duration.days(14),
     receiveMessageWaitTime: Duration.seconds(20)
   });
