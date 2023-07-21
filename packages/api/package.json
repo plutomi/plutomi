@@ -39,6 +39,8 @@
     "@types/express": "^4.17.17",
     "@types/node": "^18.15.11",
     "@types/request-ip": "^0.0.37",
+    "eslint-plugin-jest": "^27.2.3",
+    "eslint-plugin-security": "^1.7.1",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }
