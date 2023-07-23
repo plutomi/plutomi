@@ -35,6 +35,7 @@
     "typescript": "4.9.5"
   },
   "scripts": {
+    "test": "jest --coverage",
     "aws:login": "aws sso login --sso-session=plutomi",
     "dev": "nx run-many -t=dev",
     "build": "nx run-many -t=build",
