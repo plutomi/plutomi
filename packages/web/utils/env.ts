@@ -2,7 +2,6 @@ import {
   webEnvSchema,
   parseEnv,
   SchemaEnvironment,
-  DeploymentEnvironment,
   NodeEnvironment
 } from "@plutomi/env";
 
@@ -14,8 +13,5 @@ export const env = parseEnv({
    * we can have PRs against the main branch without having to add the env vars to the repo.
    * We should throw while deploying to production, though.
    */
-  shouldThrow:
-    process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ===
-      DeploymentEnvironment.PRODUCTION ||
-    process.env.NODE_ENV === NodeEnvironment.PRODUCTION
+  shouldThrow: process.env.NODE_ENV === NodeEnvironment.PRODUCTION
 });
