@@ -15,6 +15,7 @@
     "@types/jest": "^29.5.3",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "artillery": "^2.0.0-35",
     "cspell": "^6.31.1",
     "eslint": "^8.0.1",
     "eslint-config-airbnb": "^19.0.4",
@@ -48,7 +49,8 @@
     "spellcheck": "yarn cspell .",
     "deploy:dev": "yarn workspace @plutomi/infra deploy:dev",
     "deploy:stage": "yarn workspace @plutomi/infra deploy:stage",
-    "deploy:prod": "yarn workspace @plutomi/infra deploy:prod"
+    "deploy:prod": "yarn workspace @plutomi/infra deploy:prod",
+    "loadtest": "yarn artillery run loadtest.yml"
   },
   "packageManager": "yarn@3.5.0"
 }

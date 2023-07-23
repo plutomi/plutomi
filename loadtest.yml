@@ -1,0 +1,40 @@
+config:
+  target: https://development.plutomi.com
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: Warm up phase
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 30
+      name: Spike phase
+  # Load & configure a couple of useful plugins
+  # https://docs.art/reference/extensions
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99: 100
+      - http.response_time.p95: 75
+scenarios:
+  - name: "Insert 5 times"
+    flow:
+      - loop:
+          - get:
+              url: "/api/test/post"
+        count: 5
+  - name: "Get 100 times"
+    flow:
+      - loop:
+          - get:
+              url: "/api/test/get"
+        count: 100
