@@ -1,19 +1,24 @@
-> :warning: **This repository is currently undergoing maintenance and many breaking changes. These changes are necessary to enhance the long term stability of the project. Use at your own risk as long as this banner is here - things _will_ be broken!**
-
----
-
 # Plutomi
+
+Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
 ![linter badge](https://github.com/plutomi/plutomi/actions/workflows/linter.yml/badge.svg)
 ![spellcheck badge](https://github.com/plutomi/plutomi/actions/workflows/spellcheck.yml/badge.svg)
 ![prettier badge](https://github.com/plutomi/plutomi/actions/workflows/prettier.yml/badge.svg)
+![tests badge](https://github.com/plutomi/plutomi/actions/workflows/test.yml/badge.svg)
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=plastic&color=informational)](http://makeapullrequest.com)
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=plastic&color=important)](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0)
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-blue.svg?style=plastic&color=yellow)](#contributors)
 
-Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
+#### Coverage
+
+# TODO Add others
+
+![tl](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Lines)
+
+#### Infra
 
 ![infra](images/infra.png)
 
