@@ -65,12 +65,18 @@ export const createFargateService = ({
   // Scaling - based on RPS
   const scaling = fargateService.service.autoScaleTaskCount({
     minCapacity: 1,
-    maxCapacity: 4
+    maxCapacity: 100
   });
 
   scaling.scaleOnRequestCount("plutomi-request-scaling", {
-    requestsPerTarget: 50,
+    requestsPerTarget: 25,
     targetGroup: fargateService.targetGroup,
+    scaleInCooldown: Duration.seconds(60),
+    scaleOutCooldown: Duration.seconds(60)
+  });
+
+  scaling.scaleOnCpuUtilization("plutomi-cpu-scaling", {
+    targetUtilizationPercent: 35,
     scaleInCooldown: Duration.seconds(60),
     scaleOutCooldown: Duration.seconds(60)
   });

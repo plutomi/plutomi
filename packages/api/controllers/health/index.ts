@@ -3,4 +3,4 @@ import { get } from "./get";
 
 export const health = Router();
 
-health.use("/", get);
+health.get("/", get);
