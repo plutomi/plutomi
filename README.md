@@ -105,13 +105,14 @@ export const allEnvVariablesSchema = z.object({
   PORT: portSchema,
   NODE_ENV: z.nativeEnum(NodeEnvironment),
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
-  DOMAIN: z.string(),
-  NEXT_PUBLIC_BASE_URL: z.string().url()
+  NEXT_PUBLIC_BASE_URL: z.string().url(),
+  // Example web env
+  GA_TRACKING_ID: z.string()
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_BASE_URL: true,
-  DOMAIN: true
+  GA_TRACKING_ID: true
 });
 
 export const apiEnvSchema = allEnvVariablesSchema.pick({
@@ -137,7 +138,7 @@ export const env = parseEnv({
 
 You can then get type safe environment variables in each package:
 
-![type-safe-env](images/type-safety-env.png)
+![type-safe-env](images/type-safe-env.png)
 
 ## License
 

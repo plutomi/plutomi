@@ -37,6 +37,7 @@ COPY --from=deps /app/node_modules node_modules
 COPY . .
 
 # Add NextJS environment variables here
+# Make sure to update the task definition if you add a new ARG
 ARG NEXT_PUBLIC_BASE_URL
 
 RUN yarn build
