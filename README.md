@@ -54,6 +54,8 @@ Stages:
   - We are using a Monorepo so shared deps will be at the `root` while workspace specific deps will be installed in the appropriate workspace. Yarn workspaces paired with [nx](https://nx.dev/) is a killer combo
 - `yarn build` - Build the app, the correct ordering is set in the `nx.json` file for dependencies across packages like shared types
 
+- `yarn test` - Run tests
+
 - `yarn dev` - Start the app
 
 - `yarn pretty` & `yarn pretty:fix` - Run prettier & fix any issues

@@ -8,6 +8,7 @@ const jestConfig: JestConfigWithTsJest = {
   // TODO: Exclude from build
   verbose: true,
   coverageDirectory: "coverage",
+  coverageReporters: ["json-summary"],
   preset: "ts-jest",
   modulePathIgnorePatterns: ["<rootDir>/packages/infra/cdk.out*"]
 };
