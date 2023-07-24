@@ -2,10 +2,13 @@ import type { RequestHandler } from "express";
 import KSUID from "ksuid";
 
 export const post: RequestHandler = async (req, res) => {
+  const id = KSUID.randomSync().string;
+  const timerId = `POST - ${id}`;
+  console.time(timerId);
   try {
     await req.items.insertOne({
       // @ts-expect-error f
-      _id: KSUID.randomSync().string,
+      _id: id,
       index: 0,
       guid: "86ac96ed-6204-4453-a9b4-33c085591757",
       isActive: true,
@@ -50,6 +53,7 @@ export const post: RequestHandler = async (req, res) => {
       greeting: "Hello, Riley Stephens! You have 1 unread messages.",
       favoriteFruit: "banana"
     });
+    console.timeEnd(timerId);
     res.status(200).json({ message: "OK" });
   } catch (error) {
     console.error(error);

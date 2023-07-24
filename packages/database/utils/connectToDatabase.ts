@@ -41,8 +41,9 @@ export const connectToDatabase = async ({
       strict: true,
       deprecationErrors: true
     },
-    minPoolSize: 50,
-    maxPoolSize: 150
+    // Remember to update the fargate scaling if needed
+    minPoolSize: 10,
+    maxPoolSize: 20
   });
 
   const database: Db = client.db(databaseName);

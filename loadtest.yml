@@ -2,14 +2,14 @@
 config:
   target: https://development.plutomi.com
   phases:
-    - duration: 300
+    - duration: 600
       name: Warm up phase
       arrivalRate: 2
-      rampTo: 70
-    - duration: 300
-      name: Ramp Up
-      arrivalRate: 50
       rampTo: 200
+    # - duration: 300
+    #   name: Ramp Up
+    #   arrivalRate: 70
+    #   rampTo: 200
     # - duration: 200
     #   name: Final Ramp Load
     #   arrivalRate: 200
