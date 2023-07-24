@@ -77,6 +77,8 @@ Stages:
 
 - `yarn deploy:dev/stage/prod` - Deploy to the specified environment
 
+- `yarn loadtest` - Runs a load test against the API, see `loadtest.yml` for more info. This is just for simple auto scaling tests.
+
 ## Language, Tooling, & Infrastructure
 
 > Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such

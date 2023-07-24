@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+import { faker } from "@faker-js/faker/locale/en";
 
 export const createRandomWorkspaceId = () => {
   const randomColor = faker.color.human();

@@ -1,9 +1,11 @@
-import type { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
+import { type FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Port, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import { Metric } from "aws-cdk-lib/aws-cloudwatch";
+import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
 
 type CreateFargateServiceProps = {
   stack: Stack;
@@ -62,23 +64,86 @@ export const createFargateService = ({
     path: "/api/health"
   });
 
-  // Scaling - based on RPS
+  // Scaling
+  const scalingPeriodInSeconds = 10;
+  const evaluationPeriods = 3;
+  const DESIRED_RPS_PER_SERVER = 50;
+
   const scaling = fargateService.service.autoScaleTaskCount({
     minCapacity: 1,
-    maxCapacity: 100
+    // Be aware of the connection pooling settings when changing this value
+    maxCapacity: 10
   });
 
-  scaling.scaleOnRequestCount("plutomi-request-scaling", {
-    requestsPerTarget: 25,
-    targetGroup: fargateService.targetGroup,
-    scaleInCooldown: Duration.seconds(60),
-    scaleOutCooldown: Duration.seconds(60)
+  //  Get the total requests in a 10 second period
+  const requestPerSecondMetric = new Metric({
+    namespace: "AWS/ApplicationELB",
+    metricName: "RequestCountPerTarget",
+    statistic: "Sum",
+    period: Duration.seconds(scalingPeriodInSeconds),
+    dimensionsMap: {
+      // Tells CW which LB and Target Group to get metrics from
+      TargetGroup: fargateService.targetGroup.targetGroupFullName,
+      LoadBalancer: fargateService.loadBalancer.loadBalancerFullName
+    }
   });
 
-  scaling.scaleOnCpuUtilization("plutomi-cpu-scaling", {
-    targetUtilizationPercent: 35,
-    scaleInCooldown: Duration.seconds(60),
-    scaleOutCooldown: Duration.seconds(60)
+  scaling.scaleOnMetric("RPS-Scale-Up-Policy", {
+    /**
+     * TLDR:
+     * 50 RPS for 30 seconds straight -> Scale Up by 1
+     * 100 RPS for 30 seconds straight -> Scale Up by 3
+     * "RequestCountPerTarget >= 1500 for 3 datapoints (every 10 seconds) within 30 seconds"
+     *
+     */
+    evaluationPeriods,
+    metric: requestPerSecondMetric,
+    scalingSteps: [
+      {
+        lower:
+          DESIRED_RPS_PER_SERVER * scalingPeriodInSeconds * evaluationPeriods,
+        change: 1
+      },
+      {
+        lower:
+          DESIRED_RPS_PER_SERVER *
+          scalingPeriodInSeconds *
+          evaluationPeriods *
+          // Spike
+          2,
+        change: 3
+      }
+    ],
+    adjustmentType: AdjustmentType.CHANGE_IN_CAPACITY
+  });
+
+  scaling.scaleOnMetric("RPS-Scale-Down-Policy", {
+    evaluationPeriods: 18,
+    metric: requestPerSecondMetric,
+    scalingSteps: [
+      {
+        /**
+         * TLDR:
+         * Traffic dropped by 30% for 3 minutes straight -> Scale Down by 1
+         * Traffic dropped by 70% for 3 minutes straight -> Scale Down by 3
+         *
+         * "RequestCountPerTarget <= 1050 for 18 datapoints (every 10 seconds) within 3 minutes"
+         */
+        upper:
+          Math.floor(DESIRED_RPS_PER_SERVER * 0.7) *
+          scalingPeriodInSeconds *
+          evaluationPeriods,
+        change: -1
+      },
+      {
+        upper:
+          Math.floor(DESIRED_RPS_PER_SERVER * 0.3) *
+          scalingPeriodInSeconds *
+          evaluationPeriods,
+        change: -3
+      }
+    ], // Note that this is a percentage change
+    adjustmentType: AdjustmentType.CHANGE_IN_CAPACITY
   });
 
   const ports = [

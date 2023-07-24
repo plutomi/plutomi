@@ -52,6 +52,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@next/bundle-analyzer": "^13.4.12",
     "@types/lodash": "^4.14.194",
     "@types/node": "^18.15.10",
     "@types/react": "^18.0.29",
