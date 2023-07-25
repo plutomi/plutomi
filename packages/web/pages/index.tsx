@@ -2,8 +2,7 @@ import {
   type CommitType,
   LatestCommits,
   LandingHero,
-  UseCaseSection,
-  WaitListCard
+  UseCaseSection
 } from "@/components";
 import { HomepageFooter } from "@/components/HomepageFooter";
 import axios from "axios";
@@ -22,9 +21,9 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
         <UseCaseSection />
       </div>
 
-      <div className="mt-12">
+      {/* <div className="mt-12">
         <WaitListCard />
-      </div>
+      </div> */}
       <div className="mt-12">
         <LatestCommits commits={commits} />
       </div>

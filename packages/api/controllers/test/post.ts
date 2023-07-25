@@ -3,9 +3,12 @@ import KSUID from "ksuid";
 
 export const post: RequestHandler = async (req, res) => {
   const id = KSUID.randomSync().string;
-  const timerId = `POST - ${id}`;
-  console.time(timerId);
+  const requestId = `REQUEST - ${id}`;
+  console.time(requestId);
+
+  const dbId = `DB - ${id}`;
   try {
+    console.time(dbId);
     await req.items.insertOne({
       // @ts-expect-error f
       _id: id,
@@ -53,8 +56,9 @@ export const post: RequestHandler = async (req, res) => {
       greeting: "Hello, Riley Stephens! You have 1 unread messages.",
       favoriteFruit: "banana"
     });
-    console.timeEnd(timerId);
+    console.timeEnd(dbId);
     res.status(200).json({ message: "OK" });
+    console.timeEnd(requestId);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error", error });

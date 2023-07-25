@@ -9,6 +9,28 @@ export const get: RequestHandler = async (req, res) => {
     //   db
     // });
 
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+    await req.items.deleteMany({});
+
     res.sendStatus(200);
   } catch (error) {
     res.status(500).json({ message: "Error connecting to MongoDB!", error });
