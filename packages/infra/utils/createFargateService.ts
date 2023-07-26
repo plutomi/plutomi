@@ -24,6 +24,8 @@ import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
 import { Metric } from "aws-cdk-lib/aws-cloudwatch";
 import { env } from "./env";
 
+// ! TODO: https://blog.kylegalbraith.com/2019/10/24/how-to-run-docker-containers-via-aws-elastic-container-service/
+
 type CreateFargateServiceProps = {
   stack: Stack;
   taskDefinition: FargateTaskDefinition;
@@ -127,9 +129,7 @@ export const createFargateService = ({
       serviceName: "cmsservice",
       taskDefinition: ec2Definition,
       publicLoadBalancer: true,
-      taskImageOptions: {
-        
-      }
+      taskImageOptions: {}
     }
   );
 
