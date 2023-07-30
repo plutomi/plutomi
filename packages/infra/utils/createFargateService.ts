@@ -135,7 +135,7 @@ export const createFargateService = ({
       {
         upper:
           Math.floor(DESIRED_RPS_PER_SERVER * 0.3) * scalingPeriodInSeconds,
-        change: -3
+        change: -2
       }
     ], // Note that this is a percentage change
     adjustmentType: AdjustmentType.CHANGE_IN_CAPACITY
@@ -144,12 +144,11 @@ export const createFargateService = ({
   const ports = [
     // Outbound HTTPS from tasks
     443,
-    // Outbound MongoDB from tasks
+    //  Outbound MongoDB from tasks - TODO Replace with Private Link in the future
     27017
   ];
 
   // Allow outbound traffic from tasks to the internet
-  // TODO: Mongo PrivateLink
   ports.forEach((port) => {
     natGatewayProvider.connections.allowFrom(
       fargateService.service,
