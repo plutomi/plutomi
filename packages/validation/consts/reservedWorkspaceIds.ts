@@ -72,6 +72,7 @@ export const reservedWorkspaceIds = [
   "invites",
   "role",
   "roles",
+  "share",
   "tag",
   "tags",
   "report",
