@@ -5,7 +5,7 @@ const BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const bs62 = baseX(BASE62);
 
 const createId = init({
-  length: 10
+  length: 6
 });
 
 const dupeChecker = new Map();
@@ -13,11 +13,11 @@ const dupeChecker = new Map();
 const main = async () => {
   console.time("start");
   let dupeCount = 0;
-  for (let i = 0; i < 1000000; i++) {
+  for (let i = 0; i < 1000; i++) {
     const nowInMs = new Date().getTime();
     const before = `${nowInMs}${createId()}`;
     const hashed = bs62.encode(Buffer.from(before));
-    const idPrefix = "membership";
+    const idPrefix = "api_key";
     const id = `${idPrefix}_${hashed}`;
     if (dupeChecker.has(id)) {
       dupeCount++;

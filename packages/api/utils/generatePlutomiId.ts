@@ -10,6 +10,20 @@ type GenerateIdProps<T extends IdPrefix> = {
 const BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const bs62 = baseX(BASE62);
 
+const getIdLength = (idPrefix: IdPrefix) => {
+  switch (idPrefix) {
+    case IdPrefix.SESSION:
+      return 100;
+
+    default:
+      // These values should be <= 10 as they are unique per ms per entity
+      return 10;
+  }
+};
+
+// For some IDs, the timestamp is omitted as they should be fully random.
+const prefixesWithoutTimestamps: IdPrefix[] = [IdPrefix.SESSION];
+
 /**
  *
  * Creates a PlutomiId. IDs are comprised of a prefix, timestamp, and unique identifier.
@@ -17,19 +31,16 @@ const bs62 = baseX(BASE62);
  * @param date The date to use for the ID. This is used to generate the timestamp. You have to pass this in
  * because we're also storing the date in the created_at field of the entity and these should be the same.
  *
- * For sessions IDs, the timestamp is omitted as these should be fully random.
  */
 export const generatePlutomiId = <T extends IdPrefix>({
   date,
   idPrefix
 }: GenerateIdProps<T>): PlutomiId<T> => {
-  const isSession = idPrefix === IdPrefix.SESSION;
-  // You don't need a ton of entropy as we have millisecond precision on the timestamp already
   const randomId = initCuid({
-    length: isSession ? 100 : 10
+    length: getIdLength(idPrefix)
   })();
 
-  if (isSession) {
+  if (prefixesWithoutTimestamps.includes(idPrefix)) {
     return `${idPrefix}_${randomId}`;
   }
 
