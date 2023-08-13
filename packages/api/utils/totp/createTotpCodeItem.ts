@@ -9,7 +9,6 @@ import {
   type Email
 } from "@plutomi/shared";
 import dayjs from "dayjs";
-import KSUID from "ksuid";
 import { generatePlutomiId } from "../generatePlutomiId";
 
 type CreateTOTPCodeProps = {
@@ -34,7 +33,10 @@ export const createTotpCode = ({
   const totp: TOTPCode = {
     _id: totpCodeId,
     _type: IdPrefix.TOTP,
-    _locked_at: KSUID.randomSync().string,
+    _locked_at: generatePlutomiId({
+      date: now,
+      idPrefix: IdPrefix.LOCKED_AT
+    }),
     code: generateTOTP(),
     user: userId,
     email,

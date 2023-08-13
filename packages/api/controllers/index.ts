@@ -6,7 +6,6 @@ import { waitlist } from "./waitlist";
 import { logout } from "./logout";
 import { users } from "./users";
 import { orgs } from "./orgs";
-import { test } from "./test";
 
 const API = Router();
 
@@ -16,7 +15,6 @@ API.use("/totp", totp);
 API.use("/logout", logout);
 API.use("/users", users);
 API.use("/orgs", orgs);
-API.use("/test", test);
 
 // Catch All
 API.use("*", fourOhFour);

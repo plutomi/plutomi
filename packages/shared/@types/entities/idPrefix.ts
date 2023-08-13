@@ -10,7 +10,7 @@ export enum IdPrefix {
   SESSION = "session",
   MEMBERSHIP = "membership",
   ORG = "org",
-  WORKSPACE = "workspace"
+  WORKSPACE = "workspace",
 
   // // ! TODO: Remove
   // NOTE = "note",
@@ -18,4 +18,7 @@ export enum IdPrefix {
   // INVITE = "invite",
   // TASK = "task",
   // ACTIVITY = "activity"
+
+  // When locking entities in a transaction, you can use this prefix to generate a lock id
+  LOCKED_AT = "locked_at"
 }

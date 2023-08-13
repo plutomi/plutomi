@@ -55,5 +55,9 @@
     "loadtest": "yarn artillery run loadtest.yml",
     "clean": "rimraf packages/*/node_modules packages/*/dist node_modules dist packages/infra/cdk.out packages/web/.next"
   },
-  "packageManager": "yarn@3.5.0"
+  "packageManager": "yarn@3.5.0",
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "base-x": "^4.0.0"
+  }
 }

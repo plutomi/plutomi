@@ -4,11 +4,11 @@ import {
   type Email,
   type User,
   type TOTPCode,
-  type AllEntities
+  type AllEntities,
+  IdPrefix
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
-import KSUID from "ksuid";
 import { transactionOptions } from "@plutomi/database";
 import {
   type ModifyResult,
@@ -17,9 +17,10 @@ import {
   type Filter,
   type StrictUpdateFilter
 } from "mongodb";
+import dayjs from "dayjs";
 import {
-  codeIsValid,
   createSessionItem,
+  generatePlutomiId,
   getCookieJar,
   getCookieSettings,
   getSessionCookieName
@@ -58,7 +59,10 @@ export const post: RequestHandler = async (req, res) => {
 
       const lockUserUpdateFilter: StrictUpdateFilter<User> = {
         $set: {
-          _locked_at: KSUID.randomSync().string,
+          _locked_at: generatePlutomiId({
+            date: now,
+            idPrefix: IdPrefix.LOCKED_AT
+          }),
           updated_at: now
         }
       };
@@ -103,10 +107,15 @@ export const post: RequestHandler = async (req, res) => {
 
       // Check if the code is valid
       if (
-        !codeIsValid({
-          mostRecentCode,
-          codeFromClient: totpCode
-        })
+        // No code
+        mostRecentCode === undefined ||
+        // No longer active
+        mostRecentCode.status !== TOTPCodeStatus.ACTIVE ||
+        // Expired by date exhaustive check
+        // TODO: Can remove when scheduled events are in
+        dayjs(mostRecentCode.expires_at).isBefore(new Date()) ||
+        // Code is wrong
+        mostRecentCode.code !== totpCode
       ) {
         // TODO: Logging
         // ! TODO: Increment attempts here, block email if too many attempts
@@ -126,7 +135,10 @@ export const post: RequestHandler = async (req, res) => {
           status: TOTPCodeStatus.USED,
           used_at: now,
           updated_at: now,
-          _locked_at: KSUID.randomSync().string
+          _locked_at: generatePlutomiId({
+            date: now,
+            idPrefix: IdPrefix.LOCKED_AT
+          })
         }
       };
       await req.items.updateOne(
@@ -153,7 +165,10 @@ export const post: RequestHandler = async (req, res) => {
             status: TOTPCodeStatus.INVALIDATED,
             updated_at: now,
             invalidated_at: now,
-            _locked_at: KSUID.randomSync().string
+            _locked_at: generatePlutomiId({
+              date: now,
+              idPrefix: IdPrefix.LOCKED_AT
+            })
           }
         };
       await req.items.updateMany(
@@ -172,7 +187,10 @@ export const post: RequestHandler = async (req, res) => {
         const verifyUserEmailUpdateFilter: StrictUpdateFilter<User> = {
           $set: {
             updated_at: now,
-            _locked_at: KSUID.randomSync().string,
+            _locked_at: generatePlutomiId({
+              date: now,
+              idPrefix: IdPrefix.LOCKED_AT
+            }),
             email_verified_at: now,
             email_verified: true
           }

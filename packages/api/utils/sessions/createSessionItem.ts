@@ -10,7 +10,6 @@ import {
 } from "@plutomi/shared";
 import type { Request } from "express";
 import dayjs from "dayjs";
-import KSUID from "ksuid";
 import type { Filter, StrictFilter } from "mongodb";
 import { generatePlutomiId } from "../generatePlutomiId";
 import { MAX_SESSION_AGE_IN_MS } from "../../consts";
@@ -27,6 +26,7 @@ export const createSessionItem = async ({
   userId
 }: CreateSessionProps) => {
   const sessionId = generatePlutomiId({
+    date: now,
     idPrefix: IdPrefix.SESSION
   });
 
@@ -51,7 +51,10 @@ export const createSessionItem = async ({
   const newSession: Session = {
     _id: sessionId,
     _type: IdPrefix.SESSION,
-    _locked_at: KSUID.randomSync().string,
+    _locked_at: generatePlutomiId({
+      date: now,
+      idPrefix: IdPrefix.LOCKED_AT
+    }),
     user: userId,
     org: orgForSession,
     workspace: workspaceForSession,

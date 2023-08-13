@@ -6,7 +6,6 @@ import {
   type WaitListUser,
   type Email
 } from "@plutomi/shared";
-import KSUID from "ksuid";
 import { MongoError } from "mongodb";
 import { generatePlutomiId } from "../../utils";
 
@@ -34,7 +33,10 @@ export const post: RequestHandler = async (req, res) => {
     const waitListUser: WaitListUser = {
       _id: userId,
       _type: IdPrefix.WAIT_LIST_USER,
-      _locked_at: KSUID.randomSync().string,
+      _locked_at: generatePlutomiId({
+        date: now,
+        idPrefix: IdPrefix.LOCKED_AT
+      }),
       email: email as Email,
       created_at: now,
       updated_at: now,

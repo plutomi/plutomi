@@ -14,7 +14,6 @@ import {
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler, Request, Response } from "express";
 import dayjs from "dayjs";
-import KSUID from "ksuid";
 import {
   generatePlutomiId,
   getCookieJar,
@@ -85,7 +84,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newOrg: Org = {
     _id: orgId,
     _type: IdPrefix.ORG,
-    _locked_at: KSUID.randomSync().string,
+    _locked_at: generatePlutomiId({
+      date: now,
+      idPrefix: IdPrefix.LOCKED_AT
+    }),
     name: orgName,
     created_at: now,
     updated_at: now,
@@ -111,7 +113,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newWorkspace: Workspace = {
     _id: workspaceId,
     _type: IdPrefix.WORKSPACE,
-    _locked_at: KSUID.randomSync().string,
+    _locked_at: generatePlutomiId({
+      date: now,
+      idPrefix: IdPrefix.LOCKED_AT
+    }),
     custom_workspace_id: customWorkspaceId,
     // We will prompt the user to update it after / later
     name: defaultWorkspaceName,
@@ -140,7 +145,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newMembership: Membership = {
     _id: memberShipId,
     _type: IdPrefix.MEMBERSHIP,
-    _locked_at: KSUID.randomSync().string,
+    _locked_at: generatePlutomiId({
+      date: now,
+      idPrefix: IdPrefix.LOCKED_AT
+    }),
     created_at: now,
     updated_at: now,
     is_default: true,
@@ -179,7 +187,10 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   const newUserSession: Session = {
     _id: newUserSessionId,
     _type: IdPrefix.SESSION,
-    _locked_at: KSUID.randomSync().string,
+    _locked_at: generatePlutomiId({
+      date: now,
+      idPrefix: IdPrefix.LOCKED_AT
+    }),
     created_at: now,
     updated_at: now,
     active_at: now,

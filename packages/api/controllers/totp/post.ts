@@ -23,7 +23,7 @@ import type { RequestHandler } from "express";
 //   type StrictUpdateFilter
 // } from "mongodb";
 // import { transactionOptions } from "@plutomi/database";
-// import KSUID from "ksuid";
+
 // import {
 //   clearCookie,
 //   getCookieJar,
@@ -127,7 +127,10 @@ export const post: RequestHandler = async (_req, res) => {
   //       },
   //       $set: {
   //         // Note: This runs after $setOnInsert
-  //         _locked_at: KSUID.randomSync().string,
+  //         _locked_at: generatePlutomiId({
+  //   date: now,
+  //   idPrefix: IdPrefix.LOCKED_AT
+  // }),
   //         updated_at: new Date()
   //       }
   //     };
