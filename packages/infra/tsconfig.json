@@ -19,8 +19,9 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
+    "skipLibCheck": true,
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["node_modules", "cdk.out", "dist", "test"]
+  "exclude": ["node_modules", "cdk.out", "dist", "test"],
+  "include": ["./**/*.ts"]
 }

@@ -27,7 +27,6 @@ export const createSessionItem = async ({
   userId
 }: CreateSessionProps) => {
   const sessionId = generatePlutomiId({
-    date: now,
     idPrefix: IdPrefix.SESSION
   });
 

@@ -1,23 +1,21 @@
+import { init } from "@paralleldrive/cuid2";
 import { IdPrefix, type PlutomiId } from "@plutomi/shared";
-import ksuid from "ksuid";
-import { customAlphabet } from "nanoid";
+import { typeid } from "typeid-ts";
 
 type GenerateIdProps<T extends IdPrefix> = {
-  date: Date;
   idPrefix: T;
 };
 
 export const generatePlutomiId = <T extends IdPrefix>({
-  date,
   idPrefix
 }: GenerateIdProps<T>): PlutomiId<T> => {
-  const characters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const nanoid = customAlphabet(characters, 50);
+  if (idPrefix === IdPrefix.SESSION) {
+    const createSessionId = init({
+      length: 100
+    });
 
-  const id =
-    // Do not include a timestamp or -_ in the sessionId
-    idPrefix === IdPrefix.SESSION ? nanoid() : ksuid.randomSync(date).string;
+    return `${idPrefix}_${createSessionId()}`;
+  }
 
-  return `${idPrefix}_${id}`;
+  return typeid(idPrefix).toString() as PlutomiId<T>;
 };

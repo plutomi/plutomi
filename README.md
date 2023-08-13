@@ -71,6 +71,8 @@ Stages:
 <!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
 
+- `yarn clean` - Remove all `node_modules` and `dist` folders
+
 - `yarn aws:login` - Login to AWS with your credentials using SSO
 
   - To setup AWS with SSO, you can check [this tutorial](https://docs.sst.dev/setting-up-aws#create-a-management-account)

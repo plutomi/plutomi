@@ -118,8 +118,12 @@ const createMatchFilter = ({ entityType }: CreateMatchFilterProps) => ({
 });
 
 const getRootEntityType = (entitiesToRetrieve: EntitiesToRetrieve[]) =>
-  entitiesToRetrieve.filter((item) => item.entityType === RelatedToType.SELF)[0]
-    .entityType;
+  (
+    entitiesToRetrieve.filter(
+      (item) => item.entityType === RelatedToType.SELF
+      // Type guard, this will never be undefined
+    )[0] as EntitiesToRetrieve
+  ).entityType;
 
 /**
  * Given an entity {@link AllEntities}, get the entity at the root as well as any entities that are related to it

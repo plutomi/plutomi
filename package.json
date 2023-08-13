@@ -13,6 +13,7 @@
   "devDependencies": {
     "@nrwl/nx-cloud": "latest",
     "@types/jest": "^29.5.3",
+    "@types/node": "^18.17.5",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.0.0",
     "artillery": "^2.0.0-35",
@@ -32,6 +33,7 @@
     "jest": "^29.6.1",
     "nx": "15.8.9",
     "prettier": "^2.8.7",
+    "rimraf": "^5.0.1",
     "ts-jest": "^29.1.1",
     "typescript": "4.9.5"
   },
@@ -50,7 +52,8 @@
     "deploy:dev": "yarn workspace @plutomi/infra deploy:dev",
     "deploy:stage": "yarn workspace @plutomi/infra deploy:stage",
     "deploy:prod": "yarn workspace @plutomi/infra deploy:prod",
-    "loadtest": "yarn artillery run loadtest.yml"
+    "loadtest": "yarn artillery run loadtest.yml",
+    "clean": "rimraf packages/*/node_modules packages/*/dist node_modules dist packages/infra/cdk.out packages/web/.next"
   },
   "packageManager": "yarn@3.5.0"
 }

@@ -42,7 +42,7 @@ export const validate: <T extends ZodRawShape>(
   const errorHandled = true;
 
   res.status(400).json({
-    message: error.errors[0].message
+    message: (error.errors[0] ?? { message: "An error ocurred" }).message
   });
   return { data: undefined, errorHandled };
 };

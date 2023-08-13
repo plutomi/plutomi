@@ -20,7 +20,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
-    "@types/node": "^18.15.11",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }

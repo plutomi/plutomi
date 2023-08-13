@@ -14,7 +14,6 @@
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "devDependencies": {
-    "@types/node": "^18.15.11",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }
