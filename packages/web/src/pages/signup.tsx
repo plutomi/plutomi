@@ -1,8 +1,8 @@
-import { LogInOrSignUpForm } from "@/components/LogInOrSignUp";
 import { Container } from "@mantine/core";
 import type { GetStaticProps, NextPage } from "next";
+import { LogInOrSignUpForm } from "../components";
 
-const Login: NextPage = () => (
+const SignUp: NextPage = () => (
   <Container my={40}>
     <LogInOrSignUpForm />
   </Container>
@@ -10,4 +10,4 @@ const Login: NextPage = () => (
 
 export const getStaticProps: GetStaticProps = async () => ({ props: {} });
 
-export default Login;
+export default SignUp;

@@ -1,5 +1,5 @@
-import { CreateOrgOnboarding, PageShell } from "@/components";
 import type { GetStaticProps, NextPage } from "next";
+import { CreateOrgOnboarding, PageShell } from "../components";
 
 const Dashboard: NextPage = () => (
   <PageShell>

@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { MdLogout } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
-import { QueryKeys } from "@/@types";
+import { QueryKeys } from "@/src/@types";
 import { notifications } from "@mantine/notifications";
 import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { useRouter } from "next/router";

@@ -1,13 +1,13 @@
+import type { GetStaticProps, NextPage } from "next";
+import _ from "lodash";
+import axios from "axios";
 import {
   type CommitType,
   LatestCommits,
   LandingHero,
-  UseCaseSection
-} from "@/components";
-import { HomepageFooter } from "@/components/HomepageFooter";
-import axios from "axios";
-import _ from "lodash";
-import type { GetStaticProps, NextPage } from "next";
+  UseCaseSection,
+  HomepageFooter
+} from "../components";
 
 type HomeProps = {
   commits: CommitType[];
