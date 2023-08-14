@@ -9,7 +9,6 @@ export enum RelatedToType {
    */
 
   USERS = "users",
-  WAIT_LIST_USERS = "waitListUsers",
   TOTPS = "totps",
   SESSIONS = "sessions",
   MEMBERSHIPS = "memberships",
@@ -26,7 +25,10 @@ export enum RelatedToType {
 
   // These are metadata and are not directly related to parent <> child relationships
   SELF = "self",
-  ENTITY = "entity"
+  ENTITY = "entity",
+
+  // Misc
+  WAIT_LIST_USERS = "waitListUsers"
 }
 
 // These can be anything
