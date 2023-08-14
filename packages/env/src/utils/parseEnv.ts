@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import type { ZodTypeAny, z } from "zod";
-import { SchemaEnvironment } from "./consts";
-import { processEnv } from "./utils/env";
+import { SchemaEnvironment } from "../consts";
+import { processEnv } from "./env";
 
 type ParseEnvProps<T> = {
   /**
