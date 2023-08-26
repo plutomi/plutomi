@@ -1,6 +1,6 @@
 import { IdPrefix, type PlutomiId } from "@plutomi/shared";
-import { init as initCuid } from "@paralleldrive/cuid2";
 import baseX from "base-x";
+import { customAlphabet } from "nanoid";
 
 type GenerateIdProps<T extends IdPrefix> = {
   idPrefix: T;
@@ -13,10 +13,9 @@ const bs62 = baseX(BASE62);
 const getIdLength = (idPrefix: IdPrefix) => {
   switch (idPrefix) {
     case IdPrefix.SESSION:
-      return 100;
+      return 50;
 
     default:
-      // These values should be <= 10 as they are unique per ms per entity
       return 10;
   }
 };
@@ -36,17 +35,15 @@ export const generatePlutomiId = <T extends IdPrefix>({
   date,
   idPrefix
 }: GenerateIdProps<T>): PlutomiId<T> => {
-  const randomId = initCuid({
-    length: getIdLength(idPrefix)
-  })();
+  const randomId = customAlphabet(BASE62, getIdLength(idPrefix))();
 
   if (prefixesWithoutTimestamps.includes(idPrefix)) {
     return `${idPrefix}_${randomId}`;
   }
 
   const nowInMs = date.getTime();
-  const idWithTimestamp = `${nowInMs}${randomId}`;
-  const hashed = bs62.encode(Buffer.from(idWithTimestamp));
+  const base62Date = bs62.encode(Buffer.from(nowInMs.toString()));
+  const hashedId = `${base62Date}${randomId}`;
 
-  return `${idPrefix}_${hashed}`;
+  return `${idPrefix}_${hashedId}`;
 };

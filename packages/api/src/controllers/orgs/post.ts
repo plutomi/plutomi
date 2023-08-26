@@ -34,6 +34,8 @@ export const post: RequestHandler = async (req: Request, res: Response) => {
   }
 
   const { user } = req;
+
+  
   const { _id: userId } = user;
   const { name: orgName, custom_workspace_id: customWorkspaceId } = data;
 

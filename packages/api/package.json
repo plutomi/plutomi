@@ -9,7 +9,6 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.328.0",
     "@aws-sdk/client-ses": "^3.335.0",
-    "@paralleldrive/cuid2": "^2.2.2",
     "@plutomi/database": "^0.1.0",
     "@plutomi/env": "^0.1.0",
     "@plutomi/shared": "^0.1.0",

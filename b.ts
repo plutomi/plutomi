@@ -1,38 +1,52 @@
-import { init } from "@paralleldrive/cuid2";
 import baseX from "base-x";
+import { createHash } from "crypto";
+import { customAlphabet } from "nanoid";
 
 const BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const bs62 = baseX(BASE62);
 
-const createId = init({
-  length: 6
-});
-
-const dupeChecker = new Map();
+const nanoid = customAlphabet(BASE62, 12);
 
 const main = async () => {
   console.time("start");
-  let dupeCount = 0;
-  for (let i = 0; i < 1000; i++) {
-    const nowInMs = new Date().getTime();
-    const before = `${nowInMs}${createId()}`;
-    const hashed = bs62.encode(Buffer.from(before));
-    const idPrefix = "api_key";
-    const id = `${idPrefix}_${hashed}`;
-    if (dupeChecker.has(id)) {
-      dupeCount++;
-    }
-    dupeChecker.set(id, true);
-    console.log(id, id.length, hashed.length, nowInMs, new Date(nowInMs));
-    // await timer(randomDelay);
-    // console.timeEnd("iteration");
+  for (let i = 0; i < 1000000; i++) {
+    const nowInMs = Date.now();
+    const encodedDateOnly = bs62.encode(Buffer.from(nowInMs.toString()));
+    const idPrefix = "user";
+    const suffix = `${encodedDateOnly}${nanoid()}`;
+    const id = `${idPrefix}_${suffix}`;
+
+    console.log(
+      id,
+      `ID w/ Prefix: ${id.length}`,
+      `ID Only: ${suffix.length}`,
+      new Date(nowInMs)
+    );
   }
-  console.log(dupeChecker.size);
-  console.log(dupeCount);
-  console.log(
-    `${((dupeCount / dupeChecker.size) * 100).toFixed(2)}% were duplicates.`
-  );
+
   console.timeEnd("start");
 };
 
-main();
+const bugger = async () => {
+  console.time("start");
+
+  for (let i = 0; i < 1000000; i++) {
+    const nowInMs = BigInt(Date.now());
+    const idPrefix = "user";
+    const randomData = nanoid();
+
+    const timeBuffer = Buffer.alloc(8); // allocate 8 bytes for BigInt
+    timeBuffer.writeBigInt64BE(nowInMs, 0); // 64bit timestamp
+
+    const encodedDateOnly = bs62.encode(timeBuffer);
+
+    const suffix = `${encodedDateOnly}${randomData}`;
+
+    const id = `${idPrefix}_${suffix}`;
+
+    console.log(id, id.length, new Date(Number(nowInMs)));
+  }
+
+  console.timeEnd("start");
+};
+bugger();

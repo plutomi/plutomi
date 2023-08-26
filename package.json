@@ -57,7 +57,8 @@
   },
   "packageManager": "yarn@3.5.0",
   "dependencies": {
-    "@paralleldrive/cuid2": "^2.2.2",
-    "base-x": "^4.0.0"
+    "base-x": "^4.0.0",
+    "nanoid": "^3.0.0",
+    "uuidv7": "^0.6.2"
   }
 }

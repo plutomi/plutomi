@@ -85,6 +85,7 @@ export const reservedWorkspaceIds = [
   "notes",
   "comment",
   "comments",
+  "search",
 
   // Misc
 
