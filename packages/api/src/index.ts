@@ -40,7 +40,7 @@ import API from "./controllers";
     process.exit(1);
   }
 
-  server.use(express.json());
+  server.use(express.json({ limit: "1mb" }));
   // server.use(compression());
   server.use(cors());
   server.use(requestIpMiddleware());

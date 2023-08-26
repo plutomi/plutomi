@@ -10,6 +10,9 @@ type GenerateIdProps<T extends IdPrefix> = {
 const BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const bs62 = baseX(BASE62);
 
+// For some IDs, the timestamp is omitted as they should be fully random
+const prefixesWithoutTimestamps: IdPrefix[] = [IdPrefix.SESSION];
+
 const getIdLength = (idPrefix: IdPrefix) => {
   switch (idPrefix) {
     case IdPrefix.SESSION:
@@ -20,15 +23,12 @@ const getIdLength = (idPrefix: IdPrefix) => {
   }
 };
 
-// For some IDs, the timestamp is omitted as they should be fully random
-const prefixesWithoutTimestamps: IdPrefix[] = [IdPrefix.SESSION];
-
 /**
  *
- * Creates a PlutomiId. IDs are comprised of a prefix, timestamp, and unique identifier.
+ * Creates a PlutomiId. IDs are comprised of a prefix, base62 encoded 64bit timestamp, and a unique identifier.
  * @param idPrefix The prefix of the ID. For example, if you want to create a user ID, you would pass in `IdPrefix.USER`.
- * @param date The date to use for the ID. This is used to generate the timestamp. You have to pass this in
- * because we're also storing the date in the created_at field of the entity and these should be the same.
+ * @param date The date to use for the ID. This is used to generate the timestamp. This should be the same date stored
+ * in the created_at field of the entity.
  *
  */
 export const generatePlutomiId = <T extends IdPrefix>({
@@ -42,9 +42,10 @@ export const generatePlutomiId = <T extends IdPrefix>({
   }
 
   const nowInMs = BigInt(date.getTime()); // 64bit timestamp
-  const timeBuffer = Buffer.alloc(8); // allocate 8 bytes for BigInt
+  const timeBuffer = Buffer.alloc(8); // allocate 8 bytes
   timeBuffer.writeBigInt64BE(nowInMs, 0);
 
+  // Base62 encode the timestamp
   const encodedDateOnly = bs62.encode(timeBuffer);
 
   const suffix = `${encodedDateOnly}${randomData}`;

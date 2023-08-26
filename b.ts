@@ -11,8 +11,9 @@ const bugger = async () => {
   console.time("start");
 
   for (let i = 0; i < 1000000; i++) {
-    const nowInMs = BigInt(Date.now());
-    const idPrefix = "webhook";
+    const now = Date.now();
+    const nowInMs = BigInt(now);
+    const idPrefix = "user";
     const randomData = nanoid();
 
     const timeBuffer = Buffer.alloc(8); // allocate 8 bytes for BigInt
