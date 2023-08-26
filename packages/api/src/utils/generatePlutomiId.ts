@@ -16,11 +16,11 @@ const getIdLength = (idPrefix: IdPrefix) => {
       return 50;
 
     default:
-      return 10;
+      return 12;
   }
 };
 
-// For some IDs, the timestamp is omitted as they should be fully random.
+// For some IDs, the timestamp is omitted as they should be fully random
 const prefixesWithoutTimestamps: IdPrefix[] = [IdPrefix.SESSION];
 
 /**
@@ -35,15 +35,19 @@ export const generatePlutomiId = <T extends IdPrefix>({
   date,
   idPrefix
 }: GenerateIdProps<T>): PlutomiId<T> => {
-  const randomId = customAlphabet(BASE62, getIdLength(idPrefix))();
+  const randomData = customAlphabet(BASE62, getIdLength(idPrefix))();
 
   if (prefixesWithoutTimestamps.includes(idPrefix)) {
-    return `${idPrefix}_${randomId}`;
+    return `${idPrefix}_${randomData}`;
   }
 
-  const nowInMs = date.getTime();
-  const base62Date = bs62.encode(Buffer.from(nowInMs.toString()));
-  const hashedId = `${base62Date}${randomId}`;
+  const nowInMs = BigInt(date.getTime()); // 64bit timestamp
+  const timeBuffer = Buffer.alloc(8); // allocate 8 bytes for BigInt
+  timeBuffer.writeBigInt64BE(nowInMs, 0);
 
-  return `${idPrefix}_${hashedId}`;
+  const encodedDateOnly = bs62.encode(timeBuffer);
+
+  const suffix = `${encodedDateOnly}${randomData}`;
+
+  return `${idPrefix}_${suffix}`;
 };

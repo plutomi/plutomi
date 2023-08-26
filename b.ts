@@ -7,32 +7,12 @@ const bs62 = baseX(BASE62);
 
 const nanoid = customAlphabet(BASE62, 12);
 
-const main = async () => {
-  console.time("start");
-  for (let i = 0; i < 1000000; i++) {
-    const nowInMs = Date.now();
-    const encodedDateOnly = bs62.encode(Buffer.from(nowInMs.toString()));
-    const idPrefix = "user";
-    const suffix = `${encodedDateOnly}${nanoid()}`;
-    const id = `${idPrefix}_${suffix}`;
-
-    console.log(
-      id,
-      `ID w/ Prefix: ${id.length}`,
-      `ID Only: ${suffix.length}`,
-      new Date(nowInMs)
-    );
-  }
-
-  console.timeEnd("start");
-};
-
 const bugger = async () => {
   console.time("start");
 
   for (let i = 0; i < 1000000; i++) {
     const nowInMs = BigInt(Date.now());
-    const idPrefix = "user";
+    const idPrefix = "webhook";
     const randomData = nanoid();
 
     const timeBuffer = Buffer.alloc(8); // allocate 8 bytes for BigInt
