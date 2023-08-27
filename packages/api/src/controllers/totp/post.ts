@@ -102,7 +102,7 @@ export const post: RequestHandler = async (_req, res) => {
   //   await transactionSession.withTransaction(async () => {
   //     // 1. Get & lock the user if they exist with that email, and if not, create them.
   //     const findUserByEmailFilter: StrictFilter<User> = {
-  //       email: email as Email
+  //       email: email
   //     };
 
   //     const createOrLockUserUpdateFilter: StrictUpdateFilter<User> = {
@@ -112,7 +112,7 @@ export const post: RequestHandler = async (_req, res) => {
   //         // _locked_at  & updated_at not set here as $set runs after $setOnInsert
   //         first_name: null,
   //         last_name: null,
-  //         email: email as Email,
+  //         email: email
   //         email_verified: false,
   //         email_verified_at: null,
   //         can_receive_emails: true,
@@ -207,7 +207,7 @@ export const post: RequestHandler = async (_req, res) => {
   //     // Create the code
   //     totpCodeItem = createTotpCode({
   //       userId,
-  //       email: email as Email
+  //       email: email
   //     });
   //     await req.items.insertOne(totpCodeItem, {
   //       session: transactionSession

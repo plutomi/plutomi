@@ -1,12 +1,12 @@
-import type { Email, PlutomiEmails } from "@plutomi/shared";
+import type { PlutomiEmails } from "@plutomi/shared";
 import { SendEmailCommand } from "@aws-sdk/client-ses";
 import { SES } from "../../awsClients";
 
 type SendEmailProps = {
-  to: Email; // TODO: Allow arrays
+  to: string; // TODO: Allow arrays
   from: {
     header: string;
-    email: Email | PlutomiEmails;
+    email: string | PlutomiEmails;
   };
   subject: string;
   bodyHtml: string;

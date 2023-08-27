@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { type z, type ZodRawShape, type ZodObject } from "zod";
+import type { z, ZodRawShape, ZodObject } from "zod";
 
 type ValidationSuccessResult<T extends ZodRawShape> = {
   data: z.infer<ZodObject<T>>;
@@ -39,6 +39,7 @@ export const validate: <T extends ZodRawShape>(
   }
 
   const { error } = result;
+  // TODO: This is 'issues' now?
   const errorHandled = true;
 
   res.status(400).json({

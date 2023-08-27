@@ -1,4 +1,3 @@
-import type { Email } from "../email";
 import type { RelatedToArray } from "../indexableProperties";
 import type { IdPrefix } from "./idPrefix";
 import type { BaseEntity } from "./baseEntity";
@@ -8,7 +7,7 @@ type UserRelatedToArray = [...RelatedToArray<IdPrefix.USER>];
 export type User = BaseEntity<IdPrefix.USER> & {
   first_name: string | null;
   last_name: string | null;
-  email: Email;
+  email: string;
   email_verified: boolean;
   email_verified_at: Date | null;
   can_receive_emails: boolean;

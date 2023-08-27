@@ -1,4 +1,3 @@
-import type { Email } from "../email";
 import type { RelatedToArray } from "../indexableProperties";
 import type { IdPrefix } from "./idPrefix";
 import type { BaseEntity } from "./baseEntity";
@@ -10,6 +9,6 @@ type WaitListUserRelatedToArray = [
 ];
 
 export type WaitListUser = BaseEntity<IdPrefix.WAIT_LIST_USER> & {
-  email: Email;
+  email: string;
   related_to: WaitListUserRelatedToArray;
 };

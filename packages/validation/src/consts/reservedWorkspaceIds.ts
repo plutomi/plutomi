@@ -248,6 +248,8 @@ export const reservedWorkspaceIds = [
   "categories",
   "subcategories",
   "map",
+
+  "domains",
   "directions",
   "location",
   "place",

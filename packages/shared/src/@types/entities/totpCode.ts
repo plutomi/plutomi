@@ -1,4 +1,3 @@
-import type { Email } from "../email";
 import type { RelatedToType, RelatedToArray } from "../indexableProperties";
 import type { PlutomiId } from "../plutomiId";
 import type { IdPrefix } from "./idPrefix";
@@ -9,7 +8,7 @@ type TOTPCodeRelatedToArray = [
   // Get login codes for a user
   { id: PlutomiId<IdPrefix.USER>; type: RelatedToType.TOTPS },
   // Get login codes for an email
-  { id: Email; type: RelatedToType.TOTPS }
+  { id: string; type: RelatedToType.TOTPS }
 ];
 
 export enum TOTPCodeStatus {
@@ -34,7 +33,7 @@ export enum TOTPCodeStatus {
 export type TOTPCode = BaseEntity<IdPrefix.TOTP> & {
   code: string;
   user: PlutomiId<IdPrefix.USER>;
-  email: Email;
+  email: string;
   status: TOTPCodeStatus;
   expires_at: Date;
   expired_at: Date | null;

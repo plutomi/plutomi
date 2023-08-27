@@ -37,7 +37,7 @@ export const post: RequestHandler = async (req, res) => {
         date: now,
         idPrefix: IdPrefix.LOCKED_AT
       }),
-      email: email as Email,
+      email,
       created_at: now,
       updated_at: now,
       related_to: [

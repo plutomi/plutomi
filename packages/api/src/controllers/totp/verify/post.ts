@@ -1,7 +1,6 @@
 import {
   RelatedToType,
   TOTPCodeStatus,
-  type Email,
   type User,
   type TOTPCode,
   type AllEntities,
@@ -54,7 +53,7 @@ export const post: RequestHandler = async (req, res) => {
 
       // 1. Lock the user to prevent concurrent requests
       const findUserByEmailFilter: StrictFilter<User> = {
-        email: email as Email
+        email
       };
 
       const lockUserUpdateFilter: StrictUpdateFilter<User> = {
