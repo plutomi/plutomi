@@ -6,17 +6,19 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 ![linter badge](https://github.com/plutomi/plutomi/actions/workflows/linter.yml/badge.svg)
 ![spellcheck badge](https://github.com/plutomi/plutomi/actions/workflows/spellcheck.yml/badge.svg)
 ![prettier badge](https://github.com/plutomi/plutomi/actions/workflows/prettier.yml/badge.svg)
-![tests badge](https://github.com/plutomi/plutomi/actions/workflows/test.yml/badge.svg)
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=plastic&color=informational)](http://makeapullrequest.com)
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=plastic&color=important)](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0)
 [![Contributors](https://img.shields.io/badge/all_contributors-4-blue.svg?style=plastic&color=yellow)](#contributors)
 
-#### Coverage
+##### Test Coverage (WIP)
 
-# TODO Add others
-
-![tl](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Lines)
+![tests-api](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fpackages%2Fapi%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=API&color=%238A2BE2%09)
+![tests-web](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fpackages%2Fweb%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Web&color=%238A2BE2%09)
+![tests-infra](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fpackages%2Finfra%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Infra&color=%238A2BE2%09)
+![tests-env](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fpackages%2Fenv%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Env&color=%238A2BE2%09)
+![tests-validation](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fpackages%2Fenv%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Validation&color=%238A2BE2%09)
+![tests-shared](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmisc-test-setup%2Fpackages%2Fshared%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Shared&color=%238A2BE2%09)
 
 #### Infra
 
