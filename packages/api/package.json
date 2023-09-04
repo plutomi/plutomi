@@ -26,7 +26,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev --ignore-watch='.next' --exit-child --respawn --transpile-only src/index.ts",
-    "start": "node index.js",
+    "start": "node src/index.js",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
     "test": "jest",
