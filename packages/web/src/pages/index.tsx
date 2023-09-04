@@ -7,7 +7,7 @@ import {
   LandingHero,
   UseCaseSection,
   HomepageFooter
-} from "@/components";
+} from "../components";
 
 type HomeProps = {
   commits: CommitType[];

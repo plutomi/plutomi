@@ -1,4 +1,3 @@
-import { useDashboardState } from "@/hooks";
 import {
   MediaQuery,
   Header,
@@ -8,6 +7,7 @@ import {
   useMantineTheme
 } from "@mantine/core";
 import Link from "next/link";
+import { useDashboardState } from "../../../hooks";
 
 export const DashboardHeader: React.FC = () => {
   const theme = useMantineTheme();

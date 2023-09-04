@@ -10043,7 +10043,7 @@ nanoid@3.3.4:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
 
-nanoid@^3.0.0, nanoid@^3.3.4, nanoid@^3.3.6:
+nanoid@^3.3.4, nanoid@^3.3.6:
   version "3.3.6"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.6.tgz#443380c856d6e9f9824267d960b4236ad583ea4c"
   integrity sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==
@@ -12657,11 +12657,6 @@ uuid@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
   integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
-
-uuidv7@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/uuidv7/-/uuidv7-0.6.2.tgz#a032e08f96707fca372127ad31d5021c87bf658a"
-  integrity sha512-VLVN90rtN2KFewkXa9T6WWGCnRbk4kiQpPpuL47S0jdMr1rDzOEBq8VJDK5f2ykmjlCZEPLTMTPLHwa+aj9JZg==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"

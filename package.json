@@ -38,7 +38,7 @@
     "typescript": "4.9.5"
   },
   "scripts": {
-    "test": "jest --coverage",
+    "test": "nx run-many -t test --parallel",
     "aws:login": "aws sso login --sso-session=plutomi",
     "dev": "nx run-many -t=dev",
     "build": "nx run-many -t=build",
@@ -56,9 +56,5 @@
     "clean": "rimraf packages/*/node_modules packages/*/dist node_modules dist packages/infra/cdk.out packages/web/.next"
   },
   "packageManager": "yarn@3.5.0",
-  "dependencies": {
-    "base-x": "^4.0.0",
-    "nanoid": "^3.0.0",
-    "uuidv7": "^0.6.2"
-  }
+  "dependencies": {}
 }

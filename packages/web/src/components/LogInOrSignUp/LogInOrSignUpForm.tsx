@@ -11,13 +11,10 @@ import {
 import { useState } from "react";
 import { Schema } from "@plutomi/validation";
 import { useRouter } from "next/router";
-import { useAuthContext } from "@/hooks";
 import axios, { AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
-import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { IconCheck, IconInfoCircle, IconX } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { QueryKeys } from "@/src/@types";
 import { TOTPCodeForm } from "./TOTPCodeForm";
 import { LoginEmailForm } from "./EmailForm";
 import {
@@ -27,6 +24,9 @@ import {
   getSubheaderText,
   getTitleText
 } from "./utils";
+import { useAuthContext } from "../../hooks";
+import { QueryKeys } from "../../@types";
+import { handleAxiosError } from "../../utils/handleAxiosResponse";
 
 type LoginOrSignupProps = {
   title?: string;

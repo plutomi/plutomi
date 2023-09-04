@@ -4,11 +4,11 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Schema } from "@plutomi/validation";
 import { useMutation } from "@tanstack/react-query";
-import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 import { Button } from "../Button";
+import { handleAxiosError } from "../../utils/handleAxiosResponse";
 
 const cards = [
   {

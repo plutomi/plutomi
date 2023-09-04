@@ -1,4 +1,4 @@
-import type { AuthContext } from "@/hooks";
+import type { AuthContext } from "../../../hooks";
 
 type GetSubheaderActionProps = {
   subTitle?: string;

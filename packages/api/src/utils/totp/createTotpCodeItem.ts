@@ -9,7 +9,7 @@ import {
   type Email
 } from "@plutomi/shared";
 import dayjs from "dayjs";
-import { generatePlutomiId } from "../generatePlutomiId";
+import { generatePlutomiId } from "../generatePlutomiId/generatePlutomiId";
 
 type CreateTOTPCodeProps = {
   userId: PlutomiId<IdPrefix.USER>;

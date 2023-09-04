@@ -12,12 +12,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { MdLogout } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
-import { QueryKeys } from "@/src/@types";
-import { notifications } from "@mantine/notifications";
-import { handleAxiosError } from "@/utils/handleAxiosResponse";
 import { useRouter } from "next/router";
-import { useDashboardState } from "@/hooks";
+import { notifications } from "@mantine/notifications";
 import { sideBarData } from "../utils";
+import { QueryKeys } from "../../../@types";
+import { useDashboardState } from "../../../hooks";
+import { handleAxiosError } from "../../../utils/handleAxiosResponse";
 
 const useStyles = createStyles((theme) => ({
   footer: {

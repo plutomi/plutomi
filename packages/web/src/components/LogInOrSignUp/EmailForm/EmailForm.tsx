@@ -3,7 +3,7 @@ import type { UseFormReturnType } from "@mantine/form";
 import { PlutomiEmails } from "@plutomi/shared";
 import type { Schema } from "@plutomi/validation";
 import { useEffect, useRef } from "react";
-import { useAuthContext } from "@/hooks";
+import { useAuthContext } from "../../../hooks";
 
 type LoginEmailFormProps = {
   form: UseFormReturnType<Schema.LogInOrSignUp.email.UIValues>;

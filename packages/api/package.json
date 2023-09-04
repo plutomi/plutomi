@@ -27,10 +27,11 @@
   },
   "scripts": {
     "dev": "ts-node-dev --ignore-watch='.next' --exit-child --respawn --transpile-only src/index.ts",
-    "build": "tsc",
     "start": "node index.js",
     "lint": "yarn eslint --ext .ts,.tsx .",
-    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
+    "test": "jest",
+    "build": "tsc --project tsconfig.build.json"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
