@@ -16,6 +16,11 @@ import {
 } from "aws-cdk-lib/aws-cloudfront";
 import type { Stack } from "aws-cdk-lib";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
+import {
+  AwsCustomResource,
+  AwsCustomResourcePolicy,
+  PhysicalResourceId
+} from "aws-cdk-lib/custom-resources";
 import { env } from "./env";
 
 type CreateDistributionProps = {
@@ -40,7 +45,7 @@ export const createDistribution = ({
     fargateService.loadBalancer,
     {
       customHeaders: {
-        // In the future, WAF on the ALB will block requests without this header
+        // WAF on the ALB will block requests without this header
         [env.CF_HEADER_KEY]: env.CF_HEADER_VALUE
       }
     }
@@ -73,11 +78,48 @@ export const createDistribution = ({
     });
   });
 
+  // Setup domains
   void new ARecord(stack, aRecordAlias, {
     recordName: domainName,
     zone: hostedZone,
     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
   });
+
+  const now = Date.now();
+  const { distributionId } = distribution;
+  const invalidationFunctionName = `CloudFrontInvalidationFunction-${now}`;
+
+  // Invalidate the cache on deploys since most of our assets are cached
+  // https://medium.com/techhappily/supercharge-your-cloudfront-cache-invalidation-with-aws-cdks-awscustomresource-7094df119d34
+  const cloudFrontAwsResource = new AwsCustomResource(
+    stack,
+    invalidationFunctionName,
+    {
+      functionName: invalidationFunctionName,
+      
+      onCreate: {
+        physicalResourceId: PhysicalResourceId.of(`${distributionId}-${now}`),
+        service: "CloudFront",
+        action: "createInvalidation",
+        parameters: {
+          DistributionId: distributionId,
+          InvalidationBatch: {
+            CallerReference: now.toString(),
+            Paths: {
+              Quantity: 1,
+              // Invalidate everything
+              Items: ["/*"]
+            }
+          }
+        }
+      },
+      policy: AwsCustomResourcePolicy.fromSdkCalls({
+        resources: AwsCustomResourcePolicy.ANY_RESOURCE
+      })
+    }
+  );
+
+  cloudFrontAwsResource.node.addDependency(distribution);
 
   return distribution;
 };

@@ -4,7 +4,8 @@ import {
   FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
 import type { IRole } from "aws-cdk-lib/aws-iam";
-import type { Stack } from "aws-cdk-lib";
+import { type Stack } from "aws-cdk-lib";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { env } from "./env";
 
 type CreateTaskDefinitionProps = {
@@ -43,7 +44,8 @@ export const createTaskDefinition = ({
     }),
 
     logging: new AwsLogDriver({
-      streamPrefix: logStreamPrefix
+      streamPrefix: logStreamPrefix,
+      logRetention: RetentionDays.ONE_WEEK
     }),
     environment: env as unknown as Record<string, string>
   });
