@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "cdk": "cdk",
+    "test": "jest",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
     "deploy:dev": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-dev",
