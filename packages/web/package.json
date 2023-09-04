@@ -4,7 +4,8 @@
   "scripts": {
     "build": "next build",
     "lint": "yarn eslint --ext .ts,.tsx .",
-    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
+    "test": "jest"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
