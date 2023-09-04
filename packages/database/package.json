@@ -14,7 +14,8 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "build": "tsc",
+    "test": "jest",
+    "build": "tsc --project tsconfig.build.json",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
