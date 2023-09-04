@@ -6,7 +6,7 @@
   "author": "Plutomi Inc.",
   "license": "Apache-2.0",
   "dependencies": {
-    "@faker-js/faker": "^8.0.2",
+    "@ngneat/falso": "^7.1.0",
     "nanoid": "3.3.4"
   },
   "scripts": {

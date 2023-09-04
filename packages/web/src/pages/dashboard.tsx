@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import { CreateOrgOnboarding, PageShell } from "../components";
 
 const Dashboard: NextPage = () => (
@@ -6,7 +6,5 @@ const Dashboard: NextPage = () => (
     <CreateOrgOnboarding />
   </PageShell>
 );
-
-export const getStaticProps: GetStaticProps = async () => ({ props: {} });
 
 export default Dashboard;

@@ -1,5 +1,5 @@
 import { Container } from "@mantine/core";
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import { LogInOrSignUpForm } from "../components";
 
 const Login: NextPage = () => (
@@ -7,7 +7,5 @@ const Login: NextPage = () => (
     <LogInOrSignUpForm />
   </Container>
 );
-
-export const getStaticProps: GetStaticProps = async () => ({ props: {} });
 
 export default Login;

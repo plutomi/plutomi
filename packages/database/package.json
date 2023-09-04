@@ -20,7 +20,6 @@
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.0.2",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }
