@@ -1,6 +1,6 @@
 import type { PlutomiEmails } from "@plutomi/shared";
 import { SendEmailCommand } from "@aws-sdk/client-ses";
-import { SES } from "../../awsClients";
+import { SES } from "../../clients/aws";
 
 type SendEmailProps = {
   to: string; // TODO: Allow arrays
