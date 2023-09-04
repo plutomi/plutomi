@@ -9,9 +9,10 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "build": "tsc",
     "lint": "yarn eslint --ext .ts,.tsx .",
-    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
+    "test": "jest",
+    "build": "tsc --project tsconfig.build.json"
   },
   "devDependencies": {
     "rimraf": "^4.4.1",
