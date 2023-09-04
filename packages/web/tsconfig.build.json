@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  // Exclude tests and node modules from build, that's all this file does
+  // TODO: Nextjs isnt using this file, it's using the tsconfig.json file...
+  "exclude": ["node_modules", "**/__tests__/**"]
+}

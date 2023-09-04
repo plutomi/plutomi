@@ -102,8 +102,8 @@
 
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": false /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["./**/*.ts", "utils/emails/templates/totpCodeTemplate.tsx"],
+  "include": ["./**/*.ts"],
   "exclude": ["node_modules"]
 }

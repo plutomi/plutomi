@@ -4,7 +4,8 @@
   "scripts": {
     "build": "next build",
     "lint": "yarn eslint --ext .ts,.tsx .",
-    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
+    "test": "jest"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
@@ -39,7 +40,6 @@
     "dotenv": "^16.0.3",
     "embla-carousel-react": "^8.0.0-rc03",
     "lodash": "^4.17.21",
-    "nanoid": "^4.0.2",
     "next": "13.3.0",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
@@ -48,12 +48,13 @@
     "react-icons": "^4.8.0",
     "remove": "^0.1.5",
     "stylis-plugin-rtl": "^2.1.1",
+    "tailwind-merge": "^1.14.0",
     "zustand": "^4.3.8"
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@next/bundle-analyzer": "^13.4.12",
     "@types/lodash": "^4.14.194",
-    "@types/node": "^18.15.10",
     "@types/react": "^18.0.29",
     "@types/react-dom": "^18.0.11",
     "autoprefixer": "^10.4.14",

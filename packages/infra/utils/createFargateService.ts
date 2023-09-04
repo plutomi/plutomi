@@ -1,9 +1,11 @@
-import type { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
+import { type FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Port, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
+import { Metric } from "aws-cdk-lib/aws-cloudwatch";
 
 type CreateFargateServiceProps = {
   stack: Stack;
@@ -28,7 +30,6 @@ export const createFargateService = ({
     serviceName,
     {
       vpc,
-
       certificate,
       taskDefinition,
       // The load balancer will be public, but our tasks will not.
@@ -62,28 +63,91 @@ export const createFargateService = ({
     path: "/api/health"
   });
 
-  // Scaling - based on RPS
+  // Scaling
+  const scalingPeriodInSeconds = 60;
+  const evaluationPeriods = 1;
+  const DESIRED_RPS_PER_SERVER = 25;
+
   const scaling = fargateService.service.autoScaleTaskCount({
     minCapacity: 1,
-    maxCapacity: 4
+    // Be aware of the connection pooling settings when changing this value
+    maxCapacity: 10
   });
 
-  scaling.scaleOnRequestCount("plutomi-request-scaling", {
-    requestsPerTarget: 50,
-    targetGroup: fargateService.targetGroup,
-    scaleInCooldown: Duration.seconds(60),
-    scaleOutCooldown: Duration.seconds(60)
+  // scaling.scaleOnRequestCount("RPS-Scale-Up-Policy", {
+  //   requestsPerTarget: DESIRED_RPS_PER_SERVER,
+  //   targetGroup: fargateService.targetGroup,
+  //   policyName: "RPS-Scale-Up-Policy",
+  //   scaleOutCooldown: Duration.seconds(30),
+  //   scaleInCooldown: Duration.seconds(180)
+  // });
+
+  //   Get the total requests in a 10 second period
+  const requestsPerMinuteMetric = new Metric({
+    namespace: "AWS/ApplicationELB",
+    metricName: "RequestCountPerTarget",
+    statistic: "Sum",
+    period: Duration.seconds(scalingPeriodInSeconds),
+    dimensionsMap: {
+      // Tells CW which LB and Target Group to get metrics from
+      TargetGroup: fargateService.targetGroup.targetGroupFullName,
+      LoadBalancer: fargateService.loadBalancer.loadBalancerFullName
+    }
+  });
+
+  scaling.scaleOnMetric("RPS-Scale-Up-Policy", {
+    evaluationPeriods,
+    metric: requestsPerMinuteMetric,
+    scalingSteps: [
+      {
+        lower: DESIRED_RPS_PER_SERVER * scalingPeriodInSeconds,
+        change: 2
+      },
+      {
+        lower:
+          DESIRED_RPS_PER_SERVER *
+          scalingPeriodInSeconds *
+          // Spike
+          2,
+        change: 3
+      }
+    ],
+    adjustmentType: AdjustmentType.CHANGE_IN_CAPACITY
+  });
+
+  scaling.scaleOnMetric("RPS-Scale-Down-Policy", {
+    evaluationPeriods: 18,
+    metric: requestsPerMinuteMetric,
+    scalingSteps: [
+      {
+        /**
+         * TLDR:
+         * Traffic dropped by 30% for 3 minutes straight -> Scale Down by 1
+         * Traffic dropped by 70% for 3 minutes straight -> Scale Down by 3
+         *
+         * "RequestCountPerTarget <= 1050 for 18 datapoints (every 10 seconds) within 3 minutes"
+         */
+        upper:
+          Math.floor(DESIRED_RPS_PER_SERVER * 0.7) * scalingPeriodInSeconds,
+        change: -1
+      },
+      {
+        upper:
+          Math.floor(DESIRED_RPS_PER_SERVER * 0.3) * scalingPeriodInSeconds,
+        change: -2
+      }
+    ], // Note that this is a percentage change
+    adjustmentType: AdjustmentType.CHANGE_IN_CAPACITY
   });
 
   const ports = [
     // Outbound HTTPS from tasks
     443,
-    // Outbound MongoDB from tasks
+    //  Outbound MongoDB from tasks - TODO Replace with Private Link in the future
     27017
   ];
 
   // Allow outbound traffic from tasks to the internet
-  // TODO: Mongo PrivateLink
   ports.forEach((port) => {
     natGatewayProvider.connections.allowFrom(
       fargateService.service,

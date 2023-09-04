@@ -4,7 +4,7 @@
     "project": "./tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "jest"],
   "rules": {},
   "extends": ["airbnb-typescript", "../../.eslintrc.json"],
   "ignorePatterns": [

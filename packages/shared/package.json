@@ -6,16 +6,17 @@
   "author": "Plutomi Inc.",
   "license": "Apache-2.0",
   "dependencies": {
-    "@faker-js/faker": "^8.0.2",
+    "@ngneat/falso": "^7.1.0",
+    "base-x": "^4.0.0",
     "nanoid": "3.3.4"
   },
   "scripts": {
-    "build": "tsc",
+    "test": "jest",
+    "build": "tsc --project tsconfig.build.json",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "devDependencies": {
-    "@types/node": "^18.15.11",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }

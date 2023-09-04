@@ -7,11 +7,14 @@ node_modules*
 .pnp.js
 
 # testing
-/coverage
+/coverage/*
+# Allow this to go through so that we can generate a badge for the readme
+!/coverage/coverage-summary.json
 
 # next.js
-/.next/
 /out/
+.next*
+
 
 # production
 /build
@@ -48,5 +51,3 @@ cdk.context.json
 
 # Built directories
 dist/
-
-.next*

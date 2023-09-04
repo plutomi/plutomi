@@ -1,8 +1,6 @@
-> :warning: **This repository is currently undergoing maintenance and many breaking changes. These changes are necessary to enhance the long term stability of the project. Use at your own risk as long as this banner is here - things _will_ be broken!**
-
----
-
 # Plutomi
+
+Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
 ![linter badge](https://github.com/plutomi/plutomi/actions/workflows/linter.yml/badge.svg)
@@ -11,9 +9,18 @@
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=plastic&color=informational)](http://makeapullrequest.com)
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=plastic&color=important)](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0)
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-blue.svg?style=plastic&color=yellow)](#contributors)
+[![Contributors](https://img.shields.io/badge/all_contributors-4-blue.svg?style=plastic&color=yellow)](#contributors)
 
-Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
+##### Test Coverage (WIP)
+
+![tests-api](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fapi%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=API&color=%238A2BE2%09)
+![tests-web](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fweb%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Web&color=%238A2BE2%09)
+![tests-infra](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Finfra%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Infra&color=%238A2BE2%09)
+![tests-env](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fenv%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Env&color=%238A2BE2%09)
+![tests-validation](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fenv%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Validation&color=%238A2BE2%09)
+![tests-shared](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fshared%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Shared&color=%238A2BE2%09)
+
+#### Infra
 
 ![infra](images/infra.png)
 
@@ -54,21 +61,27 @@ Stages:
   - We are using a Monorepo so shared deps will be at the `root` while workspace specific deps will be installed in the appropriate workspace. Yarn workspaces paired with [nx](https://nx.dev/) is a killer combo
 - `yarn build` - Build the app, the correct ordering is set in the `nx.json` file for dependencies across packages like shared types
 
+- `yarn test` - Run tests in parallel or `yarn workspace @plutomi/api test` to run tests in a specific package
+
 - `yarn dev` - Start the app
 
-- `yarn pretty` & `yarn pretty:fix` - Run prettier & fix any issues
+- `yarn pretty/pretty:fix` - Run prettier & fix any issues
 
-- `yarn lint` & `yarn lint:fix` - Run the linter & fix any issues
+- `yarn lint/lint:fix` - Run the linter & fix any issues
 
 - `yarn tidy` - Runs `pretty:fix` and `lint:fix` sequentially
 <!-- cspell:disable-next-line -->
 - `yarn spellcheck` - Mkae srue you didn't goof up a wrod
+
+- `yarn clean` - Remove all `node_modules` and `dist` folders
 
 - `yarn aws:login` - Login to AWS with your credentials using SSO
 
   - To setup AWS with SSO, you can check [this tutorial](https://docs.sst.dev/setting-up-aws#create-a-management-account)
 
 - `yarn deploy:dev/stage/prod` - Deploy to the specified environment
+
+- `yarn loadtest` - Runs a load test against the API, see `loadtest.yml` for more info. This is just for simple auto scaling tests
 
 ## Language, Tooling, & Infrastructure
 
@@ -105,13 +118,14 @@ export const allEnvVariablesSchema = z.object({
   PORT: portSchema,
   NODE_ENV: z.nativeEnum(NodeEnvironment),
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
-  DOMAIN: z.string(),
-  NEXT_PUBLIC_BASE_URL: z.string().url()
+  NEXT_PUBLIC_BASE_URL: z.string().url(),
+  // Example web env
+  GA_TRACKING_ID: z.string()
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_BASE_URL: true,
-  DOMAIN: true
+  GA_TRACKING_ID: true
 });
 
 export const apiEnvSchema = allEnvVariablesSchema.pick({
@@ -137,7 +151,7 @@ export const env = parseEnv({
 
 You can then get type safe environment variables in each package:
 
-![type-safe-env](images/type-safety-env.png)
+![type-safe-env](images/type-safe-env.png)
 
 ## License
 

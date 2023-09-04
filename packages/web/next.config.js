@@ -15,4 +15,9 @@ const nextConfig = {
   }
 };
 
-module.exports = nextConfig;
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  // Set ANALYZE=true in web/package.json "build" command to analyze bundle size
+  enabled: process.env.ANALYZE === "true"
+});
+
+module.exports = withBundleAnalyzer(nextConfig);

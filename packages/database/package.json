@@ -14,13 +14,12 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "build": "tsc",
+    "test": "jest",
+    "build": "tsc --project tsconfig.build.json",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.0.2",
-    "@types/node": "^18.15.11",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }
