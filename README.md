@@ -65,9 +65,9 @@ Stages:
 
 - `yarn dev` - Start the app
 
-- `yarn pretty` & `yarn pretty:fix` - Run prettier & fix any issues
+- `yarn pretty/pretty:fix` - Run prettier & fix any issues
 
-- `yarn lint` & `yarn lint:fix` - Run the linter & fix any issues
+- `yarn lint/lint:fix` - Run the linter & fix any issues
 
 - `yarn tidy` - Runs `pretty:fix` and `lint:fix` sequentially
 <!-- cspell:disable-next-line -->
@@ -81,7 +81,7 @@ Stages:
 
 - `yarn deploy:dev/stage/prod` - Deploy to the specified environment
 
-- `yarn loadtest` - Runs a load test against the API, see `loadtest.yml` for more info. This is just for simple auto scaling tests.
+- `yarn loadtest` - Runs a load test against the API, see `loadtest.yml` for more info. This is just for simple auto scaling tests
 
 ## Language, Tooling, & Infrastructure
 
@@ -105,7 +105,7 @@ There isn't good support for [official L2 constructs for AWS WAF](https://docs.a
 
 #### MongoDB
 
-We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future. We connect to it using [Private Link](https://www.mongodb.com/docs/atlas/security-private-endpoint/). During our testing, we noticed a 50% drop in latency when using Private Link vs the public endpoint. You're going to want to deploy first connecting with your regular public endpoint so you can your VPC & subnets, create the endpoint on MongoDB's end, then redeploy with the new URI MongoDB gives you. Make sure to follow all the steps on that page, especially the last one (allowing the newly created endpoint to have inbound access from your instances security group. TODO clean this up)
+We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
 
 #### Environment Variables
 
