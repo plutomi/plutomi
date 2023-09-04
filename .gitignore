@@ -52,3 +52,5 @@ cdk.context.json
 dist/
 
 .next*
+
+.vscode

@@ -1,11 +1,6 @@
 import type { RequestHandler } from "express";
 import { Schema, validate } from "@plutomi/validation";
-import {
-  IdPrefix,
-  RelatedToType,
-  type WaitListUser,
-  type Email
-} from "@plutomi/shared";
+import { IdPrefix, RelatedToType, type WaitListUser } from "@plutomi/shared";
 import { MongoError } from "mongodb";
 import { generatePlutomiId } from "../../utils";
 

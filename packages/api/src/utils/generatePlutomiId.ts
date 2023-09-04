@@ -25,7 +25,9 @@ const getIdLength = (idPrefix: IdPrefix) => {
 
 /**
  *
- * Creates a PlutomiId. IDs are comprised of a prefix, base62 encoded 64bit timestamp, and a unique identifier.
+ * Creates a PlutomiId. Most IDs are comprised of a prefix, base62 encoded 64bit timestamp, and a unique identifier.
+ * Some Ids are fully random like for sessions.
+ *
  * @param idPrefix The prefix of the ID. For example, if you want to create a user ID, you would pass in `IdPrefix.USER`.
  * @param date The date to use for the ID. This is used to generate the timestamp. This should be the same date stored
  * in the created_at field of the entity.
@@ -45,7 +47,7 @@ export const generatePlutomiId = <T extends IdPrefix>({
   const timeBuffer = Buffer.alloc(8); // allocate 8 bytes
   timeBuffer.writeBigInt64BE(nowInMs, 0);
 
-  // Base62 encode the timestamp
+  // Base62 encode just the timestamp
   const encodedDateOnly = bs62.encode(timeBuffer);
 
   const suffix = `${encodedDateOnly}${randomData}`;
