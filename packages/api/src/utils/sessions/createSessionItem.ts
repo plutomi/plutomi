@@ -6,12 +6,12 @@ import {
   type PlutomiId,
   type Session,
   type Membership,
-  type AllEntities
+  type AllEntities,
+  generatePlutomiId
 } from "@plutomi/shared";
 import type { Request } from "express";
 import dayjs from "dayjs";
 import type { Filter, StrictFilter } from "mongodb";
-import { generatePlutomiId } from "../generatePlutomiId/generatePlutomiId";
 import { MAX_SESSION_AGE_IN_MS } from "../../consts";
 
 type CreateSessionProps = {

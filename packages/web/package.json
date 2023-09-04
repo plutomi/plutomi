@@ -40,7 +40,6 @@
     "dotenv": "^16.0.3",
     "embla-carousel-react": "^8.0.0-rc03",
     "lodash": "^4.17.21",
-    "nanoid": "^4.0.2",
     "next": "13.3.0",
     "react": "^18.2.0",
     "react-dom": "18.2.0",

@@ -1,6 +1,6 @@
-import { IdPrefix, type PlutomiId } from "@plutomi/shared";
 import baseX from "base-x";
 import { customAlphabet } from "nanoid";
+import { IdPrefix, type PlutomiId } from "../../@types";
 
 type GenerateIdProps<T extends IdPrefix> = {
   idPrefix: T;
