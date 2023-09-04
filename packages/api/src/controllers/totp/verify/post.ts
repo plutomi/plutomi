@@ -4,7 +4,8 @@ import {
   type User,
   type TOTPCode,
   type AllEntities,
-  IdPrefix
+  IdPrefix,
+  generatePlutomiId
 } from "@plutomi/shared";
 import { Schema, validate } from "@plutomi/validation";
 import type { RequestHandler } from "express";
@@ -19,7 +20,6 @@ import {
 import dayjs from "dayjs";
 import {
   createSessionItem,
-  generatePlutomiId,
   getCookieJar,
   getCookieSettings,
   getSessionCookieName
