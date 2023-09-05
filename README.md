@@ -2,6 +2,7 @@
 
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
+![release badge](https://github.com/plutomi/plutomi/actions/workflows/release.yml/badge.svg)
 ![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
 ![linter badge](https://github.com/plutomi/plutomi/actions/workflows/linter.yml/badge.svg)
 ![spellcheck badge](https://github.com/plutomi/plutomi/actions/workflows/spellcheck.yml/badge.svg)

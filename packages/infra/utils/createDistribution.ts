@@ -96,7 +96,6 @@ export const createDistribution = ({
     invalidationFunctionName,
     {
       functionName: invalidationFunctionName,
-      
       onCreate: {
         physicalResourceId: PhysicalResourceId.of(`${distributionId}-${now}`),
         service: "CloudFront",
