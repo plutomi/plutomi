@@ -1,7 +1,5 @@
 {
-  "files": [
-    "README.md"
-  ],
+  "files": ["README.md"],
   "imageSize": 100,
   "commit": false,
   "contributors": [
@@ -10,41 +8,28 @@
       "name": "Jose Valerio",
       "avatar_url": "https://avatars.githubusercontent.com/u/22891173?v=4",
       "profile": "https://github.com/joswayski",
-      "contributions": [
-        "code",
-        "infra",
-        "maintenance"
-      ]
+      "contributions": ["code", "infra", "maintenance"]
     },
     {
       "login": "praguru14",
       "name": "praguru14",
       "avatar_url": "https://avatars.githubusercontent.com/u/48213609?v=4",
       "profile": "https://github.com/praguru14",
-      "contributions": [
-        "code",
-        "maintenance"
-      ]
+      "contributions": ["code", "maintenance"]
     },
     {
       "login": "mazupicua",
       "name": "Jose Valerio",
       "avatar_url": "https://avatars.githubusercontent.com/u/37680756?v=4",
       "profile": "https://github.com/mazupicua",
-      "contributions": [
-        "code",
-        "maintenance",
-        "bug"
-      ]
+      "contributions": ["code", "maintenance", "bug"]
     },
     {
       "login": "Jeremyjay121",
       "name": "Jeremy Trenchard",
       "avatar_url": "https://avatars.githubusercontent.com/u/94778748?v=4",
       "profile": "https://github.com/Jeremyjay121",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     }
   ],
   "contributorsPerLine": 7,

@@ -5,46 +5,46 @@
       "name": "root"
     },
     {
-      "path": "services/api",
+      "path": "packages/api",
       "name": "api"
     },
     {
-      "path": "services/web",
+      "path": "packages/web",
       "name": "web"
     },
     {
-      "path": "services/infra",
+      "path": "packages/infra",
       "name": "infra"
     },
     {
-      "path": "services/env",
+      "path": "packages/env",
       "name": "env"
     }, // TODO combine these? ^ v
     {
-      "path": "services/validation",
+      "path": "packages/validation",
       "name": "validation"
     },
     {
-      "path": "services/shared",
+      "path": "packages/shared",
       "name": "shared"
     },
     {
-      "path": "services/database",
+      "path": "packages/database",
       "name": "database"
     }
   ],
   "settings": {
     "eslint.workingDirectories": [
-      { "directory": "services/api", "changeProcessCWD": true },
-      { "directory": "services/web", "changeProcessCWD": true },
-      { "directory": "services/infra", "changeProcessCWD": true },
-      { "directory": "services/env", "changeProcessCWD": true },
-      { "directory": "services/validation", "changeProcessCWD": true },
+      { "directory": "packages/api", "changeProcessCWD": true },
+      { "directory": "packages/web", "changeProcessCWD": true },
+      { "directory": "packages/infra", "changeProcessCWD": true },
+      { "directory": "packages/env", "changeProcessCWD": true },
+      { "directory": "packages/validation", "changeProcessCWD": true },
       {
-        "directory": "services/shared",
+        "directory": "packages/shared",
         "changeProcessCWD": true
       },
-      { "directory": "services/database", "changeProcessCWD": true }
+      { "directory": "packages/database", "changeProcessCWD": true }
     ],
     "search.exclude": {
       "**/node_modules": true,
