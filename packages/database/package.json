@@ -1,0 +1,13 @@
+{
+  "name": "@plutomi/database",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest",
+    "eslint": "^8.49.0",
+    "rimraf": "^5.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
