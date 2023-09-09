@@ -1,0 +1,13 @@
+{
+  "name": "@plutomi/shared",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "^1.0.1",
+    "eslint": "^8.49.0",
+    "rimraf": "^5.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
