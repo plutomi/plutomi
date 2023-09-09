@@ -9,5 +9,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@ngneat/falso": "^7.1.0",
+    "base-x": "^4.0.0",
+    "nanoid": "^4.0.2"
   }
 }

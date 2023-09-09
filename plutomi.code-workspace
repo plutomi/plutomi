@@ -54,6 +54,9 @@
       "yarn-error.log": true,
       "yarn.lock": true
     },
-    "typescript.tsdk": "root/node_modules/typescript/lib"
+    "typescript.tsdk": "root/node_modules/typescript/lib",
+    "cSpell.words": [
+      "outdir"
+    ]
   }
 }
