@@ -1,17 +1,10 @@
 {
-  "extends": [
-    "airbnb-typescript",
-    "plugin:security/recommended",
-    "../../.eslintrc.json"
-  ],
+  "extends": ["../../.eslintrc.json"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "jest"],
-  "rules": {
-    "@typescript-eslint/no-misused-promises": "off",
-    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }]
-  }
+  "plugins": ["@typescript-eslint"],
+  "rules": {}
 }

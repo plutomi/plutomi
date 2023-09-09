@@ -1,17 +1,11 @@
 {
   "name": "plutomi",
   "module": "index.ts",
-  "scripts": {
-    "clean": "rimraf packages/*/node_modules packages/*/dist node_modules dist packages/infra/cdk.out packages/web/.next",
-    "pretty": "prettier --check .",
-    "pretty:fix": "prettier --write ."
-    
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.6.0",
-    "@typescript-eslint/parser": "^6.6.0",
     "artillery": "^2.0.0-36",
     "bun-types": "^1.0.1",
+    "concurrently": "^8.2.1",
     "cspell": "^7.3.2",
     "eslint": "^8.49.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -19,20 +13,32 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard-with-typescript": "^39.0.0",
     "eslint-plugin-import": "^2.28.1",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-n": "^16.0.2",
     "eslint-plugin-no-template-curly-in-string-fix": "^1.0.4",
     "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-security": "^1.7.1",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.1"
   },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "scripts": {
+    "clean": "rimraf packages/*/node_modules packages/*/dist node_modules dist packages/infra/cdk.out packages/web/.next",
+    "pretty": "prettier --check .",
+    "pretty:fix": "prettier --write .",
+    "lint:api": "eslint --ext .ts packages/api",
+    "lint:infra": "eslint --ext .ts packages/infra",
+    "lint:web": "eslint --ext .ts,.tsx packages/web",
+    "lint:env": "eslint --ext .ts packages/env",
+    "lint:shared": "eslint --ext .ts packages/shared",
+    "lint:validation": "eslint --ext .ts packages/validation",
+    "lint:database": "eslint --ext .ts packages/database",
+    "lint": "concurrently --kill-others \"bun run lint:api\" \"bun run lint:infra\" \"bun run lint:web\" \"bun run lint:env\" \"bun run lint:shared\" \"bun run lint:validation\" \"bun run lint:database\""
   },
   "type": "module",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@typescript-eslint/parser": "^6.6.0",
+    "typescript": "^5.2.2"
+  }
 }

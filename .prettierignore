@@ -7,3 +7,5 @@ OLD*
 .github
 .yarn
 cdk.out*
+package-lock.json
+package.json

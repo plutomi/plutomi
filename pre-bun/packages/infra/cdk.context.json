@@ -1,0 +1,49 @@
+{
+  "availability-zones:account=108642551841:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ],
+  "ami:account=108642551841:filters.image-type.0=machine:filters.name.0=fck-nat-amzn2-*-arm64-ebs:filters.state.0=available:owners.0=568608671756:region=us-east-1": "ami-0f57d652281755ea1",
+  "hosted-zone:account=108642551841:domainName=stage.plutomi.com:region=us-east-1": {
+    "Id": "/hostedzone/Z059585131YQFGXQ6MSOR",
+    "Name": "stage.plutomi.com."
+  },
+  "availability-zones:account=598840973286:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ],
+  "ami:account=598840973286:filters.image-type.0=machine:filters.name.0=fck-nat-amzn2-*-arm64-ebs:filters.state.0=available:owners.0=568608671756:region=us-east-1": "ami-0f57d652281755ea1",
+  "hosted-zone:account=598840973286:domainName=plutomi.com:region=us-east-1": {
+    "Id": "/hostedzone/Z038531061VGD46C2QZ1",
+    "Name": "plutomi.com."
+  },
+  "availability-zones:account=700220389181:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ],
+  "ami:account=700220389181:filters.image-type.0=machine:filters.name.0=fck-nat-amzn2-*-arm64-ebs:filters.state.0=available:owners.0=568608671756:region=us-east-1": "ami-0f57d652281755ea1",
+  "hosted-zone:account=700220389181:domainName=dev.plutomi.com:region=us-east-1": {
+    "Id": "/hostedzone/Z03347607BOZ85Q3F9H8",
+    "Name": "dev.plutomi.com."
+  },
+  "hosted-zone:account=700220389181:domainName=development.plutomi.com:region=us-east-1": {
+    "Id": "/hostedzone/Z03014292KZLBRDJHSEFX",
+    "Name": "development.plutomi.com."
+  },
+  "hosted-zone:account=108642551841:domainName=staging.plutomi.com:region=us-east-1": {
+    "Id": "/hostedzone/Z034307023QBZQ7FIEYES",
+    "Name": "staging.plutomi.com."
+  }
+}
