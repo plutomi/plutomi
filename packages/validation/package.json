@@ -9,5 +9,9 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "zod": "^3.22.2",
+    "@plutomi/shared": "workspace:@plutomi/shared"
   }
 }

@@ -1,6 +1,10 @@
 {
   "name": "plutomi",
   "module": "index.ts",
+  "private": true,
+  "repository": "https://github.com/plutomi/plutomi.git",
+  "author": "Jose Valerio <jose@plutomi.com>",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "artillery": "^2.0.0-36",
@@ -32,8 +36,9 @@
     "lint:validation": "eslint --ext .ts packages/validation",
     "lint:database": "eslint --ext .ts packages/database",
     "lint": "concurrently --kill-others \"bun run lint:api\" \"bun run lint:infra\" \"bun run lint:web\" \"bun run lint:env\" \"bun run lint:shared\" \"bun run lint:validation\" \"bun run lint:database\"",
-    "build:shared": "bun build packages/shared/index.ts --outdir packages/shared/build"
-    
+    "build:shared": "bun build packages/shared/index.ts --outdir packages/shared/build",
+    "build:validation": "bun build packages/validation/index.ts --outdir packages/validation/build"
+
   },
   "type": "module",
   "workspaces": [

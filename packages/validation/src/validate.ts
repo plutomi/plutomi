@@ -15,6 +15,8 @@ type ValidateArgs<T extends ZodRawShape> = {
   /**
    * The data to parse. Defaults to `req.body`.
    */
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
 };
 
@@ -34,7 +36,7 @@ export const validate: <T extends ZodRawShape>(
 }) => {
   const result = schema.strict().safeParse(rawData);
 
-  if (result.success) {
+  if (result.success === true) {
     return { data: result.data, errorHandled: false };
   }
 
