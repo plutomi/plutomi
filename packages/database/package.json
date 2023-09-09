@@ -9,5 +9,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "mongodb": "^6.0.0",
+    "@plutomi/shared": "workspace:@plutomi/shared"
+
   }
 }

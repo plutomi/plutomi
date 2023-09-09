@@ -40,7 +40,8 @@
     "build:env": "bun build packages/env/index.ts --outdir packages/validation/env",
     "build:deps": "bun run build:shared && bun run build:env",
     "build:validation": "bun build packages/validation/index.ts --outdir packages/validation/build",
-    "build": "bun run build:deps && bun run build:validation"
+    "build:database": "bun build --target=bun packages/database/index.ts --outdir packages/database/build",
+    "build": "bun run build:deps && bun run build:validation && bun run build:database"
 
   },
   "type": "module",
