@@ -6,7 +6,7 @@
   },
   "plugins": ["@typescript-eslint", "jest"],
   "rules": {},
-  "extends": ["airbnb-typescript", "../../.eslintrc.json"],
+  "extends": ["../../.eslintrc.json"],
   "ignorePatterns": [
     "node_modules/",
     "dist/",

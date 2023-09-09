@@ -3,11 +3,12 @@
     "es2021": true
   },
   "extends": [
+    
     "eslint:recommended",
-    "plugin:react/recommended",
+    "plugin:security/recommended",
     "standard-with-typescript",
-    "airbnb",
     "airbnb-typescript/base",
+    "airbnb-typescript",
     "prettier",
     "plugin:no-template-curly-in-string-fix/recommended"
   ],
@@ -22,7 +23,6 @@
     "quotes": [2, "double", { "avoidEscape": true }],
     "comma-dangle": ["error", "never"],
     "no-console": "error",
-    "react/jsx-props-no-spreading": "off",
     "max-params": ["error", 3],
     "prefer-destructuring": ["error", { "object": true, "array": false }],
     "no-implicit-globals": ["error", { "lexicalBindings": true }],
@@ -48,14 +48,7 @@
     ],
     "import/no-default-export": "off",
     "import/prefer-default-export": "off",
-    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
-    "react/function-component-definition": [
-      2,
-      {
-        "namedComponents": "arrow-function",
-        "unnamedComponents": "arrow-function"
-      }
-    ]
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"]
   },
   "ignorePatterns": [
     "node_modules/",
