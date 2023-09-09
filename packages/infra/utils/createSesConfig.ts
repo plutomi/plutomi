@@ -1,3 +1,4 @@
+import path from "path";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { TxtRecord, type IHostedZone } from "aws-cdk-lib/aws-route53";
 import {
@@ -13,7 +14,6 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
-import path from "path";
 import { env } from "./env";
 
 enum EmailSubdomains {

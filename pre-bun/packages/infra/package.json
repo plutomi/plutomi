@@ -5,10 +5,7 @@
     "cdk": "cdk",
     "test": "jest",
     "lint": "yarn eslint --ext .ts,.tsx .",
-    "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
-    "deploy:dev": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-dev",
-    "deploy:stage": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-stage",
-    "deploy:prod": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-prod"
+    "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "license": "Apache-2.0",
   "devDependencies": {

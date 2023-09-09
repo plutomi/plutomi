@@ -41,8 +41,13 @@
     "build:deps": "bun run build:shared && bun run build:env",
     "build:validation": "bun build packages/validation/index.ts --outdir packages/validation/build",
     "build:database": "bun build --target=bun packages/database/index.ts --outdir packages/database/build",
-    "build": "bun run build:deps && bun run build:validation && bun run build:database"
+    "build": "bun run build:deps && bun run build:validation && bun run build:database",
 
+
+
+    "deploy:dev": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-dev --cwd packages/infra",
+    "deploy:stage": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-stage --cwd packages/infra",
+    "deploy:prod": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-prod --cwd packages/infra"
   },
   "type": "module",
   "workspaces": [

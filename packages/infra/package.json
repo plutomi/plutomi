@@ -2,6 +2,7 @@
   "name": "@plutomi/infra",
   "module": "index.ts",
   "type": "module",
+  "scripts": {},
   "devDependencies": {
     "bun-types": "latest",
     "eslint": "^8.49.0",
@@ -9,5 +10,11 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.95.1",
+    "cdk-fck-nat": "^1.0.93",
+    "constructs": "^10.2.70",
+    "@plutomi/env": "workspace:@plutomi/env"
   }
 }
