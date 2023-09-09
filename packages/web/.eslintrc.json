@@ -1,10 +1,38 @@
 {
-  "extends": ["../../.eslintrc.json"],
+  "extends": [
+    "next/core-web-vitals",
+    "airbnb-typescript",
+    "airbnb/hooks",
+    "../../.eslintrc.json"
+  ],
+
+  // TODO: Add back eslint rules that were taken out of api
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
-  "rules": {}
+  "plugins": ["jest"],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "react/no-jsx-props-no-spreading": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
+    "react/no-array-index-key": ["error"],
+    // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues/718
+    "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }]
+  },
+
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    "next-env.d.ts",
+    "next.config.js",
+    "tailwind.config.js",
+    "postcss.config.js"
+  ]
 }
