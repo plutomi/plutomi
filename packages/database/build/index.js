@@ -51113,9 +51113,6 @@ var parseEnv = ({
   }
   return parsed.data;
 };
-// /Users/josevalerio/Documents/GitHub/plutomi/node_modules/@plutomi/env/index.ts
-console.log("Hello via Bun!");
-
 // packages/database/src/utils/env.ts
 var env4 = parseEnv({
   envSchema: databaseEnvSchema,

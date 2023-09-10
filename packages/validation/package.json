@@ -1,6 +1,6 @@
 {
   "name": "@plutomi/validation",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
     "bun-types": "latest",
@@ -11,7 +11,5 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "zod": "^3.22.2",
-    "@plutomi/shared": "workspace:@plutomi/shared"
-  }
+    "zod": "^3.22.2"  }
 }

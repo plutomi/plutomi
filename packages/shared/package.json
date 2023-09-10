@@ -1,7 +1,6 @@
 {
   "name": "@plutomi/shared",
-  "private" :true,
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
     "bun-types": "^1.0.1",

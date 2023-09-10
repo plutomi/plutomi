@@ -36,11 +36,11 @@
     "lint:validation": "eslint --ext .ts packages/validation",
     "lint:database": "eslint --ext .ts packages/database",
     "lint": "concurrently --kill-others \"bun run lint:api\" \"bun run lint:infra\" \"bun run lint:web\" \"bun run lint:env\" \"bun run lint:shared\" \"bun run lint:validation\" \"bun run lint:database\"",
-    "build:shared": "bun build packages/shared/index.ts --outdir packages/shared/build",
-    "build:env": "bun build packages/env/index.ts --outdir packages/validation/env",
+    "build:shared": "bun build packages/shared/src/index.ts --outdir packages/shared/build",
+    "build:env": "bun build packages/env/src/index.ts --outdir packages/validation/env",
     "build:deps": "bun run build:shared && bun run build:env",
-    "build:validation": "bun build packages/validation/index.ts --outdir packages/validation/build",
-    "build:database": "bun build --target=bun packages/database/index.ts --outdir packages/database/build",
+    "build:validation": "bun build packages/validation/src/index.ts --outdir packages/validation/build",
+    "build:database": "bun build --target=bun packages/database/src/index.ts --outdir packages/database/build",
     "build": "bun run build:deps && bun run build:validation && bun run build:database",
 
 
@@ -50,9 +50,7 @@
     "deploy:prod": "cdk deploy --require-approval any-change --progress events --verbose --profile=plutomi-prod --cwd packages/infra"
   },
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": [ "packages/*"],
   "dependencies": {
     "@typescript-eslint/parser": "^6.6.0",
     "typescript": "^5.2.2"

@@ -1,6 +1,6 @@
 {
   "name": "@plutomi/env",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
     "bun-types": "latest",
