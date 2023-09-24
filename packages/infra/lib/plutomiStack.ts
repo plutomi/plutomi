@@ -8,7 +8,9 @@ import {
   getHostedZone,
   createDistribution,
   createCertificate,
-  createSesConfig
+  createSesConfig,
+  createEc2Service,
+  createEc2TaskDefinition
 } from "../utils";
 
 type PlutomiStackProps = StackProps;
@@ -19,24 +21,34 @@ export class PlutomiStack extends Stack {
 
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
     const taskRole = createTaskRole({ stack: this });
-    const taskDefinition = createTaskDefinition({ stack: this, taskRole });
+    const taskDefinition = createEc2TaskDefinition({
+      stack: this,
+      taskRole
+    });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = createCertificate({ stack: this, hostedZone });
-    const fargateService = createFargateService({
+    const ec2Service = createEc2Service({
       stack: this,
-      taskDefinition,
-      certificate,
       vpc,
-      natGatewayProvider
+      taskDefinition,
+      natGatewayProvider,
+      certificate
     });
+    // const fargateService = createFargateService({
+    //   stack: this,
+    //   taskDefinition,
+    //   certificate,
+    //   vpc,
+    //   natGatewayProvider
+    // });
 
     createSesConfig({ stack: this, hostedZone });
 
-    createDistribution({
-      stack: this,
-      certificate,
-      fargateService,
-      hostedZone
-    });
+    // createDistribution({
+    //   stack: this,
+    //   certificate,
+    //   fargateService: ec2Service,
+    //   hostedZone
+    // });
   }
 }
