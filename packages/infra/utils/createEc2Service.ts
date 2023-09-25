@@ -32,6 +32,7 @@ const clusterName = "plutomi-cluster";
 const capacityProviderName = "plutomi-capacity-provider";
 const serviceName = "plutomi-service";
 const loadBalancerName = "plutomi-load-balancer";
+const autoScalingGroupName = "plutomi-autoscaling-group";
 
 export const createEc2Service = ({
   stack,
@@ -45,17 +46,14 @@ export const createEc2Service = ({
     clusterName
   });
 
-  const autoScalingGroup = new AutoScalingGroup(
-    stack,
-    "plutomi-autoscaling-group",
-    {
-      vpc,
-      instanceType: INSTANCE_TYPE,
-      machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
-      minCapacity: 1,
-      maxCapacity: 4
-    }
-  );
+  const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
+    vpc,
+    autoScalingGroupName,
+    instanceType: INSTANCE_TYPE,
+    machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
+    minCapacity: 2,
+    maxCapacity: 4
+  });
 
   const capacityProvider = new AsgCapacityProvider(
     stack,
@@ -72,7 +70,9 @@ export const createEc2Service = ({
   // https://stackoverflow.com/questions/36523282/aws-ecs-error-when-running-task-no-container-instances-were-found-in-your-clust
   autoScalingGroup.addUserData(
     "#!/bin/bash",
-    `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`
+    `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`,
+    "sudo yum update -y",
+    "sudo yum clean all"
   );
 
   const ec2Service = new ApplicationLoadBalancedEc2Service(stack, serviceName, {
