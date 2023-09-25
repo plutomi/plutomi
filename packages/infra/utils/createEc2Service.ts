@@ -1,4 +1,4 @@
-import { type FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
+import { Cluster, type FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Port, type Vpc } from "aws-cdk-lib/aws-ec2";
@@ -14,7 +14,7 @@ type CreateEc2ServiceProps = {
   stack: Stack;
   taskDefinition: FargateTaskDefinition;
   certificate: ICertificate;
-  vpc: Vpc;
+  cluster: Cluster;
   natGatewayProvider: FckNatInstanceProvider;
 };
 
@@ -25,11 +25,11 @@ export const createEc2Service = ({
   stack,
   taskDefinition,
   certificate,
-  vpc,
+  cluster,
   natGatewayProvider
 }: CreateEc2ServiceProps): ApplicationLoadBalancedEc2Service => {
   const ec2Service = new ApplicationLoadBalancedEc2Service(stack, serviceName, {
-    vpc,
+    cluster,
     certificate,
     taskDefinition,
     // The load balancer will be public, but our tasks will not.

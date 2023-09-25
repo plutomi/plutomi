@@ -10,3 +10,4 @@ export * from "./env";
 export * from "./createEc2Service";
 export * from "./createEc2TaskDefinition";
 export * from "./createEc2TaskRole";
+export * from "./createEc2Cluster";

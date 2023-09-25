@@ -10,7 +10,8 @@ import {
   createCertificate,
   createSesConfig,
   createEc2Service,
-  createEc2TaskDefinition
+  createEc2TaskDefinition,
+  createEc2Cluster
 } from "../utils";
 
 type PlutomiStackProps = StackProps;
@@ -27,9 +28,10 @@ export class PlutomiStack extends Stack {
     });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = createCertificate({ stack: this, hostedZone });
+    const cluster = createEc2Cluster({ stack: this, vpc });
     const ec2Service = createEc2Service({
       stack: this,
-      vpc,
+      cluster,
       taskDefinition,
       natGatewayProvider,
       certificate
