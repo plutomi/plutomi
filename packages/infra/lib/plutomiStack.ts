@@ -3,7 +3,6 @@ import type { Construct } from "constructs";
 import {
   createTaskDefinition,
   createVpc,
-  createFargateService,
   getHostedZone,
   createDistribution,
   createCertificate,

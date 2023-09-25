@@ -1,5 +1,4 @@
 export * from "./createDistribution";
-export * from "./createFargateService";
 export * from "./createTaskDefinition";
 export * from "./createVpc";
 export * from "./getHostedZone";
