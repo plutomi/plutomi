@@ -1,4 +1,5 @@
 import {
+  AmiHardwareType,
   AsgCapacityProvider,
   Cluster,
   EcsOptimizedImage,
@@ -11,11 +12,12 @@ import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedEc2Service } from "aws-cdk-lib/aws-ecs-patterns";
 import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
 import { Metric } from "aws-cdk-lib/aws-cloudwatch";
+import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
+import { env } from "./env";
 import {
-  CAPACITY_PROVIDER_NAME,
   INSTANCE_TYPE,
-  NUMBER_OF_CONTAINERS_PER_INSTANCE,
-  NUMBER_OF_INSTANCES
+  MIN_NUMBER_OF_INSTANCES,
+  NUMBER_OF_CONTAINERS_PER_INSTANCE
 } from "./config";
 
 type CreateEc2ServiceProps = {
@@ -26,15 +28,8 @@ type CreateEc2ServiceProps = {
   natGatewayProvider: FckNatInstanceProvider;
 };
 
-import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
-
-type CreateEc2ClusterProps = {
-  stack: Stack;
-  vpc: Vpc;
-};
-
 const clusterName = "plutomi-cluster";
-
+const capacityProviderName = "plutomi-capacity-provider";
 const serviceName = "plutomi-service";
 const loadBalancerName = "plutomi-load-balancer";
 
@@ -56,21 +51,17 @@ export const createEc2Service = ({
     {
       vpc,
       instanceType: INSTANCE_TYPE,
-      machineImage: EcsOptimizedImage.amazonLinux2(),
+      machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
       minCapacity: 1,
-      maxCapacity: 4,
-      vpcSubnets: {
-        // Enforce they're private
-        subnets: vpc.privateSubnets
-      }
+      maxCapacity: 4
     }
   );
 
   const capacityProvider = new AsgCapacityProvider(
     stack,
-    CAPACITY_PROVIDER_NAME,
+    capacityProviderName,
     {
-      capacityProviderName: CAPACITY_PROVIDER_NAME,
+      capacityProviderName,
       autoScalingGroup
     }
   );
@@ -92,12 +83,12 @@ export const createEc2Service = ({
     // Outbound traffic for the tasks will be provided by the NAT Gateway
     // assignPublicIp: false,
     publicLoadBalancer: true,
-    desiredCount: NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
+    desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
     serviceName,
     loadBalancerName,
     capacityProviderStrategies: [
       {
-        capacityProvider: CAPACITY_PROVIDER_NAME,
+        capacityProvider: capacityProviderName,
         weight: 1
       }
     ]
@@ -122,18 +113,24 @@ export const createEc2Service = ({
     path: "/api/health"
   });
 
-  const ports = [
-    // Outbound HTTPS from tasks
-    443,
-    //  Outbound MongoDB from tasks - TODO Replace with Private Link in the future
-    27017
+  // Allow our LB to connect to our instances only
+  ec2Service.loadBalancer.connections.allowTo(
+    autoScalingGroup,
+    Port.tcp(Number(env.PORT))
+  );
+
+  /**
+   * Allow instances to talk to the internet & MongoDB
+   * Needs to pass through the NAT gateway for internet access
+   */
+  //
+  const outboundPorts = [
+    443, // HTTPS from tasks
+    27017 // MongoDB from tasks - TODO Replace with Private Link in the future
   ];
 
-  ports.forEach((port) => {
-    natGatewayProvider.connections.allowFrom(
-      ec2Service.service,
-      Port.tcp(port)
-    );
+  outboundPorts.forEach((port) => {
+    natGatewayProvider.connections.allowFrom(autoScalingGroup, Port.tcp(port));
   });
 
   return ec2Service;
