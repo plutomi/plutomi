@@ -1,7 +1,6 @@
 import { type StackProps, Stack } from "aws-cdk-lib";
 import type { Construct } from "constructs";
 import {
-  createTaskRole,
   createTaskDefinition,
   createVpc,
   createFargateService,
@@ -10,8 +9,7 @@ import {
   createCertificate,
   createSesConfig,
   createEc2Service,
-  createEc2TaskDefinition,
-  createEc2Cluster
+  createEc2TaskDefinition
 } from "../utils";
 
 type PlutomiStackProps = StackProps;
@@ -21,17 +19,14 @@ export class PlutomiStack extends Stack {
     super(scope, id, props);
 
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
-    const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createEc2TaskDefinition({
-      stack: this,
-      taskRole
+      stack: this
     });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = createCertificate({ stack: this, hostedZone });
-    const cluster = createEc2Cluster({ stack: this, vpc });
     const ec2Service = createEc2Service({
       stack: this,
-      cluster,
+      vpc,
       taskDefinition,
       natGatewayProvider,
       certificate

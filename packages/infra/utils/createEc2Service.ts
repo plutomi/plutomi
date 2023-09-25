@@ -1,15 +1,19 @@
-import { Cluster, type FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
+import {
+  AsgCapacityProvider,
+  Cluster,
+  EcsOptimizedImage,
+  type FargateTaskDefinition
+} from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Port, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
-import {
-  ApplicationLoadBalancedEc2Service,
-  ApplicationLoadBalancedFargateService
-} from "aws-cdk-lib/aws-ecs-patterns";
+import { ApplicationLoadBalancedEc2Service } from "aws-cdk-lib/aws-ecs-patterns";
 import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
 import { Metric } from "aws-cdk-lib/aws-cloudwatch";
 import {
+  CAPACITY_PROVIDER_NAME,
+  INSTANCE_TYPE,
   NUMBER_OF_CONTAINERS_PER_INSTANCE,
   NUMBER_OF_INSTANCES
 } from "./config";
@@ -18,9 +22,18 @@ type CreateEc2ServiceProps = {
   stack: Stack;
   taskDefinition: FargateTaskDefinition;
   certificate: ICertificate;
-  cluster: Cluster;
+  vpc: Vpc;
   natGatewayProvider: FckNatInstanceProvider;
 };
+
+import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
+
+type CreateEc2ClusterProps = {
+  stack: Stack;
+  vpc: Vpc;
+};
+
+const clusterName = "plutomi-cluster";
 
 const serviceName = "plutomi-service";
 const loadBalancerName = "plutomi-load-balancer";
@@ -29,9 +42,48 @@ export const createEc2Service = ({
   stack,
   taskDefinition,
   certificate,
-  cluster,
+  vpc,
   natGatewayProvider
 }: CreateEc2ServiceProps): ApplicationLoadBalancedEc2Service => {
+  const cluster = new Cluster(stack, clusterName, {
+    vpc,
+    clusterName
+  });
+
+  const autoScalingGroup = new AutoScalingGroup(
+    stack,
+    "plutomi-autoscaling-group",
+    {
+      vpc,
+      instanceType: INSTANCE_TYPE,
+      machineImage: EcsOptimizedImage.amazonLinux2(),
+      minCapacity: 1,
+      maxCapacity: 4,
+      vpcSubnets: {
+        // Enforce they're private
+        subnets: vpc.privateSubnets
+      }
+    }
+  );
+
+  const capacityProvider = new AsgCapacityProvider(
+    stack,
+    CAPACITY_PROVIDER_NAME,
+    {
+      capacityProviderName: CAPACITY_PROVIDER_NAME,
+      autoScalingGroup
+    }
+  );
+
+  cluster.addAsgCapacityProvider(capacityProvider);
+
+  // Required for non default clusters
+  // https://stackoverflow.com/questions/36523282/aws-ecs-error-when-running-task-no-container-instances-were-found-in-your-clust
+  autoScalingGroup.addUserData(
+    "#!/bin/bash",
+    `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`
+  );
+
   const ec2Service = new ApplicationLoadBalancedEc2Service(stack, serviceName, {
     cluster,
     certificate,
@@ -40,15 +92,21 @@ export const createEc2Service = ({
     // Outbound traffic for the tasks will be provided by the NAT Gateway
     // assignPublicIp: false,
     publicLoadBalancer: true,
-    // taskSubnets: {
-    //   // Ensure private subnets are used for tasks
-    //   subnets: vpc.privateSubnets
-    // },
     desiredCount: NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
     serviceName,
-    loadBalancerName
+    loadBalancerName,
+    capacityProviderStrategies: [
+      {
+        capacityProvider: CAPACITY_PROVIDER_NAME,
+        weight: 1
+      }
+    ]
   });
 
+  // Ensure that it gets created before making the service
+  ec2Service.node.addDependency(capacityProvider);
+
+  // --- Autoscaling ---
   const deregistrationDelaySeconds = 5;
   ec2Service.targetGroup.setAttribute(
     "deregistration_delay.timeout_seconds",

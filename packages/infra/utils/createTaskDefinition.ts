@@ -3,24 +3,28 @@ import {
   ContainerImage,
   FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
-import type { IRole } from "aws-cdk-lib/aws-iam";
+import { ServicePrincipal, type IRole, Role } from "aws-cdk-lib/aws-iam";
 import { type Stack } from "aws-cdk-lib";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { env } from "./env";
 
 type CreateTaskDefinitionProps = {
   stack: Stack;
-  taskRole: IRole;
 };
 
 const taskDefinitionName = "plutomi-task-definition";
 const containerName = "plutomi-container";
 const logStreamPrefix = "plutomi-logs";
+const roleName = "plutomi-ec2-role";
 
 export const createTaskDefinition = ({
-  stack,
-  taskRole
+  stack
 }: CreateTaskDefinitionProps): FargateTaskDefinition => {
+  const taskRole = new Role(stack, roleName, {
+    roleName,
+    assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com")
+  });
+
   // Create a task definition we can attach policies to
   const taskDefinition = new FargateTaskDefinition(stack, taskDefinitionName, {
     taskRole,

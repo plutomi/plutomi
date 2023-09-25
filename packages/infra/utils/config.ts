@@ -14,3 +14,5 @@ export const INSTANCE_TYPE = InstanceType.of(
 export const CONTAINER_CPU = 1546;
 export const CONTAINER_MEMORY_LIMIT = 350;
 export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 1;
+
+export const CAPACITY_PROVIDER_NAME = "plutomi-capacity-provider";

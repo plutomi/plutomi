@@ -4,7 +4,7 @@ import {
   Ec2TaskDefinition,
   FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
-import type { IRole } from "aws-cdk-lib/aws-iam";
+import { Role, type IRole, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { type Stack } from "aws-cdk-lib";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { env } from "./env";
@@ -12,17 +12,21 @@ import { CONTAINER_CPU, CONTAINER_MEMORY_LIMIT } from "./config";
 
 type CreateEc2TaskDefinitionProps = {
   stack: Stack;
-  taskRole: IRole;
 };
 
 const taskDefinitionName = "plutomi-task-definition";
 const containerName = "plutomi-container";
 const logStreamPrefix = "plutomi-logs";
+const roleName = "plutomi-ec2-role";
 
 export const createEc2TaskDefinition = ({
-  stack,
-  taskRole
+  stack
 }: CreateEc2TaskDefinitionProps): Ec2TaskDefinition => {
+  const taskRole = new Role(stack, roleName, {
+    roleName,
+    assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com")
+  });
+
   // Create a task definition we can attach policies to
   const taskDefinition = new Ec2TaskDefinition(stack, taskDefinitionName, {
     taskRole,
@@ -32,7 +36,9 @@ export const createEc2TaskDefinition = ({
   taskDefinition.addContainer(containerName, {
     portMappings: [
       {
-        containerPort: Number(env.PORT)
+        // TODO Add name?
+        containerPort: Number(env.PORT),
+        hostPort: Number(env.PORT)
       }
     ],
 
