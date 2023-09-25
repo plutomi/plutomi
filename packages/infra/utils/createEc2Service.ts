@@ -9,6 +9,10 @@ import {
 } from "aws-cdk-lib/aws-ecs-patterns";
 import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
 import { Metric } from "aws-cdk-lib/aws-cloudwatch";
+import {
+  NUMBER_OF_CONTAINERS_PER_INSTANCE,
+  NUMBER_OF_INSTANCES
+} from "./config";
 
 type CreateEc2ServiceProps = {
   stack: Stack;
@@ -40,7 +44,7 @@ export const createEc2Service = ({
     //   // Ensure private subnets are used for tasks
     //   subnets: vpc.privateSubnets
     // },
-    desiredCount: 1,
+    desiredCount: NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
     serviceName,
     loadBalancerName
   });

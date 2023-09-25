@@ -8,6 +8,7 @@ import type { IRole } from "aws-cdk-lib/aws-iam";
 import { type Stack } from "aws-cdk-lib";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { env } from "./env";
+import { CONTAINER_CPU, CONTAINER_MEMORY_LIMIT } from "./config";
 
 type CreateEc2TaskDefinitionProps = {
   stack: Stack;
@@ -34,6 +35,7 @@ export const createEc2TaskDefinition = ({
         containerPort: Number(env.PORT)
       }
     ],
+
     image: ContainerImage.fromAsset("../../", {
       // Get the local docker image (@root), build and deploy it
       // ! Must match the ARGs in the docker file for NextJS!
@@ -47,8 +49,8 @@ export const createEc2TaskDefinition = ({
       logRetention: RetentionDays.ONE_WEEK
     }),
     environment: env as unknown as Record<string, string>,
-    cpu: 1024,
-    memoryLimitMiB: 1024
+    cpu: CONTAINER_CPU,
+    memoryLimitMiB: CONTAINER_MEMORY_LIMIT
   });
 
   return taskDefinition;

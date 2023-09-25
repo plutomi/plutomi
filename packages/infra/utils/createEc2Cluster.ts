@@ -3,9 +3,12 @@ import {
   InstanceType,
   Vpc,
   InstanceClass,
-  InstanceSize
+  InstanceSize,
+  AmazonLinuxImage,
+  MachineImage
 } from "aws-cdk-lib/aws-ec2";
-import { Cluster } from "aws-cdk-lib/aws-ecs";
+import { Cluster, MachineImageType } from "aws-cdk-lib/aws-ecs";
+import { INSTANCE_TYPE, NUMBER_OF_INSTANCES } from "./config";
 
 type CreateEc2ClusterProps = {
   stack: Stack;
@@ -21,8 +24,9 @@ export const createEc2Cluster = ({
   });
 
   cluster.addCapacity("plutomi-cluster-capacity", {
-    instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO),
-    desiredCapacity: 1
+    instanceType: INSTANCE_TYPE,
+    machineImage: MachineImage.latestAmazonLinux2023(),
+    desiredCapacity: NUMBER_OF_INSTANCES
   });
 
   return cluster;
