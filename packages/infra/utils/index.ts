@@ -1,5 +1,4 @@
 export * from "./createDistribution";
-export * from "./createTaskDefinition";
 export * from "./createVpc";
 export * from "./getHostedZone";
 export * from "./createCertificate";
@@ -7,4 +6,3 @@ export * from "./createSesConfig";
 export * from "./env";
 export * from "./createEc2Service";
 export * from "./createEc2TaskDefinition";
-export * from "./createEc2TaskRole";

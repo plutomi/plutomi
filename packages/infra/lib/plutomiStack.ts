@@ -1,7 +1,6 @@
 import { type StackProps, Stack } from "aws-cdk-lib";
 import type { Construct } from "constructs";
 import {
-  createTaskDefinition,
   createVpc,
   getHostedZone,
   createDistribution,
@@ -30,21 +29,14 @@ export class PlutomiStack extends Stack {
       natGatewayProvider,
       certificate
     });
-    // const fargateService = createFargateService({
-    //   stack: this,
-    //   taskDefinition,
-    //   certificate,
-    //   vpc,
-    //   natGatewayProvider
-    // });
 
     createSesConfig({ stack: this, hostedZone });
 
-    // createDistribution({
-    //   stack: this,
-    //   certificate,
-    //   fargateService: ec2Service,
-    //   hostedZone
-    // });
+    createDistribution({
+      stack: this,
+      certificate,
+      ec2Service,
+      hostedZone
+    });
   }
 }

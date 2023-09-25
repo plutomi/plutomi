@@ -1,4 +1,4 @@
-import type { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import type { ApplicationLoadBalancedEc2Service } from "aws-cdk-lib/aws-ecs-patterns";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
   type IHostedZone,
@@ -25,7 +25,7 @@ import { env } from "./env";
 
 type CreateDistributionProps = {
   stack: Stack;
-  fargateService: ApplicationLoadBalancedFargateService;
+  ec2Service: ApplicationLoadBalancedEc2Service;
   certificate: ICertificate;
   hostedZone: IHostedZone;
 };
@@ -37,12 +37,12 @@ const domainName = new URL(env.NEXT_PUBLIC_BASE_URL).hostname;
 
 export const createDistribution = ({
   stack,
-  fargateService,
+  ec2Service,
   certificate,
   hostedZone
 }: CreateDistributionProps): Distribution => {
   const loadBalancerOrigin = new LoadBalancerV2Origin(
-    fargateService.loadBalancer,
+    ec2Service.loadBalancer,
     {
       customHeaders: {
         // WAF on the ALB will block requests without this header
