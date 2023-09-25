@@ -1,12 +1,14 @@
 import type { RequestHandler } from "express";
+import axios from "axios";
 
 export const get: RequestHandler = async (req, res) => {
   try {
-    const db = (await req.database.command({ ping: 1 })).ok as number;
+
+    const metadata = await axios.get(process.env.ECS_CONTAINER_METADATA_URI_V4 as string);
 
     const response = {
       message: "Saul Goodman",
-      db,
+      metadata
     }
     res.status(200).json(response);
 
@@ -14,6 +16,6 @@ export const get: RequestHandler = async (req, res) => {
   } catch (error) {
     console.log(`Error parsing data`)
     console.error(error);
-    res.status(500).json({ message: "Error connecting to MongoDB!", error });
+    res.status(500).json({ message: "Error getting meratada 3", error });
   }
 };

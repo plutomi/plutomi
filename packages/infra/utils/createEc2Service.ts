@@ -16,6 +16,7 @@ import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
 import { env } from "./env";
 import {
   INSTANCE_TYPE,
+  MAX_NUMBER_OF_INSTANCES,
   MIN_NUMBER_OF_INSTANCES,
   NUMBER_OF_CONTAINERS_PER_INSTANCE
 } from "./config";
@@ -51,8 +52,8 @@ export const createEc2Service = ({
     autoScalingGroupName,
     instanceType: INSTANCE_TYPE,
     machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
-    minCapacity: 2,
-    maxCapacity: 4
+    minCapacity: MIN_NUMBER_OF_INSTANCES,
+    maxCapacity: MAX_NUMBER_OF_INSTANCES
   });
 
   const capacityProvider = new AsgCapacityProvider(
@@ -114,10 +115,7 @@ export const createEc2Service = ({
   });
 
   // Allow our LB to connect to our instances only
-  ec2Service.loadBalancer.connections.allowTo(
-    autoScalingGroup,
-    Port.tcp(Number(env.PORT))
-  );
+  ec2Service.loadBalancer.connections.allowTo(autoScalingGroup, Port.allTcp());
 
   /**
    * Allow instances to talk to the internet & MongoDB

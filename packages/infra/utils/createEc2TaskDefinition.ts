@@ -37,8 +37,9 @@ export const createEc2TaskDefinition = ({
     portMappings: [
       {
         // TODO Add name?
-        containerPort: Number(env.PORT),
-        hostPort: Number(env.PORT)
+        containerPort: Number(env.PORT)
+        // Have dynamic host port so that we can run multiple instances on the same host
+        // hostPort: Number(env.PORT)
       }
     ],
 

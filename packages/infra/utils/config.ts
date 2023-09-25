@@ -8,10 +8,11 @@ export const MAX_NUMBER_OF_INSTANCES = 1;
  */
 export const INSTANCE_TYPE = InstanceType.of(
   InstanceClass.T4G,
-  InstanceSize.NANO
+  //
+  InstanceSize.SMALL
 );
 
 // Ensure these values fit within the instance type
-export const CONTAINER_CPU = 1546;
-export const CONTAINER_MEMORY_LIMIT = 350;
-export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 1;
+export const CONTAINER_CPU = 250;
+export const CONTAINER_MEMORY_LIMIT = 120;
+export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 2;

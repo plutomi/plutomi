@@ -1,12 +1,15 @@
 import type { RequestHandler } from "express";
+import axios from "axios";
 
 export const get: RequestHandler = async (req, res) => {
+    const id = req.query.id
   try {
-    const db = (await req.database.command({ ping: 1 })).ok as number;
+
+    const metadata = await axios.get(`http://169.254.169.254/latest/meta-data/${id}`);
 
     const response = {
       message: "Saul Goodman",
-      db,
+      metadata
     }
     res.status(200).json(response);
 
