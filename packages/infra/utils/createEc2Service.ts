@@ -48,6 +48,7 @@ export const createEc2Service = ({
   });
 
   const autoscalingGroup = cluster.addCapacity(capacityProviderName, {
+    autoScalingGroupName,
     instanceType: INSTANCE_TYPE,
     machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
     minCapacity: MIN_NUMBER_OF_INSTANCES,
@@ -71,6 +72,8 @@ export const createEc2Service = ({
     cluster,
     certificate,
     taskDefinition,
+
+    desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
     // The load balancer will be public, but our tasks will not.
     // Outbound traffic for the tasks will be provided by the NAT Gateway
     // assignPublicIp: false,
