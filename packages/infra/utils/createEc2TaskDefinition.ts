@@ -11,7 +11,8 @@ import { env } from "./env";
 import {
   CONTAINER_CPU,
   CONTAINER_MEMORY_LIMIT,
-  HEALTH_CHECK_PATH
+  HEALTH_CHECK_PATH,
+  HEALTH_CHECK_THRESHOLD_SECONDS
 } from "./config";
 
 type CreateEc2TaskDefinitionProps = {
@@ -67,7 +68,7 @@ export const createEc2TaskDefinition = ({
         "CMD-SHELL",
         `curl -f http://localhost:${env.PORT}${HEALTH_CHECK_PATH} || exit 1`
       ],
-      interval: Duration.seconds(5),
+      interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
       retries: 2
     }
     // This is a hard limit, use the other one as its a soft limit

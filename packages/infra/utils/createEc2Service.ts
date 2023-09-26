@@ -16,6 +16,7 @@ import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
 import { env } from "./env";
 import {
   HEALTH_CHECK_PATH,
+  HEALTH_CHECK_THRESHOLD_SECONDS,
   INSTANCE_TYPE,
   MAX_NUMBER_OF_INSTANCES,
   MIN_NUMBER_OF_INSTANCES,
@@ -83,23 +84,23 @@ export const createEc2Service = ({
     serviceName,
     loadBalancerName,
 
-    // Required for rolling deploys otherwise we have an outage
-    // TODO: not working look at last screenshot
-    minHealthyPercent: 100,
+    // https://nathanpeck.com/speeding-up-amazon-ecs-container-deployments/
+    minHealthyPercent: 50,
     maxHealthyPercent: 200
   });
 
   // --- Autoscaling ---
-  const deregistrationDelaySeconds = 5;
   ec2Service.targetGroup.setAttribute(
     "deregistration_delay.timeout_seconds",
-    deregistrationDelaySeconds.toString()
+    HEALTH_CHECK_THRESHOLD_SECONDS.toString()
   );
 
   // Health Checks
   ec2Service.targetGroup.configureHealthCheck({
-    interval: Duration.seconds(5),
-    timeout: Duration.seconds(4),
+    // https://nathanpeck.com/speeding-up-amazon-ecs-container-deployments/
+    // This needs to be low otherwise the instance is killed before the new one is ready
+    healthyThresholdCount: 2,
+    interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
     path: HEALTH_CHECK_PATH
   });
 
