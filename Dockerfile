@@ -47,6 +47,9 @@ RUN yarn build
 FROM --platform=linux/arm64 node:18-alpine AS runner
 WORKDIR /app
 
+# For container health checks, we need curl to be installed as node:alpine does not come with it
+RUN apk add --no-cache curl
+
 ENV NODE_ENV production
 
 # Disable telemetry during runtime.

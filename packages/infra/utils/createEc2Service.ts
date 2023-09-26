@@ -15,6 +15,7 @@ import { Metric } from "aws-cdk-lib/aws-cloudwatch";
 import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
 import { env } from "./env";
 import {
+  HEALTH_CHECK_PATH,
   INSTANCE_TYPE,
   MAX_NUMBER_OF_INSTANCES,
   MIN_NUMBER_OF_INSTANCES,
@@ -33,7 +34,8 @@ const clusterName = "plutomi-cluster";
 const capacityProviderName = "plutomi-capacity-provider";
 const serviceName = "plutomi-service";
 const loadBalancerName = "plutomi-load-balancer";
-const autoScalingGroupName = "plutomi-autoscaling-group";
+// This needs to be unique in some deployment use cases
+const autoScalingGroupName = `plutomi-autoscaling-group-${new Date().getTime()}`;
 
 export const createEc2Service = ({
   stack,
@@ -79,7 +81,12 @@ export const createEc2Service = ({
     // assignPublicIp: false,
     publicLoadBalancer: true,
     serviceName,
-    loadBalancerName
+    loadBalancerName,
+
+    // Required for rolling deploys otherwise we have an outage
+    // TODO: not working look at last screenshot
+    minHealthyPercent: 100,
+    maxHealthyPercent: 200
   });
 
   // --- Autoscaling ---
@@ -92,10 +99,8 @@ export const createEc2Service = ({
   // Health Checks
   ec2Service.targetGroup.configureHealthCheck({
     interval: Duration.seconds(5),
-    healthyThresholdCount: 2,
-    unhealthyThresholdCount: 2,
     timeout: Duration.seconds(4),
-    path: "/api/health"
+    path: HEALTH_CHECK_PATH
   });
 
   // Allow our LB to connect to our instances only

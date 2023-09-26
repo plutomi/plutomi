@@ -17,3 +17,4 @@ export const INSTANCE_TYPE = InstanceType.of(
 export const CONTAINER_CPU = 350;
 export const CONTAINER_MEMORY_LIMIT = 160;
 export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 2;
+export const HEALTH_CHECK_PATH = "/api/health";

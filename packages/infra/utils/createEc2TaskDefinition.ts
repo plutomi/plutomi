@@ -5,10 +5,14 @@ import {
   FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
 import { Role, type IRole, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import { type Stack } from "aws-cdk-lib";
+import { Duration, type Stack } from "aws-cdk-lib";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { env } from "./env";
-import { CONTAINER_CPU, CONTAINER_MEMORY_LIMIT } from "./config";
+import {
+  CONTAINER_CPU,
+  CONTAINER_MEMORY_LIMIT,
+  HEALTH_CHECK_PATH
+} from "./config";
 
 type CreateEc2TaskDefinitionProps = {
   stack: Stack;
@@ -37,9 +41,9 @@ export const createEc2TaskDefinition = ({
     portMappings: [
       {
         // TODO Add name?
-        containerPort: Number(env.PORT),
+        containerPort: Number(env.PORT)
         // Have dynamic host port so that we can run multiple instances on the same host
-        hostPort: Number(0)
+        // hostPort: Number(0)
       }
     ],
 
@@ -56,12 +60,17 @@ export const createEc2TaskDefinition = ({
       logRetention: RetentionDays.ONE_WEEK
     }),
     memoryReservationMiB: CONTAINER_MEMORY_LIMIT,
-    // healthCheck: {
-    //   command: ["CMD-SHELL", "curl -f http://localhost/api/health || exit 1"]
-    // },
-
     environment: env as unknown as Record<string, string>,
-    cpu: CONTAINER_CPU
+    cpu: CONTAINER_CPU,
+    healthCheck: {
+      command: [
+        "CMD-SHELL",
+        `curl -f http://localhost:${env.PORT}${HEALTH_CHECK_PATH} || exit 1`
+      ],
+      interval: Duration.seconds(5),
+      retries: 2
+    }
+    // This is a hard limit, use the other one as its a soft limit
     // memoryLimitMiB: CONTAINER_MEMORY_LIMIT
   });
 
