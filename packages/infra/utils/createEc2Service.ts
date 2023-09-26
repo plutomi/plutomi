@@ -3,6 +3,7 @@ import {
   AsgCapacityProvider,
   Cluster,
   EcsOptimizedImage,
+  PlacementConstraint,
   type FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
@@ -68,7 +69,10 @@ export const createEc2Service = ({
     "#!/bin/bash",
     `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`,
     "sudo yum update -y",
-    "sudo yum clean all"
+    "sudo yum clean all",
+    // Set some metadata so ECS doesn't launch tasks on this instance until it is ready
+    // eslint-disable-next-line quotes
+    `curl -X PUT "http://localhost:51678/v1/metadata" -d '{"Attributes": {"fullyInitialized": "true"}}'`
   );
 
   const ec2Service = new ApplicationLoadBalancedEc2Service(stack, serviceName, {
@@ -83,7 +87,10 @@ export const createEc2Service = ({
     publicLoadBalancer: true,
     serviceName,
     loadBalancerName,
-
+    placementConstraints: [
+      // Add some metadata so ECS doesn't launch tasks on this instance until it is ready
+      PlacementConstraint.memberOf("attribute:fullyInitialized == true")
+    ],
     // https://nathanpeck.com/speeding-up-amazon-ecs-container-deployments/
     minHealthyPercent: 50,
     maxHealthyPercent: 200
