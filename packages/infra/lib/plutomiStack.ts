@@ -30,13 +30,13 @@ export class PlutomiStack extends Stack {
       certificate
     });
 
-    createSesConfig({ stack: this, hostedZone });
+    // createSesConfig({ stack: this, hostedZone });
 
-    createDistribution({
-      stack: this,
-      certificate,
-      ec2Service,
-      hostedZone
-    });
+    // createDistribution({
+    //   stack: this,
+    //   certificate,
+    //   ec2Service,
+    //   hostedZone
+    // });
   }
 }

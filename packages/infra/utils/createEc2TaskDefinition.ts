@@ -37,9 +37,9 @@ export const createEc2TaskDefinition = ({
     portMappings: [
       {
         // TODO Add name?
-        containerPort: Number(env.PORT)
+        containerPort: Number(env.PORT),
         // Have dynamic host port so that we can run multiple instances on the same host
-        // hostPort: Number(env.PORT)
+        hostPort: Number(0)
       }
     ],
 
@@ -55,9 +55,14 @@ export const createEc2TaskDefinition = ({
       streamPrefix: logStreamPrefix,
       logRetention: RetentionDays.ONE_WEEK
     }),
+    memoryReservationMiB: CONTAINER_MEMORY_LIMIT,
+    // healthCheck: {
+    //   command: ["CMD-SHELL", "curl -f http://localhost/api/health || exit 1"]
+    // },
+
     environment: env as unknown as Record<string, string>,
-    cpu: CONTAINER_CPU,
-    memoryLimitMiB: CONTAINER_MEMORY_LIMIT
+    cpu: CONTAINER_CPU
+    // memoryLimitMiB: CONTAINER_MEMORY_LIMIT
   });
 
   return taskDefinition;
