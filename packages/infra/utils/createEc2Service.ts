@@ -69,10 +69,7 @@ export const createEc2Service = ({
     "#!/bin/bash",
     `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`,
     "sudo yum update -y",
-    "sudo yum clean all",
-    // Set some metadata so ECS doesn't launch tasks on this instance until it is ready
-    // eslint-disable-next-line quotes
-    `curl -X PUT "http://localhost:51678/v1/metadata" -d '{"Attributes": {"fullyInitialized": "true"}}'`
+    "sudo yum clean all"
   );
 
   const ec2Service = new ApplicationLoadBalancedEc2Service(stack, serviceName, {
@@ -80,19 +77,15 @@ export const createEc2Service = ({
     certificate,
     taskDefinition,
 
-    desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
     // The load balancer will be public, but our tasks will not.
     // Outbound traffic for the tasks will be provided by the NAT Gateway
     // assignPublicIp: false,
     publicLoadBalancer: true,
     serviceName,
     loadBalancerName,
-    placementConstraints: [
-      // Add some metadata so ECS doesn't launch tasks on this instance until it is ready
-      PlacementConstraint.memberOf("attribute:fullyInitialized == true")
-    ],
-    // https://nathanpeck.com/speeding-up-amazon-ecs-container-deployments/
-    minHealthyPercent: 50,
+
+    desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
+    minHealthyPercent: 100,
     maxHealthyPercent: 200
   });
 
