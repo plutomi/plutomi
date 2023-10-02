@@ -21,7 +21,7 @@ type CreateEc2TaskDefinitionProps = {
 
 const taskDefinitionName = "plutomi-task-definition";
 const containerName = "plutomi-container";
-const logStreamPrefix = "plutomi-logs";
+const LOG_STREAM_PREFIX = "plutomi-logs";
 const roleName = "plutomi-ec2-role";
 
 export const createEc2TaskDefinition = ({
@@ -57,7 +57,7 @@ export const createEc2TaskDefinition = ({
     }),
 
     logging: new AwsLogDriver({
-      streamPrefix: logStreamPrefix,
+      streamPrefix: LOG_STREAM_PREFIX,
       logRetention: RetentionDays.ONE_WEEK
     }),
     memoryReservationMiB: CONTAINER_MEMORY_LIMIT,

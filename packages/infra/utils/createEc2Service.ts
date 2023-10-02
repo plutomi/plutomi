@@ -4,6 +4,7 @@ import {
   Cluster,
   EcsOptimizedImage,
   PlacementConstraint,
+  PlacementStrategy,
   type FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
@@ -13,7 +14,10 @@ import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedEc2Service } from "aws-cdk-lib/aws-ecs-patterns";
 import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
 import { Metric } from "aws-cdk-lib/aws-cloudwatch";
-import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
+import {
+  AutoScalingGroup,
+  TerminationPolicy
+} from "aws-cdk-lib/aws-autoscaling";
 import { env } from "./env";
 import {
   HEALTH_CHECK_PATH,
@@ -57,10 +61,13 @@ export const createEc2Service = ({
     machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
     minCapacity: MIN_NUMBER_OF_INSTANCES,
     maxCapacity: MAX_NUMBER_OF_INSTANCES,
+
     vpcSubnets: {
       // Ensure that our instances are in a private subnet
       subnetType: SubnetType.PRIVATE_WITH_EGRESS
-    }
+    },
+
+    defaultInstanceWarmup: Duration.seconds(0)
   });
 
   // Required for non default clusters
@@ -83,24 +90,25 @@ export const createEc2Service = ({
     publicLoadBalancer: true,
     serviceName,
     loadBalancerName,
-
     desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
-    minHealthyPercent: 100,
+    // Note: Ensure that the instance type can handle a 200% increase in tasks if only running one
+    minHealthyPercent: 50,
     maxHealthyPercent: 200
   });
 
   // --- Autoscaling ---
   ec2Service.targetGroup.setAttribute(
     "deregistration_delay.timeout_seconds",
-    HEALTH_CHECK_THRESHOLD_SECONDS.toString()
+    String(HEALTH_CHECK_THRESHOLD_SECONDS)
   );
 
   // Health Checks
   ec2Service.targetGroup.configureHealthCheck({
     // https://nathanpeck.com/speeding-up-amazon-ecs-container-deployments/
-    // This needs to be low otherwise the instance is killed before the new one is ready
     healthyThresholdCount: 2,
+    unhealthyThresholdCount: 2,
     interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
+    timeout: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS - 1),
     path: HEALTH_CHECK_PATH
   });
 
