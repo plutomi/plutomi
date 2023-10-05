@@ -59,14 +59,17 @@ export const createEc2Service = ({
     autoScalingGroupName,
     instanceType: INSTANCE_TYPE,
     machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
-    minCapacity: MIN_NUMBER_OF_INSTANCES,
-    maxCapacity: MAX_NUMBER_OF_INSTANCES,
-
+    /**
+     * ! TODO: I think this is killing the old instance on deployment before ECS registers
+     * the new containers on the new instance
+     */
+    minCapacity: 1,
+    desiredCapacity: 1,
+    maxCapacity: 10,
     vpcSubnets: {
       // Ensure that our instances are in a private subnet
       subnetType: SubnetType.PRIVATE_WITH_EGRESS
     },
-
     defaultInstanceWarmup: Duration.seconds(0)
   });
 
@@ -84,19 +87,19 @@ export const createEc2Service = ({
     certificate,
     taskDefinition,
 
-    // The load balancer will be public, but our tasks will not.
-    // Outbound traffic for the tasks will be provided by the NAT Gateway
-    // assignPublicIp: false,
+    /**
+     * LB is public, instances are in a private subnet
+     */
     publicLoadBalancer: true,
     serviceName,
     loadBalancerName,
     desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
     // Note: Ensure that the instance type can handle a 200% increase in tasks if only running one
-    minHealthyPercent: 50,
+    // TODO: or find a way to only deploy new tasks on the new instances?
+    minHealthyPercent: 100,
     maxHealthyPercent: 200
   });
 
-  // --- Autoscaling ---
   ec2Service.targetGroup.setAttribute(
     "deregistration_delay.timeout_seconds",
     String(HEALTH_CHECK_THRESHOLD_SECONDS)
@@ -104,7 +107,6 @@ export const createEc2Service = ({
 
   // Health Checks
   ec2Service.targetGroup.configureHealthCheck({
-    // https://nathanpeck.com/speeding-up-amazon-ecs-container-deployments/
     healthyThresholdCount: 2,
     unhealthyThresholdCount: 2,
     interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
@@ -131,33 +133,3 @@ export const createEc2Service = ({
 
   return ec2Service;
 };
-
-/**
- * Questions to answer:
- * Why were tasks deregistered from the target group before 1. new tasks were placed 2. no new instance was up:
- * 
- * Started at
-Message
-Event ID
-September 27, 2023 at 01:45 (UTC+3:00)	service plutomi-service was unable to place a task because no container instance met all of its requirements. The closest matching container-instance 2811a2a83e7d47f5a6fe6307a40f0f3b encountered error "MemberOf placement constraint unsatisfied.". For more information, see the Troubleshooting section of the Amazon ECS Developer Guide.	4570bfa7-8be5-4cb2-8251-b2ec7d97a3eb
-September 27, 2023 at 01:45 (UTC+3:00)	service plutomi-service deregistered 2 targets in target-group plutom-pluto-PXPBQHYDOVMS 	8887f006-96c1-4cd2-8ce2-e04dd67e6ce6
-September 27, 2023 at 01:45 (UTC+3:00)	(service plutomi-service, taskSet ecs-svc/3590336725212589463) has begun draining connections on 2 tasks.	62fbb7a4-9363-49da-9241-701ff094914d
-September 27, 2023 at 01:45 (UTC+3:00)	service plutomi-service deregistered 2 targets in target-group plutom-pluto-PXPBQHYDOVMS 	331c2a2e-23f8-45e3-b039-7a98daf8db99
-September 27, 2023 at 01:29 (UTC+3:00)	
-
-
-- Does ECS retry if it fails to place? If so how long after?
-service plutomi-service was unable to place a task because no container instance met all of its requirements. The closest matching container-instance 2811a2a83e7d47f5a6fe6307a40f0f3b encountered error "MemberOf placement constraint unsatisfied.". For more information, see the Troubleshooting section of the Amazon ECS Developer Guide.
-
-- Could it be due to the healthcheck grace period at the service level?
-
-StatusInfo
-
-Health check grace period
-60 seconds
-
-
-- Should just go back to fargate lel!!
-
-
- */
