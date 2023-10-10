@@ -16,10 +16,12 @@ import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
 import { Metric } from "aws-cdk-lib/aws-cloudwatch";
 import {
   AutoScalingGroup,
+  HealthCheck,
   TerminationPolicy
 } from "aws-cdk-lib/aws-autoscaling";
 import { env } from "./env";
 import {
+  HEALTHY_THRESHOLD_COUNT,
   HEALTH_CHECK_PATH,
   HEALTH_CHECK_THRESHOLD_SECONDS,
   INSTANCE_TYPE,
@@ -55,22 +57,39 @@ export const createEc2Service = ({
     clusterName
   });
 
+  // ! TODO: Add placement strategy to only add new tasks on new instances
+
   const autoscalingGroup = cluster.addCapacity(capacityProviderName, {
     autoScalingGroupName,
     instanceType: INSTANCE_TYPE,
     machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
-    /**
-     * ! TODO: I think this is killing the old instance on deployment before ECS registers
-     * the new containers on the new instance
-     */
-    minCapacity: 1,
-    desiredCapacity: 1,
-    maxCapacity: 10,
+    minCapacity: MIN_NUMBER_OF_INSTANCES,
+    maxCapacity: MAX_NUMBER_OF_INSTANCES,
     vpcSubnets: {
       // Ensure that our instances are in a private subnet
       subnetType: SubnetType.PRIVATE_WITH_EGRESS
     },
-    defaultInstanceWarmup: Duration.seconds(0)
+    defaultInstanceWarmup: Duration.seconds(0),
+
+    /**
+     * ! This is required because what is happening is the following:
+     * 2 Tasks are running on 1 instance
+     * ECS starts up the 2 new tasks on the old instance (total 4) because it has room
+     * New instance starts up, still initializing
+     * New tasks are running & stable on the old instance
+     * Old tasks are killed on old instance
+     * New instance finishes initializing
+     * Old instance is killed due to ECS tasks healthy, but LB not healthy
+     * Downtime
+     * New instance is healthy
+     * ECS starts tasks on those instances
+     *
+     */
+    healthCheck: HealthCheck.elb({
+      grace: Duration.seconds(
+        HEALTH_CHECK_THRESHOLD_SECONDS * HEALTHY_THRESHOLD_COUNT
+      )
+    })
   });
 
   // Required for non default clusters
@@ -107,7 +126,7 @@ export const createEc2Service = ({
 
   // Health Checks
   ec2Service.targetGroup.configureHealthCheck({
-    healthyThresholdCount: 2,
+    healthyThresholdCount: HEALTHY_THRESHOLD_COUNT,
     unhealthyThresholdCount: 2,
     interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
     timeout: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS - 1),
