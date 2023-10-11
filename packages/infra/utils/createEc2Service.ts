@@ -95,7 +95,7 @@ export const createEc2Service = ({
     {
       autoScalingGroup,
       enableManagedScaling: true,
-      targetCapacityPercent: 60
+      targetCapacityPercent: 100
     }
   );
 
