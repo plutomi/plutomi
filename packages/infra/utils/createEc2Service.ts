@@ -108,7 +108,8 @@ export const createEc2Service = ({
     publicLoadBalancer: true,
     serviceName,
     loadBalancerName,
-    desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE, // Test + 1 remove
+    desiredCount:
+      MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE + 3, // Test + 1 remove
     minHealthyPercent: 50,
     maxHealthyPercent: 200
   });

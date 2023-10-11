@@ -13,6 +13,7 @@
     "@plutomi/env": "^0.1.0",
     "@plutomi/shared": "^0.1.0",
     "@plutomi/validation": "^0.1.0",
+    "axios": "^1.5.1",
     "cookies": "^0.8.0",
     "cors": "^2.8.5",
     "dayjs": "^1.11.7",
