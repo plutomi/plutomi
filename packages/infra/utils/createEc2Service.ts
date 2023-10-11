@@ -24,7 +24,8 @@ import { Metric } from "aws-cdk-lib/aws-cloudwatch";
 import {
   AutoScalingGroup,
   HealthCheck,
-  TerminationPolicy
+  TerminationPolicy,
+  UpdatePolicy
 } from "aws-cdk-lib/aws-autoscaling";
 import { env } from "./env";
 import {
@@ -65,35 +66,36 @@ export const createEc2Service = ({
     clusterName
   });
 
-  const launchTemplate = new LaunchTemplate(stack, launchTemplateName, {
-    launchTemplateName,
+  // -- AUTOSCALING --
+  const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
+    vpc,
+    autoScalingGroupName,
     instanceType: INSTANCE_TYPE,
-    machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM)
+    machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
+    minCapacity: MIN_NUMBER_OF_INSTANCES,
+    maxCapacity: MAX_NUMBER_OF_INSTANCES,
+    defaultInstanceWarmup: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
+    updatePolicy: UpdatePolicy.rollingUpdate(),
+    // Only allow outbound through NAT Gateway
+    allowAllOutbound: false
   });
 
   // https://stackoverflow.com/questions/36523282/aws-ecs-error-when-running-task-no-container-instances-were-found-in-your-clust
-  launchTemplate.userData?.addCommands(
+  autoScalingGroup.addUserData(
     "#!/bin/bash",
     `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`,
     "sudo yum update -y",
     "sudo yum clean all"
   );
 
-  // -- AUTOSCALING --
-  const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
-    vpc,
-    autoScalingGroupName,
-    minCapacity: MIN_NUMBER_OF_INSTANCES,
-    maxCapacity: MAX_NUMBER_OF_INSTANCES,
-    defaultInstanceWarmup: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
-    launchTemplate
-  });
-
   const capacityProvider = new AsgCapacityProvider(
     stack,
     capacityProviderName,
+    // TODO add name to this before deploying
     {
-      autoScalingGroup
+      autoScalingGroup,
+      enableManagedScaling: true,
+      targetCapacityPercent: 60
     }
   );
 
@@ -107,9 +109,7 @@ export const createEc2Service = ({
     publicLoadBalancer: true,
     serviceName,
     loadBalancerName,
-    desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
-    // Note: Ensure that the instance type can handle a 200% increase in tasks if only running one
-    // TODO: or find a way to only deploy new tasks on the new instances?
+    desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE, // Test + 1 remove
     minHealthyPercent: 100,
     maxHealthyPercent: 200
   });
@@ -128,8 +128,12 @@ export const createEc2Service = ({
     path: HEALTH_CHECK_PATH
   });
 
-  // Allow our LB to connect to our instances only
-  ec2Service.loadBalancer.connections.allowTo(autoScalingGroup, Port.allTcp());
+  // Allow our LB to connect to our instances on any port since our containers can be running on any port
+  const AWS_EPHEMERAL_PORT_RANGE = Port.tcpRange(1024, 65535);
+  ec2Service.loadBalancer.connections.allowTo(
+    autoScalingGroup,
+    AWS_EPHEMERAL_PORT_RANGE
+  );
 
   /**
    * Allow instances to talk to the internet & MongoDB
