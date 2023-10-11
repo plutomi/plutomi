@@ -7,6 +7,6 @@ export const get: RequestHandler = async (req, res) => {
     console.log(`Health check successful at ${new Date().toISOString()}`);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error on teh health check!!", error });
+    res.status(500).json({ message: "Error on the health check!!", error });
   }
 };

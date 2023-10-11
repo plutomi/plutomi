@@ -3,13 +3,20 @@ import {
   AsgCapacityProvider,
   Cluster,
   EcsOptimizedImage,
+  MachineImageType,
   PlacementConstraint,
   PlacementStrategy,
   type FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
-import { Port, SubnetType, UserData, type Vpc } from "aws-cdk-lib/aws-ec2";
+import {
+  LaunchTemplate,
+  Port,
+  SubnetType,
+  UserData,
+  type Vpc
+} from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedEc2Service } from "aws-cdk-lib/aws-ecs-patterns";
 import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
@@ -42,8 +49,9 @@ const clusterName = "plutomi-cluster";
 const capacityProviderName = "plutomi-capacity-provider";
 const serviceName = "plutomi-service";
 const loadBalancerName = "plutomi-load-balancer";
+const launchTemplateName = "plutomi-launch-template";
 // This needs to be unique in some deployment use cases
-const autoScalingGroupName = `plutomi-autoscaling-group-${new Date().getTime()}`;
+const autoScalingGroupName = "plutomi-autoscaling-group";
 
 export const createEc2Service = ({
   stack,
@@ -57,58 +65,45 @@ export const createEc2Service = ({
     clusterName
   });
 
-  // ! TODO: Add placement strategy to only add new tasks on new instances
-
-  const autoscalingGroup = cluster.addCapacity(capacityProviderName, {
-    autoScalingGroupName,
+  const launchTemplate = new LaunchTemplate(stack, launchTemplateName, {
+    launchTemplateName,
     instanceType: INSTANCE_TYPE,
-    machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
-    minCapacity: MIN_NUMBER_OF_INSTANCES,
-    maxCapacity: MAX_NUMBER_OF_INSTANCES,
-    vpcSubnets: {
-      // Ensure that our instances are in a private subnet
-      subnetType: SubnetType.PRIVATE_WITH_EGRESS
-    },
-    defaultInstanceWarmup: Duration.seconds(0),
-
-    /**
-     * ! This is required because what is happening is the following:
-     * 2 Tasks are running on 1 instance
-     * ECS starts up the 2 new tasks on the old instance (total 4) because it has room
-     * New instance starts up, still initializing
-     * New tasks are running & stable on the old instance
-     * Old tasks are killed on old instance
-     * New instance finishes initializing
-     * Old instance is killed due to ECS tasks healthy, but LB not healthy
-     * Downtime
-     * New instance is healthy
-     * ECS starts tasks on those instances
-     *
-     */
-    healthCheck: HealthCheck.elb({
-      grace: Duration.seconds(
-        HEALTH_CHECK_THRESHOLD_SECONDS * HEALTHY_THRESHOLD_COUNT
-      )
-    })
+    machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM)
   });
 
-  // Required for non default clusters
   // https://stackoverflow.com/questions/36523282/aws-ecs-error-when-running-task-no-container-instances-were-found-in-your-clust
-  autoscalingGroup.addUserData(
+  launchTemplate.userData?.addCommands(
     "#!/bin/bash",
     `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`,
     "sudo yum update -y",
     "sudo yum clean all"
   );
 
+  // -- AUTOSCALING --
+  const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
+    vpc,
+    autoScalingGroupName,
+    minCapacity: MIN_NUMBER_OF_INSTANCES,
+    maxCapacity: MAX_NUMBER_OF_INSTANCES,
+    defaultInstanceWarmup: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
+    launchTemplate
+  });
+
+  const capacityProvider = new AsgCapacityProvider(
+    stack,
+    capacityProviderName,
+    {
+      autoScalingGroup
+    }
+  );
+
+  cluster.addAsgCapacityProvider(capacityProvider);
+
   const ec2Service = new ApplicationLoadBalancedEc2Service(stack, serviceName, {
     cluster,
     certificate,
     taskDefinition,
-
-    /**
-     * LB is public, instances are in a private subnet
-     */
+    // LB is public, instances are in a private subnet
     publicLoadBalancer: true,
     serviceName,
     loadBalancerName,
@@ -134,7 +129,7 @@ export const createEc2Service = ({
   });
 
   // Allow our LB to connect to our instances only
-  ec2Service.loadBalancer.connections.allowTo(autoscalingGroup, Port.allTcp());
+  ec2Service.loadBalancer.connections.allowTo(autoScalingGroup, Port.allTcp());
 
   /**
    * Allow instances to talk to the internet & MongoDB
@@ -147,7 +142,7 @@ export const createEc2Service = ({
   ];
 
   outboundPorts.forEach((port) => {
-    natGatewayProvider.connections.allowFrom(autoscalingGroup, Port.tcp(port));
+    natGatewayProvider.connections.allowFrom(autoScalingGroup, Port.tcp(port));
   });
 
   return ec2Service;
