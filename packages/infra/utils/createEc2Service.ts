@@ -66,7 +66,6 @@ export const createEc2Service = ({
     clusterName
   });
 
-  // -- AUTOSCALING --
   const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
     vpc,
     autoScalingGroupName,
@@ -95,7 +94,7 @@ export const createEc2Service = ({
     {
       autoScalingGroup,
       enableManagedScaling: true,
-      targetCapacityPercent: 100
+      targetCapacityPercent: 70
     }
   );
 
@@ -110,7 +109,7 @@ export const createEc2Service = ({
     serviceName,
     loadBalancerName,
     desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE, // Test + 1 remove
-    minHealthyPercent: 100,
+    minHealthyPercent: 50,
     maxHealthyPercent: 200
   });
 
