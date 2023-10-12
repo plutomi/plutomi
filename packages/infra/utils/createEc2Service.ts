@@ -90,8 +90,8 @@ export const createEc2Service = ({
   const capacityProvider = new AsgCapacityProvider(
     stack,
     capacityProviderName,
-    // TODO add name to this before deploying
     {
+      capacityProviderName,
       autoScalingGroup
     }
   );
