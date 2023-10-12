@@ -8,14 +8,15 @@ export const MAX_NUMBER_OF_INSTANCES = 4;
  * 2vCPUs, 0.5GB RAM
  */
 export const INSTANCE_TYPE = InstanceType.of(
-  InstanceClass.C7G,
-  InstanceSize.LARGE
+  InstanceClass.T4G,
+  InstanceSize.NANO
 );
 
 // Ensure these values fit within the instance type
-export const CONTAINER_CPU = 800;
-export const CONTAINER_MEMORY_LIMIT = 1600;
-export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 2;
+// Or might cause a crash on deployments due to running out of resources
+export const CONTAINER_CPU = 1800;
+export const CONTAINER_MEMORY_LIMIT = 420;
+export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 1;
 export const HEALTH_CHECK_PATH = "/api/health";
 export const HEALTH_CHECK_THRESHOLD_SECONDS = 5;
 export const HEALTHY_THRESHOLD_COUNT = 2;
