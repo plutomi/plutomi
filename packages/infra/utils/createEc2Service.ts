@@ -24,6 +24,7 @@ import { Metric } from "aws-cdk-lib/aws-cloudwatch";
 import {
   AutoScalingGroup,
   HealthCheck,
+  Signals,
   TerminationPolicy,
   UpdatePolicy
 } from "aws-cdk-lib/aws-autoscaling";
@@ -47,12 +48,11 @@ type CreateEc2ServiceProps = {
 };
 
 const clusterName = "plutomi-cluster";
-const capacityProviderName = "plutomi-capacity-provider";
 const serviceName = "plutomi-service";
 const loadBalancerName = "plutomi-load-balancer";
-const launchTemplateName = "plutomi-launch-template";
-// This needs to be unique in some deployment use cases
+// This needs to be unique due to Replacing Update
 const autoScalingGroupName = "plutomi-autoscaling-group";
+const capacityProviderName = "plutomi-capacity-provider";
 
 export const createEc2Service = ({
   stack,
@@ -66,15 +66,19 @@ export const createEc2Service = ({
     clusterName
   });
 
+  /**
+   * TODO Use a launch template from now on. Launch configs are no longer supported (ie default instance size on ASG)
+   */
+
   const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
     vpc,
     autoScalingGroupName,
     instanceType: INSTANCE_TYPE,
     machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
     minCapacity: MIN_NUMBER_OF_INSTANCES,
+    // desiredCapacity: MIN_NUMBER_OF_INSTANCES,
     maxCapacity: MAX_NUMBER_OF_INSTANCES,
     defaultInstanceWarmup: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
-    updatePolicy: UpdatePolicy.rollingUpdate(),
     // Only allow outbound through NAT Gateway
     allowAllOutbound: false
   });
@@ -92,8 +96,7 @@ export const createEc2Service = ({
     capacityProviderName,
     {
       capacityProviderName,
-      autoScalingGroup,
-      targetCapacityPercent: 100
+      autoScalingGroup
     }
   );
 
@@ -108,7 +111,7 @@ export const createEc2Service = ({
     serviceName,
     loadBalancerName,
     desiredCount: MIN_NUMBER_OF_INSTANCES * NUMBER_OF_CONTAINERS_PER_INSTANCE,
-    minHealthyPercent: 50,
+    minHealthyPercent: 100,
     maxHealthyPercent: 200
   });
 

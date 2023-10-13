@@ -24,21 +24,29 @@ New instance is healthy
 ECS starts tasks on those instances
  */
 export const MIN_NUMBER_OF_INSTANCES = 2;
-export const MAX_NUMBER_OF_INSTANCES = 4;
+export const MAX_NUMBER_OF_INSTANCES = 10;
 /**
  * https://instances.vantage.sh/aws/ec2/t4g.nano?region=us-east-1&os=linux&cost_duration=monthly&reserved_term=Standard.noUpfront
  * 2vCPUs, 0.5GB RAM
  */
 export const INSTANCE_TYPE = InstanceType.of(
+  /**
+   * Runbook for changing instance type without downtime:
+   * - Change the instance type & deploy
+   * - Clickops in the AWS console and update the DESIRED capacity on the ASG to double the minimum at least
+   * - Wait for the new instances to be healthy
+   * - Update the ECS service desired count and deploy
+   * - Lower the tasks back down to the desired count / drain the old instances if needed
+   * - Update the ASG min back to the original value or let the autoscaling handle this
+   *
+   */
   InstanceClass.T4G,
   InstanceSize.NANO
 );
 
 // Ensure these values fit within the instance type
 // Or might cause a crash on deployments due to running out of resources
-// export const CONTAINER_CPU = 400;
-// export const CONTAINER_MEMORY_LIMIT = 800;
-// export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 4;
+
 export const CONTAINER_CPU = 500;
 export const CONTAINER_MEMORY_LIMIT = 350;
 export const NUMBER_OF_CONTAINERS_PER_INSTANCE = 1;
