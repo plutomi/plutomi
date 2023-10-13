@@ -69,7 +69,8 @@ export const createEc2TaskDefinition = ({
         `curl -f http://localhost:${env.PORT}${HEALTH_CHECK_PATH} || exit 1`
       ],
       interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
-      retries: 2
+      startPeriod: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS * 3),
+      retries: 3
     }
     // This is a hard limit, use the other one as its a soft limit
     // memoryLimitMiB: CONTAINER_MEMORY_LIMIT
