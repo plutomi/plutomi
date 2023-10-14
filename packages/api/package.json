@@ -22,7 +22,7 @@
     "nanoid": "3.3.4",
     "next": "^13.3.0",
     "request-ip": "^3.3.0",
-    "zod": "^3.21.4"
+    "zod": "^3.22.3"
   },
   "scripts": {
     "dev": "ts-node-dev --ignore-watch='.next' --exit-child --respawn --transpile-only src/index.ts",
