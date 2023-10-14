@@ -6,8 +6,8 @@ import {
   createDistribution,
   createCertificate,
   createSesConfig,
-  createEc2Service,
-  createEc2TaskDefinition
+  createPlutomiService,
+  createTaskDefinition
 } from "../utils";
 
 type PlutomiStackProps = StackProps;
@@ -17,12 +17,12 @@ export class PlutomiStack extends Stack {
     super(scope, id, props);
 
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
-    const taskDefinition = createEc2TaskDefinition({
+    const taskDefinition = createTaskDefinition({
       stack: this
     });
     const hostedZone = getHostedZone({ stack: this });
     const certificate = createCertificate({ stack: this, hostedZone });
-    const ec2Service = createEc2Service({
+    const ec2Service = createPlutomiService({
       stack: this,
       vpc,
       taskDefinition,

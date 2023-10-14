@@ -259,5 +259,6 @@ export const reservedWorkspaceIds = [
   "assessments",
 
   "verification",
-  "locations"
+  "locations",
+  "sandbox"
 ];

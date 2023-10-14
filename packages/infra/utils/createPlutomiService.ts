@@ -3,9 +3,6 @@ import {
   AsgCapacityProvider,
   Cluster,
   EcsOptimizedImage,
-  MachineImageType,
-  PlacementConstraint,
-  PlacementStrategy,
   type FargateTaskDefinition
 } from "aws-cdk-lib/aws-ecs";
 import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
@@ -13,22 +10,13 @@ import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import {
   LaunchTemplate,
   Port,
-  SubnetType,
+  SecurityGroup,
   UserData,
   type Vpc
 } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { ApplicationLoadBalancedEc2Service } from "aws-cdk-lib/aws-ecs-patterns";
-import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
-import { Metric } from "aws-cdk-lib/aws-cloudwatch";
-import {
-  AutoScalingGroup,
-  HealthCheck,
-  Signals,
-  TerminationPolicy,
-  UpdatePolicy
-} from "aws-cdk-lib/aws-autoscaling";
-import { env } from "./env";
+import { AutoScalingGroup } from "aws-cdk-lib/aws-autoscaling";
 import {
   HEALTHY_THRESHOLD_COUNT,
   HEALTH_CHECK_PATH,
@@ -38,8 +26,9 @@ import {
   MIN_NUMBER_OF_INSTANCES,
   NUMBER_OF_CONTAINERS_PER_INSTANCE
 } from "./config";
+import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
-type CreateEc2ServiceProps = {
+type CreatePlutomiServiceProps = {
   stack: Stack;
   taskDefinition: FargateTaskDefinition;
   certificate: ICertificate;
@@ -53,43 +42,60 @@ const loadBalancerName = "plutomi-load-balancer";
 // This needs to be unique due to Replacing Update
 const autoScalingGroupName = "plutomi-autoscaling-group";
 const capacityProviderName = "plutomi-capacity-provider";
+const launchTemplateName = "plutomi-launch-template";
+const launchTemplateRoleName = "plutomi-launch-template-role";
+const ec2SecurityGroupName = "plutomi-ec2-security-group";
 
-export const createEc2Service = ({
+export const createPlutomiService = ({
   stack,
   taskDefinition,
   certificate,
   vpc,
   natGatewayProvider
-}: CreateEc2ServiceProps): ApplicationLoadBalancedEc2Service => {
+}: CreatePlutomiServiceProps): ApplicationLoadBalancedEc2Service => {
   const cluster = new Cluster(stack, clusterName, {
     vpc,
     clusterName
   });
 
-  /**
-   * TODO Use a launch template from now on. Launch configs are no longer supported (ie default instance size on ASG)
-   */
-
-  const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
-    vpc,
-    autoScalingGroupName,
-    instanceType: INSTANCE_TYPE,
-    machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
-    minCapacity: MIN_NUMBER_OF_INSTANCES,
-    // desiredCapacity: MIN_NUMBER_OF_INSTANCES,
-    maxCapacity: MAX_NUMBER_OF_INSTANCES,
-    defaultInstanceWarmup: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
-    // Only allow outbound through NAT Gateway
-    allowAllOutbound: false
-  });
-
-  // https://stackoverflow.com/questions/36523282/aws-ecs-error-when-running-task-no-container-instances-were-found-in-your-clust
-  autoScalingGroup.addUserData(
+  const userData = UserData.forLinux();
+  userData.addCommands(
+    // https://stackoverflow.com/questions/36523282/aws-ecs-error-when-running-task-no-container-instances-were-found-in-your-clust
     "#!/bin/bash",
     `echo ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`,
     "sudo yum update -y",
     "sudo yum clean all"
   );
+
+  const ec2SecurityGroup = new SecurityGroup(stack, ec2SecurityGroupName, {
+    vpc,
+    allowAllOutbound: false,
+    // Only allow outbound through NAT Gateway - extra check
+    securityGroupName: ec2SecurityGroupName
+  });
+
+  const launchTemplate = new LaunchTemplate(stack, launchTemplateName, {
+    // This is required due to launch configurations (defined in ASGs) being deprecated
+    instanceType: INSTANCE_TYPE,
+    machineImage: EcsOptimizedImage.amazonLinux2(AmiHardwareType.ARM),
+    userData,
+    launchTemplateName,
+    role: new Role(stack, launchTemplateRoleName, {
+      assumedBy: new ServicePrincipal("ec2.amazonaws.com"),
+      roleName: launchTemplateRoleName
+    }),
+    securityGroup: ec2SecurityGroup
+  });
+
+  const autoScalingGroup = new AutoScalingGroup(stack, autoScalingGroupName, {
+    vpc,
+    autoScalingGroupName,
+    launchTemplate,
+    minCapacity: MIN_NUMBER_OF_INSTANCES,
+    // desiredCapacity: MIN_NUMBER_OF_INSTANCES, - Don't set this
+    maxCapacity: MAX_NUMBER_OF_INSTANCES,
+    defaultInstanceWarmup: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS)
+  });
 
   const capacityProvider = new AsgCapacityProvider(
     stack,
@@ -124,8 +130,8 @@ export const createEc2Service = ({
   ec2Service.targetGroup.configureHealthCheck({
     healthyThresholdCount: HEALTHY_THRESHOLD_COUNT,
     unhealthyThresholdCount: 2,
-    interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
-    timeout: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS - 1),
+    interval: Duration.seconds(20),
+    timeout: Duration.seconds(10),
     path: HEALTH_CHECK_PATH
   });
 

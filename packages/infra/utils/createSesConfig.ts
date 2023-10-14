@@ -31,6 +31,10 @@ type CreateSesConfigProps = {
   hostedZone: IHostedZone;
 };
 
+const sesEventTopicName = "SES-Events-Topic";
+const sesEventQueueName = "SES-Events-Queue";
+const sesEventProcessorName = "SES-Event-Processor";
+
 /**
  *
  * Sets up Email from SES with the proper subdomains.
@@ -45,13 +49,13 @@ export const createSesConfig = ({
    * All events go to one SNS topic which sends them to SQS,
    * which is processed by lambda.
    */
-  const sesEventsTopic = new Topic(stack, "SES-Events-Topic", {
-    displayName: "SES Events Topic",
-    topicName: "SES-Events-Topic"
+  const sesEventsTopic = new Topic(stack, sesEventTopicName, {
+    displayName: sesEventTopicName,
+    topicName: sesEventTopicName
   });
 
-  const sesEventsQueue = new Queue(stack, "SES-Events-Queue", {
-    queueName: "SES-Events-Queue",
+  const sesEventsQueue = new Queue(stack, sesEventQueueName, {
+    queueName: sesEventQueueName,
     retentionPeriod: Duration.days(14),
     receiveMessageWaitTime: Duration.seconds(20)
   });
@@ -99,16 +103,16 @@ export const createSesConfig = ({
       "This _dmarc record indicates to your recipients that you properly set up DKIM, and that they are allowed to refuse your email if there is an authentication failure."
   });
 
-  const functionName = "SES-Event-Processor";
-  const eventProcessor = new NodejsFunction(stack, functionName, {
-    functionName,
+  const eventProcessor = new NodejsFunction(stack, sesEventProcessorName, {
+    functionName: sesEventProcessorName,
     runtime: Runtime.NODEJS_18_X,
     entry: path.join(__dirname, "../functions/sesEventProcessor.ts"),
     logRetention: RetentionDays.ONE_WEEK,
     memorySize: 128,
     timeout: Duration.seconds(30),
     architecture: Architecture.ARM_64,
-    description: "Processes SES events"
+    description:
+      "Processes SES events for things like unsubscribes, bounces, etc."
   });
 
   eventProcessor.addEventSource(

@@ -1,7 +1,7 @@
 export const LandingHero: React.FC = () => (
   <div className=" text-start md:text-center px-5">
     <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 ">
-   T4G Now
+   T4G.medium Now
       <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400">
         any scale
       </span>

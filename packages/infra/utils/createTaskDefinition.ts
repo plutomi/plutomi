@@ -1,10 +1,9 @@
 import {
   AwsLogDriver,
   ContainerImage,
-  Ec2TaskDefinition,
-  FargateTaskDefinition
+  Ec2TaskDefinition
 } from "aws-cdk-lib/aws-ecs";
-import { Role, type IRole, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { Duration, type Stack } from "aws-cdk-lib";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { env } from "./env";
@@ -15,7 +14,7 @@ import {
   HEALTH_CHECK_THRESHOLD_SECONDS
 } from "./config";
 
-type CreateEc2TaskDefinitionProps = {
+type CreateTaskDefinitionProps = {
   stack: Stack;
 };
 
@@ -24,9 +23,9 @@ const containerName = "plutomi-container";
 const LOG_STREAM_PREFIX = "plutomi-logs";
 const roleName = "plutomi-ec2-role";
 
-export const createEc2TaskDefinition = ({
+export const createTaskDefinition = ({
   stack
-}: CreateEc2TaskDefinitionProps): Ec2TaskDefinition => {
+}: CreateTaskDefinitionProps): Ec2TaskDefinition => {
   const taskRole = new Role(stack, roleName, {
     roleName,
     assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com")
@@ -41,7 +40,6 @@ export const createEc2TaskDefinition = ({
   taskDefinition.addContainer(containerName, {
     portMappings: [
       {
-        // TODO Add name?
         containerPort: Number(env.PORT)
         // Have dynamic host port so that we can run multiple instances on the same host
         // hostPort: Number(0)
@@ -69,10 +67,12 @@ export const createEc2TaskDefinition = ({
         `curl -f http://localhost:${env.PORT}${HEALTH_CHECK_PATH} || exit 1`
       ],
       interval: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS),
+      // Ensure that this is long enough for startup (node running & any DB lookups)
+      // If not, ECS will get stuck in an infinite loop :(
       startPeriod: Duration.seconds(HEALTH_CHECK_THRESHOLD_SECONDS * 3),
       retries: 3
     }
-    // This is a hard limit, use the other one as its a soft limit
+    // This is a hard limit (DO NOT USE) - use memoryReservationMiB instead as it is a soft limit
     // memoryLimitMiB: CONTAINER_MEMORY_LIMIT
   });
 
