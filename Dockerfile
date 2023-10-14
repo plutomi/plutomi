@@ -1,4 +1,4 @@
-FROM --platform=linux/arm64 node:18-alpine AS deps
+FROM node:20-alpine AS deps
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat 
@@ -22,7 +22,7 @@ RUN yarn global add node-gyp
 RUN yarn install --frozen-lockfile
 
 # Rebuild the source code only when needed
-FROM --platform=linux/arm64 node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy deps over
@@ -44,11 +44,8 @@ RUN yarn build
 
 
 # Production image, copy all the files and run next
-FROM --platform=linux/arm64 node:18-alpine AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
-
-# For container health checks, we need curl to be installed as node:alpine does not come with it
-RUN apk add --no-cache curl
 
 ENV NODE_ENV production
 
@@ -96,7 +93,7 @@ COPY --from=builder /app/node_modules node_modules
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next/standalone ./
 
-# Copy the WEB / NEXTJS files, these will be cached by cloudfront
+# Copy the WEB / NEXTJS files, these will be cached by Cloudflare
 COPY --from=builder  --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
 COPY --from=builder /app/packages/web/public packages/web/public
 

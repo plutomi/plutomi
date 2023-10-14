@@ -5668,11 +5668,6 @@ case@1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-fck-nat@^1.0.93:
-  version "1.0.93"
-  resolved "https://registry.yarnpkg.com/cdk-fck-nat/-/cdk-fck-nat-1.0.93.tgz#7ec429105890d1a6330922b3fb1ec025774963c8"
-  integrity sha512-eC2mqvJgFdAm0Zs/HqYIGKuHvTbo9W6C6vv9iZfr9wgJgk5JBGkxUuypYMyIlEEQ33lLQGY4yPPX0uYAghAhDg==
-
 "chainsaw@>=0.0.7 <0.1":
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/chainsaw/-/chainsaw-0.0.9.tgz#11a05102d1c4c785b6d0415d336d5a3a1612913e"
