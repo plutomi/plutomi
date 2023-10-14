@@ -23,7 +23,6 @@ export const allEnvVariablesSchema = z.object({
     .default(DeploymentEnvironment.DEVELOPMENT),
   // ! For NextJS, make sure to add to packages/web/env.ts as well as the Dockerfile
   NEXT_PUBLIC_BASE_URL: z.string().url().default("http://localhost:3000"), // Used by API and web
-
   MONGO_URL: z.string().includes("mongodb+srv://").includes(".mongodb.net"),
   SESSION_PASSWORD_1: z.string().min(100)
 });
