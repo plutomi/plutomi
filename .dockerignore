@@ -11,6 +11,8 @@ Thumbs.db
 .env
 .env.development
 .env.test
+jest.config.js
+jest.config.ts
 *.env
 tests/
 __tests__/
