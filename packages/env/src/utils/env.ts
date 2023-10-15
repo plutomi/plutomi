@@ -28,7 +28,8 @@ export const allEnvVariablesSchema = z.object({
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
-  NEXT_PUBLIC_BASE_URL: true
+  NEXT_PUBLIC_BASE_URL: true,
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: true
 });
 
 export const databaseEnvSchema = allEnvVariablesSchema.pick({

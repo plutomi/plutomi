@@ -34,7 +34,8 @@ COPY . .
 RUN yarn install --frozen-lockfile
 
 # Add NextJS environment variables here
-ARG NEXT_PUBLIC_BASE_URL
+# ARG NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
 
 # Build the app
 RUN yarn build
