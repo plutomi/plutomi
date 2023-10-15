@@ -27,10 +27,11 @@ COPY --from=deps /app/packages/web/ packages/web/node_modules
 COPY --from=deps /app/packages/env/ packages/env/node_modules 
 COPY --from=deps /app/packages/shared/ packages/shared/node_modules
 COPY --from=deps /app/packages/validation/ packages/validation/node_modules
-COPY --from=deps /app/node_modules node_modules 
+COPY --from=deps /app/node_modules ./node_modules 
 
 # Copy the rest of the files
 COPY . . 
+RUN yarn install --frozen-lockfile
 
 # Add NextJS environment variables here
 ARG NEXT_PUBLIC_BASE_URL
@@ -51,37 +52,42 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy the SHARED package
-COPY --from=builder /app/packages/shared/dist packages/shared 
-COPY --from=builder /app/packages/shared/package.json packages/shared/package.json
+# COPY --from=builder /app/packages/shared/dist packages/shared 
+# COPY --from=builder /app/packages/shared/package.json packages/shared/package.json
 # COPY --from=builder /app/packages/shared/node_modules packages/shared/node_modules
 
 # Copy the ENV package
-COPY --from=builder /app/packages/env/dist packages/env 
-COPY --from=builder /app/packages/env/package.json packages/env/package.json
+# COPY --from=builder /app/packages/env/dist packages/env 
+# COPY --from=builder /app/packages/env/package.json packages/env/package.json
 # COPY --from=builder /app/packages/env/node_modules packages/env/node_modules
 
 # Copy the VALIDATION package
-COPY --from=builder /app/packages/validation/dist packages/validation
-COPY --from=builder /app/packages/validation/package.json packages/validation/package.json
+# COPY --from=builder /app/packages/validation/dist packages/validation
+# COPY --from=builder /app/packages/validation/package.json packages/validation/package.json
 # COPY --from=builder /app/packages/validation/node_modules packages/validation/node_modules
 
 # Coy the necessary ROOT files
-COPY --from=builder /app/package.json package.json
-COPY --from=builder /app/yarn.lock yarn.lock
+# COPY --from=builder /app/package.json package.json
+# COPY --from=builder /app/yarn.lock yarn.lock
 # COPY --from=builder /app/node_modules node_modules
 
 # Copy the WEB / NEXTJS files
-COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
-COPY --from=builder /app/packages/web/public packages/web/public
-# So we can run from root
-COPY --from=builder /app/packages/web/package.json packages/web/package.json
+
+COPY --from=builder /app/packages/web/.next/standalone ./
+COPY --from=builder /app/packages/web/.next/static packages/.next/static
+COPY --from=builder /app/packages/web/public packages/public
+
+# # Automatically leverage output traces to reduce image size
+# # https://nextjs.org/docs/advanced-features/output-file-tracing
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# # So we can run from root
+# COPY --from=builder /app/packages/web/package.json packages/web/package.json
 
 
 # Install production dependencies
-RUN yarn install --production --frozen-lockfile
-# Automatically leverage output traces to reduce image size # TODO
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-# COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next/standalone ./
+# RUN yarn install --production --frozen-lockfile
 
 USER nextjs
 
@@ -89,6 +95,7 @@ EXPOSE 3000
 
 ENV PORT 3000
 
+ENV HOSTNAME "0.0.0.0"
 
 # Running the app
-CMD [ "yarn", "start:web" ]
+CMD ["sh", "-c", "cd packages/web && node server.js"]
