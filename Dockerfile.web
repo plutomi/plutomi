@@ -31,7 +31,7 @@ COPY --from=deps /app/node_modules ./node_modules
 
 # Copy the rest of the files
 COPY . . 
-RUN yarn install --frozen-lockfile --production
+RUN yarn install --frozen-lockfile
 
 # Add NextJS environment variables here
 ARG NEXT_PUBLIC_BASE_URL

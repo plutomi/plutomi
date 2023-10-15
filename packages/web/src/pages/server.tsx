@@ -1,5 +1,4 @@
- import axios from "axios";
- import type { InferGetServerSidePropsType, NextPage } from "next";
+ import type { InferGetServerSidePropsType } from "next";
 import { API } from "../utils/axiosInstance";
 
 const Test = ({ data: { message} }: InferGetServerSidePropsType<typeof getServerSideProps>) => (

@@ -1,17 +1,21 @@
-# fly.toml app configuration file generated for plutomi-prod on 2023-10-14T16:14:59-04:00
+# fly.toml app configuration file generated for prod-plutomi-web on 2023-10-15T17:38:08-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "plutomi-prod"
+app = "prod-plutomi-web"
 primary_region = "iad"
 
 [build]
+dockerfile = "Dockerfile.web"
+
+[env]
+PORT = "3000"
 
 [http_service]
 internal_port = 3000
 force_https = true
-auto_stop_machines = true
+auto_stop_machines = false
 auto_start_machines = true
 min_machines_running = 1
 processes = ["app"]
