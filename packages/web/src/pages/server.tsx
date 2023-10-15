@@ -1,14 +1,15 @@
-import axios from "axios";
-import type { InferGetServerSidePropsType, NextPage } from "next";
-// import { LogInOrSignUpForm } from "../components";
+ import axios from "axios";
+ import type { InferGetServerSidePropsType, NextPage } from "next";
+import { API } from "../utils/axiosInstance";
 
-const Login = ({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
-   <div>Login - {data.message} s</div>
+const Test = ({ data: { message} }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
+   <div>Login - {message} s</div>
 );
 
 
 export const getServerSideProps = async () => {
-   const { data }: { data: { message: string } } = await axios.get('/api/hello')
+   // TODO: Remove - just testing
+   const { data }: { data: { message: string } } = await API.get("/hello");
 
    return {
       props: {
@@ -16,4 +17,8 @@ export const getServerSideProps = async () => {
       }
    }
 }
-export default Login;
+export default Test;
+
+
+
+
