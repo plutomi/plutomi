@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "build": "next build",
+    "start": "next start",
+    "dev": "next dev",
     "lint": "yarn eslint --ext .ts,.tsx .",
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix .",
     "test": "jest"

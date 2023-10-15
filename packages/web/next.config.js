@@ -3,8 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     // https://github.com/vercel/next.js/issues/13045
-    externalDir: true,
-    runtime: "experimental-edge"
+    externalDir: true
   },
   images: {
     remotePatterns: [

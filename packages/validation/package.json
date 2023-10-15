@@ -7,7 +7,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@plutomi/shared": "^0.1.0",
-    "@types/express": "^4.17.17",
     "zod": "^3.21.4"
   },
   "scripts": {
@@ -17,6 +16,7 @@
     "lint:fix": "yarn eslint --ext .ts,.tsx --fix ."
   },
   "devDependencies": {
+    "@types/express": "^4.17.19",
     "rimraf": "^4.4.1",
     "ts-node-dev": "^2.0.0"
   }
