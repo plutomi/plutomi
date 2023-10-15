@@ -72,15 +72,10 @@ RUN adduser --system --uid 1001 nextjs
 # COPY --from=builder /app/node_modules node_modules
 
 # Copy the WEB / NEXTJS files
-
 COPY --from=builder /app/packages/web/.next/standalone ./
-COPY --from=builder /app/packages/web/.next/static packages/.next/static
-COPY --from=builder /app/packages/web/public packages/public
+COPY --from=builder /app/packages/web/.next/static packages/web/.next/static
+COPY --from=builder /app/packages/web/public packages/web/public
 
-# # Automatically leverage output traces to reduce image size
-# # https://nextjs.org/docs/advanced-features/output-file-tracing
-# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-# COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # # So we can run from root
 # COPY --from=builder /app/packages/web/package.json packages/web/package.json

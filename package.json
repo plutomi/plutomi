@@ -36,7 +36,7 @@
   "scripts": {
     "test": "nx run-many -t test --parallel",
     "aws:login": "aws sso login --sso-session=plutomi",
-    "dev": "nx run-many -t=dev",
+    "web:dev": "yarn workspace @plutomi/web dev",
     "build": "yarn build:shared && yarn build:env && yarn build:validation && yarn build:web",
     "build:shared": "yarn workspace @plutomi/shared build",
     "build:env": "yarn workspace @plutomi/env build",
