@@ -31,15 +31,6 @@ export const webEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_BASE_URL: true
 });
 
-export const apiEnvSchema = allEnvVariablesSchema.pick({
-  PORT: true,
-  NODE_ENV: true,
-  NEXT_PUBLIC_BASE_URL: true,
-  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: true,
-  MONGO_URL: true,
-  SESSION_PASSWORD_1: true
-});
-
 export const databaseEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: true,
   MONGO_URL: true

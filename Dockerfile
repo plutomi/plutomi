@@ -73,6 +73,9 @@ COPY --from=builder /app/node_modules node_modules
 # Copy the WEB / NEXTJS files
 COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
 COPY --from=builder /app/packages/web/public packages/web/public
+# So we can run from root
+COPY --from=builder /app/packages/web/package.json packages/web/package.json
+
 
 # Install production dependencies
 RUN yarn install --production --frozen-lockfile
