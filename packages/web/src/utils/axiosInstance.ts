@@ -1,7 +1,10 @@
 import axios from "axios";
 
 export const API = axios.create({
-  // This will always be localhost, even in stage or prod. Its internal for the web app
-  // Then the web app will reach out to our real API written in whatever
-  baseURL: "http://localhost:3000/api"
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? // In production, reach out to our Rust / Go / whatever API
+        "internal.api"
+      : // Locally, reach out to our local API
+        "http://localhost:8000/api"
 });
