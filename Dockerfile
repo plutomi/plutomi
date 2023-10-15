@@ -53,22 +53,22 @@ RUN adduser --system --uid 1001 nextjs
 # Copy the SHARED package
 COPY --from=builder /app/packages/shared/dist packages/shared 
 COPY --from=builder /app/packages/shared/package.json packages/shared/package.json
-COPY --from=builder /app/packages/shared/node_modules packages/shared/node_modules
+# COPY --from=builder /app/packages/shared/node_modules packages/shared/node_modules
 
 # Copy the ENV package
 COPY --from=builder /app/packages/env/dist packages/env 
 COPY --from=builder /app/packages/env/package.json packages/env/package.json
-COPY --from=builder /app/packages/env/node_modules packages/env/node_modules
+# COPY --from=builder /app/packages/env/node_modules packages/env/node_modules
 
 # Copy the VALIDATION package
 COPY --from=builder /app/packages/validation/dist packages/validation
 COPY --from=builder /app/packages/validation/package.json packages/validation/package.json
-COPY --from=builder /app/packages/validation/node_modules packages/validation/node_modules
+# COPY --from=builder /app/packages/validation/node_modules packages/validation/node_modules
 
 # Coy the necessary ROOT files
 COPY --from=builder /app/package.json package.json
 COPY --from=builder /app/yarn.lock yarn.lock
-COPY --from=builder /app/node_modules node_modules
+# COPY --from=builder /app/node_modules node_modules
 
 # Copy the WEB / NEXTJS files
 COPY --from=builder --chown=nextjs:nodejs /app/packages/web/.next packages/web/.next
