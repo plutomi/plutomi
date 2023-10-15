@@ -4,7 +4,7 @@ const nextConfig = {
   experimental: {
     // https://github.com/vercel/next.js/issues/13045
     externalDir: true,
-    runtime: "edge"
+    runtime: "experimental-edge"
   },
   images: {
     remotePatterns: [
