@@ -13,7 +13,7 @@ func main() {
 
 	http.HandleFunc("/api/ssr", func(w http.ResponseWriter, r *http.Request) {
 		message := map[string]string{
-			"message": fmt.Sprintf("SSR - %s", time.Now().Format(time.RFC3339)),
+			"message": fmt.Sprintf("SSR GO APP - %s", time.Now().Format(time.RFC3339)),
 		}
 
 		w.Header().Set("Content-Type", "application/json")

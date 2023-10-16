@@ -8,13 +8,16 @@ const Test = ({ data: { message} }: InferGetServerSidePropsType<typeof getServer
 
 export const getServerSideProps = async () => {
    // TODO: Remove - just testing
-   const { data }: { data: { message: string } } = await API.get("/ssr");
 
-   return {
-      props: {
-         data
+      const { data }: { data: { message: string } } = await API.get("/ssr");
+
+      return {
+         props: {
+            data
+         }
       }
-   }
+
+
 }
 export default Test;
 
