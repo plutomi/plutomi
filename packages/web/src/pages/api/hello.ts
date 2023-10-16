@@ -4,6 +4,7 @@ import { API } from "../../utils/axiosInstance";
 type ResponseData = {
   message: string;
   responseFromApi: any;
+  error: any;
 };
 
 export default async function handler(
@@ -19,12 +20,16 @@ export default async function handler(
     const x = await API.get("/ssr");
     res.status(200).json({
       message: `SSR - ${new Date().toISOString()}`,
-      responseFromApi: x.data
+      responseFromApi: x.data,
+      error: undefined
     });
-  } catch (error) {
+  } catch (error: any) {
+    // eslint-disable-next-line no-console
+    console.error(error.response);
     res.status(200).json({
       message: `SSR - ${new Date().toISOString()}`,
-      responseFromApi: "nothing, we errored out"
+      responseFromApi: "nothing, we errored out",
+      error
     });
   }
 }
