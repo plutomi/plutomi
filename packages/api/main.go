@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	http.HandleFunc("/ssr", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/ssr", func(w http.ResponseWriter, r *http.Request) {
 		message := map[string]string{
 			"message": fmt.Sprintf("SSR - %s", time.Now().Format(time.RFC3339)),
 		}
@@ -20,11 +20,11 @@ func main() {
 		json.NewEncoder(w).Encode(message)
 	})
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
 	})
 
-	http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hi")
 	})
 

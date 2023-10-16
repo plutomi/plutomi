@@ -6,7 +6,7 @@ export const API = axios.create({
       ? // In production, reach out to our Rust / Go / whatever API
         `${
           process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT as string
-        }.api.internal`
+        }-plutomi-api.internal`
       : // Locally, reach out to our local API
-        "http://localhost:8000/api"
+        "http://localhost:8080/api"
 });
