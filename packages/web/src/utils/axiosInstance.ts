@@ -8,5 +8,5 @@ export const API = axios.create({
           process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT as string
         }-plutomi-api.internal:8080`
       : // Locally, reach out to our local API
-        "http://localhost:8080/api"
+        "http://localhost:8080"
 });
