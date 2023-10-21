@@ -5,7 +5,7 @@ FROM golang:1.21 AS builder
 WORKDIR /app
 
 # Copy everything from the current directory to the Working Directory inside the container
-COPY packages/api/ ./
+# COPY ./main ./
 
 # Build the Go app
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./main.go
