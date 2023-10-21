@@ -1,5 +1,9 @@
 
 
+export const runtime = 'edge';
+
+
+
 const Test = ({ data: { message} } : any) => (
    <div>SSR Page - {message} s</div>
 );
