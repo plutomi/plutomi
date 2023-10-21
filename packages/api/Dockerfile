@@ -10,7 +10,7 @@ COPY ./ ./
 # Build the Rust app using Cargo (Rust's build tool)
 RUN cargo build --release
 
-# Start a new stage to create a smaller final image
+# Start a new stage to create a smaller final image - # Choose a smaller image!
 FROM ubuntu:latest AS runtime
 
 COPY --from=builder /app/target/release/api ./api
