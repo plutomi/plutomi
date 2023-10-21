@@ -10,7 +10,9 @@ const Test = ({ data: { message} } : any) => (
 
 
 export const getServerSideProps = async () => {
-      const { data }: { data: { message: string } } = await fetch("https://api.plutomi.com/api/ssr").then(res => res.json());
+      const res  = await fetch("https://api.plutomi.com/ssr-page")
+
+      const data = await res.text()
       return {
          props: {
             data
