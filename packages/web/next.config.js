@@ -5,8 +5,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api(.*)",
-        destination: "/this-is-not-the-api-url-you-are-looking-for",
+        source: "/api/(.*)",
+        destination: "/api-fallback",
       },
     ];
   },
