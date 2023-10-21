@@ -124,6 +124,13 @@ const url = DE === "production" ? "https://api.plutomi.com" : DE === 'staging' ?
 export const getServerSideProps = async () => {
   const res = await fetch(`${url}/ssr`);
 
+  if (!res.ok) {
+    return {
+      props: {
+        data: `Error: ${res.status} - ${res.statusText} - ${await res.text()}`,
+      },
+    };
+  }
   const data = await res.text();
   return {
     props: {
