@@ -1,5 +1,5 @@
 # Start from the official Rust base image
-FROM rust:latest AS builder
+FROM clux/muslrust:stable AS builder
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -11,9 +11,9 @@ COPY ./ ./
 RUN cargo build --release
 
 # Start a new stage to create a smaller final image - # Choose a smaller image!
-FROM ubuntu:latest AS runtime
+FROM alpine:latest AS runtime
 
-COPY --from=builder /app/target/release/api ./api
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/api ./api
 
 # This container exposes port 8080 to the outside world
 EXPOSE 8080
