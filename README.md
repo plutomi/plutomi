@@ -14,6 +14,8 @@ Add a new fly environment
 
 fly apps create
 
+FE is deployed to cloudflare pages, preview environments one everything thats not main
+
 # TODO:
 
 staging.plutomi.com
