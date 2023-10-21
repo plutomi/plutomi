@@ -10,6 +10,10 @@ plutomi.com / api.plutomi.com
 
 scripts/deploy:web.sh production
 
+Add a new fly environment
+
+fly apps create
+
 # TODO:
 
 staging.plutomi.com
