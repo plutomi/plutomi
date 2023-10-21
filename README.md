@@ -2,7 +2,9 @@
 
 TODO:
 
-Plutomi WEB runs on Cloudflare pages. This allows us to have a mostly static export and use workers for SSR calls which call our real api written in Rust on fly.io. 
+Plutomi WEB runs on Cloudflare pages. This allows us to have a mostly static export and use workers for SSR calls which call our real api written in Rust on fly.io. You can find a guide for cloudflare pages & nextjs here: https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site
+
+`npm create cloudflare@latest packages/web -- --framework=next`
 
 plutomi.com / api.plutomi.com
 
@@ -116,18 +118,18 @@ export const allEnvVariablesSchema = z.object({
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
   NEXT_PUBLIC_BASE_URL: z.string().url(),
   // Example web env
-  GA_TRACKING_ID: z.string()
+  GA_TRACKING_ID: z.string(),
 });
 
 export const webEnvSchema = allEnvVariablesSchema.pick({
   NEXT_PUBLIC_BASE_URL: true,
-  GA_TRACKING_ID: true
+  GA_TRACKING_ID: true,
 });
 
 export const apiEnvSchema = allEnvVariablesSchema.pick({
   PORT: true,
   NODE_ENV: true,
-  NEXT_PUBLIC_BASE_URL: true
+  NEXT_PUBLIC_BASE_URL: true,
 });
 ```
 
@@ -141,7 +143,7 @@ import { webEnvSchema, parseEnv, SchemaEnvironment } from "@plutomi/env";
 export const env = parseEnv({
   envSchema: webEnvSchema,
   // Used for error logging which environment has invalid variables
-  schemaEnvironment: SchemaEnvironment.WEB
+  schemaEnvironment: SchemaEnvironment.WEB,
 });
 ```
 
