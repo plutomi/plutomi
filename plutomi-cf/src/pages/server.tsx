@@ -4,8 +4,8 @@ export const runtime = 'experimental-edge';
 
 
 
-const Test = ({ data: { message} } : any) => (
-   <div>SSR Page - {message} s</div>
+const Test = ({ data } : any) => (
+   <div>SSR Page - {data}</div>
 );
 
 
