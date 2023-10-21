@@ -13,11 +13,8 @@ trap cleanup SIGINT SIGTERM
 # Navigate to the API directory
 cd packages/api
 
-# Build the Go application
-go build -o main
-
-# Run the built binary
-./main &
+# Build the Rust application
+cargo run
 
 # Store the PID of the background process
 PID=$!
