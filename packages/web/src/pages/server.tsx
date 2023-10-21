@@ -92,7 +92,7 @@ const url =
     ? "https://api.plutomi.com"
     : DE === "staging"
     ? "https://staging-api.plutomi.com"
-    : "http://localhost:8080";
+    : "http://0.0.0.0:8080";
 
 export const getServerSideProps = async () => {
   const res = await fetch(`${url}/ssr`);
