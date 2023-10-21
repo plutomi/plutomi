@@ -5,7 +5,8 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 
-export const runtime = 'edge';
+// TODO: Make this a const
+export const runtime = 'experimental-age';
 
 
 const Server = ({ data } : any) => (
