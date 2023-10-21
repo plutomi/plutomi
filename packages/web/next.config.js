@@ -5,7 +5,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/*",
+        source: "/api(.*)",
         destination: "/this-is-not-the-api-url-you-are-looking-for", // Matched parameters can be used in the destination
       },
     ];
