@@ -9,6 +9,10 @@
       "name": "api"
     },
     {
+      "path": "packages/oldweb",
+      "name": "oldweb"
+    },
+    {
       "path": "packages/web",
       "name": "web"
     },

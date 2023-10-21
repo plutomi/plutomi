@@ -1,5 +1,9 @@
 # Plutomi
 
+TODO:
+
+Plutomi WEB runs on Cloudflare pages. This allows us to have a mostly static export and use workers for SSR calls which call our real api written in Rust on fly.io. 
+
 plutomi.com / api.plutomi.com
 
 # TODO:
