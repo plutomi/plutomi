@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 
 // TODO: Make this a const
-export const runtime = 'experimental-age';
+export const runtime = 'experimental-edge';
 
 
 const Server = ({ data } : any) => (

@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: "/api(.*)",
-        destination: "/this-is-not-the-api-url-you-are-looking-for", // Matched parameters can be used in the destination
+        destination: "/this-is-not-the-api-url-you-are-looking-for",
       },
     ];
   },
