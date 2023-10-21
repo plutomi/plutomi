@@ -10,6 +10,7 @@ cd packages/api
 if [ "$DEPLOYMENT_ENVIRONMENT" == "staging" ]; then
   for i in {1..3}; do
     echo -e "\n\n-- No environment specified, defaulting to 'staging' --\n\n"
+    done
 fi
 
 # Generate the fly.toml file from the template
