@@ -122,7 +122,7 @@ const Server = ({ data } : any) => (
  
  
  export const getServerSideProps = async () => {
-       const res  = await fetch("https://api.plutomi.com/ssr-page")
+       const res  = await fetch("https://api.plutomi.com/ssr")
  
        const data = await res.text()
        return {
