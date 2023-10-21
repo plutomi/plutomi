@@ -11,8 +11,9 @@ plutomi.com / api.plutomi.com
 scripts/deploy:web.sh production
 
 Add a new fly environment
-
-fly apps create
+in `packages/api`
+`fly apps create`
+Go through the guided setup (select org, app name). Whatever your app name is, make sure it matches the `fly.toml` file
 
 FE is deployed to cloudflare pages, preview environments one everything thats not main
 

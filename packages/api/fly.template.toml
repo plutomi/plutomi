@@ -3,7 +3,8 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "production-plutomi-api"
+# Do not modify the fly.toml that is generated
+app = "{{ENV}}-plutomi-api"
 primary_region = "iad"
 
 # [build]
