@@ -2,7 +2,7 @@ import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Schema } from "@plutomi/validation";
+// import { Schema } from "@plutomi/validation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -45,9 +45,7 @@ export const WaitListCard: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<WaitlistFormValues>({
-    resolver: zodResolver(Schema.Subscribe.UISchema)
-  });
+  } = useForm<WaitlistFormValues>();
 
   const subscribe = useMutation({
     mutationFn: async (data: WaitlistFormValues) =>

@@ -1,4 +1,3 @@
-import { PlutomiEmails } from "@plutomi/shared";
 // import { toast } from "react-hot-toast";
 import { Button } from "../Button";
 
@@ -15,7 +14,7 @@ export const HomepageFooter: React.FC = () => (
             // });
           }}
         >
-          {PlutomiEmails.JOSE}
+          jose@plutomi.com
         </Button>
       </div>
     </footer>
