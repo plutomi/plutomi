@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -18,6 +18,6 @@
       "@/*": ["./*"]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "**/__tests__/**"],
   "include": ["next-env.d.ts", "./**/*.ts", "./**/*.tsx"]
 }
