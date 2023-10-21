@@ -26,6 +26,7 @@
     "certificatemanager",
     "Clickops",
     "Codereview",
+    "compat",
     "consts",
     "Cooldown",
     "cpus",

@@ -1,16 +1,18 @@
- import type { InferGetServerSidePropsType } from "next";
-import { API } from "../utils/axiosInstance";
 
-const Test = ({ data: { message} }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
-   <div>Login - {message} s</div>
+
+export const runtime = 'experimental-edge';
+
+
+
+const Test = ({ data } : any) => (
+   <div>SSR Page - {data}</div>
 );
 
 
 export const getServerSideProps = async () => {
-   // TODO: Remove - just testing
+      const res  = await fetch("https://api.plutomi.com/ssr-page")
 
-      const { data }: { data: { message: string } } = await API.get("/ssr");
-
+      const data = await res.text()
       return {
          props: {
             data
@@ -20,7 +22,3 @@ export const getServerSideProps = async () => {
 
 }
 export default Test;
-
-
-
-
