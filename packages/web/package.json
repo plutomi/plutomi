@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "pages:build": "npx @cloudflare/next-on-pages@1",
-    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=$ENV-plutomi"
+    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=plutomi"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
