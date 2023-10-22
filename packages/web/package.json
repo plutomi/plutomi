@@ -11,22 +11,38 @@
     "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=$ENV-plutomi"
   },
   "dependencies": {
-    "@types/node": "20.8.7",
-    "@types/react": "18.2.31",
-    "@types/react-dom": "18.2.14",
-    "autoprefixer": "10.4.16",
-    "eslint": "8.52.0",
+    "@hookform/resolvers": "^3.3.2",
+    "@tanstack/react-query": "^5.0.0",
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.5.1",
     "eslint-config-next": "13.5.6",
+    "eslint-config-standard-with-typescript": "^39.1.1",
     "next": "13.5.6",
     "postcss": "8.4.31",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.47.0",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.11.0",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "zustand": "^4.4.4"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.7.1",
+    "@types/node": "^20.8.7",
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.52.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-recommended": "^4.1.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-next-on-pages": "^1.7.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "vercel": "^32.5.0"
   }
 }
