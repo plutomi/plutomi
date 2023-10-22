@@ -1,10 +1,10 @@
 # Plutomi
 
-TODO: chmod +x scripts/\*
+---
+
+Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 Plutomi WEB runs on Cloudflare pages. This allows us to have a mostly static export and use workers for SSR calls which call our real api written in Rust on fly.io. You can find a guide for cloudflare pages & nextjs here: https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site
-
-`npm create cloudflare@latest packages/web -- --framework=next`
 
 plutomi.com / api.plutomi.com
 
@@ -16,13 +16,6 @@ in `packages/api`
 Go through the guided setup (select org, app name). Whatever your app name is, make sure it matches the `fly.toml` file
 
 FE is deployed to cloudflare pages, preview environments one everything thats not main
-
-# TODO:
-
-staging.plutomi.com
-api.staging.plutomi.com
-
-Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![release badge](https://github.com/plutomi/plutomi/actions/workflows/release.yml/badge.svg)
 ![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
@@ -43,7 +36,6 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 ![tests-validation](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fenv%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Validation&color=%238A2BE2%09)
 ![tests-shared](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fshared%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Shared&color=%238A2BE2%09)
 
-#### Infra
 
 ![infra](images/infra.png)
 
