@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
+    "@tabler/icons-react": "^2.39.0",
     "@tanstack/react-query": "^5.0.0",
     "autoprefixer": "^10.4.16",
     "axios": "^1.5.1",
