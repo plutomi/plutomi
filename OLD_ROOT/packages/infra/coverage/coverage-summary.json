@@ -1,3 +1,0 @@
-{"total": {"lines":{"total":20,"covered":18,"skipped":0,"pct":90},"statements":{"total":21,"covered":19,"skipped":0,"pct":90.47},"functions":{"total":2,"covered":2,"skipped":0,"pct":100},"branches":{"total":3,"covered":1,"skipped":0,"pct":33.33},"branchesTrue":{"total":0,"covered":0,"skipped":0,"pct":"Unknown"}}
-,"/Users/josevalerio/Documents/GitHub/plutomi/packages/infra/cdk.out/asset.bf0e7770525cc96205939f0066fd65de30952b1ba8bbf574775484e30b2bc880/packages/api/src/utils/generatePlutomiId/generatePlutomiId.ts": {"lines":{"total":20,"covered":18,"skipped":0,"pct":90},"functions":{"total":2,"covered":2,"skipped":0,"pct":100},"statements":{"total":21,"covered":19,"skipped":0,"pct":90.47},"branches":{"total":3,"covered":1,"skipped":0,"pct":33.33}}
-}

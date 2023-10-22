@@ -41,10 +41,9 @@ See the [scripts README](scripts/README.md) for more information.
 
 ## Database Schema
 
-We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). We write very small documents and index a `relatedTo` attribute that is shared across all items. This is how we are able to query for an item and all of its related items without `$lookup`. See the example below with an applicant and their notes and files:
+We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=1190)). We write very small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. See the example below with an applicant and their notes and files:
 
 ```typescript
-// Here are the small individual documents we write to the database
 const applicant = {
   name: "Jose Valerio",
   nickname: "joswayski",
@@ -105,7 +104,6 @@ To make a contribution, submit a pull request into the `main` branch. You will b
 Thanks goes to these wonderful people who contributed!
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
