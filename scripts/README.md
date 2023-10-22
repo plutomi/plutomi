@@ -12,7 +12,7 @@ Which will start the API and the frontend in development mode. You can run eithe
 
 ## Deploying
 
-As stated in the [root README](../README.md), the frontend is a NextJS app on [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/) and the API is a Rust + Axum container on [Fly.io](https://fly.io/docs/speedrun/). To deploy either, you can run:
+As shown in the [root README](../README.md), the frontend is a NextJS app on [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/) and the API is a Rust + Axum container on [Fly.io](https://fly.io/docs/speedrun/). To deploy either, you can run:
 
 ```bash
 $ scripts/deploy/web.sh
@@ -25,7 +25,7 @@ For the API, if you do not specify a deployment environment, it will default to 
 $ scripts/deploy/web.sh production
 ```
 
-This will pass `--branch=main` to the deploy script. Ensure that `main` is set to your production environment and everything should work.
+This will pass `--branch=main` to the deploy script. Ensure that `main` is set for your production environment on Cloudflare and everything should work.
 
 ## Adding more scripts
 
