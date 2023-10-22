@@ -1,41 +1,6 @@
 # Plutomi
 
----
-
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
-
-Plutomi WEB runs on Cloudflare pages. This allows us to have a mostly static export and use workers for SSR calls which call our real api written in Rust on fly.io. You can find a guide for cloudflare pages & nextjs here: https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site
-
-plutomi.com / api.plutomi.com
-
-scripts/deploy:web.sh production
-
-Add a new fly environment
-in `packages/api`
-`fly apps create`
-Go through the guided setup (select org, app name). Whatever your app name is, make sure it matches the `fly.toml` file
-
-FE is deployed to cloudflare pages, preview environments one everything thats not main
-
-![release badge](https://github.com/plutomi/plutomi/actions/workflows/release.yml/badge.svg)
-![build badge](https://github.com/plutomi/plutomi/actions/workflows/build.yml/badge.svg)
-![linter badge](https://github.com/plutomi/plutomi/actions/workflows/linter.yml/badge.svg)
-![spellcheck badge](https://github.com/plutomi/plutomi/actions/workflows/spellcheck.yml/badge.svg)
-![prettier badge](https://github.com/plutomi/plutomi/actions/workflows/prettier.yml/badge.svg)
-
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=plastic&color=informational)](http://makeapullrequest.com)
-[![License](https://img.shields.io/github/license/plutomi/plutomi?style=plastic&color=important)](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0)
-[![Contributors](https://img.shields.io/badge/all_contributors-4-blue.svg?style=plastic&color=yellow)](#contributors)
-
-##### Test Coverage (WIP)
-
-![tests-api](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fapi%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=API&color=%238A2BE2%09)
-![tests-web](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fweb%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Web&color=%238A2BE2%09)
-![tests-infra](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Finfra%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Infra&color=%238A2BE2%09)
-![tests-env](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fenv%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Env&color=%238A2BE2%09)
-![tests-validation](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fenv%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Validation&color=%238A2BE2%09)
-![tests-shared](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fplutomi%2Fplutomi%2Fmain%2Fpackages%2Fshared%2Fcoverage%2Fcoverage-summary.json&query=%24.total.lines.pct&suffix=%25&label=Shared&color=%238A2BE2%09)
-
 
 ![infra](images/infra.png)
 
@@ -63,94 +28,71 @@ Stages:
 
 ## Prerequisites
 
-- [Node 18](https://nodejs.org/en/download)
+- [Node 20](https://nodejs.org/en/download)
 - [Docker](https://docs.docker.com/get-docker/)
-- Install the [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) `yarn global add aws-cdk`
-- Install the [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
-
-## Useful Commands
-
-- `yarn` - Install deps.
-  - TODO remove nx and update docs
-- `yarn build` - Build the app, the correct ordering is set in the `nx.json` file for dependencies across packages like shared types
-
-- `yarn test` - Run tests in parallel or `yarn workspace @plutomi/api test` to run tests in a specific package
-
-- `yarn dev` - Start the app
-
-- `yarn pretty/pretty:fix` - Run prettier & fix any issues
-
-- `yarn lint/lint:fix` - Run the linter & fix any issues
-
-- `yarn tidy` - Runs `pretty:fix` and `lint:fix` sequentially
-<!-- cspell:disable-next-line -->
-- `yarn spellcheck` - Mkae srue you didn't goof up a wrod
-
-- `yarn clean` - Remove all `node_modules` and `dist` folders
-
-- `yarn aws:login` - Login to AWS with your credentials using SSO
-
+- [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
   - To setup AWS with SSO, you can check [this tutorial](https://docs.sst.dev/setting-up-aws#create-a-management-account)
+- [Rust](https://www.rust-lang.org/tools/install)
+- [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
 
-## Language, Tooling, & Infrastructure
+## Useful Scripts
 
-> Make sure to open the `plutomi.code-workspace` file to get the best dev experience with linters and such
+See the [scripts README](scripts/README.md) for more information.
 
-#### WAF
+## Database Schema
 
-// TODO Generated by chatgippity lel
-
-We are using [Cloudflare](https://www.cloudflare.com/) for our WAF / CDN / DNS. We are using [Cloudflare Workers](https://workers.cloudflare.com/) to proxy requests to our API. This is because we are using [Fly.io](https://fly.io/) for our API and they don't have a WAF yet. We are using [Cloudflare Pages](https://pages.cloudflare.com/) to host our frontend. We are using [Cloudflare Access](https://www.cloudflare.com/en-gb/teams/access/) to manage access to our API and frontend. We are using [Cloudflare Workers KV](https://developers.cloudflare.com/workers/runtime-apis/kv) to store our sessions.
-
-#### MongoDB
-
-We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) due to DynamoDB no longer meeting our needs. We store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). It works great. No ORM as they aren't really designed for the way we are using it and it was hard trying to shoehorn this pattern in. This may change in the future.
-
-#### Environment Variables
-
-> Check the .env.sample in each package for guidance
-
-In **packages/env**, there is an `env.ts` file which has **ALL** of the environment variables for the app as well as the schema for each package. We `pick` the environment variables needed in each package to create a schema:
+We are using Mongo on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=960)). We write very small documents and index a `relatedTo` attribute that is shared across all items. This is how we are able to query for an item and all of its related items without `$lookup`. See the example below with an applicant and their notes and files:
 
 ```typescript
-export const allEnvVariablesSchema = z.object({
-  PORT: portSchema,
-  NODE_ENV: z.nativeEnum(NodeEnvironment),
-  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z.nativeEnum(DeploymentEnvironment),
-  NEXT_PUBLIC_BASE_URL: z.string().url(),
-  // Example web env
-  GA_TRACKING_ID: z.string(),
-});
+// Here are the small individual documents we write to the database
+const applicant = {
+  name: "Jose Valerio",
+  nickname: "joswayski",
+  company: "Plutomi, Inc.",
+  relatedTo: [
+    {
+      id: "applicant_123",
+      type: "self", // Every item has a reference to itself
+    },
+  ],
+};
 
-export const webEnvSchema = allEnvVariablesSchema.pick({
-  NEXT_PUBLIC_BASE_URL: true,
-  GA_TRACKING_ID: true,
-});
+const note = {
+  text: "This applicant is great!",
+  createdBy: "Random Hiring Manager",
+  relatedTo: [
+    {
+      id: "note_123",
+      type: "self", /
+    },
+    {
+      id: "applicant_123", // Reference to the applicant
+      type: "note",
+    },
+  ],
+};
 
-export const apiEnvSchema = allEnvVariablesSchema.pick({
-  PORT: true,
-  NODE_ENV: true,
-  NEXT_PUBLIC_BASE_URL: true,
-});
+const file = {
+  name: "resume.pdf",
+  url: "https://assets.plutomi.com/resume.pdf",
+  relatedTo: [
+    {
+      id: "file_123",
+      type: "file",
+    }
+    {
+      id: "applicant_123", // Reference to the applicant
+      type: "file",
+    },
+  ],
+};
+
+
+const applicantWithNotesAndFiles = db.find({ relatedTo: { $elemMatch: { id: "applicant_123" } } });
+const justTheNotesForThisApplicant = db.find({ relatedTo: { $elemMatch: { id: "applicant_123", type: "notes" } } });
+
+
 ```
-
-When _running locally_ , the `.env` in the `api` package is the most important. Those are the variables that are used throughout the app. When _deploying_ locally (not recommended), things change a bit and the `web` package (NextJS) uses its own local `.env` and the API uses the `.env` in the `infra` package.
-
-To setup an `env.ts` file in each package, you can use the `parseEnv` function:
-
-```typescript
-import { webEnvSchema, parseEnv, SchemaEnvironment } from "@plutomi/env";
-
-export const env = parseEnv({
-  envSchema: webEnvSchema,
-  // Used for error logging which environment has invalid variables
-  schemaEnvironment: SchemaEnvironment.WEB,
-});
-```
-
-You can then get type safe environment variables in each package:
-
-![type-safe-env](images/type-safe-env.png)
 
 ## License
 
