@@ -12,19 +12,20 @@ Which will start the API and the frontend in development mode. You can run eithe
 
 ## Deploying
 
-As stated in the [root README](../README.md), the frontend is a NextJS app on [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/) and the API is a Rust + Axum container on [Fly.io](https://fly.io/docs/speedrun/). To deploy the frontend, you can run:
+As stated in the [root README](../README.md), the frontend is a NextJS app on [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/) and the API is a Rust + Axum container on [Fly.io](https://fly.io/docs/speedrun/). To deploy either, you can run:
 
 ```bash
 $ scripts/deploy/web.sh
+$ scripts/deploy/api.sh
 ```
 
-and the API with:
+For the API, if you do not specify a deployment environment, it will default to `staging`. For the frontend, Cloudflare automatically deploys to staging environments (called "preview environments") for every pull request & commit not on the `main` branch. To force a deploy to production, you can run:
 
 ```bash
-$ scripts/deploy/api.sh production/staging
+$ scripts/deploy/web.sh production
 ```
 
-For the API, if you do not specify a deployment environment, it will default to `staging`. For the frontend, Cloudflare automatically deploys to staging environments (called preview environments) for every pull request & commit not on the `main` branch.
+This will pass `--branch=main` to the deploy script. Ensure that `main` is set to your production environment and everything should work.
 
 ## Adding more scripts
 
@@ -38,4 +39,10 @@ To fix this, you can run:
 
 ```bash
 $ chmod +x scripts/run/example.sh
+```
+
+Or for the whole directory:
+
+```bash
+$ chmod +x scripts/run/*
 ```
