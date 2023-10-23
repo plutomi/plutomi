@@ -14,7 +14,7 @@ case "$1" in
   *)
     # Notify the user that the default 'development' is used
     for i in {1..3}; do
-      echo -e "\n\n-- No valid environment deployment specified, defaulting to 'development'. --\n\n"
+      echo -e "\n\n-- No valid deployment environment specified, defaulting to 'development'. --\n\n"
       sleep 2
     done
     ;;
