@@ -55,11 +55,29 @@ export const setupSES = ({ stack, deploymentEnvironment }: SetupSESProps) => {
     destination: EventDestination.snsTopic(sesEventsTopic),
   });
 
+  /**
+   * plutomi.com for production OR
+   * deploymentEnvironment.plutomi.com
+   */
+  const identityDomain = `${
+    deploymentEnvironment === "production"
+      ? "plutomi.com"
+      : `${deploymentEnvironment}.plutomi.com`
+  }`;
+
+  /**
+   * notifications.plutomi.com for production OR
+   * notifications.deploymentEnvironment.plutomi.com
+   */
+  const mailFromDomain = `notifications.${
+    deploymentEnvironment === "production" ? "" : `${deploymentEnvironment}.`
+  }plutomi.com`;
+
   // Create the SES identity
   void new EmailIdentity(stack, sesEmailIdentityName, {
-    identity: Identity.domain(`${deploymentEnvironment}.plutomi.com`),
+    identity: Identity.domain(identityDomain),
     configurationSet,
-    mailFromDomain: `notifications.${deploymentEnvironment}.plutomi.com`,
+    mailFromDomain: mailFromDomain,
   });
 
   const eventProcessor = new NodejsFunction(
