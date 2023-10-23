@@ -29,7 +29,7 @@ This will pass `--branch=main` to the deploy script. Ensure that `main` is set f
 
 ### AWS
 
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in `scripts/deploy/api.sh` to match the profile you want to use. Update the domains you want to use in [setupSES.ts](../packages/aws/lib/setupSES.ts) and then run:
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [scripts/deploy/aws.sh](deploy/aws.sh) to match the profile names you want to use. Update the domains you want to use in [setupSES.ts](../packages/aws/lib/setupSES.ts) and then run:
 
 ```bash
 $ scripts/deploy/aws.sh
