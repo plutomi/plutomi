@@ -44,7 +44,7 @@ See the [scripts README](scripts/README.md) for more information.
 
 ## Database
 
-We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=1190)). We write very small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. See the example below with an applicant and their notes and files:
+We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=1190)). We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. See the example below with an applicant and their notes and files:
 
 ```typescript
 const applicant = {
