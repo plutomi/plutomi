@@ -1,23 +1,21 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules*
-/node_modules
-/.pnp
+node_modules/
+
 .pnp.js
 
 # testing
-/coverage/*
+coverage/
 # Allow this to go through so that we can generate a badge for the readme
 !/coverage/coverage-summary.json
 
 # next.js
-/out/
-.next*
-
+out/
+.next/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -28,8 +26,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-
 
 # Ignore files that start with .env except sample
 .env*
@@ -47,7 +43,7 @@ cdk.out
 cdk.context.json
 
 # Local yarn files
-.yarn
+.yarn/
 
 # Built directories
 dist/

@@ -1,11 +1,8 @@
-import { Container } from "@mantine/core";
 import type { NextPage } from "next";
-import { LogInOrSignUpForm } from "../components";
+// import { LogInOrSignUpForm } from "../components";
 
 const SignUp: NextPage = () => (
-  <Container my={40}>
-    <LogInOrSignUpForm />
-  </Container>
+  <div>Signup</div>
 );
 
 export default SignUp;

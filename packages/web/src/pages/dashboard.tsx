@@ -1,10 +1,8 @@
 import type { NextPage } from "next";
-import { CreateOrgOnboarding, PageShell } from "../components";
+// import { CreateOrgOnboarding } from "../components";
 
 const Dashboard: NextPage = () => (
-  <PageShell>
-    <CreateOrgOnboarding />
-  </PageShell>
+<div>shell</div>
 );
 
 export default Dashboard;

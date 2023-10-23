@@ -1,5 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  // Exclude tests and node modules from build, that's all this file does
-  "exclude": ["node_modules", "**/__tests__/**"]
-}

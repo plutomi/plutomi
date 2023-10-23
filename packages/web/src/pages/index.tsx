@@ -1,5 +1,5 @@
 import type { GetStaticProps, NextPage } from "next";
-import _ from "lodash";
+import { orderBy } from "lodash";
 import axios from "axios";
 import {
   type CommitType,
@@ -34,9 +34,6 @@ const Home: NextPage<HomeProps> = ({ commits }) => (
   </div>
 );
 
-// Note: Pages WITHOUT getStaticProps will be server-side rendered
-// Due to _getInitialProps in _document.tsx
-// https://nextjs.org/docs/messages/opt-out-auto-static-optimization
 export const getStaticProps: GetStaticProps = async () => {
   const commitsFromEachBranch = 8;
   const allCommits: CommitType[] = [];
@@ -77,9 +74,7 @@ export const getStaticProps: GetStaticProps = async () => {
   );
 
   // Sort by commit timestamp
-  const orderedCommits = _.orderBy(allCommits, (commit) => commit.date, [
-    "desc"
-  ]);
+  const orderedCommits = orderBy(allCommits, (commit) => commit.date, ["desc"]);
 
   // Remove duplicates
   const commits = orderedCommits.filter(

@@ -2,7 +2,7 @@ import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Schema } from "@plutomi/validation";
+// import { Schema } from "@plutomi/validation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -38,6 +38,7 @@ const cards = [
 
 type WaitlistFormValues = {
   email: string;
+  isloading: boolean
 };
 
 export const WaitListCard: React.FC = () => {
@@ -45,9 +46,7 @@ export const WaitListCard: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<WaitlistFormValues>({
-    resolver: zodResolver(Schema.Subscribe.UISchema)
-  });
+  } = useForm<WaitlistFormValues>();
 
   const subscribe = useMutation({
     mutationFn: async (data: WaitlistFormValues) =>
@@ -110,14 +109,14 @@ export const WaitListCard: React.FC = () => {
                       id="beans"
                       type="waitlist-email"
                       autoComplete="email"
-                      disabled={subscribe.isLoading}
+                      disabled={false}
                       {...register("email")}
                       className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 max-w-lg w-full pl-10 flex-auto rounded-md border bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 focus:outline-none"
                       placeholder="Enter your email"
                     />
 
-                    <Button size="medium" isLoading={subscribe.isLoading}>
-                      {subscribe.isLoading ? "Joining..." : "Join"}
+                    <Button size="medium" isLoading={false}>
+                      {false ? "Joining..." : "Join"}
                     </Button>
                   </form>
                   {errors.email?.message !== undefined ? (

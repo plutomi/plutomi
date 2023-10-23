@@ -1,9 +1,10 @@
 name: Release
 
+# TODO Fly.io setup
 on:
   push:
     branches: [main]
-    
+
   workflow_dispatch:
     inputs:
       environment:
@@ -11,7 +12,7 @@ on:
         type: environment
         required: true
       notes:
-        description: 'What are you deploying?'
+        description: "What are you deploying?"
         type: string
 
 env:
@@ -60,6 +61,3 @@ jobs:
           NODE_ENV: production
           NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: ${{ env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT }}
           NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
-          CF_HEADER_KEY: ${{ secrets.CF_HEADER_KEY }}
-          CF_HEADER_VALUE: ${{ secrets.CF_HEADER_VALUE }}
-
