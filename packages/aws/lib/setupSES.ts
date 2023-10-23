@@ -24,10 +24,9 @@ const configurationSetEventDestinationName = "ses-event-destination";
 const sesEventsProcessorFunctionName = "ses-events-processor";
 const sesEmailIdentityName = `development-SES-Identity`;
 const configurationSetName = `ses-configuration-set`;
+const sesEventsQueueName = `ses-events-queue`;
 
 export const setupSES = ({ stack, deploymentEnvironment }: SetupSESProps) => {
-  const sesEventsQueueName = `ses-events-queue-ENV:${deploymentEnvironment}"}`;
-
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
     displayName: sesEventsTopicName,
     topicName: sesEventsTopicName,
