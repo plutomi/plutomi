@@ -39,7 +39,7 @@ This will setup most of your AWS environment. For SES, you'll need to add a few 
 
 ![SES DNS Records](../images//ses-setup.png)
 
-Also, you'll want to add a DMARC record to your DNS provider. This is a TXT record with the name `_dmarc.example.com` and value `v=DMARC1; p=none; rua=mailto:you@yourdomain.com`
+Also, you'll want to add a DMARC record to your DNS provider. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
 See [here](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
 
 ## Adding more scripts
