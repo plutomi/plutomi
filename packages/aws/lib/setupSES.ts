@@ -16,6 +16,7 @@ import * as path from "path";
 
 type SetupSESProps = {
   stack: Stack;
+  deploymentEnvironment: string;
 };
 
 const sesEventsTopicName = "ses-events-topic";
@@ -25,7 +26,7 @@ const sesEventsProcessorFunctionName = "ses-events-processor";
 const sesEmailIdentityName = `development-SES-Identity`;
 const configurationSetName = `ses-configuration-set`;
 
-export const setupSES = ({ stack }: SetupSESProps) => {
+export const setupSES = ({ stack, deploymentEnvironment }: SetupSESProps) => {
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
     displayName: sesEventsTopicName,
     topicName: sesEventsTopicName,
@@ -56,9 +57,9 @@ export const setupSES = ({ stack }: SetupSESProps) => {
 
   // Create the SES identity
   void new EmailIdentity(stack, sesEmailIdentityName, {
-    identity: Identity.domain(`development.plutomi.com`),
+    identity: Identity.domain(`${deploymentEnvironment}.plutomi.com`),
     configurationSet,
-    mailFromDomain: `notifications.development.plutomi.com`,
+    mailFromDomain: `notifications.${deploymentEnvironment}.plutomi.com`,
   });
 
   const eventProcessor = new NodejsFunction(
