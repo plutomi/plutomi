@@ -2,17 +2,17 @@
 
 # Default profile
 AWS_PROFILE="--profile=plutomi-dev"
-DEPLOYMENT_ENVIRONMENT="-c DEPLOYMENT_ENVIRONMENT=development"
+DEPLOYMENT_ENVIRONMENT="development"
 
 # Check the provided argument
 case "$1" in
   "production")
     AWS_PROFILE="--profile=plutomi-prod"
-    DEPLOYMENT_ENVIRONMENT="-c DEPLOYMENT_ENVIRONMENT=production"
+    DEPLOYMENT_ENVIRONMENT="production"
     ;;
   "staging")
     AWS_PROFILE="--profile=plutomi-stage"
-    DEPLOYMENT_ENVIRONMENT="-c DEPLOYMENT_ENVIRONMENT=staging"
+    DEPLOYMENT_ENVIRONMENT="staging"
     ;;
   *)
     # Notify the user that the default 'development' is used
@@ -30,4 +30,4 @@ echo -e "\n\nFINAL WARNING: \n\n ---> DEPLOYING TO AWS WITH '$AWS_PROFILE' & '$D
 sleep 7
 
 # Run the npm deploy command with the selected profile
-npm run deploy $AWS_PROFILE $DEPLOYMENT_ENVIRONMENT
+AWS_PROFILE=$AWS_PROFILE DEPLOYMENT_ENVIRONMENT=$DEPLOYMENT_ENVIRONMENT npm run deploy 

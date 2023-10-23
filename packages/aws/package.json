@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": "cdk deploy --require-approval any-change --progress events --verbose $AWS_PROFILE"
+    "deploy": "cdk deploy --require-approval any-change --progress events --verbose $AWS_PROFILE -c $DEPLOYMENT_ENVIRONMENT"
   },
   "devDependencies": {
     "@types/jest": "^29.5.5",
