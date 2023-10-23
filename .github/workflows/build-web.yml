@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Change directory
+        run: cd packages/web
+
       - name: Install dependencies
         run: npm install --frozen-lockfile
 
