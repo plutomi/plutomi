@@ -26,4 +26,4 @@ echo -e "\n\n-- DEPLOYING WEB ON BRANCH '$BRANCH_ARG' --\n\n"
 sleep 5
 
 # Run the npm deploy command with the provided environment
-npm run pages:deploy $BRANCH_ARG
+npm run pages:deploy $BRANCH_ARG # TODO This isnt working
