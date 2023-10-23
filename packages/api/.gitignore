@@ -8,3 +8,4 @@
 # IDE/Editor folders
 .idea/
 .vscode/
+target/
