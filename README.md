@@ -33,7 +33,7 @@ Stages:
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
 - [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
-- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails. If you don't want to use SES, we recommend using [Postmark](https://postmarkapp.com/). Our AWS stack sets up SES, but you'll need to add the DNS records (DKIM, SPF, DMARC) manually. See the [deploying AWS Section](scripts/README.md#aws) for more information.
+- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails. If you don't want to use SES, we recommend using [Postmark](https://postmarkapp.com/). Our AWS stack sets up SES, an SNS topic for events, a queue, and a lambda function to process those events (opens, clicks, bounces, etc.). You'll need to add the DNS records (DKIM, SPF, DMARC) that SES provides you manually. See the [deploying AWS Section](scripts/README.md#aws) for more information.
 
 - [Rust](https://www.rust-lang.org/tools/install)
 - [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
@@ -42,7 +42,7 @@ Stages:
 
 See the [scripts README](scripts/README.md) for more information.
 
-## Database Schema
+## Database
 
 We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=1190)). We write very small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. See the example below with an applicant and their notes and files:
 

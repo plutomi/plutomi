@@ -103,13 +103,4 @@ export const setupSES = ({ stack, deploymentEnvironment }: SetupSESProps) => {
       batchSize: 1,
     })
   );
-
-  // ! TODO: Add this manually
-  // void new TxtRecord(this, "SES-Txt-Record-DMARC", {
-  //   recordName: "_dmarc",
-  //   zone: hostedZone,
-  //   values: ["v=DMARC1", "p=none"],
-  //   comment:
-  //     "This _dmarc record indicates to your recipients that you properly set up DKIM, and that they are allowed to refuse your email if there is an authentication failure.",
-  // });
 };
