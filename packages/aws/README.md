@@ -1,17 +1,5 @@
 # Infrastructure for AWS
 
+This sets up SES aside from the DNS records. You'll need to add those manually.
 
-
-
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-## Useful commands
-
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk synth` emits the synthesized CloudFormation template
+It also creates an SNS topic where email events are sent to. SNS publishes events to a queue, and we have a lambda function reading those events for processing.

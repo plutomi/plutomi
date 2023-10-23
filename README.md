@@ -31,8 +31,10 @@ Stages:
 - [Node 20](https://nodejs.org/en/download)
 - [Docker](https://docs.docker.com/get-docker/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
-  - To setup AWS with SSO, you can check [this tutorial](https://docs.sst.dev/setting-up-aws#create-a-management-account)
-  - [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails
+- [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
+
+- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails. If you don't want to use SES, we recommend using [Postmark](https://postmarkapp.com/). Our AWS stack sets up SES, but you'll need to add the DNS records manually.
+
 - [Rust](https://www.rust-lang.org/tools/install)
 - [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
 
