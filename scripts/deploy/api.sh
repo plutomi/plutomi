@@ -18,7 +18,7 @@ fi
 sed "s/{{ENV}}/$DEPLOYMENT_ENVIRONMENT/g" fly.template.toml > fly.toml
 
 
-echo -e "\n\n-- Running the deploy command with '$DEPLOYMENT_ENVIRONMENT' --\n\n"
+echo -e "\n\n-- DEPLOYING '$DEPLOYMENT_ENVIRONMENT' ON FLY.IO --\n\n"
 sleep 5
 
 # Now deploy using the generated fly.toml

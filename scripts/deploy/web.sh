@@ -22,7 +22,7 @@ fi
 # Navigate to the WEB directory
 cd packages/web
 
-echo -e "\n\n-- Running the deploy command with '$BRANCH_ARG' --\n\n"
+echo -e "\n\n-- DEPLOYING WEB ON BRANCH '$BRANCH_ARG' --\n\n"
 sleep 5
 
 # Run the npm deploy command with the provided environment
