@@ -27,6 +27,18 @@ $ scripts/deploy/web.sh production
 
 This will pass `--branch=main` to the deploy script. Ensure that `main` is set for your production environment on Cloudflare and everything should work.
 
+### AWS
+
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in `scripts/deploy/api.sh` to match the profile you want to use. Update the domains you want to use in [setupSES.ts](../packages/aws/lib/setupSES.ts) and then run:
+
+```bash
+$ scripts/deploy/aws.sh
+```
+
+This will setup most of your AWS environment. For SES, you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:
+
+![SES DNS Records](../images//ses-setup.png)
+
 ## Adding more scripts
 
 If you add another script, you might run into a permission issue:
