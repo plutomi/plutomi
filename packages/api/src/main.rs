@@ -51,13 +51,21 @@ fn create_plutomi_id(entity: Entities, timestamp_ms: Option<i64>) -> String {
 async fn main() {
     let app = Router::new().route("/ssr", get(|| async { 
         
-        let x = create_plutomi_id(Entities::Org, None);
+        // let x = create_plutomi_id(Entities::Org, None);
         // "Hello from rust!"
 
-        // Return hello from rust and x concatenated
-         format!("Hello from rust! {}", x)
+        let y = KsuidMs::new(None, None);
+
+    for i in 0..1000000 {
+        let y = KsuidMs::new(None, None);
+        println!("Hello from rust! {} {}", y, y.timestamp());
+     }
     
-     }));
+    
+        // Return hello from rust and x concatenated
+        format!("Hello from rust!")
+    }
+    ));
 
     axum::Server::bind(&"0.0.0.0:8080".parse().unwrap())
         .serve(app.into_make_service())
