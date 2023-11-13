@@ -4,6 +4,8 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 
 ![infra](images/infra.png)
 
+//
+
 ## Motivation
 
 Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://www.linkedin.com/in/joswayski/) attempt to do just that.
