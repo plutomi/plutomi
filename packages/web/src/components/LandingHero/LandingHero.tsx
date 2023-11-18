@@ -7,7 +7,7 @@ export const LandingHero: React.FC = () => (
       </span>
     </h1>
     <p className="mt-6 text-xl lg:text-3xl text-slate-700 ">
-      Plutomi streamlines your application process with automated workflows. :)
+      Plutomi streamlines your application process with automated workflows.
     </p>
   </div>
 );
