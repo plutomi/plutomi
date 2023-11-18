@@ -8,7 +8,6 @@ import {
   UseCaseSection,
   HomepageFooter
 } from "../components";
-
 type HomeProps = {
   commits: CommitType[];
 };
@@ -61,7 +60,7 @@ export const getStaticProps: GetStaticProps = async () => {
       if (!isBot) {
         const customCommit = {
           name: author,
-          username: commit.author.login,
+          username: author,
           image: commit.author.avatar_url,
           email: commit.commit.author.email,
           date: commit.commit.author.date,
