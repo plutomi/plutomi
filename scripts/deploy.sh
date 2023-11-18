@@ -28,6 +28,10 @@ fi
 
 case "$component" in
   "api")
+  # Navigate to the API directory
+  cd packages/api
+  sed "s/{{ENV}}/$environment/g" fly.template.toml > fly.toml
+  fly deploy
     ;;
   "web")
     ;;

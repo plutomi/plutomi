@@ -4,7 +4,7 @@
 #
 
 # Do not modify the fly.toml that is generated
-app = "production-plutomi-api"
+app = "staging-plutomi-api"
 primary_region = "iad"
 
 # [build]
