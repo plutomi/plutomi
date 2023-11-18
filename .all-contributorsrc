@@ -45,6 +45,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "CodingRubix",
+      "name": "CodingRubix",
+      "avatar_url": "https://avatars.githubusercontent.com/u/94731024?v=4",
+      "profile": "https://github.com/CodingRubix",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -52,5 +61,7 @@
   "projectOwner": "plutomi",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
 }
