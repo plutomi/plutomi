@@ -15,24 +15,17 @@ Which will start the API and the frontend in development mode. You can run eithe
 As shown in the [root README](../README.md), the frontend is a NextJS app on [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/) and the API is a Rust + Axum container on [Fly.io](https://fly.io/docs/speedrun/). To deploy either, you can run:
 
 ```bash
-$ scripts/deploy/web.sh
-$ scripts/deploy/api.sh
+$ scripts/deploy.sh <api|web> <staging|production>
 ```
 
-For the API, if you do not specify a deployment environment, it will default to `staging`. For the frontend, Cloudflare automatically deploys to staging environments (called "preview environments") for every pull request & commit not on the `main` branch. To force a deploy to production, you can run:
-
-```bash
-$ scripts/deploy/web.sh production
-```
-
-This will pass `--branch=main` to the deploy script. Ensure that `main` is set for your production environment on Cloudflare and everything should work.
+TEnsure that `main` is set for your production environment on Cloudflare and everything should work.
 
 ### AWS
 
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [scripts/deploy/aws.sh](deploy/aws.sh) to match the profile names you want to use. Update the domains you want to use in [setupSES.ts](../packages/aws/lib/setupSES.ts) and then run:
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the domains you want to use in [setupSES.ts](../packages/aws/lib/setupSES.ts) and then run:
 
 ```bash
-$ scripts/deploy/aws.sh
+$ scripts/deploy.sh aws <development|staging|production>
 ```
 
 This will setup most of your AWS environment. For SES, you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:

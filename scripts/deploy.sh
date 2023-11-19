@@ -28,17 +28,35 @@ deploy_api() {
 }
 
 deploy_web() {
-    # Navigate to the WEB directory and deploy
+    # Force deploy to Cloudflare main branch
+    if [[ "$environment" == "production" ]]; then
+        BRANCH_ARG="--branch=main"
+    fi
+
+    echo "Deploying WEB (Cloudflare) with environment: $environment and branch: $BRANCH_ARG"
+
+    
+    # Navigate to the web directory and deploy
     cd packages/web
-    [ "$environment" == "production" ] && BRANCH_ARG="--branch=main" || BRANCH_ARG=""
     npm run pages:deploy -- $BRANCH_ARG
 }
 
 deploy_aws() {
-    # Set AWS profile and environment, then deploy
-    local aws_profile="--profile=plutomi-${environment}"
+    # Set AWS_PROFILE based on the environment
+    if [[ "$environment" == "production" ]]; then
+        AWS_PROFILE="plutomi-prod"
+    elif [[ "$environment" == "staging" ]]; then
+        AWS_PROFILE="plutomi-stage"
+    elif [[ "$environment" == "development" ]]; then
+        AWS_PROFILE="plutomi-dev"
+    else
+        print_error_and_exit "Invalid environment for AWS deployment."
+    fi
+
+    echo "Deploying AWS with environment: $environment and profile: $AWS_PROFILE"
+    
     cd packages/aws
-    npm run deploy -- $aws_profile $environment
+    npm run deploy -- DEPLOYMENT_ENVIRONMENT=$environment --profile $AWS_PROFILE
 }
 
 # Main deployment switch
