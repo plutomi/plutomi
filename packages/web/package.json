@@ -47,6 +47,6 @@
     "eslint-plugin-next-on-pages": "^1.7.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "vercel": "^32.5.0"
+    "vercel": "^32.5.5"
   }
 }
