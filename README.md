@@ -30,10 +30,7 @@ Stages:
 
 - [Node 20](https://nodejs.org/en/download)
 - [Docker](https://docs.docker.com/get-docker/)
-- [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
-- [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
-
-- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails. If you don't want to use SES, we recommend using [Postmark](https://postmarkapp.com/)
+- [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 - [Rust](https://www.rust-lang.org/tools/install)
 - [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
 
@@ -42,7 +39,9 @@ Stages:
 The frontend is deployed to [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/). Any SSR pages use a Cloudflare Worker to proxy the request to the API and send the response back to the client.
 
 The API is deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker.
-There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn a bit of Rust and this seemed like a good project to do that with. I'm not a Rust expert, so if you see something that can be improved, please open a PR! 🦀
+There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn a bit of Rust and this seemed like a good project to do that with. If you see something that can be improved, please open a PR! 🦀
+
+We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
 ## Useful Scripts
 
@@ -84,60 +83,6 @@ After running the deploy script above, most of your environment will be setup. F
 
 Also, you'll want to add a DMARC record to your DNS provider. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
 See [here](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
-
-## Database
-
-We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=1190)). We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. See the example below with an applicant and their notes and files:
-
-```typescript
-const applicant = {
-  name: "Jose Valerio",
-  nickname: "joswayski",
-  company: "Plutomi, Inc.",
-  relatedTo: [
-    {
-      id: "applicant_123",
-      type: "self", // Every item has a reference to itself
-    },
-  ],
-};
-
-const note = {
-  text: "This applicant is great!",
-  createdBy: "Random Hiring Manager",
-  relatedTo: [
-    {
-      id: "note_123",
-      type: "self", /
-    },
-    {
-      id: "applicant_123", // Reference to the applicant
-      type: "note",
-    },
-  ],
-};
-
-const file = {
-  name: "resume.pdf",
-  url: "https://assets.plutomi.com/resume.pdf",
-  relatedTo: [
-    {
-      id: "file_123",
-      type: "file",
-    }
-    {
-      id: "applicant_123", // Reference to the applicant
-      type: "file",
-    },
-  ],
-};
-
-
-const applicantWithNotesAndFiles = db.find({ relatedTo: { $elemMatch: { id: "applicant_123" } } });
-const justTheNotesForThisApplicant = db.find({ relatedTo: { $elemMatch: { id: "applicant_123", type: "notes" } } });
-
-
-```
 
 ## License
 
