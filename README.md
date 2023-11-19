@@ -39,7 +39,7 @@ Stages:
 
 ## Useful Scripts
 
-#### Running Locally
+### Running Locally
 
 The following will start the API and the frontend in development mode:
 
@@ -53,7 +53,9 @@ You can also run either individually:
 $ scripts/run.sh <api|web>
 ```
 
-#### Deploying
+The script also has hot reloading for both so you can make changes and see them reflected immediately once you save the file.
+
+### Deploying
 
 ```bash
 $ scripts/deploy.sh <api|web> <staging|production>

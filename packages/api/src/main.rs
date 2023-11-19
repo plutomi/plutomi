@@ -63,7 +63,7 @@ async fn main() {
     
     
         // Return hello from rust and x concatenated
-        format!("Hello from rust :D")
+        format!("Hello from rust 2:D")
     }
     ));
 
