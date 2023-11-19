@@ -58,10 +58,16 @@ The script also has hot reloading for both so you can make changes and see them 
 ### Deploying
 
 ```bash
-$ scripts/deploy.sh <api|web> <staging|production>
+$ scripts/deploy.sh <api|web|aws> <staging|production>
 ```
 
 Ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
+
+You can also deploy a `development` environment to AWS **only** so you can have things like queues and emails when running things locally:
+
+```bash
+$ scripts/deploy.sh aws development
+```
 
 ## Website & API
 
