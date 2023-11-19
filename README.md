@@ -33,14 +33,33 @@ Stages:
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
 - [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
-- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails. If you don't want to use SES, we recommend using [Postmark](https://postmarkapp.com/). Our AWS stack sets up SES, an SNS topic for events, a queue, and a lambda function to process those events (opens, clicks, bounces, etc.). You'll need to add the DNS records (DKIM, SPF, DMARC) that SES provides you manually. See the [deploying AWS Section](scripts/README.md#aws) for more information.
-
+- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails
 - [Rust](https://www.rust-lang.org/tools/install)
 - [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
 
 ## Useful Scripts
 
-See the [scripts README](scripts/README.md) for more information.
+#### Running Locally
+
+The following will start the API and the frontend in development mode:
+
+```bash
+$ scripts/run.sh
+```
+
+You can also run either individually:
+
+```bash
+$ scripts/run.sh <api|web>
+```
+
+#### Deploying
+
+```bash
+$ scripts/deploy.sh <api|web> <staging|production>
+```
+
+Ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
 
 ## Website & API
 
@@ -48,6 +67,17 @@ The frontend is deployed to [Cloudflare Pages](https://developers.cloudflare.com
 
 The API is deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker.
 There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn a bit of Rust and this seemed like a good project to do that with. I'm not a Rust expert, so if you see something that can be improved, please open a PR! 🦀
+
+## AWS
+
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the domains you want to use in [setupSES.ts](./packages/aws/lib/setupSES.ts).
+
+After running the deploy script above, most of your environment will be setup. For SES, you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:
+
+![SES DNS Records](./images/ses-setup.png)
+
+Also, you'll want to add a DMARC record to your DNS provider. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
+See [here](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
 
 ## Database
 
