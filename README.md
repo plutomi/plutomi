@@ -39,7 +39,7 @@ Stages:
 The frontend is deployed to [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/). Any SSR pages use a Cloudflare Worker to proxy the request to the API and send the response back to the client.
 
 The API is deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker.
-There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn a bit of Rust and this seemed like a good project to do that with. If you see something that can be improved, please open a PR! 🦀
+There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn Rust and this seemed like a good project to do that with. If you see something that can be improved, please open a PR! 🦀
 
 We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
