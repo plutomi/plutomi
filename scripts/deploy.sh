@@ -27,14 +27,33 @@ fi
 
 
 case "$component" in
-  "api")
-  # Navigate to the API directory
-  cd packages/api
-  sed "s/{{ENV}}/$environment/g" fly.template.toml > fly.toml
-  fly deploy
+    ### Handle API deployment ###
+    "api")
+    # Navigate to the API directory
+    cd packages/api
+
+    # Create a fly.toml file with the correct environment & deploy
+    sed "s/{{ENV}}/$environment/g" fly.template.toml > fly.toml
+    fly deploy
     ;;
-  "web")
+    ### Handle WEB deployment ###
+    "web")
+
+    ### Force deployment to production
+    if [[ "$environment" == "production" ]]; then
+        BRANCH_ARG="--branch=main"
+    else
+        BRANCH_ARG=""
+    fi
+
+    # Navigate to the WEB directory
+    cd packages/web
+
+    # Deploy FE to Cloudflare
+    npm run pages:deploy -- $BRANCH_ARG
     ;;
+
+    ### Handle AWS deployment ###
     "aws")
     ;;
   *)

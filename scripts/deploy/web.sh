@@ -11,14 +11,6 @@ if [ "$1" == "production" ]; then
 fi
 
 
-# If the default 'staging' is used, notify the user in red letters
-if [ "$1" != "production" ]; then
-  for i in {1..3}; do
-    echo -e "\n\n-- No environment specified, defaulting to preview environment of current branch name. --\n\n"
-    sleep 2
-    done
-fi
-
 # Navigate to the WEB directory
 cd packages/web
 
@@ -26,4 +18,4 @@ echo -e "\n\n-- DEPLOYING WEB ON BRANCH '$BRANCH_ARG' --\n\n"
 sleep 5
 
 # Run the npm deploy command with the provided environment
-npm run pages:deploy $BRANCH_ARG # TODO This isnt working
+$BRANCH_ARG npm run pages:deploy  # TODO This isnt working
