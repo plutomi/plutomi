@@ -1,95 +1,50 @@
 #!/bin/bash
 
-# Check if two arguments are not provided
-if [ $# -ne 2 ]; then
-    echo -e "\n-- ERROR: Invalid number of arguments --\n"
+# Function to print error message and usage
+print_error_and_exit() {
+    echo -e "\n-- ERROR: $1 --\n"
     echo -e "Usage: $0 <component> <environment>\n"
     echo -e "Component: 'api', 'web', or 'aws'\n"
     echo -e "Environment: 'development', 'staging', or 'production'.\n"
     exit 1
-fi
+}
+
+# Check if two arguments are provided
+[ $# -ne 2 ] && print_error_and_exit "Invalid number of arguments"
 
 component=$1
 environment=$2
 
+# Validate component and environment
+[[ "$component" =~ ^(api|web|aws)$ ]] || print_error_and_exit "Invalid component: $component. Must be 'web', 'api', or 'aws'."
+[[ "$environment" =~ ^(staging|production|development)$ ]] || print_error_and_exit "Invalid environment: '$environment'. Must be 'staging', 'production', or 'development'."
+[ "$environment" == "development" -a "$component" != "aws" ] && print_error_and_exit "There is no 'dev' environment for '$component', run things locally :D"
 
-if [[ "$component" != "api" && "$component" != "web" && "$component" != "aws" ]]; then
-    echo "Invalid component: $component. Must be either 'web', 'api', or 'aws'."
-    exit 1
-fi
-
-if [[ "$environment" != "staging" && "$environment" != "production"  && "$environment" != "development" ]]; then
-    echo "Invalid environment: '$environment'. Must be either 'staging' or 'production'."
-    exit 1
-fi
-
-if [[ "$environment" == "development" && "$component" != "aws" ]]; then
-    echo "There is no 'dev' environment for '$component', run things locally."
-    exit 1
-fi
-
-
-
-case "$component" in
-    #########################################
-    ####### Handle API deployment ###########
-    #########################################
-    "api")
-    # Navigate to the API directory
+deploy_api() {
+    # Navigate to the API directory and deploy
     cd packages/api
-
-    # Create a fly.toml file with the correct environment & deploy
     sed "s/{{ENV}}/$environment/g" fly.template.toml > fly.toml
     fly deploy
-    ;;
+}
 
-    #########################################
-    ####### Handle WEB deployment ###########
-    #########################################
-    "web")
-
-    ### Force deployment to production
-    if [[ "$environment" == "production" ]]; then
-        BRANCH_ARG="--branch=main"
-    else
-        BRANCH_ARG=""
-    fi
-
-    # Navigate to the WEB directory
+deploy_web() {
+    # Navigate to the WEB directory and deploy
     cd packages/web
-
-    # Deploy FE to Cloudflare
+    [ "$environment" == "production" ] && BRANCH_ARG="--branch=main" || BRANCH_ARG=""
     npm run pages:deploy -- $BRANCH_ARG
-    ;;
+}
 
-    #########################################
-    ####### Handle AWS deployment ###########
-    #########################################
-    "aws")
-
-    AWS_PROFILE="--profile=plutomi-dev"
-    DEPLOYMENT_ENVIRONMENT="development"
-
-    if [[ "$environment" == "production" ]]; then
-        AWS_PROFILE="--profile=plutomi-prod"
-        DEPLOYMENT_ENVIRONMENT="production"
-    else if [[ "$environment" == "staging" ]]; then
-        AWS_PROFILE="--profile=plutomi-stage"
-        DEPLOYMENT_ENVIRONMENT="staging"
-    fi
-
-
-    # Navigate to the WEB directory
+deploy_aws() {
+    # Set AWS profile and environment, then deploy
+    local aws_profile="--profile=plutomi-${environment}"
     cd packages/aws
+    npm run deploy -- $aws_profile $environment
+}
 
-    
-    # Run the npm deploy command with the selected profile
-    npm run deploy -- $AWS_PROFILE $DEPLOYMENT_ENVIRONMENT
-    ;;
-  *)
-    echo "Invalid component specified. Use 'api', 'web', or 'aws'."
-    exit 1
-    ;;
+# Main deployment switch
+case "$component" in
+    "api") deploy_api ;;
+    "web") deploy_web ;;
+    "aws") deploy_aws ;;
+    *) print_error_and_exit "Invalid component specified. Use 'api', 'web', or 'aws'." ;;
 esac
-
-# The rest of your deployment logic goes here

@@ -56,14 +56,14 @@ async fn main() {
 
         let y = KsuidMs::new(None, None);
 
-    for i in 0..1000000 {
-        let y = KsuidMs::new(None, None);
-        println!("Hello from rust! {} {}", y, y.timestamp());
-     }
+    // for i in 0..1000000 {
+    //     let y = KsuidMs::new(None, None);
+    //     println!("Hello from rust 2! {} {}", y, y.timestamp());
+    //  }
     
     
         // Return hello from rust and x concatenated
-        format!("Hello from rust!")
+        format!("Hello from rust :D")
     }
     ));
 
