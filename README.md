@@ -58,16 +58,14 @@ The script also has hot reloading for both so you can make changes and see them 
 ### Deploying
 
 ```bash
-$ scripts/deploy.sh <api|web|aws> <staging|production>
+$ scripts/deploy.sh --stack <web|api|aws> --env <development|staging|production>
 ```
 
 Ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
 
-You can also deploy a `development` environment to AWS **only** so you can have things like queues and emails when running things locally:
+An environment of `development` will only work with AWS as it is meant to give you the resources needed when running the other things locally.
 
-```bash
-$ scripts/deploy.sh aws development
-```
+> If you omit a stack, all of them will be deployed. If you omit an environment, `staging` will be used.
 
 ## Website & API
 

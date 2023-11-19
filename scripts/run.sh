@@ -9,11 +9,12 @@ cleanup() {
     echo "Stopping services..."
     [ ! -z "$API_PID" ] && kill $API_PID
     [ ! -z "$WEB_PID" ] && kill $WEB_PID
+    echo "Done."
 }
 
 print_error_and_usage() {
     echo -e "\n-- ERROR: $1 --\n"
-    echo -e "Usage: $0 [component]\n"
+    echo -e "Usage: $0 [--stack <component>]\n"
     echo -e "Component (optional): 'api', 'web'\n"
     exit 1
 }
@@ -24,8 +25,6 @@ run_api() {
     # Navigate to the API directory
     cd "$PROJECT_ROOT/packages/api"
     echo "Starting API..."
-
-    # Using cargo-watch to restart on code changes
     cargo install cargo-watch
     cargo watch -x run &
     API_PID=$!
@@ -39,8 +38,21 @@ run_web() {
     WEB_PID=$!
 }
 
-case "$1" in
-    "")
+# Default stack to run both if not specified
+stack="all"
+
+# Parse named arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --stack) stack="$2"; shift ;;
+        *) print_error_and_usage "Invalid argument: $1" ;;
+    esac
+    shift
+done
+
+# Run based on stack argument
+case "$stack" in
+    "all")
         run_api
         run_web
         ;;
@@ -51,7 +63,7 @@ case "$1" in
         run_web
         ;;
     *)
-        print_error_and_usage "Invalid argument: $1"
+        print_error_and_usage "Invalid stack: $stack"
         ;;
 esac
 

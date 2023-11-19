@@ -49,7 +49,7 @@ fn create_plutomi_id(entity: Entities, timestamp_ms: Option<i64>) -> String {
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/ssr", get(|| async { 
+    let app = Router::new().route("/", get(|| async { 
         
         // let x = create_plutomi_id(Entities::Org, None);
         // "Hello from rust!"
@@ -63,7 +63,7 @@ async fn main() {
     
     
         // Return hello from rust and x concatenated
-        format!("Hello from rust 2:D")
+        format!("Hello from rust prod:D")
     }
     ));
 

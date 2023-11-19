@@ -2,10 +2,12 @@
 
 # Function to print error message and usage
 print_error_and_exit() {
-    echo -e "\n-- ERROR: $1 --\n"
+    echo -e "\nERROR: $1 \n"
     echo -e "Usage: $0 [--stack <stack>] [--env <environment>]\n"
-    echo -e "Stack (optional): --stack=<api,web,aws>"
-    echo -e "Environment (optional): --env=<development,staging,production>"
+    echo -e "Stack (optional): api, web, aws"
+    echo -e "Environment (optional): development, staging, production"
+    echo -e "If no stack is provided, all stacks will be deployed to staging.\n"
+    echo -e "Example: $0 --stack api --env production\n"
     exit 1
 }
 
