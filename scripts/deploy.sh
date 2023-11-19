@@ -24,10 +24,10 @@ if [[ "$environment" != "staging" && "$environment" != "production" ]]; then
 fi
 
 
-
-
 case "$component" in
-    ### Handle API deployment ###
+    #########################################
+    ####### Handle API deployment ###########
+    #########################################
     "api")
     # Navigate to the API directory
     cd packages/api
@@ -36,7 +36,10 @@ case "$component" in
     sed "s/{{ENV}}/$environment/g" fly.template.toml > fly.toml
     fly deploy
     ;;
-    ### Handle WEB deployment ###
+
+    #########################################
+    ####### Handle WEB deployment ###########
+    #########################################
     "web")
 
     ### Force deployment to production
@@ -53,11 +56,32 @@ case "$component" in
     npm run pages:deploy -- $BRANCH_ARG
     ;;
 
-    ### Handle AWS deployment ###
+    #########################################
+    ####### Handle AWS deployment ###########
+    #########################################
     "aws")
+
+    AWS_PROFILE="--profile=plutomi-dev"
+    DEPLOYMENT_ENVIRONMENT="development"
+
+    if [[ "$environment" == "production" ]]; then
+        AWS_PROFILE="--profile=plutomi-prod"
+        DEPLOYMENT_ENVIRONMENT="production"
+    else if [[ "$environment" == "staging" ]]; then
+        AWS_PROFILE="--profile=plutomi-stage"
+        DEPLOYMENT_ENVIRONMENT="staging"
+    fi
+
+
+    # Navigate to the WEB directory
+    cd packages/aws
+
+    
+    # Run the npm deploy command with the selected profile
+    npm run deploy -- $AWS_PROFILE $DEPLOYMENT_ENVIRONMENT
     ;;
   *)
-    echo "Invalid component specified. Use 'api' or 'web'."
+    echo "Invalid component specified. Use 'api', 'web', or 'aws'."
     exit 1
     ;;
 esac
