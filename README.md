@@ -33,9 +33,16 @@ Stages:
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
 - [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
-- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails
+- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails. If you don't want to use SES, we recommend using [Postmark](https://postmarkapp.com/)
 - [Rust](https://www.rust-lang.org/tools/install)
 - [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
+
+## Infra
+
+The frontend is deployed to [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/). Any SSR pages use a Cloudflare Worker to proxy the request to the API and send the response back to the client.
+
+The API is deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker.
+There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn a bit of Rust and this seemed like a good project to do that with. I'm not a Rust expert, so if you see something that can be improved, please open a PR! 🦀
 
 ## Useful Scripts
 
@@ -50,7 +57,7 @@ $ scripts/run.sh
 You can also run either individually:
 
 ```bash
-$ scripts/run.sh <api|web>
+$ scripts/run.sh --stack <web|api>
 ```
 
 The script also has hot reloading for both so you can make changes and see them reflected immediately once you save the file.
@@ -58,19 +65,14 @@ The script also has hot reloading for both so you can make changes and see them 
 ### Deploying
 
 ```bash
-$ scripts/deploy.sh --stack <web|api|aws> --env <development|staging|production>
+$ scripts/deploy.sh --stack <web|api|aws> --env <staging|production>
 ```
 
-An environment of `development` will only work with AWS as it is meant to give you the resources needed when running the other things locally. When deploying to production, ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
+An environment of `development` will work with AWS **only** as it is meant to give you the resources needed when running the other things locally.
 
-> If you omit a stack, all of them will be deployed. If you omit an environment, `staging` will be used.
+When deploying to production, ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
 
-## Website & API
-
-The frontend is deployed to [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/). Any SSR pages use a Cloudflare Worker to proxy the request to the API and send the response back to the client.
-
-The API is deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker.
-There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn a bit of Rust and this seemed like a good project to do that with. I'm not a Rust expert, so if you see something that can be improved, please open a PR! 🦀
+If you omit a stack, all of them will be deployed. If you omit an environment, `staging` will be used.
 
 ## AWS
 
