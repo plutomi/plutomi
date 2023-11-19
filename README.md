@@ -61,9 +61,7 @@ The script also has hot reloading for both so you can make changes and see them 
 $ scripts/deploy.sh --stack <web|api|aws> --env <development|staging|production>
 ```
 
-Ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
-
-An environment of `development` will only work with AWS as it is meant to give you the resources needed when running the other things locally.
+An environment of `development` will only work with AWS as it is meant to give you the resources needed when running the other things locally. When deploying to production, ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
 
 > If you omit a stack, all of them will be deployed. If you omit an environment, `staging` will be used.
 
