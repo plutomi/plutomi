@@ -5,7 +5,7 @@ if [ $# -ne 2 ]; then
     echo -e "\n-- ERROR: Invalid number of arguments --\n"
     echo -e "Usage: $0 <component> <environment>\n"
     echo -e "Component: 'api', 'web', or 'aws'\n"
-    echo -e "Environment: 'staging' or 'production'\n"
+    echo -e "Environment: 'development', 'staging', or 'production'.\n"
     exit 1
 fi
 
@@ -18,10 +18,16 @@ if [[ "$component" != "api" && "$component" != "web" && "$component" != "aws" ]]
     exit 1
 fi
 
-if [[ "$environment" != "staging" && "$environment" != "production" ]]; then
+if [[ "$environment" != "staging" && "$environment" != "production"  && "$environment" != "development" ]]; then
     echo "Invalid environment: '$environment'. Must be either 'staging' or 'production'."
     exit 1
 fi
+
+if [[ "$environment" == "development" && "$component" != "aws" ]]; then
+    echo "There is no 'dev' environment for '$component', run things locally."
+    exit 1
+fi
+
 
 
 case "$component" in
