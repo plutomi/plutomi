@@ -22,7 +22,7 @@ type SetupSESProps = {
 const sesEventsTopicName = "ses-events-topic";
 const configurationSetEventDestinationName = "ses-event-destination";
 const sesEventsProcessorFunctionName = "ses-events-processor";
-const sesEmailIdentityName = `development-SES-Identity`;
+const sesEmailIdentityName = `ses-identity`;
 const configurationSetName = `ses-configuration-set`;
 const sesEventsQueueName = `ses-events-queue`;
 

@@ -30,78 +30,59 @@ Stages:
 
 - [Node 20](https://nodejs.org/en/download)
 - [Docker](https://docs.docker.com/get-docker/)
-- [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
-- [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
-
-- [SES identity](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/get-set-up) for sending emails. If you don't want to use SES, we recommend using [Postmark](https://postmarkapp.com/). Our AWS stack sets up SES, an SNS topic for events, a queue, and a lambda function to process those events (opens, clicks, bounces, etc.). You'll need to add the DNS records (DKIM, SPF, DMARC) that SES provides you manually. See the [deploying AWS Section](scripts/README.md#aws) for more information.
-
+- [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 - [Rust](https://www.rust-lang.org/tools/install)
 - [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
 
-## Useful Scripts
-
-See the [scripts README](scripts/README.md) for more information.
-
-## Website & API
+## Infra
 
 The frontend is deployed to [Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/). Any SSR pages use a Cloudflare Worker to proxy the request to the API and send the response back to the client.
 
 The API is deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker.
-There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn a bit of Rust and this seemed like a good project to do that with. I'm not a Rust expert, so if you see something that can be improved, please open a PR! 🦀
+There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn Rust and this seemed like a good project to do that with. If you see something that can be improved, please open a PR! 🦀
 
-## Database
+We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
-We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection ([yes, really](https://youtu.be/eEENrNKxCdw?t=1190)). We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. See the example below with an applicant and their notes and files:
+## Useful Scripts
 
-```typescript
-const applicant = {
-  name: "Jose Valerio",
-  nickname: "joswayski",
-  company: "Plutomi, Inc.",
-  relatedTo: [
-    {
-      id: "applicant_123",
-      type: "self", // Every item has a reference to itself
-    },
-  ],
-};
+### Running Locally
 
-const note = {
-  text: "This applicant is great!",
-  createdBy: "Random Hiring Manager",
-  relatedTo: [
-    {
-      id: "note_123",
-      type: "self", /
-    },
-    {
-      id: "applicant_123", // Reference to the applicant
-      type: "note",
-    },
-  ],
-};
+The following will start the API and the frontend in development mode:
 
-const file = {
-  name: "resume.pdf",
-  url: "https://assets.plutomi.com/resume.pdf",
-  relatedTo: [
-    {
-      id: "file_123",
-      type: "file",
-    }
-    {
-      id: "applicant_123", // Reference to the applicant
-      type: "file",
-    },
-  ],
-};
-
-
-const applicantWithNotesAndFiles = db.find({ relatedTo: { $elemMatch: { id: "applicant_123" } } });
-const justTheNotesForThisApplicant = db.find({ relatedTo: { $elemMatch: { id: "applicant_123", type: "notes" } } });
-
-
+```bash
+$ scripts/run.sh
 ```
+
+You can also run either individually:
+
+```bash
+$ scripts/run.sh --stack <web|api>
+```
+
+The script also has hot reloading for both so you can make changes and see them reflected immediately once you save the file.
+
+### Deploying
+
+```bash
+$ scripts/deploy.sh --stack <web|api|aws> --env <staging|production>
+```
+
+An environment of `development` will work with AWS **only** as it is meant to give you the resources needed when running the other things locally.
+
+When deploying to production, ensure that the `main` branch is set for your production environment on Cloudflare Pages and everything should work.
+
+If you omit a stack, all of them will be deployed. If you omit an environment, `staging` will be used.
+
+## AWS
+
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the domains you want to use in [setupSES.ts](./packages/aws/lib/setupSES.ts).
+
+After running the deploy script above, most of your environment will be setup. For SES, you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:
+
+![SES DNS Records](./images/ses-setup.png)
+
+Also, you'll want to add a DMARC record to your DNS provider. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
+See [here](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
 
 ## License
 
