@@ -25,7 +25,7 @@ async fn main() {
     let shared_collection = Arc::new(collection);
 
     let app = Router::new()
-        .route("/", get(insert_person))
+        .route("/api/", get(insert_person))
         .layer(ServiceBuilder::new().layer(Extension(shared_collection)));
 
     let addr = "[::]:8080".parse::<std::net::SocketAddr>().unwrap();
