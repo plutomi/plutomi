@@ -5,7 +5,11 @@ import {
   type FargateTaskDefinition,
   Protocol,
 } from "aws-cdk-lib/aws-ecs";
-import type { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
+import {
+  Certificate,
+  CertificateValidation,
+  type ICertificate,
+} from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Port, SecurityGroup, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
@@ -39,6 +43,7 @@ const loadBalancerName = "plutomi-load-balancer";
 const webTargetGroupName = "plutomi-web-target-group";
 const apiTargetGroupName = "plutomi-api-target-group";
 const clusterName = "plutomi-cluster";
+const certificateName = "plutomi-certificate";
 // const plutomiSecurityGroupName = "plutomi-service-sg";
 const listenerName = "plutomi-listener";
 
@@ -74,8 +79,14 @@ export const createFargateService = ({
   //   });
 
   const listener = loadBalancer.addListener(listenerName, {
-    port: 80,
-    open: true,
+    port: 443,
+    certificates: [
+      new Certificate(stack, certificateName, {
+        domainName: `*.plutomi.com`, // ! TODO: make dynamic
+        validation: CertificateValidation.fromDns(),
+        certificateName,
+      }),
+    ],
   });
 
   const defaultHealthCheck: HealthCheck = {
@@ -146,15 +157,6 @@ export const createFargateService = ({
       deregistrationDelaySeconds.toString()
     );
   });
-
-  // Health Checks
-  // fargateService.targetGroup.configureHealthCheck({
-  //   interval: Duration.seconds(5),
-  //   healthyThresholdCount: 2,
-  //   unhealthyThresholdCount: 2,
-  //   timeout: Duration.seconds(4),
-  //   path: "/api/health",
-  // });
 
   // Scaling
   //   const scalingPeriodInSeconds = 60;
