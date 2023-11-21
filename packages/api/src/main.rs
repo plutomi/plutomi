@@ -28,8 +28,8 @@ async fn main() {
         .route("/", get(insert_person))
         .layer(ServiceBuilder::new().layer(Extension(shared_collection)));
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
-    println!("Listening on {}", addr);
+    let addr = "[::]:8080".parse::<std::net::SocketAddr>().unwrap();
+        // println!("Listening on {}", &addr);
     axum::Server::bind(&addr).serve(app.into_make_service()).await.unwrap();
 }
 

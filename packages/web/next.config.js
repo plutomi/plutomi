@@ -14,7 +14,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "staging-plutomi-api.internal:8080/:path*"
+        destination: "http://staging-plutomi-api.internal:8080"
       }
     ];
   }
