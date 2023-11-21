@@ -2,7 +2,7 @@
 
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
-![infra](images/infra.png)
+TODO Update infra
 
 ## Motivation
 
