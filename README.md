@@ -36,22 +36,13 @@ Stages:
 
 ## Infra
 
-TODO after deploying on fly, you're going to want to remove the API from the public internet.
-
-fly ips list
-
-fly ips release <ip> for BOTH ipv4 and ipv6 that is returned
-
-Then, allocate a private ipv6
-
-fly ips allocate-v6 --private  
-
-
-
-The NextJS app and API are deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker.
-There's honestly not much to say here as of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn Rust and this seemed like a good project to do that with. If you see something that can be improved, please open a PR! 🦀
+The NextJS app and API are deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker. The NextJS app forwards all API requests through the internal Fly network to the API. The API is not exposed to the public internet. As of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn Rust and this seemed like a good project to do that with. If you see something that can be improved, please open a PR! 🦀
 
 We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
+
+#### API Networking
+
+To make sure that the API is not exposed to the public internet, you can run `fly ips list` and `fly ips release <ip>` for both ipv4 and ipv6 that is returned. Then, allocate a private ipv6 with `fly ips allocate-v6 --private`. You can verify that the API is not exposed by running `fly ips list` and ensuring only the ipv6 address is listed and it is private.
 
 ## Useful Scripts
 

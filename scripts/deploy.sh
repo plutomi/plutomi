@@ -30,33 +30,19 @@ done
 
 deploy_all() {
     deploy_aws
-    deploy_api
-    deploy_web
+    deploy_stack "api"
+    deploy_stack "web"
 }
 
 # Function definitions (deploy_api, deploy_web, deploy_aws) remain the same
-deploy_api() {
+deploy_stack() {
+    local stack=$1  # 'api' or 'web'
+
     (
-    # Navigate to the API directory and deploy
-    cd packages/api
+    # Navigate to the specified stack directory and deploy
+    cd "packages/$stack"
     sed "s/{{ENV}}/$environment/g" fly.template.toml > fly.toml
-    fly deploy
-    )
-}
-
-deploy_web() {
-    (
-    # Force deploy to Cloudflare main branch
-    if [[ "$environment" == "production" ]]; then
-        BRANCH_ARG="--branch=main"
-    fi
-
-    echo "Deploying WEB (Cloudflare) with environment: $environment and branch: $BRANCH_ARG"
-
-    
-    # Navigate to the web directory and deploy
-    cd packages/web
-    npm run pages:deploy -- $BRANCH_ARG
+    fly deploy --build-arg NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=$environment --local-only # TODO remove if build remotely
     )
 }
 
@@ -92,8 +78,8 @@ else
 
     # Deploy specific stack
     case "$stack" in
-        "api") deploy_api ;;
-        "web") deploy_web ;;
+        "api") deploy_stack "api" ;;
+        "web") deploy_stack "web" ;;
         "aws") deploy_aws ;;
         *) print_error_and_exit "Invalid stack specified. Use 'api', 'web', or 'aws'." ;;
     esac
