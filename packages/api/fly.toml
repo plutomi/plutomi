@@ -17,7 +17,7 @@ PORT = "8080"
 ### TODO Remove this from public!
 [http_service]
 internal_port = 8080
-force_https = true
+force_https = false
 auto_stop_machines = false
 auto_start_machines = true
 min_machines_running = 1
