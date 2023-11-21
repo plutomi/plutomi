@@ -9,18 +9,6 @@ const nextConfig = {
         hostname: "githubusercontent.com"
       }
     ]
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/api",
-        destination: `/apiDocs`
-      },
-      {
-        source: "/api/:path+",
-        destination: `http://${process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}-plutomi-api.internal:8080`
-      }
-    ];
   }
 };
 

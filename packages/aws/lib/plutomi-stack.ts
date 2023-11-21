@@ -7,6 +7,7 @@ import { Queue } from "aws-cdk-lib/aws-sqs";
 import { createVpc } from "./createVpc";
 import { createTaskRole } from "./createTaskRole";
 import { createTaskDefinition } from "./createTaskDefinition";
+import { createFargateService } from "./createFargateService";
 
 const deploymentEnvironment =
   process.env.DEPLOYMENT_ENVIRONMENT || "development";
@@ -21,5 +22,12 @@ export class PlutomiStack extends Stack {
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
+    const fargateService = createFargateService({
+      stack: this,
+      taskDefinition,
+      // certificate,
+      vpc,
+      natGatewayProvider,
+    });
   }
 }
