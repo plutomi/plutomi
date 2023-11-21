@@ -1,23 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: "standalone",
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "githubusercontent.com",
-      },
-    ],
+        hostname: "githubusercontent.com"
+      }
+    ]
   },
   async rewrites() {
     return [
       {
-        source: "/api/(.*)",
-        // Show a custom page when a user navigates to the API route for NextJS
-        destination: "/api-fallback",
-      },
+        source: "/api/:path*",
+        destination: "staging-plutomi-api.internal:8080/:path*"
+      }
     ];
-  },
+  }
 };
 
 module.exports = nextConfig;

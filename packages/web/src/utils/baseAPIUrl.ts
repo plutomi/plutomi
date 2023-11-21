@@ -1,6 +1,6 @@
 export const baseAPIUrl =
   process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "production"
-    ? `https://api.plutomi.com`
+    ? `http://production-plutomi-api.internal:8080`
     : process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "staging"
-    ? "https://staging-api.plutomi.com"
+    ? `http://staging-plutomi-api.internal:8080`
     : "http://0.0.0.0.:8080";
