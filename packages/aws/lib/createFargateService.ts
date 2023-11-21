@@ -21,6 +21,7 @@ import {
   ApplicationProtocol,
   ApplicationProtocolVersion,
   ApplicationTargetGroup,
+  HealthCheck,
   ListenerAction,
   ListenerCondition,
 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
@@ -68,24 +69,22 @@ export const createFargateService = ({
     loadBalancerName,
   });
 
+  //   loadBalancer.connections.securityGroups.forEach((sg: SecurityGroup) => {
+  //     sg. // ! TODO: Add cloudflare IPS @ LB
+  //   });
+
   const listener = loadBalancer.addListener(listenerName, {
     port: 80,
     open: true,
   });
 
-  //   const fargateService = new ApplicationLoadBalancedFargateService(
-  //     stack,
-  //     serviceName,
-  //     {
-  //       vpc,
-  //       desiredCount: 1,
-  //       taskDefinition,
-  //       taskSubnets: {
-  //         subnets: vpc.privateSubnets,
-  //       },
-  //       loadBalancerName,
-  //     }
-  //   );
+  const defaultHealthCheck: HealthCheck = {
+    interval: Duration.seconds(5),
+    healthyThresholdCount: 2,
+    unhealthyThresholdCount: 2,
+    timeout: Duration.seconds(4),
+    path: "/",
+  };
 
   const apiTargetGroup = new ApplicationTargetGroup(stack, apiTargetGroupName, {
     vpc,
@@ -98,6 +97,10 @@ export const createFargateService = ({
         containerPort: 8080,
       }),
     ],
+    healthCheck: {
+      ...defaultHealthCheck,
+      path: "/", // ! TODO: Update health check path
+    },
   });
 
   const webTargetGroup = new ApplicationTargetGroup(stack, webTargetGroupName, {
@@ -111,19 +114,8 @@ export const createFargateService = ({
         containerPort: 3000,
       }),
     ],
+    healthCheck: defaultHealthCheck,
   });
-
-  //   listener.addTargetGroups("ApiTargetGroup", {
-  //     priority: 1,
-  //     conditions: [ListenerCondition.pathPatterns(["/api/*"])],
-  //     targetGroups: [apiTargetGroup],
-  //   });
-
-  //   listener.addTargetGroups("WebTargetGroup", {
-  //     priority: 2,
-  //     conditions: [ListenerCondition.pathPatterns(["*"])],
-  //     targetGroups: [webTargetGroup],
-  //   });
 
   listener.addAction("ApiAction", {
     action: ListenerAction.forward([apiTargetGroup]),
@@ -143,53 +135,26 @@ export const createFargateService = ({
   });
 
   // Required or else will fail to deploy
-
   fargateService.node.addDependency(listener);
-
-  //   // Ensure everything is setup before trying to register the targets
-  //   [apiTargetGroup, webTargetGroup].forEach((targetGroup) => {
-  //     [listener].forEach((node) => {
-  //       targetGroup.node.addDependency(node);
-  //     });
-  //   });
-
-  //   const albListener = fargateService.listeners[0];
-  //   fargateService.service.registerLoadBalancerTargets({
-  //     containerName: "plutomi-web-container", // Replace with your actual container name
-  //     containerPort: 3000, // Make sure this matches the port your container is listening on
-  //     protocol: Protocol.TCP,
-  //     newTargetGroupId: `plutomi-web-target-group-id`, // Use the ARN of the target group
-  //     listener: ListenerConfig.applicationListener(albListener, {
-  //       protocol: ApplicationProtocol.HTTP,
-  //     }),
-  //   });
-
-  //   fargateService.service.registerLoadBalancerTargets({
-  //     containerName: "plutomi-api-container", // Replace with your actual container name
-  //     containerPort: 8080, // Make sure this matches the port your container is listening on
-  //     protocol: Protocol.TCP,
-  //     newTargetGroupId: `plutomi-api-target-group-id`, // Use the ARN of the target group
-  //     listener: ListenerConfig.applicationListener(albListener, {
-  //       protocol: ApplicationProtocol.HTTP,
-  //     }),
-  //   });
 
   // How long it takes to kill a container
   // https://twitter.com/pahudnet/status/1185232660081197056
-  //   const deregistrationDelaySeconds = 5;
-  //   fargateService.targetGroup.setAttribute(
-  //     "deregistration_delay.timeout_seconds",
-  //     deregistrationDelaySeconds.toString()
-  // );
+  const deregistrationDelaySeconds = 5;
+  [apiTargetGroup, webTargetGroup].forEach((tg) => {
+    tg.setAttribute(
+      "deregistration_delay.timeout_seconds",
+      deregistrationDelaySeconds.toString()
+    );
+  });
 
   // Health Checks
-  //   fargateService.targetGroup.configureHealthCheck({
-  //     interval: Duration.seconds(5),
-  //     healthyThresholdCount: 2,
-  //     unhealthyThresholdCount: 2,
-  //     timeout: Duration.seconds(4),
-  //     path: "/api/health",
-  //   });
+  // fargateService.targetGroup.configureHealthCheck({
+  //   interval: Duration.seconds(5),
+  //   healthyThresholdCount: 2,
+  //   unhealthyThresholdCount: 2,
+  //   timeout: Duration.seconds(4),
+  //   path: "/api/health",
+  // });
 
   // Scaling
   //   const scalingPeriodInSeconds = 60;
