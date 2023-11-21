@@ -1,23 +1,18 @@
-# Start from the official Rust base image
-FROM clux/muslrust:stable AS builder
+FROM arm64v8/rust:1.74 AS builder
 
-# Set the Current Working Directory inside the container
+RUN rustup target add aarch64-unknown-linux-musl
+RUN apt update && apt install -y musl-tools musl-dev
+
 WORKDIR /app
 
-# Copy everything from the current directory to the Working Directory inside the container
-COPY ./ ./
+COPY ./ .
+RUN cargo build --target aarch64-unknown-linux-musl --release
 
-# Build the Rust app using Cargo (Rust's build tool)
-RUN cargo build --release
+FROM scratch
 
-# Start a new stage to create a smaller final image - # Choose a smaller image!
-FROM alpine:latest AS runtime
-
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/api ./api
-
-# This container exposes port 8080 to the outside world
 EXPOSE 8080
+WORKDIR /app
+COPY --from=builder /app/target/aarch64-unknown-linux-musl/release/api ./api
+CMD ["/app/api"]
 
 
-# # Set the binary as the default CMD to run
-CMD ["/api"]
