@@ -9,15 +9,22 @@ import { createTaskRole } from "./createTaskRole";
 import { createTaskDefinition } from "./createTaskDefinition";
 import { createFargateService } from "./createFargateService";
 
-const deploymentEnvironment =
-  process.env.DEPLOYMENT_ENVIRONMENT || "development";
+const deploymentEnvironment = process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT;
 
 export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // const deadLetterQueue = new Queue(this, "DeadLetterQueue");
+    console.log("Deployment Environment:", deploymentEnvironment); // For debugging
 
+    console.log("Deployment Environment:", deploymentEnvironment); // For debugging
+    console.log("Deployment Environment:", deploymentEnvironment); // For debugging
+    console.log("Deployment Environment:", deploymentEnvironment); // For debugging
+
+    if (!deploymentEnvironment)
+      throw new Error("No NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT variable set!");
+
+    // @ts-ignore
     setupSES({ stack: this, deploymentEnvironment });
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
     const taskRole = createTaskRole({ stack: this });
