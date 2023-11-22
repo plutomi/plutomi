@@ -6,7 +6,7 @@ const Test = ({ data }: any) => <div>SSR Page 2 - {data}</div>;
 
 export const getServerSideProps = async () => {
   
-  const res = await fetch(`${baseAPIUrl}/`);
+  const res = await fetch(`${baseAPIUrl}/api/`);
 
   const data = await res.text();
   return {
