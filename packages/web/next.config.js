@@ -14,7 +14,6 @@ const nextConfig = {
   async rewrites() {
     return [
       // If you hit the base API route, go to docs
-
       {
         source: "/api",
         destination: `/apiDocs`

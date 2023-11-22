@@ -128,20 +128,22 @@ export const createFargateService = ({
     healthCheck: defaultHealthCheck,
   });
 
-  listener.addAction("ApiAction", {
+  listener.addAction(`plutomi-force-api-to-web-action`, {
+    action: ListenerAction.forward([webTargetGroup]),
+    priority: 10,
+    // Force /api/ to redirect to web, which will force a redirect to an API docs page
+    conditions: [ListenerCondition.pathPatterns(["/api/"])],
+  });
+
+  listener.addAction(`plutomi-api-rule`, {
     action: ListenerAction.forward([apiTargetGroup]),
-    priority: 1,
+    priority: 20,
+    // Force anything with stuff after /api/* to the actual API
     conditions: [ListenerCondition.pathPatterns(["/api/*"])],
   });
 
-  listener.addAction("WebAction", {
-    action: ListenerAction.forward([webTargetGroup]),
-    priority: 2,
-    conditions: [ListenerCondition.pathPatterns(["*"])],
-  });
-
-  listener.addAction("DefaultAction", {
-    // This default one is required
+  // Everything else, go to web. A default action is required
+  listener.addAction(`plutomi-default action`, {
     action: ListenerAction.forward([webTargetGroup]),
   });
 
