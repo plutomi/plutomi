@@ -1,12 +1,10 @@
 use axum::{
     routing::get, 
     Router, 
-    Json, 
     Extension
 };
 use mongodb::{options::ClientOptions, Client, Collection};
 use serde::{Deserialize, Serialize};
-use std::net::SocketAddr;
 use std::sync::Arc;
 use tower::ServiceBuilder;
 
@@ -27,7 +25,7 @@ async fn main() {
     let app = Router::new()
         .route("/api/health", get(health_check))
         .route("/api/insert", get(insert_person))
-        .layer(ServiceBuilder::new().layer(Extension(shared_collection)))
+        .layer(ServiceBuilder::new().layer(Extension(shared_collection)));
 
     let addr = "[::]:8080".parse::<std::net::SocketAddr>().unwrap();
         // println!("Listening on {}", &addr);
