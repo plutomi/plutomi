@@ -25,12 +25,17 @@ async fn main() {
     let shared_collection = Arc::new(collection);
 
     let app = Router::new()
-        .route("/api/", get(insert_person))
-        .layer(ServiceBuilder::new().layer(Extension(shared_collection)));
+        .route("/api/health", get(health_check))
+        .route("/api/insert", get(insert_person))
+        .layer(ServiceBuilder::new().layer(Extension(shared_collection)))
 
     let addr = "[::]:8080".parse::<std::net::SocketAddr>().unwrap();
         // println!("Listening on {}", &addr);
     axum::Server::bind(&addr).serve(app.into_make_service()).await.unwrap();
+}
+
+async fn health_check() -> &'static str {
+    "Hello from rust prod:D"
 }
 
 async fn insert_person(Extension(collection): Extension<Arc<Collection<Person>>>) -> &'static str {
