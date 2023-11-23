@@ -4,16 +4,16 @@
 print_error_and_exit() {
     echo -e "\nERROR: $1 \n"
     echo -e "Usage: $0 [--stack <stack>] [--env <environment>]\n"
-    echo -e "Stack (optional): api, web, aws"
+    echo -e "Stack (optional): aws"
     echo -e "Environment (optional): development, staging, production"
     echo -e "If no stack is provided, all stacks will be deployed to staging.\n"
-    echo -e "Example: $0 --stack api --env production\n"
+    echo -e "Example: $0 --stack aws --env production\n"
     exit 1
 }
 
 # Default values
 stack=""
-environment="staging" # Default to 'staging' if no environment is provided
+environment="development" # Default to 'development' if no environment is provided
 
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
@@ -28,23 +28,6 @@ done
 # Validate environment
 [[ "$environment" =~ ^(staging|production|development)$ ]] || print_error_and_exit "Invalid environment: '$environment'. Must be 'staging', 'production', or 'development'."
 
-deploy_all() {
-    deploy_aws
-    deploy_stack "api"
-    deploy_stack "web"
-}
-
-# Function definitions (deploy_api, deploy_web, deploy_aws) remain the same
-deploy_stack() {
-    local stack=$1  # 'api' or 'web'
-
-    (
-    # Navigate to the specified stack directory and deploy
-    cd "packages/$stack"
-    sed "s/{{ENV}}/$environment/g" fly.template.toml > fly.toml
-    fly deploy --build-arg NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=$environment --local-only # TODO remove if build remotely
-    )
-}
 
 deploy_aws() {
    ( 
@@ -62,7 +45,8 @@ deploy_aws() {
     echo "Deploying AWS with environment: $environment and profile: $AWS_PROFILE"
     
     cd packages/aws
-    npm run deploy -- DEPLOYMENT_ENVIRONMENT=$environment --profile $AWS_PROFILE
+    export NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=$environment
+    npm run deploy -- --profile $AWS_PROFILE
     )
 }
 
@@ -73,14 +57,12 @@ if [ -z "$stack" ]; then
     deploy_all
 else
     # Validate stack
-    [[ "$stack" =~ ^(api|web|aws)$ ]] || print_error_and_exit "Invalid stack: $stack. Must be 'web', 'api', or 'aws'."
+    [[ "$stack" =~ ^(aws)$ ]] || print_error_and_exit "Invalid stack: $stack. Must be 'aws'."
     [ "$environment" == "development" -a "$stack" != "aws" ] && print_error_and_exit "There is no 'dev' environment for '$stack', run things locally :D"
 
     # Deploy specific stack
     case "$stack" in
-        "api") deploy_stack "api" ;;
-        "web") deploy_stack "web" ;;
         "aws") deploy_aws ;;
-        *) print_error_and_exit "Invalid stack specified. Use 'api', 'web', or 'aws'." ;;
+        *) print_error_and_exit "Invalid stack specified. Use 'aws'." ;;
     esac
 fi

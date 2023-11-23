@@ -2,7 +2,7 @@
 
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
-TODO Update infra
+![infra](./images/infra.png)
 
 ## Motivation
 
@@ -29,28 +29,19 @@ Stages:
 ## Prerequisites
 
 - [Node 20](https://nodejs.org/en/download)
+- [Rust](https://www.rust-lang.org/tools/install)
 - [Docker](https://docs.docker.com/get-docker/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
-- [Rust](https://www.rust-lang.org/tools/install)
-- [fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/)
 
 ## Infra
 
-@ TODO When deploying, make sure to add the certificate name to cloudflare
+Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet. A NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, etc. We use Cloudflare for DNS, CDN, WAF and other goodies.
 
-The NextJS app and API are deployed to [fly.io](https://fly.io/docs/speedrun/) using Docker. The NextJS app forwards all API requests through the internal Fly network to the API. The API is not exposed to the public internet. As of this writing, it's a basic Rust server using [Axum](https://crates.io/crates/axum). I wanted to learn Rust and this seemed like a good project to do that with. If you see something that can be improved, please open a PR! 🦀
-
-We are using MongoDB on [Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
-
-#### API Networking
-
-To make sure that the API is not exposed to the public internet, you can run `fly ips list` and `fly ips release <ip>` for both ipv4 and ipv6 that is returned. Then, allocate a private ipv6 with `fly ips allocate-v6 --private`. You can verify that the API is not exposed by running `fly ips list` and ensuring only the ipv6 address is listed and it is private.
-
-## Useful Scripts
+For the database, we are using [MongoDB on Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
 ### Running Locally
 
-The following will start the API and the frontend in development mode:
+The following will start the API and the web app in development mode:
 
 ```bash
 $ scripts/run.sh
@@ -67,23 +58,21 @@ The script also has hot reloading for both so you can make changes and see them 
 ### Deploying
 
 ```bash
-$ scripts/deploy.sh --stack <web|api|aws> --env <staging|production>
+$ scripts/deploy.sh --stack <aws> --env <development|staging|production>
 ```
 
-An environment of `development` will work with AWS **only** as it is meant to give you the resources needed when running the other things locally.
-
-If you omit a stack, all of them will be deployed. If you omit an environment, `staging` will be used.
+If you omit a stack, all of them (just 1 for now!) will be deployed. If you omit an environment, `development` will be used.
 
 ## AWS
 
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the domains you want to use in [setupSES.ts](./packages/aws/lib/setupSES.ts).
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the domains you want to use for sending emails in [setupSES.ts](./packages/aws/lib/setupSES.ts).
 
-After running the deploy script above, most of your environment will be setup. For SES, you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:
+After running the deploy script above, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
 
 ![SES DNS Records](./images/ses-setup.png)
 
-Also, you'll want to add a DMARC record to your DNS provider. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
-See [here](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
+Also, make sure to setup DMARC. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
+See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
 
 ## License
 
