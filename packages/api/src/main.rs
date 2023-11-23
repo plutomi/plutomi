@@ -1,12 +1,11 @@
-use axum::{
-    routing::get, 
-    Router, 
-    Extension
-};
-use mongodb::{options::ClientOptions, Client, Collection};
+use axum::{routing::get, Router};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use tower::ServiceBuilder;
+
+mod controllers;
+mod utils;
+
+use controllers::health_check::health_check;
+use controllers::not_found::not_found;
 
 #[derive(Serialize, Deserialize)]
 struct Person {
@@ -15,33 +14,19 @@ struct Person {
 
 #[tokio::main]
 async fn main() {
-    let client_options = ClientOptions::parse("mongodb+srv://jose-dev-local:HhaVozprvB63fLdD@plutomi.pd4tt.mongodb.net/").await.unwrap();
-    let client = Client::with_options(client_options).unwrap();
-    let database = client.database("mydb");
-    let collection: Collection<Person> = database.collection("mycollection");
+    let all_routes = Router::new().route("/health", get(health_check));
 
-    let shared_collection = Arc::new(collection);
+    let app = Router::new().nest("/api", all_routes).fallback(not_found);
 
-    let app = Router::new()
-        .route("/api/health", get(health_check))
-        .route("/api/insert", get(insert_person))
-        .layer(ServiceBuilder::new().layer(Extension(shared_collection)));
+    let addr = "[::]:8080"
+        .parse::<std::net::SocketAddr>()
+        .expect("Error parsing localhost:8080");
 
-    let addr = "[::]:8080".parse::<std::net::SocketAddr>().unwrap();
-        // println!("Listening on {}", &addr);
-    axum::Server::bind(&addr).serve(app.into_make_service()).await.unwrap();
-}
-
-async fn health_check() -> &'static str {
-    "Hello from rust prod:D"
-}
-
-async fn insert_person(Extension(collection): Extension<Arc<Collection<Person>>>) -> &'static str {
-    let new_person = Person {
-        name: "Jose Valerio".to_string(),
-    };
-
-    collection.insert_one(new_person, None).await.unwrap();
-
-    "Hello from rust prod:D"
+    match axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+    {
+        Ok(_) => println!("Listening on {}", &addr),
+        Err(e) => println!("Error starting server: {}", e),
+    }
 }
