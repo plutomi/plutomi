@@ -1,5 +1,5 @@
-use core::panic;
 use super::get_env::get_env;
+use core::panic;
 use mongodb::{options::ClientOptions, Client};
 
 pub async fn connect_to_database() -> Client {
