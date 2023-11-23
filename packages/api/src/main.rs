@@ -1,14 +1,18 @@
 use axum::{routing::get, Router};
 use controllers::{health_check::health_check, not_found::not_found};
 use dotenv::dotenv;
+use utils::connect_to_database::connect_to_database;
 
 mod controllers;
-mod env;
+mod utils;
 
 #[tokio::main]
 async fn main() {
     // Load .env if available (used in development)
     dotenv().ok();
+
+    // Connect to database
+    let dbClient = connect_to_database().await;
 
     let app = Router::new()
         .nest("/api", Router::new().route("/health", get(health_check)))

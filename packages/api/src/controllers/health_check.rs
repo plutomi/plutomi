@@ -1,7 +1,5 @@
-use crate::env::get_env;
+use axum::http::StatusCode;
 
-pub async fn health_check() -> String {
-    let env = get_env();
-
-    format!("Hello from rust :D {}", env.API_KEY)
+pub async fn health_check() -> (StatusCode, &'static str) {
+    (StatusCode::OK, "Hello from Plutomi!")
 }
