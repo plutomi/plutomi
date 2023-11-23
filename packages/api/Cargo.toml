@@ -21,3 +21,4 @@ bson = { version = "2", features = [
 ] } # Needed for using chrono datetime in doc
 chrono = "0.4" # Used for setting DateTimes
 tower = "0.4.13"
+dotenv = "0.15.0"
