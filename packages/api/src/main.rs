@@ -4,19 +4,15 @@ use dotenv::dotenv;
 
 mod controllers;
 mod env;
-mod utils;
 
 #[tokio::main]
 async fn main() {
     // Load .env if available (used in development)
     dotenv().ok();
 
-    let app = Router::new().nest(
-        "/api",
-        Router::new()
-            .route("/health", get(health_check))
-            .fallback(not_found),
-    );
+    let app = Router::new()
+        .nest("/api", Router::new().route("/health", get(health_check)))
+        .fallback(not_found);
 
     let addr = "[::]:8080"
         .parse::<std::net::SocketAddr>()

@@ -50,19 +50,10 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "axum",
- "base-encode",
- "base62",
- "bson",
- "byteorder",
- "chrono",
  "dotenv",
- "getrandom",
  "mongodb",
  "rand",
- "serde",
- "time",
  "tokio",
- "tower",
 ]
 
 [[package]]
@@ -147,18 +138,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "base-encode"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a17bd29f7c70f32e9387f4d4acfa5ea7b7749ef784fb78cf382df97069337b8c"
-
-[[package]]
-name = "base62"
-version = "2.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f879ef8fc74665ed7f0e6127cb106315888fc2744f68e14b74f83edbb2a08992"
-
-[[package]]
 name = "base64"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -206,7 +185,6 @@ dependencies = [
  "ahash",
  "base64 0.13.1",
  "bitvec",
- "chrono",
  "hex",
  "indexmap 1.9.3",
  "js-sys",
@@ -224,12 +202,6 @@ name = "bumpalo"
 version = "3.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
-
-[[package]]
-name = "byteorder"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
 name = "bytes"
@@ -260,9 +232,7 @@ checksum = "7f2c685bad3eb3d45a01354cedb7d5faa66194d1d58ba6e267a8de788f79db38"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
- "js-sys",
  "num-traits",
- "wasm-bindgen",
  "windows-targets",
 ]
 
