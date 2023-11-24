@@ -1,11 +1,11 @@
 use super::get_env::get_env;
 use crate::EntityType;
 use core::panic;
-use mongodb::{options::ClientOptions, Client, Collection};
+use mongodb::{options::ClientOptions, Client, Collection, bson::Document};
 
 pub struct Database {
     pub client: Client,
-    pub collection: Collection<EntityType>,
+    pub collection: Collection<Document>,
 }
 
 pub async fn connect_to_database() -> Database {
