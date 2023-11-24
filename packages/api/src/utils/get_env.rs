@@ -7,7 +7,7 @@ pub struct Env {
 
 fn get_key_from_env(key: &str) -> String {
     env::var(key).unwrap_or_else(|e| {
-        panic!("Error getting {} from environment: {}", key, e);
+        panic!("Error getting '{}' from environment: {}", key, e);
     })
 }
 
