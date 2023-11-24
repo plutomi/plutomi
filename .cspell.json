@@ -21,6 +21,7 @@
     "apdex",
     "applicationautoscaling",
     "barebones",
+    "bson",
     "cacheable",
     "cellspacing",
     "certificatemanager",

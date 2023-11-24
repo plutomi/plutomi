@@ -6,10 +6,11 @@ use serde_json::{json, Value};
 use std::sync::Arc;
 
 pub async fn health_check(
-    database: Extension<Arc<Database>>,
+    mongodb: Extension<Arc<mongodb>>,
+    // TODO update types
 ) -> Result<(StatusCode, Json<Vec<Document>>), (StatusCode, Json<Value>)> {
     // Get a cursor with all items
-    let mut items_cursor = match database.collection.find(None, None).await {
+    let mut items_cursor = match mongodb.collection.find(None, None).await {
         Ok(cursor) => cursor,
         Err(e) => {
             return Err((
