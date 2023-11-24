@@ -11,21 +11,33 @@ pub struct Database {
 pub async fn connect_to_database() -> Database {
     let env = get_env();
 
-    let client_options = ClientOptions::parse(env.DATABASE_URL)
-        .await
-        .unwrap_or_else(|e| {
-            panic!("Error parsing database URL: {}", e);
-        });
+    // Parse the connection string into a client
+    let client_options = match ClientOptions::parse(env.DATABASE_URL).await {
+        Ok(client_options) => client_options,
+        Err(e) => {
+            // TODO: Log error
+            panic!("Error parsing client options for DB: {}", e);
+        }
+    };
 
-    let client = Client::with_options(client_options).unwrap_or_else(|e| {
-        panic!("Error connecting to database: {}", e);
-    });
+    // Get the DB client that's connected to the DB
+    let client = match Client::with_options(client_options) {
+        Ok(client) => client,
+        Err(e) => {
+            // TODO: Log error
+            panic!("Error connecting to database: {}", e);
+        }
+    };
 
-    let db = client.default_database().unwrap_or_else(|| {
-        // We want to error here so that we have one less .env variable to worry about with DB_NAME
-        // So just panic if we can't find the default database in the connection string
-        panic!("Unable to find default collection.\nMake sure you include it in the connection string like: mongodb://localhost:27017/this-part-is-missing");
-    });
+    let db = match client.default_database() {
+        Some(db) => db,
+        None => {
+            // TODO: Log error
+            // We want to error here so that we have one less .env variable to worry about with DB_NAME
+            // So just panic if we can't find the default database in the connection string
+            panic!("Unable to find default database.\nMake sure you include it in the connection string like: mongodb://localhost:27017/this-part-is-missing");
+        }
+    };
 
     Database {
         client,

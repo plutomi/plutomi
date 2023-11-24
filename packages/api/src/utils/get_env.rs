@@ -6,9 +6,13 @@ pub struct Env {
 }
 
 fn get_key_from_env(key: &str) -> String {
-    env::var(key).unwrap_or_else(|e| {
-        panic!("Error getting '{}' from environment: {}", key, e);
-    })
+    match env::var(key) {
+        Ok(val) => val,
+        Err(e) => {
+            // TODO: Log error
+            panic!("Error getting key '{}' from env: {}", key, e)
+        }
+    }
 }
 
 pub fn get_env() -> Env {

@@ -24,14 +24,23 @@ async fn main() {
         .layer(Extension(database));
 
     // Bind address
-    let addr = "[::]:8080"
-        .parse::<std::net::SocketAddr>()
-        .unwrap_or_else(|e| panic!("Error parsing address: {}", e));
+    let addr = match "[::]:8080".parse::<std::net::SocketAddr>() {
+        Ok(addr) => addr,
+        Err(_) => {
+            // TODO: Log error
+            panic!("Error parsing address");
+        }
+    };
 
     // Start the server
-    axum::Server::bind(&addr)
+    match axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
-        .map(|_| println!("Listening on {}", &addr))
-        .unwrap_or_else(|e| panic!("Error binding address: {}", e));
+    {
+        Ok(_) => println!("Listening on {}", &addr),
+        Err(e) => {
+            // TODO: Log error
+            panic!("Error binding address: {}", e)
+        }
+    }
 }
