@@ -1,9 +1,8 @@
 use axum::{routing::get, Extension, Router};
 use controllers::{health_check::health_check, not_found::not_found};
 use dotenv::dotenv;
-use entities::EntityType;
 use std::sync::Arc;
-use utils::connect_to_database::connect_to_database;
+use utils::connect_to_mongodb::connect_to_mongodb;
 
 mod controllers;
 mod entities;
@@ -15,13 +14,13 @@ async fn main() {
     dotenv().ok();
 
     // Connect to database
-    let database = Arc::new(connect_to_database().await);
+    let mongodb = Arc::new(connect_to_mongodb().await);
 
     // Routes
     let app = Router::new()
         .nest("/api", Router::new().route("/health", get(health_check)))
         .fallback(not_found)
-        .layer(Extension(database));
+        .layer(Extension(mongodb));
 
     // Bind address
     let addr = match "[::]:8080".parse::<std::net::SocketAddr>() {

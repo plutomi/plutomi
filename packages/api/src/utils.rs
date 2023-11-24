@@ -1,2 +1,2 @@
-pub mod connect_to_database;
+pub mod connect_to_mongodb;
 pub mod get_env;

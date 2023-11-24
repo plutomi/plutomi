@@ -1,14 +1,14 @@
 use super::get_env::get_env;
-use crate::EntityType;
 use core::panic;
-use mongodb::{options::ClientOptions, Client, Collection, bson::Document};
+use mongodb::{bson::Document, options::ClientOptions, Client, Collection, Database};
 
-pub struct Database {
+pub struct MongoDB {
     pub client: Client,
     pub collection: Collection<Document>,
+    pub database: Database,
 }
 
-pub async fn connect_to_database() -> Database {
+pub async fn connect_to_mongodb() -> MongoDB {
     let env = get_env();
 
     // Parse the connection string into a client
@@ -29,7 +29,7 @@ pub async fn connect_to_database() -> Database {
         }
     };
 
-    let db = match client.default_database() {
+    let database = match client.default_database() {
         Some(db) => db,
         None => {
             // TODO: Log error
@@ -39,8 +39,9 @@ pub async fn connect_to_database() -> Database {
         }
     };
 
-    Database {
+    MongoDB {
         client,
-        collection: db.collection("items"),
+        collection: database.collection("items"),
+        database,
     }
 }
