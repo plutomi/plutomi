@@ -23,33 +23,23 @@ pub async fn health_check(
         }
     };
 
+    // Iterate over the cursor and collect the items into a vector
     let mut items: Vec<Document> = Vec::new();
-    (
-        StatusCode::OK,
-        Json(items_cursor.try_collect().await.unwrap()),
-    )
-    // let mut items: Vec<Document> = Vec::new();
 
-    // while let Some(result) = items_cursor.unwrap().try_next().await {
-    //     match result {
-    //         Ok(doc) => items.push(doc),
-    //         Err(_) => {
-    //             return Err((
-    //                 StatusCode::INTERNAL_SERVER_ERROR,
-    //                 Json(json!({ "message": "Error retrieving data from cursor" })),
-    //             ));
-    //         }
-    //     }
-    // }
+    while let Some(result) = items_cursor.try_next().await {
+        match result {
+            Ok(Some(doc)) => items.push(doc),
+            Ok(None) => break,
+            Err(e) => {
+                return Err((
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(
+                        json!({ "message": format!("Error retrieving data from database: {}", e) }),
+                    ),
+                ));
+            }
+        }
+    }
 
-    // while let Some(Book) = items_cursor.try_next().await? {
-    //     println!("title: {}", book.title);
-    // }
-
-    // items_cursor.clone().unwrap_or_else(|e| {
-    //     (
-    //         StatusCode::INTERNAL_SERVER_ERROR,
-    //         json!({ "error": format!("Error getting item: {}", e) }),
-    //     );
-    // });
+    Ok((StatusCode::OK, Json(items)))
 }
