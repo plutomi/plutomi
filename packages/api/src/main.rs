@@ -15,7 +15,7 @@ async fn main() {
     dotenv().ok();
 
     // Connect to database
-    let database = Arc::new(connect_to_database::<EntityType>().await);
+    let database = Arc::new(connect_to_database().await);
 
     // Routes
     let app = Router::new()

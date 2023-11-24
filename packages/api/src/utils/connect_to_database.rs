@@ -8,7 +8,7 @@ pub struct Database {
     pub collection: Collection<EntityType>,
 }
 
-pub async fn connect_to_database<T>() -> Database {
+pub async fn connect_to_database() -> Database {
     let env = get_env();
 
     let client_options = ClientOptions::parse(env.DATABASE_URL)
@@ -27,7 +27,8 @@ pub async fn connect_to_database<T>() -> Database {
         panic!("Unable to find default collection.\nMake sure you include it in the connection string like: mongodb://localhost:27017/this-part-is-missing");
     });
 
-    let collection = db.collection("items");
-
-    Database { client, collection }
+    Database {
+        client,
+        collection: db.collection("items"),
+    }
 }
