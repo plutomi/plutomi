@@ -93,6 +93,7 @@ export const createTaskDefinition = ({
           streamPrefix: logStreamPrefix,
           logRetention: RetentionDays.ONE_WEEK,
         }),
+        // TODO Parameter store?
         environment,
       });
     }
