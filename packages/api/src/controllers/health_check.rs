@@ -6,7 +6,6 @@ use std::sync::Arc;
 #[derive(Serialize)]
 pub struct HealthCheckResponse {
     message: &'static str,
-    server: bool,
     database: bool,
     deployment_environment: String,
 }
@@ -16,7 +15,6 @@ pub async fn health_check(
 ) -> (StatusCode, Json<HealthCheckResponse>) {
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
-        server: true,
         database: mongodb.collection.find_one(None, None).await.is_ok(),
         deployment_environment: get_env().NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
     };
