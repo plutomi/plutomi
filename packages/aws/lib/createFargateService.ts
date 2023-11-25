@@ -33,7 +33,6 @@ import {
 type CreateFargateServiceProps = {
   stack: Stack;
   taskDefinition: FargateTaskDefinition;
-  //   certificate: ICertificate;
   vpc: Vpc;
   natGatewayProvider: FckNatInstanceProvider;
 };
