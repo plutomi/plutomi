@@ -16,6 +16,7 @@ pub async fn connect_to_mongodb() -> MongoDB {
         Ok(client_options) => client_options,
         Err(e) => {
             // TODO: Log error
+            // TODO: Again - we probably shouldn't panic here due to new health check setup
             panic!("Error parsing client options for DB: {}", e);
         }
     };
@@ -25,6 +26,7 @@ pub async fn connect_to_mongodb() -> MongoDB {
         Ok(client) => client,
         Err(e) => {
             // TODO: Log error
+            // TODO: Again - we probably shouldn't panic here due to new health check setup
             panic!("Error connecting to database: {}", e);
         }
     };
@@ -33,6 +35,7 @@ pub async fn connect_to_mongodb() -> MongoDB {
         Some(db) => db,
         None => {
             // TODO: Log error
+            // TODO: Again - we probably shouldn't panic here due to new health check setup
             // We want to error here so that we have one less .env variable to worry about with DB_NAME
             // So just panic if we can't find the default database in the connection string
             panic!("Unable to find default database.\nMake sure you include it in the connection string like: mongodb://localhost:27017/this-part-is-missing");

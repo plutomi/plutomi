@@ -18,7 +18,7 @@ pub async fn not_found(
             "'{} {}' not found - Go to {}/api to view the docs.",
             method,
             uri,
-            crate::utils::get_env::get_env().NEXT_PUBLIC_BASE_URL
+            &crate::utils::get_env::get_env().NEXT_PUBLIC_BASE_URL
         ),
     };
     (StatusCode::NOT_FOUND, Json(response))

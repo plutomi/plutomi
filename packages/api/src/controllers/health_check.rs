@@ -1,4 +1,4 @@
-use crate::utils::connect_to_mongodb::MongoDB;
+use crate::utils::{connect_to_mongodb::MongoDB, get_env::get_env};
 use axum::{http::StatusCode, Extension, Json};
 use serde::Serialize;
 use std::sync::Arc;
@@ -8,6 +8,7 @@ pub struct HealthCheckResponse {
     message: &'static str,
     server: bool,
     database: bool,
+    deployment_environment: String,
 }
 
 pub async fn health_check(
@@ -17,6 +18,7 @@ pub async fn health_check(
         message: "Saul Goodman",
         server: true,
         database: mongodb.collection.find_one(None, None).await.is_ok(),
+        deployment_environment: get_env().NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
     };
 
     (StatusCode::OK, Json(response))
