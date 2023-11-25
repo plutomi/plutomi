@@ -56,7 +56,7 @@ export const setupSES = ({ stack }: SetupSESProps) => {
   });
 
   // Strips out https:// and any trailing slashes
-  const rawUrl = new URL(env.BASE_URL).hostname;
+  const rawUrl = new URL(env.NEXT_PUBLIC_BASE_URL).hostname;
   const identity = Identity.domain(rawUrl);
 
   /**

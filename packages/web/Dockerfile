@@ -15,6 +15,9 @@ RUN \
     else echo "Lockfile not found." && exit 1; \
     fi
 
+# Make sure to update task defintion
+ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
+ARG NEXT_PUBLIC_BASE_URL
 
 # Rebuild the source code only when needed
 FROM base AS builder

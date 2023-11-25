@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require("dotenv").config();
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 import { PlutomiStack } from "../lib/plutomi-stack";

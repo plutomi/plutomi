@@ -80,7 +80,7 @@ export const createFargateService = ({
     port: 443,
     certificates: [
       new Certificate(stack, certificateName, {
-        domainName: `*.plutomi.com`, // Do not use .env.BASE_URL here
+        domainName: `*.plutomi.com`, // Do not use .env.NEXT_PUBLIC_BASE_URL here
         validation: CertificateValidation.fromDns(),
         certificateName,
       }),

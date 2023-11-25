@@ -9,8 +9,7 @@ import {
 import type { IRole } from "aws-cdk-lib/aws-iam";
 import { type Stack } from "aws-cdk-lib";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
-import { Platform } from "aws-cdk-lib/aws-ecr-assets";
-import { ApplicationProtocol } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { env } from "../utils/env";
 
 type CreateTaskDefinitionProps = {
   stack: Stack;
@@ -42,6 +41,7 @@ export const createTaskDefinition = ({
     containerPort: number;
     cpu: number;
     memoryLimitMiB: number;
+    environment: Record<string, string>;
   }[] = [
     {
       containerName: "plutomi-web-container",
@@ -49,6 +49,12 @@ export const createTaskDefinition = ({
       cpu: 120,
       memoryLimitMiB: 220,
       containerPort: 3000,
+      environment: {
+        // Make sure to update the Docker image with the latest env vars
+        NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT:
+          env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
+        NEXT_PUBLIC_BASE_URL: env.NEXT_PUBLIC_BASE_URL,
+      },
     },
     {
       containerName: "plutomi-api-container",
@@ -56,11 +62,19 @@ export const createTaskDefinition = ({
       cpu: 120,
       memoryLimitMiB: 220,
       containerPort: 8080,
+      environment: env,
     },
   ];
 
   containers.forEach(
-    ({ containerName, containerPort, imageDirectory, cpu, memoryLimitMiB }) => {
+    ({
+      containerName,
+      containerPort,
+      imageDirectory,
+      cpu,
+      memoryLimitMiB,
+      environment,
+    }) => {
       taskDefinition.addContainer(containerName, {
         portMappings: [
           {
@@ -79,7 +93,7 @@ export const createTaskDefinition = ({
           streamPrefix: logStreamPrefix,
           logRetention: RetentionDays.ONE_WEEK,
         }),
-        environment: {} as unknown as Record<string, string>,
+        environment,
       });
     }
   );
