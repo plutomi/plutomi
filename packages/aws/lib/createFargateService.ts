@@ -44,13 +44,11 @@ const webTargetGroupName = "plutomi-web-target-group";
 const apiTargetGroupName = "plutomi-api-target-group";
 const clusterName = "plutomi-cluster";
 const certificateName = "plutomi-certificate";
-// const plutomiSecurityGroupName = "plutomi-service-sg";
 const listenerName = "plutomi-listener";
 
 export const createFargateService = ({
   stack,
   taskDefinition,
-  //   certificate,
   vpc,
   natGatewayProvider,
 }: CreateFargateServiceProps): FargateService => {
@@ -82,7 +80,7 @@ export const createFargateService = ({
     port: 443,
     certificates: [
       new Certificate(stack, certificateName, {
-        domainName: `*.plutomi.com`, // ! TODO: make dynamic
+        domainName: `*.plutomi.com`, // Do not use .env.BASE_URL here
         validation: CertificateValidation.fromDns(),
         certificateName,
       }),
