@@ -107,7 +107,7 @@ export const createFargateService = ({
     ],
     healthCheck: {
       ...defaultHealthCheck,
-      path: "/api/health", // ! TODO: Update health check path
+      path: "/api/health",
     },
   });
 
