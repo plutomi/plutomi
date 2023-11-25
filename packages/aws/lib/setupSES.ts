@@ -13,10 +13,10 @@ import { Topic } from "aws-cdk-lib/aws-sns";
 import { SqsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import * as path from "path";
+import { env } from "../utils/env";
 
 type SetupSESProps = {
   stack: Stack;
-  deploymentEnvironment: string;
 };
 
 const sesEventsTopicName = "ses-events-topic";
@@ -26,7 +26,7 @@ const sesEmailIdentityName = `ses-identity`;
 const configurationSetName = `ses-configuration-set`;
 const sesEventsQueueName = `ses-events-queue`;
 
-export const setupSES = ({ stack, deploymentEnvironment }: SetupSESProps) => {
+export const setupSES = ({ stack }: SetupSESProps) => {
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
     displayName: sesEventsTopicName,
     topicName: sesEventsTopicName,
@@ -55,25 +55,15 @@ export const setupSES = ({ stack, deploymentEnvironment }: SetupSESProps) => {
     destination: EventDestination.snsTopic(sesEventsTopic),
   });
 
-  /**
-   * plutomi.com for production OR
-   * deploymentEnvironment.plutomi.com
-   */
-  const identity = Identity.domain(
-    `${
-      deploymentEnvironment === "production"
-        ? "plutomi.com"
-        : `${deploymentEnvironment}.plutomi.com`
-    }`
-  );
+  // Strips out https:// and any trailing slashes
+  const rawUrl = new URL(env.NEXT_PUBLIC_BASE_URL).hostname;
+  const identity = Identity.domain(rawUrl);
 
   /**
    * notifications.plutomi.com for production OR
    * notifications.deploymentEnvironment.plutomi.com
    */
-  const mailFromDomain = `notifications.${
-    deploymentEnvironment === "production" ? "" : `${deploymentEnvironment}.`
-  }plutomi.com`;
+  const mailFromDomain = `notifications.${rawUrl}`;
 
   // Create the SES identity
   void new EmailIdentity(stack, sesEmailIdentityName, {

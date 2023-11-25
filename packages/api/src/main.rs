@@ -1,19 +1,45 @@
-use axum::{routing::get, Router};
+use axum::{routing::get, Extension, Router};
+use controllers::{health_check::health_check, not_found::not_found};
+use dotenv::dotenv;
+use std::sync::Arc;
+use utils::connect_to_mongodb::connect_to_mongodb;
 
-pub mod utils;
-
+mod controllers;
+mod entities;
+mod utils;
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", get(|| async { 
-   
-    
-        format!("Hello from rust prod:D")
-    }
-    ));
+    // Load .env if available (used in development)
+    dotenv().ok();
 
-    axum::Server::bind(&"0.0.0.0:8080".parse().unwrap())
+    // Connect to database
+    let mongodb = Arc::new(connect_to_mongodb().await);
+
+    // Routes
+    let app = Router::new()
+        .nest("/api", Router::new().route("/health", get(health_check)))
+        .fallback(not_found)
+        .layer(Extension(mongodb));
+
+    // Bind address
+    let addr = match "[::]:8080".parse::<std::net::SocketAddr>() {
+        Ok(addr) => addr,
+        Err(_) => {
+            // TODO: Log error
+            panic!("Error parsing address");
+        }
+    };
+
+    // Start the server
+    match axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
-        .unwrap();
+    {
+        Ok(_) => println!("Listening on {}", &addr),
+        Err(e) => {
+            // TODO: Log error
+            panic!("Error binding address: {}", e)
+        }
+    }
 }
