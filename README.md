@@ -35,7 +35,7 @@ Stages:
 
 ## Infra
 
-Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet. A NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, etc. We use Cloudflare for DNS, CDN, WAF and other goodies.
+Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, etc. We use Cloudflare for DNS, CDN, WAF and other goodies.
 
 For the database, we are using [MongoDB on Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
