@@ -65,14 +65,23 @@ If you omit a stack, all of them (just 1 for now!) will be deployed. If you omit
 
 ## AWS
 
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the domains you want to use for sending emails in [setupSES.ts](./packages/aws/lib/setupSES.ts).
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [setupSES.ts](./packages/aws/lib/setupSES.ts). Change directories into `packages/aws` and install dependencies and copy the `.env.sample` file...
 
-After running the deploy script above, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
+```bash
+$ npm install
+$ cp .env.sample .env
+```
+
+...modify the values as needed, then you can go back to the root and deploy.
+
+After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
 
 ![SES DNS Records](./images/ses-setup.png)
 
 Also, make sure to setup DMARC. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
 See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
+
+In MongoDB, make sure to whitelist the IP address of the NAT instance which you can find in the EC2 console. We will eventually migrate over to use [PrivateLink](packages/aws/privateLink.md).
 
 ## License
 
