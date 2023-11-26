@@ -1,39 +1,10 @@
-import type { GetStaticProps, NextPage } from "next";
+// Import your Client Component
 import { orderBy } from "lodash";
+import HomePage from "./home-page";
 import axios from "axios";
-import {
-  type CommitType,
-  LatestCommits,
-  LandingHero,
-  UseCaseSection,
-  HomepageFooter
-} from "../components";
-type HomeProps = {
-  commits: CommitType[];
-};
+import { CommitType } from "./commit";
 
-const Home: NextPage<HomeProps> = ({ commits }) => (
-  <div className="w-full h-full flex justify-center">
-    <div className="flex flex-col my-32  items-center">
-      <LandingHero /> 
-      <div className="w-full flex justify-center">
-        <UseCaseSection />
-      </div>
-
-      {/* <div className="mt-12">
-        <WaitListCard />
-      </div> */}
-      <div className="mt-12">
-        <LatestCommits commits={commits} />
-      </div>
-      <div className=" w-full mt-12 flex justify-center">
-        <HomepageFooter />
-      </div>
-    </div>
-  </div>
-);
-
-export const getStaticProps: GetStaticProps = async () => {
+async function getCommits() {
   const commitsFromEachBranch = 8;
   const allCommits: CommitType[] = [];
 
@@ -82,11 +53,11 @@ export const getStaticProps: GetStaticProps = async () => {
       self.findIndex((t) => t.url === value.url && t.date === value.date)
   );
 
-  return {
-    props: {
-      commits
-    }
-  };
-};
-
-export default Home;
+  return commits;
+}
+export default async function Page() {
+  // Fetch data directly in a Server Component
+  const commits = await getCommits();
+  // Forward fetched data to your Client Component
+  return <HomePage commits={commits} />;
+}
