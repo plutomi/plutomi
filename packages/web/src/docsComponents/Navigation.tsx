@@ -233,23 +233,23 @@ export const navigation: Array<NavGroup> = [
   {
     title: "Guides",
     links: [
-      { title: "Introduction", href: "/api/" },
-      { title: "Quickstart", href: "/api/quickstart" },
-      { title: "SDKs", href: "/api/sdks" },
-      { title: "Authentication", href: "/api/authentication" },
-      { title: "Pagination", href: "/api/pagination" },
-      { title: "Errors", href: "/api/errors" },
-      { title: "Webhooks", href: "/api/webhooks" }
+      { title: "Introduction", href: "/docs/" },
+      { title: "Quickstart", href: "/docs/quickstart" },
+      { title: "SDKs", href: "/docs/sdks" },
+      { title: "Authentication", href: "/docs/authentication" },
+      { title: "Pagination", href: "/docs/pagination" },
+      { title: "Errors", href: "/docs/errors" },
+      { title: "Webhooks", href: "/docs/webhooks" }
     ]
   },
   {
     title: "Resources",
     links: [
-      { title: "Contacts", href: "/api/contacts" },
-      { title: "Conversations", href: "/api/conversations" },
-      { title: "Messages", href: "/api/messages" },
-      { title: "Groups", href: "/api/groups" },
-      { title: "Attachments", href: "/api/attachments" }
+      { title: "Contacts", href: "/docs/contacts" },
+      { title: "Conversations", href: "/docs/conversations" },
+      { title: "Messages", href: "/docs/messages" },
+      { title: "Groups", href: "/docs/groups" },
+      { title: "Attachments", href: "/docs/attachments" }
     ]
   }
 ];
