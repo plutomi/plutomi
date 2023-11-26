@@ -6,8 +6,6 @@ async function getCommits() {
   const commitsFromEachBranch = 8;
   const allCommits: CommitType[] = [];
 
-  await delay(1000);
-
   let response = await fetch(
     `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`
   );
