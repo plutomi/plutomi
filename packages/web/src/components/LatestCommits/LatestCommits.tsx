@@ -1,7 +1,5 @@
 import { orderBy } from "lodash";
 import { Commit, type CommitType } from "./Commit";
-import { Suspense } from "react";
-import CommitLoading from "./CommitLoading";
 import { delay } from "@/utils";
 
 async function getCommits() {
@@ -11,10 +9,7 @@ async function getCommits() {
   await delay(1000);
 
   let response = await fetch(
-    `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`,
-    {
-      // cache: "no-cache"
-    }
+    `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`
   );
 
   if (!response.ok) {
@@ -25,7 +20,6 @@ async function getCommits() {
 
   try {
     data = await response.json();
-    console.log(`DATA ${data}`);
   } catch (error) {
     return null;
   }
