@@ -12,6 +12,20 @@ const nextConfig = {
         hostname: "githubusercontent.com"
       }
     ]
+  },
+  async redirects() {
+    return [
+      {
+        source: "/api",
+        destination: "/docs/api",
+        permanent: true
+      },
+      {
+        source: "/api/",
+        destination: "/docs/api",
+        permanent: true
+      }
+    ];
   }
 };
 
