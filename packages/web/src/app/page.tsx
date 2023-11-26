@@ -3,7 +3,7 @@ import LatestCommits from "@/components/LatestCommits/LatestCommits";
 import { Suspense } from "react";
 import Loading from "../components/LatestCommits/loadingCommits";
 
-export default async function Page() {
+export default function Page() {
   return (
     <div className="w-full h-full flex justify-center">
       <div className="flex flex-col my-32  items-center">

@@ -76,6 +76,7 @@ function useVisibleSections(sectionStore: StoreApi<SectionState>) {
         sectionIndex < sections.length;
         sectionIndex++
       ) {
+        // @ts-ignore TODO
         let { id, headingRef, offsetRem = 0 } = sections[sectionIndex]
 
         if (!headingRef?.current) {

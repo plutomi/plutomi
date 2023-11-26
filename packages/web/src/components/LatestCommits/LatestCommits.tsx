@@ -6,7 +6,7 @@ async function getCommits() {
   const allCommits: CommitType[] = [];
 
   await new Promise((resolve) =>
-    setTimeout(() => resolve("Loading finished"), 5000)
+    setTimeout(() => resolve("Loading finished"), 1000)
   );
 
   const res = await fetch(

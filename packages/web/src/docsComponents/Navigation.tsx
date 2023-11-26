@@ -233,23 +233,23 @@ export const navigation: Array<NavGroup> = [
   {
     title: "Guides",
     links: [
-      { title: "Introduction", href: "/" },
-      { title: "Quickstart", href: "/quickstart" },
-      { title: "SDKs", href: "/sdks" },
-      { title: "Authentication", href: "/authentication" },
-      { title: "Pagination", href: "/pagination" },
-      { title: "Errors", href: "/errors" },
-      { title: "Webhooks", href: "/webhooks" }
+      { title: "Introduction", href: "/api/" },
+      { title: "Quickstart", href: "/api/quickstart" },
+      { title: "SDKs", href: "/api/sdks" },
+      { title: "Authentication", href: "/api/authentication" },
+      { title: "Pagination", href: "/api/pagination" },
+      { title: "Errors", href: "/api/errors" },
+      { title: "Webhooks", href: "/api/webhooks" }
     ]
   },
   {
     title: "Resources",
     links: [
-      { title: "Contacts", href: "/contacts" },
-      { title: "Conversations", href: "/conversations" },
-      { title: "Messages", href: "/messages" },
-      { title: "Groups", href: "/groups" },
-      { title: "Attachments", href: "/attachments" }
+      { title: "Contacts", href: "/api/contacts" },
+      { title: "Conversations", href: "/api/conversations" },
+      { title: "Messages", href: "/api/messages" },
+      { title: "Groups", href: "/api/groups" },
+      { title: "Attachments", href: "/api/attachments" }
     ]
   }
 ];

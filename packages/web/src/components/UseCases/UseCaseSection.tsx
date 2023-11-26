@@ -1,3 +1,4 @@
+"use client";
 import { UseCaseCards } from "./UseCaseCards";
 import { UseCaseSegment } from "./UseCaseSegment";
 

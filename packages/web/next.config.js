@@ -3,7 +3,7 @@ const withMDX = require("@next/mdx")();
 
 const nextConfig = {
   reactStrictMode: true,
-  pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
+  pageExtensions: ["js", "jsx", "mdx", "ts", "tsx", "md"],
 
   output: "standalone",
   images: {

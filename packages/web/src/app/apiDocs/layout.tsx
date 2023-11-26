@@ -1,8 +1,8 @@
+import "@/styles/globals.css";
+
 import glob from "fast-glob";
 import { Providers } from "./providers";
 import { Layout } from "@/docsComponents/Layout";
-
-import "@/styles/globals.css";
 import { type Metadata } from "next";
 import { Section } from "@/docsComponents/SectionProvider";
 
@@ -18,7 +18,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let pages = await glob("**/*.mdx", { cwd: "src/app" });
+  let pages = await glob("**/*.mdx", { cwd: "../src/app" });
   let allSectionsEntries = (await Promise.all(
     pages.map(async (filename) => [
       "/" + filename.replace(/(^|\/)page\.mdx$/, ""),
