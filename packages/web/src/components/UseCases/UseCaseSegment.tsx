@@ -1,3 +1,4 @@
+"use client";
 import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
 
 const useCases: UseCase[] = [

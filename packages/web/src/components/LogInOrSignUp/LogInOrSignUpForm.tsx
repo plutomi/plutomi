@@ -1,3 +1,4 @@
+"use client";
 
 // import { useState } from "react";
 // import { Schema } from "@plutomi/validation";
@@ -24,8 +25,9 @@ type LoginOrSignupProps = {
 
 // const redirectToDashboardPaths = ["/login", "/signup"];
 
-export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> =  () =>  <div>FORM</div>
-
+export const LogInOrSignUpForm: React.FC<LoginOrSignupProps> = () => (
+  <div>FORM</div>
+);
 
 // ({
 //   title,

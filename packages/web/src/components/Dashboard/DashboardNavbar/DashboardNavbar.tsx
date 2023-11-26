@@ -1,3 +1,4 @@
+"use client";
 
 // import { IconInfoCircle, IconSwitchHorizontal } from "@tabler/icons-react";
 // import axios from "axios";
@@ -11,8 +12,7 @@
 // import { useDashboardState } from "../../../hooks";
 // import { handleAxiosError } from "../../../utils/handleAxiosResponse";
 
-
-export const DashboardNavbar: React.FC = () => <div>Navbar</div>
+export const DashboardNavbar: React.FC = () => <div>Navbar</div>;
 //   const [active, setActive] = useState("Dashboard");
 //   const { navbarIsOpen } = useDashboardState();
 
