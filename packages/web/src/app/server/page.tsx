@@ -1,13 +1,6 @@
-import { baseAPIUrl } from "@/utils/baseAPIUrl";
+import { baseAPIUrl } from "@/utils";
 
-// async function getData() {
-//   const res = await fetch(`${baseAPIUrl}/api/health`, {
-//     cache: "no-cache"
-//   });
-//   return { name: "sample" };
-// }
-
-export default async function Test() {
+export default function Test() {
   //  const data = await getData();
   return (
     <div>

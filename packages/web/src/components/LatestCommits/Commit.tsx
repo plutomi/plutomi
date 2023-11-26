@@ -9,7 +9,6 @@ export type CommitType = {
   email: string;
   message: string;
 };
-
 export const Commit: React.FC<CommitType> = ({
   url,
   username,
@@ -18,20 +17,10 @@ export const Commit: React.FC<CommitType> = ({
   image,
   date
 }) => {
-  const handleCardClick = () => {
-    window.open(url, "_blank", "noopener noreferrer");
-  };
-
-  // className="inline-block h-16 w-16 md:h-24 md:w-24 rounded-lg "
-
-  // TODO add lines changed
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
       className="p-2 bg-white w-full max-w-3xl rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-150 hover:scale-102 cursor-pointer"
-      onClick={handleCardClick}
+      onClick={() => window.open(url, "_blank", "noopener noreferrer")}
     >
       <div className="flex items-center">
         <div className="shrink-0">
@@ -47,24 +36,19 @@ export const Commit: React.FC<CommitType> = ({
           </p>
           <p className="text-lg font-semibold text-slate-700 ">
             {name} -{" "}
-            <span
-              role="presentation"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(
-                  `https://github.com/${username}`,
-                  "_blank",
-                  "noopener noreferrer"
-                );
-              }}
-              className="transition ease-in-out duration-200 text-blue-500 hover:text-blue-600 hover:underline "
+            <a
+              href={`https://github.com/${username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition ease-in-out duration-200 text-blue-500 hover:text-blue-600 hover:underline"
+              onClick={(e) => e.stopPropagation()}
             >
               @{username}
-            </span>
+            </a>
           </p>
           <p className="text-slate-500 line-clamp-2">{message}</p>
         </div>
       </div>
-    </a>
+    </div>
   );
 };
