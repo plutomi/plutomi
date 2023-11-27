@@ -1,5 +1,5 @@
 // import Link from "next/link";
-"use client";
+"use client"; // TODO: sighhghodahjfoihadopfhaposhdfo
 export default function GlobalError({
   error,
   reset
