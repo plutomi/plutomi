@@ -1,14 +1,20 @@
 import { baseAPIUrl } from "@/utils";
 
-// Function getData that calls localhost on 8080 /api/health and returns the text
-async function getData() {
-  const response = await fetch(`${baseAPIUrl}/api/health`, {
-    // API not running when deploying and we want this to be dynamic
-    cache: "no-store"
-  });
-  const data = await response.text();
-  return data;
-}
+const getData = async () => {
+  try {
+    const response = await fetch(`${baseAPIUrl}/api/health`, {
+      // method: "GET",
+      cache: "no-store"
+      // headers: {
+      //   "Content-Type": "application/json"
+      // }
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return "FUCK YOU NEXT";
+  }
+};
 
 export default async function Server() {
   const data = await getData();

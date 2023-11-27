@@ -19,13 +19,13 @@ export default function Page() {
               </h3>
             </div>
 
-            <Suspense
+            {/* <Suspense
               fallback={[1, 2, 3, 4].map((i) => (
                 <CommitLoading key={i} />
               ))}
             >
               <LatestCommits />
-            </Suspense>
+            </Suspense> */}
           </div>
         </div>
         <div className=" w-full mt-12 flex justify-center">
