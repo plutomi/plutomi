@@ -1,19 +1,33 @@
 import { baseAPIUrl } from "@/utils";
 
 const getData = async () => {
-  try {
-    const response = await fetch(`${baseAPIUrl}/api/health`, {
-      // method: "GET",
-      cache: "no-store"
-      // headers: {
-      //   "Content-Type": "application/json"
-      // }
+  // try {
+  //   const response = await fetch(`${baseAPIUrl}/api/health`, {
+  //     // method: "GET",
+  //     cache: "no-store"
+  //     // headers: {
+  //     //   "Content-Type": "application/json"
+  //     // }
+  //   });
+  //   const data = await response.json();
+  //   return data;
+  // } catch (error) {
+  //   return "FUCK YOU NEXT";
+  // }
+
+  return fetch(`${baseAPIUrl}/api/health`, { cache: "no-store" })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((res) => res)
+    .catch((error) => {
+      // Handle any errors that occurred during fetch or JSON parsing
+      console.error("Fetch error:", error);
+      return null;
     });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return "FUCK YOU NEXT";
-  }
 };
 
 export default async function Server() {
@@ -25,7 +39,7 @@ export default async function Server() {
       <div className="mx-auto">
         <figure className="mt-10">
           <blockquote className="text-center text-xl font-semibold leading-8 text-slate-900 sm:text-2xl sm:leading-9 prose-code">
-            <p>{data}</p>
+            <p>{JSON.stringify(data)}</p>
           </blockquote>
           <figcaption className="mt-10">
             <div className="mt-4 flex items-center justify-center space-x-3 text-base">
