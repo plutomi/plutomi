@@ -1,6 +1,5 @@
 import { HeaderMenu } from "@/components/HeaderMenu/HeaderMenu";
-import { UseCaseSelector } from "@/components/UseCaseSelector/UseCaseSelector";
-import { UseCaseSelectorSection } from "@/components/UseCaseSelector/UseCaseSelectorSection";
+import { UseCaseSelectorSection } from "@/components/UseCases/UseCaseSelectorSection";
 import { Container, Center, Space, Box } from "@mantine/core";
 
 export default function Page() {
@@ -8,10 +7,8 @@ export default function Page() {
     <Container size="xl" mt={80}>
       <HeaderMenu />
       <Space h={20} />
-      <Container size={"sm"}>
-        <Center>
-          <UseCaseSelectorSection />
-        </Center>
+      <Container fluid>
+        <UseCaseSelectorSection />
       </Container>
     </Container>
   );

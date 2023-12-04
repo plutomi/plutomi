@@ -1,18 +1,4 @@
-"use client";
-import {
-  Button,
-  Group,
-  Text,
-  List,
-  ThemeIcon,
-  rem,
-  Title,
-  Container,
-  Stack,
-  SegmentedControl,
-  Space
-} from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
+import { Text, Stack } from "@mantine/core";
 
 const MobileHeader = () => (
   <Stack align="start" hiddenFrom="md">

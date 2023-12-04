@@ -1,14 +1,14 @@
 "use client";
-
+import { SimpleGrid } from "@mantine/core";
 import { IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
+import { ImProfile } from "react-icons/im";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
 import {
   AiFillCloseCircle,
   AiOutlineFieldTime,
   AiFillDollarCircle
 } from "react-icons/ai";
-import { HiUserGroup } from "react-icons/hi";
 import {
   BsPersonXFill,
   BsPersonBoundingBox,
@@ -17,8 +17,7 @@ import {
 } from "react-icons/bs";
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
-import { ImProfile } from "react-icons/im";
-import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
+import { UseCase, useUseCaseStore } from "@/hooks/useUseCaseStore";
 
 type UseCaseCard = {
   title: string;
@@ -122,37 +121,20 @@ const largeScaleContractingUseCase: UseCaseCard[] = [
 ];
 
 const useCases = new Map<UseCase, UseCaseCard[]>([
-  ["Employee Hiring", hiringUseCase],
-  ["Large Scale Contracting", largeScaleContractingUseCase],
-  ["Social Services", socialServicesUseCase]
+  [UseCase.Hiring, hiringUseCase],
+  [UseCase.Contracting, largeScaleContractingUseCase],
+  [UseCase.Services, socialServicesUseCase]
 ]);
 
-export const UseCaseCards: React.FC = () => {
+export const UseCaseCardsSection: React.FC = () => {
   const { useCase } = useUseCaseStore();
-
-  const items = (useCases.get(useCase) ?? []).map((item) => (
-    <div
-      className=" rounded-lg bg-white drop-shadow-sm border"
-      key={item.title}
-    >
-      <div className="flex flex-col items-center px-5 py-2">
-        <item.icon size="2rem" className={`${item.color}`} />
-        <p className="text-md font-medium text-slate-700">{item.title}</p>
-      </div>
-
-      <div className="flex border-t py-1 justify-center space-x-2 text-slate-500 font-light items-center ">
-        <div className="text-slate-400">
-          <HiUserGroup />
-        </div>
-
-        <div className="">
-          <p className="">{item.amount.toLocaleString()} </p>
-        </div>
-      </div>
-    </div>
-  ));
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 w-full">{items}</div>
+    <SimpleGrid cols={5} spacing="xs">
+      {useCases.get(useCase)!.map((card, idx) => (
+        <div>
+          {card.title} - {idx}
+        </div>
+      ))}
+    </SimpleGrid>
   );
 };
