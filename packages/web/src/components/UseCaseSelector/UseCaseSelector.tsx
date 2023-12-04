@@ -1,4 +1,5 @@
 "use client";
+import { useUseCaseStore } from "@/hooks/useUseCaseStore";
 import { Text, SegmentedControl } from "@mantine/core";
 import { useState } from "react";
 
@@ -33,8 +34,7 @@ export type UseCaseSelectorProps = {
 export const UseCaseSelector: React.FC<UseCaseSelectorProps> = ({
   orientation = "horizontal"
 }) => {
-  const [useCase, setUseCase] = useState(UseCase.Hiring);
-
+  const { useCase, setUseCase } = useUseCaseStore();
   return (
     <SegmentedControl
       size="md"

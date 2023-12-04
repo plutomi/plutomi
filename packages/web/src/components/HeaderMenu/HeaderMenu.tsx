@@ -16,12 +16,12 @@ import { IconCheck } from "@tabler/icons-react";
 
 const MobileHeader = () => (
   <Stack align="start" hiddenFrom="md">
-    <Text lh="1" fw={900} fz="60">
+    <Text lh="1" fw={900} fz="50">
       Applicant management at{" "}
       <Text
         lh="1"
         fw={900}
-        fz="60"
+        fz="50"
         span
         variant="gradient"
         gradient={{
