@@ -8,7 +8,9 @@ import {
   rem,
   Title,
   Container,
-  Stack
+  Stack,
+  SegmentedControl,
+  Space
 } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 
@@ -64,9 +66,9 @@ const DesktopHeader = () => (
 
 export function HeaderMenu() {
   return (
-    <div>
+    <Stack gap="lg">
       <MobileHeader />
       <DesktopHeader />
-    </div>
+    </Stack>
   );
 }
