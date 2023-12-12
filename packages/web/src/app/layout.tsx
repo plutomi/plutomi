@@ -13,7 +13,7 @@ export default function RootLayout({
   return (
     <>
       <head></head>
-      <html lang="en">
+      <html lang="en" className="bg-slate-100">
         <body>{children}</body>
       </html>
     </>
