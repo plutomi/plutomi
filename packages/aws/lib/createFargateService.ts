@@ -129,14 +129,7 @@ export const createFargateService = ({
     action: ListenerAction.forward([webTargetGroup]),
     priority: 5,
     // Force /api/ to redirect to web, which will force a redirect to an API docs page
-    conditions: [ListenerCondition.pathPatterns(["/api/"])],
-  });
-  listener.addAction(`plutomi-force-api-docs-to-web-action`, {
-    action: ListenerAction.forward([webTargetGroup]),
-    priority: 6,
-    // Force /api/docs to redirect to web, which will force a redirect to an API docs page
-    // I assume this might be a common typo
-    conditions: [ListenerCondition.pathPatterns(["/api/docs"])],
+    conditions: [ListenerCondition.pathPatterns(["/api/", "/api/docs"])],
   });
 
   listener.addAction(`plutomi-api-rule`, {
