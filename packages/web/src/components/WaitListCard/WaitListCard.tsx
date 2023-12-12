@@ -9,7 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-import { Button } from "../OLD/Button";
+import { Button } from "../Button";
 import { handleAxiosError } from "../../utils/handleAxiosResponse";
 
 const cards = [

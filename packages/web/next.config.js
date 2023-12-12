@@ -14,24 +14,12 @@ const nextConfig = {
   },
   async redirects() {
     // ! TODO: Add redirect toast with query param
-    return [
-      {
-        source: "/api",
-        destination: "/docs/api",
-        permanent: true
-      },
-      {
-        source: "/api/",
-        destination: "/docs/api",
-        permanent: true
-      },
-      {
-        // I assume this might be a common typo
-        source: "/api/docs",
-        destination: "/docs/api",
-        permanent: true
-      }
-    ];
+    // The load balancer will redirect these to the FE, and Next will force the redirect to the docs page
+    return ["/api", "/api/", "/api/docs", "/api/docs/"].map((source) => ({
+      source,
+      destination: "/docs/api",
+      permanent: true
+    }));
   }
 };
 
