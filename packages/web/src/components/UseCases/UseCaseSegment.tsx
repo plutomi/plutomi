@@ -1,3 +1,4 @@
+"use client";
 import { UseCase, useUseCaseStore } from "@/hooks/useUseCaseStore";
 
 export const UseCaseSegment: React.FC = () => {
