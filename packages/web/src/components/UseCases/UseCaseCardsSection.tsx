@@ -1,10 +1,12 @@
+import { HiUserGroup } from "react-icons/hi";
 import { UseCaseSegment } from "./UseCaseSegment";
 import { useUseCaseStore, UseCase } from "@/hooks/useUseCaseStore";
+import { useCases } from "./UseCaseCards";
 
 export const UseCaseCards: React.FC = () => {
   const { useCase } = useUseCaseStore();
 
-  const items = (Object.values(UseCase).get(useCase) ?? []).map((item) => (
+  const items = (useCases.get(useCase) ?? []).map((item) => (
     <div
       className=" rounded-lg bg-white drop-shadow-sm border"
       key={item.title}
@@ -25,4 +27,6 @@ export const UseCaseCards: React.FC = () => {
       </div>
     </div>
   ));
+
+  return items;
 };
