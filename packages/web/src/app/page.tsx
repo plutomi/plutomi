@@ -1,5 +1,6 @@
 import { HomepageFooter, LandingHero } from "@/components";
 import LatestCommits from "@/components/LatestCommits/LatestCommits";
+import { UseCaseCards } from "@/components/UseCases/UseCaseCards";
 import { UseCaseSegment } from "@/components/UseCases/UseCaseSegment";
 
 export default function Page() {
@@ -9,6 +10,7 @@ export default function Page() {
         <LandingHero />
         <>
           <UseCaseSegment />
+          <UseCaseCards />
           <LatestCommits />
         </>
         <HomepageFooter />
