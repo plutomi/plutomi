@@ -6,7 +6,7 @@ export const UseCaseSegment: React.FC = () => {
 
   const isSelected = (title: UseCase) => useCase === title;
   return (
-    <div className="flex flex-col lg:flex-row text-center space-x-0 lg:space-x-1 space-y-1 lg:space-y-0 rounded-lg bg-slate-200 p-1 shadow-sm">
+    <div className=" flex justify-center flex-col lg:flex-row text-center space-x-0 lg:space-x-1 space-y-1 lg:space-y-0 rounded-lg bg-slate-200 p-1 shadow-sm">
       {Object.values(UseCase).map((title) => (
         <button
           key={title}
