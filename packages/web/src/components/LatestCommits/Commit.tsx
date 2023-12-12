@@ -19,7 +19,7 @@ export const Commit: React.FC<CommitType> = ({
 }) => {
   return (
     <div
-      className="p-2 bg-stone-50 w-full max-w-3xl rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-150 hover:scale-102 cursor-pointer"
+      className="p-2 bg-white border border-gray-100 hover:bg-gray-50 w-full max-w-3xl rounded-md shadow-sm hover:shadow-md transition ease-in-out duration-150 hover:scale-101 cursor-pointer"
       onClick={() => window.open(url, "_blank", "noopener noreferrer")}
     >
       <div className="flex items-center">
