@@ -2,14 +2,22 @@ use axum::{
     routing::{get, post},
     Extension, Router,
 };
+
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use std::sync::Arc;
-use utils::connect_to_mongodb::connect_to_mongodb;
-
+use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer, BoxError};
+use tracing::{info, instrument};
+use tracing_subscriber::prelude::*;
+use utils::mongodb::connect_to_mongodb;
 mod controllers;
 mod entities;
 mod utils;
+
+#[instrument]
+fn log() {
+    info!("Hello, world!");
+}
 
 #[tokio::main]
 async fn main() {
@@ -28,7 +36,9 @@ async fn main() {
             .merge(totp_routes)
             .route("/health", get(health_check))
             .fallback(not_found)
-            .layer(Extension(mongodb)),
+            .layer(Extension(mongodb))
+            .layer(CompressionLayer::new())
+            .layer(TimeoutLayer::new(std::time::Duration::from_secs(5))),
     );
 
     // Bind address

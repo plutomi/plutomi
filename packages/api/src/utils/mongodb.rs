@@ -42,9 +42,9 @@ pub async fn connect_to_mongodb() -> MongoDB {
         }
     };
 
-    MongoDB {
+    return MongoDB {
         client,
         collection: database.collection("items"),
         database,
-    }
+    };
 }

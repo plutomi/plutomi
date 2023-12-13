@@ -1,4 +1,4 @@
-use crate::utils::{connect_to_mongodb::MongoDB, get_env::get_env};
+use crate::utils::{mongodb::MongoDB, get_env::get_env};
 use axum::{http::StatusCode, Extension, Json};
 use serde::Serialize;
 use std::sync::Arc;
