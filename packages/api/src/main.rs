@@ -2,7 +2,7 @@ use axum::{
     routing::{get, post},
     Extension, Router,
 };
-use controllers::{health_check::health_check, not_found::not_found, Totp::totp};
+use controllers::{health_check::health_check, not_found::not_found, totp::create_totp};
 use dotenv::dotenv;
 use std::sync::Arc;
 use utils::connect_to_mongodb::connect_to_mongodb;
@@ -20,11 +20,13 @@ async fn main() {
     let mongodb = Arc::new(connect_to_mongodb().await);
 
     // Routes
+    let totp_routes = Router::new().route("/totp", post(create_totp::create_totp));
+
     let app = Router::new().nest(
         "/api",
         Router::new()
+            .merge(totp_routes)
             .route("/health", get(health_check))
-            .route("/totp", post(Totp::create))
             .fallback(not_found)
             .layer(Extension(mongodb)),
     );
