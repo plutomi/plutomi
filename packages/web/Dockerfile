@@ -8,12 +8,9 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-    if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-    elif [ -f package-lock.json ]; then npm ci; \
-    elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-    else echo "Lockfile not found." && exit 1; \
-    fi
+
+# Clean install deps
+RUN npm ci
 
 # Make sure to update task defintion
 ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
@@ -31,14 +28,12 @@ COPY . .
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 
-###
+# Make sure to update task defintion
 ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT 
 
 
-RUN yarn build
-
 # If using npm comment out above and use below instead
-# RUN npm run build
+RUN npm run build
 
 
 
