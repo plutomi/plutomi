@@ -1,3 +1,5 @@
+"use client";
+
 import { IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
@@ -16,7 +18,7 @@ import {
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
 import { ImProfile } from "react-icons/im";
-import { type UseCase, useUseCaseStore } from "./useUseCaseStore";
+import { UseCase, useUseCaseStore } from "@/hooks/useUseCaseStore";
 
 type UseCaseCard = {
   title: string;
@@ -119,26 +121,23 @@ const largeScaleContractingUseCase: UseCaseCard[] = [
   }
 ];
 
-const useCases = new Map<UseCase, UseCaseCard[]>([
-  ["Employee Hiring", hiringUseCase],
-  ["Large Scale Contracting", largeScaleContractingUseCase],
-  ["Social Services", socialServicesUseCase]
+export const useCases = new Map<UseCase, UseCaseCard[]>([
+  [UseCase.Hiring, hiringUseCase],
+  [UseCase.Contracting, largeScaleContractingUseCase],
+  [UseCase.Services, socialServicesUseCase]
 ]);
 
 export const UseCaseCards: React.FC = () => {
   const { useCase } = useUseCaseStore();
 
   const items = (useCases.get(useCase) ?? []).map((item) => (
-    <div
-      className=" rounded-lg bg-white drop-shadow-sm border"
-      key={item.title}
-    >
+    <div className="rounded-lg bg-white shadow " key={item.title}>
       <div className="flex flex-col items-center px-5 py-2">
         <item.icon size="2rem" className={`${item.color}`} />
         <p className="text-md font-medium text-slate-700">{item.title}</p>
       </div>
 
-      <div className="flex border-t py-1 justify-center space-x-2 text-slate-500 font-light items-center ">
+      <div className="flex border-t border-slate-300 py-1 justify-center space-x-2 text-slate-500 font-light items-center ">
         <div className="text-slate-400">
           <HiUserGroup />
         </div>

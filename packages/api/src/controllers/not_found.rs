@@ -15,10 +15,10 @@ pub async fn not_found(
 ) -> (StatusCode, Json<NotFoundResponse>) {
     let response = NotFoundResponse {
         message: format!(
-            "'{} {}' not found - Go to {}/api to view the docs.",
+            "Route at: '{} {}' not found - Check {}/docs/api to view the documentation.",
             method,
             uri,
-            crate::utils::get_env::get_env().NEXT_PUBLIC_BASE_URL
+            &crate::utils::get_env::get_env().NEXT_PUBLIC_BASE_URL
         ),
     };
     (StatusCode::NOT_FOUND, Json(response))

@@ -2,6 +2,7 @@
 
 const nextConfig = {
   reactStrictMode: true,
+  pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   output: "standalone",
   images: {
     remotePatterns: [
@@ -11,18 +12,14 @@ const nextConfig = {
       }
     ]
   },
-  async rewrites() {
-    return [
-      // If you hit the base API route, go to docs
-      {
-        source: "/api",
-        destination: `/apiDocs`
-      },
-      {
-        source: "/api/",
-        destination: `/apiDocs`
-      }
-    ];
+  async redirects() {
+    // ! TODO: Add redirect toast with query param
+    // The load balancer will redirect these to the FE, and Next will force the redirect to the docs page
+    return ["/api", "/api/", "/api/docs", "/api/docs/"].map((source) => ({
+      source,
+      destination: "/docs/api",
+      permanent: true
+    }));
   }
 };
 

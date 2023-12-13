@@ -1,9 +1,10 @@
 import { create } from "zustand";
 
-export type UseCase =
-  | "Employee Hiring"
-  | "Large Scale Contracting"
-  | "Social Services";
+export enum UseCase {
+  Hiring = "Employee Hiring",
+  Contracting = "Large Scale Contracting",
+  Services = "Social Services"
+}
 
 type UseCaseState = {
   useCase: UseCase;
@@ -11,7 +12,7 @@ type UseCaseState = {
 };
 
 export const useUseCaseStore = create<UseCaseState>()((set) => ({
-  useCase: "Employee Hiring",
+  useCase: UseCase.Hiring,
   setUseCase: (useCase: UseCase) => {
     set({ useCase });
   }

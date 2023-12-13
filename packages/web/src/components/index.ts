@@ -1,4 +1,3 @@
-export * from "./CreateOrgOnboarding";
 export * from "./Dashboard";
 export * from "./HomepageNavbar";
 export * from "./LandingHero";
@@ -7,6 +6,5 @@ export * from "./HomepageFooter";
 export * from "./LogInOrSignUp";
 export * from "./PageLoader";
 export * from "./PageShell";
-export * from "./UseCases";
 export * from "./WaitListCard";
 export * from "./Button";

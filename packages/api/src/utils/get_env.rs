@@ -4,6 +4,7 @@ use std::env;
 pub struct Env {
     pub DATABASE_URL: String,
     pub NEXT_PUBLIC_BASE_URL: String,
+    pub NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: String,
 }
 
 fn get_key_from_env(key: &str) -> String {
@@ -20,5 +21,6 @@ pub fn get_env() -> Env {
     Env {
         DATABASE_URL: get_key_from_env("DATABASE_URL"),
         NEXT_PUBLIC_BASE_URL: get_key_from_env("NEXT_PUBLIC_BASE_URL"),
+        NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: get_key_from_env("NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT"),
     }
 }
