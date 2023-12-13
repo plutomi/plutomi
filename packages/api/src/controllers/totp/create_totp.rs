@@ -7,7 +7,7 @@ use std::sync::Arc;
 pub struct CreateTotpResponse {
     message: &'static str,
     database: bool,
-    deployment_environment: String,
+    environment: String,
 }
 
 pub async fn create_totp(
@@ -16,7 +16,7 @@ pub async fn create_totp(
     let response: CreateTotpResponse = CreateTotpResponse {
         message: "TOTP",
         database: mongodb.collection.find_one(None, None).await.is_ok(),
-        deployment_environment: get_env().NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
+        environment: get_env().NEXT_PUBLIC_ENVIRONMENT,
     };
     (StatusCode::OK, Json(response))
 }

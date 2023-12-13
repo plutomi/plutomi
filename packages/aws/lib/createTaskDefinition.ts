@@ -51,8 +51,7 @@ export const createTaskDefinition = ({
       containerPort: 3000,
       environment: {
         // Make sure to update the Docker image with the latest env vars
-        NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT:
-          env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
+        NEXT_PUBLIC_ENVIRONMENT: env.NEXT_PUBLIC_ENVIRONMENT,
         NEXT_PUBLIC_BASE_URL: env.NEXT_PUBLIC_BASE_URL,
       },
     },

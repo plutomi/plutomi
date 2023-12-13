@@ -7,7 +7,7 @@ use std::sync::Arc;
 pub struct HealthCheckResponse {
     message: &'static str,
     database: bool,
-    deployment_environment: String,
+    environment: String,
 }
 
 pub async fn health_check(
@@ -16,7 +16,7 @@ pub async fn health_check(
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
         database: mongodb.collection.find_one(None, None).await.is_ok(),
-        deployment_environment: get_env().NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
+        environment: get_env().NEXT_PUBLIC_ENVIRONMENT,
     };
 
     (StatusCode::OK, Json(response))
