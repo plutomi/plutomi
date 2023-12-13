@@ -10,11 +10,7 @@ WORKDIR /app
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 # Clean install deps
-RUN npm ci
-
-# Make sure to update task defintion
-ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
-ARG NEXT_PUBLIC_BASE_URL
+RUN npm ci --verbose
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -30,7 +26,7 @@ COPY . .
 
 # Make sure to update task defintion
 ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT 
-
+ARG NEXT_PUBLIC_BASE_URL
 
 # If using npm comment out above and use below instead
 RUN npm run build
