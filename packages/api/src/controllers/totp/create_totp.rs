@@ -14,7 +14,7 @@ pub async fn create_totp(
     mongodb: Extension<Arc<MongoDB>>,
 ) -> (StatusCode, Json<CreateTotpResponse>) {
     let response: CreateTotpResponse = CreateTotpResponse {
-        message: "TOTP",
+        message: "TOTP2",
         database: mongodb.collection.find_one(None, None).await.is_ok(),
         environment: get_env().NEXT_PUBLIC_ENVIRONMENT,
     };
