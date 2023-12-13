@@ -99,10 +99,11 @@ export default async function LatestCommits() {
   const commits = await getCommits();
 
   return (
-    <div className="space-y-2 p-6">
+    <div className="space-y-2">
       {commits ? (
         <>
-          <p className="text-2xl">Latest changes</p>
+          <p className="text-2xl font-bold">Latest changes</p>
+          <hr></hr>
           {commits.map((commit) => (
             <Commit {...commit} key={commit.message} />
           ))}

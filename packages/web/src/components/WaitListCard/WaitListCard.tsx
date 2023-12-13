@@ -65,7 +65,7 @@ export const WaitListCard: React.FC = () => {
   };
 
   return (
-    <div className="relative isolate overflow-hidden bg-white py-16 sm:py-12 lg:py-18   drop-shadow-sm border rounded-lg">
+    <div className="relative isolate overflow-hidden bg-white py-16 sm:py-12 lg:py-18   drop-shadow border rounded-lg">
       <div className="mx-auto max-w-7xl px-6 lg:px-8 ">
         <div className="  items-center  mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
           <div className="max-w-xl lg:max-w-2xl  h-full space-y-5 ">
@@ -113,7 +113,7 @@ export const WaitListCard: React.FC = () => {
                       autoComplete="email"
                       disabled={false}
                       {...register("email")}
-                      className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 max-w-lg w-full pl-10 flex-auto rounded-md border bg-white/5 px-3.5 py-2 text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 focus:outline-none"
+                      className="flex placeholder-slate-400 disabled:bg-slate-100  disabled:border-slate-100 disabled:text-slate-400 max-w-lg w-full pl-10 flex-auto rounded-md border bg-white/5 px-3.5 py-2 text-slate-700 shadow ring-1 ring-inset ring-slate-300 focus:ring-2  focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 focus:outline-none"
                       placeholder="Enter your email"
                     />
 

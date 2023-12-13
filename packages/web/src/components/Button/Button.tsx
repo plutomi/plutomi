@@ -51,7 +51,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const getVariantClasses = () => {
       if (variant === "secondary-outline") {
         const defaultClasses =
-          "bg-white border text-slate-700 border-slate-400 shadow-sm";
+          "bg-white border text-slate-700 border-slate-400 shadow";
 
         const onlyWhenEnabledClasses =
           "enabled:hover:bg-slate-100 enabled:active:bg-slate-200  enabled:focus:ring-slate-100 enabled:focus-visible:outline-slate-300";
@@ -80,7 +80,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       }
 
       if (variant === "danger") {
-        const defaultClasses = "bg-red-500 text-white shadow-sm";
+        const defaultClasses = "bg-red-500 text-white shadow";
         const onlyWhenEnabledClasses =
           "enabled:hover:bg-red-600 enabled:active:bg-red-700 enabled:focus:ring-red-300 enabled:focus-visible:outline-red-600";
         const onlyWhenDisabledClasses = "disabled:bg-red-100";
@@ -92,7 +92,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       }
 
       // Default - Primary
-      const defaultClasses = "text-white bg-blue-500 shadow-sm";
+      const defaultClasses = "text-white bg-blue-500 shadow";
       const onlyWhenEnabledClasses =
         "enabled:hover:bg-blue-600 enabled:active:bg-blue-700 enabled:focus:ring-blue-300 enabled:focus-visible:outline-blue-600";
       const onlyWhenDisabledClasses = "disabled:bg-blue-100";
