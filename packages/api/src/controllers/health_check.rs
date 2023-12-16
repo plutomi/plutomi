@@ -1,4 +1,4 @@
-use crate::utils::{mongodb::MongoDB, get_env::get_env};
+use crate::utils::{get_env::get_env, mongodb::MongoDB};
 use axum::{http::StatusCode, Extension, Json};
 use serde::Serialize;
 use std::sync::Arc;
@@ -18,6 +18,8 @@ pub async fn health_check(
         database: mongodb.collection.find_one(None, None).await.is_ok(),
         environment: get_env().NEXT_PUBLIC_ENVIRONMENT,
     };
+
+    tracing::info!("Health check response sent");
 
     (StatusCode::OK, Json(response))
 }

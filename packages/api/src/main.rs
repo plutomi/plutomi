@@ -1,48 +1,44 @@
+use axiom_rs::Client;
 use axum::{
-    http::Request,
+    body::Bytes,
+    http::{Request, Response},
     routing::{get, post},
     Extension, Router,
 };
+
 use controllers::{create_totp, health_check, not_found};
 use core::panic;
 use dotenv::dotenv;
-use std::sync::Arc;
-use tower::ServiceBuilder;
+
+use std::{sync::Arc, time::Duration};
+use tower::{Layer, ServiceBuilder};
 use tower_http::{
     compression::CompressionLayer, timeout::TimeoutLayer, trace::TraceLayer, BoxError,
 };
-use tracing::{debug, event, info, instrument, Level, Span};
-use tracing_subscriber::prelude::*;
+use tracing::{debug, error, event, info, instrument, Level, Span};
+use tracing_subscriber::{prelude::*, Registry};
 
-use utils::mongodb::connect_to_mongodb;
+use utils::{get_env::get_env, logger::Logger, mongodb::connect_to_mongodb};
 mod controllers;
 mod entities;
 mod utils;
 
-#[instrument]
-fn log() {
-    info!("Hello, world!");
+#[tracing::instrument]
+pub fn say_hello() {
+    tracing::info!("Hello, world!");
 }
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread")]
 async fn main() {
     // Load .env if available (used in development)
     dotenv().ok();
+    info!("Starting server");
+
+    let logger = Arc::new(Logger::new());
+    let logger_clone = logger.clone();
 
     // Connect to database
     let mongodb = Arc::new(connect_to_mongodb().await);
-
-    let axiom_layer = tracing_axiom::builder()
-        .with_service_name("fmt")
-        .with_dataset("plutomi-logs".to_string())
-        .with_token("XXXX".to_string())
-        .layer()
-        .unwrap();
-    let fmt_layer = tracing_subscriber::fmt::layer().pretty();
-    tracing_subscriber::registry()
-        .with(fmt_layer.compact())
-        .with(axiom_layer)
-        .init();
 
     // Routes
     let totp_routes = Router::new().route("/totp", post(create_totp));
@@ -55,16 +51,18 @@ async fn main() {
             .fallback(not_found)
             .layer(
                 ServiceBuilder::new()
-                    // https://docs.rs/axum/latest/axum/middleware/index.html#ordering
-                    .layer(TraceLayer::new_for_http().on_request(
-                        |request: &Request<_>, span: &Span| {
-                            // debug!("TEST LOG {} {}", request.method(), request.uri(),);
-                            log();
-                        },
-                    ))
+                    .layer(TraceLayer::new_for_http().on_request({
+                        move |request: &Request<_>, _span: &Span| {
+                            let logger = logger_clone.clone();
+                            tokio::spawn(async move {
+                                logger.info("Request received".to_string());
+                            });
+                        }
+                    }))
                     .layer(TimeoutLayer::new(std::time::Duration::from_secs(5)))
                     .layer(CompressionLayer::new())
-                    .layer(Extension(mongodb)),
+                    .layer(Extension(mongodb))
+                    .layer(Extension(logger)),
             ),
     );
 
@@ -89,10 +87,9 @@ async fn main() {
     // Start the server
     match axum::serve(listener, app).await {
         Ok(_) => {
-            println!("Listening on {}", &addr);
-            log();
-            log();
-            log();
+            info!("Server started!!!");
+
+            println!("Hello, world!");
         }
         Err(e) => {
             // TODO: Log error
