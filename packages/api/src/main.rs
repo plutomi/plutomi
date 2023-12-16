@@ -1,27 +1,19 @@
-use axiom_rs::Client;
 use axum::{
-    body::Bytes,
     http::{Request, Response},
     routing::{get, post},
     Extension, Router,
 };
-
 use controllers::{create_totp, health_check, not_found};
-use core::panic;
 use dotenv::dotenv;
 use serde_json::json;
-
 use std::{collections::HashMap, sync::Arc, time::Duration};
-use tower::{Layer, ServiceBuilder};
+use tower::ServiceBuilder;
 use tower_http::{
     classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
-    trace::TraceLayer, BoxError,
+    trace::TraceLayer,
 };
-use tracing::{info, Span};
-use tracing_subscriber::{prelude::*, Registry};
-
+use tracing::Span;
 use utils::{logger::Logger, mongodb::connect_to_mongodb};
-
 use crate::utils::get_env::get_env;
 mod controllers;
 mod entities;
