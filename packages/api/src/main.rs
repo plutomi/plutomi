@@ -1,15 +1,18 @@
 use crate::utils::get_env::get_env;
 use axum::{
     body::Body,
-    http::{Request, Response},
+    extract,
+    http::{HeaderValue, Request},
+    middleware::{from_fn, Next},
+    response::Response,
     routing::{get, post},
-    Extension, Router,
+    Extension, Json, Router,
 };
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use serde::Serialize;
 use serde_json::{json, Value};
-use std::{collections::HashMap, sync::Arc, time::Duration};
+use std::{collections::HashMap, convert::Infallible, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
 use tower_http::{
     classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
@@ -61,12 +64,20 @@ fn parse_request<B>(request: &Request<B>) -> HashMap<String, StringOrJson> {
 
     return request_map;
 }
+async fn add_custom_id(mut request: extract::Request, next: Next) -> Response {
+    request.headers_mut().insert(
+        "x-custom-request-id",
+        HeaderValue::from_static("your_custom_id"), // Replace with your custom value
+    );
+
+    let response = next.run(request).await;
+
+    return response;
+}
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     // Load .env if available (used in development)
-    dotenv().ok();
-
     dotenv().ok();
     let env_vars = get_env();
     let is_production =
@@ -89,65 +100,65 @@ async fn main() {
             .fallback(not_found)
             .layer(
                 ServiceBuilder::new()
-                    .layer(
-                        ServiceBuilder::new().layer(
-                            TraceLayer::new_for_http()
-                                .on_request({
-                                    let logger: Arc<Logger> = logger.clone(); //
-                                    move |request: &Request<_>, _span: &Span| {
-                                        let logger = logger.clone(); // Clone the Arc for use within this closure
-                                        let properties: HashMap<String, StringOrJson> =
-                                            parse_request(request);
-
-                                        tokio::spawn(async move {
-                                            logger.debug(
-                                                // ! TODO: Add timestamp from headers, format it!
-                                                "Request received".to_string(),
-                                                Some(json!(properties)),
-                                            )
-                                        });
-                                    }
-                                })
-                                .on_response({
-                                    // ! TODO: Log response values
-                                    let logger: Arc<Logger> = logger.clone();
-
-                                    move |_response: &Response<_>,
-                                          _latency: Duration,
-                                          _span: &Span| {
-                                        tokio::spawn(async move {
-                                            let logger = logger.clone();
-                                            logger.debug(
-                                                "Response sent".to_string(),
-                                                Some(json!({"todo": "todo"})),
-                                            );
-                                        });
-                                    }
-                                })
-                                .on_failure({
-                                    let logger: Arc<Logger> = logger.clone();
-
-                                    move |error: ServerErrorsFailureClass,
-                                          _latency: Duration,
-                                          _span: &Span| {
-                                        let logger = logger.clone();
-                                        tokio::spawn(async move {
-                                            let error_message =
-                                                format!("Request failed: {:?}", error);
-                                            logger.error(
-                                                error_message,
-                                                None,
-                                                Some(json!({ "error": error.to_string() })),
-                                            );
-                                        });
-                                    }
-                                }),
-                        ),
-                    )
-                    .layer(TimeoutLayer::new(std::time::Duration::from_secs(5)))
+                    .layer(from_fn(add_custom_id)) // Replace with your middleware
+                    .layer(TimeoutLayer::new(Duration::from_secs(5)))
                     .layer(CompressionLayer::new())
                     .layer(Extension(mongodb))
-                    .layer(Extension(logger.clone())),
+                    .layer(Extension(logger.clone()))
+                    .layer(
+                        TraceLayer::new_for_http()
+                            .on_request({
+                                let logger: Arc<Logger> = logger.clone(); //
+                                move |request: &Request<_>, _span: &Span| {
+                                    // let (parts, body) = request.into_parts();
+                                    // let payload = request.body();
+
+                                    let logger = logger.clone(); // Clone the Arc for use within this closure
+                                    let properties: HashMap<String, StringOrJson> =
+                                    // ! TODO: Parse body!!
+                                        parse_request(request);
+
+                                    tokio::spawn(async move {
+                                        logger.debug(
+                                            // ! TODO: Add timestamp from headers, format it!
+                                            "Request received".to_string(),
+                                            Some(json!(properties)),
+                                        )
+                                    });
+                                }
+                            })
+                            .on_response({
+                                // ! TODO: Log response values
+                                let logger: Arc<Logger> = logger.clone();
+
+                                move |_response: &Response<_>, _latency: Duration, _span: &Span| {
+                                    tokio::spawn(async move {
+                                        let logger = logger.clone();
+                                        logger.debug(
+                                            "Response sent".to_string(),
+                                            Some(json!({"todo": "todo"})),
+                                        );
+                                    });
+                                }
+                            })
+                            .on_failure({
+                                let logger: Arc<Logger> = logger.clone();
+
+                                move |error: ServerErrorsFailureClass,
+                                      _latency: Duration,
+                                      _span: &Span| {
+                                    let logger = logger.clone();
+                                    tokio::spawn(async move {
+                                        let error_message = format!("Request failed: {:?}", error);
+                                        logger.error(
+                                            error_message,
+                                            None,
+                                            Some(json!({ "error": error.to_string() })),
+                                        );
+                                    });
+                                }
+                            }),
+                    ),
             ),
     );
 
