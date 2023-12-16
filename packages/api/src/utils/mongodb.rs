@@ -1,6 +1,7 @@
 use super::get_env::get_env;
 use core::panic;
 use mongodb::{bson::Document, options::ClientOptions, Client, Collection, Database};
+use std::sync::Arc;
 
 pub struct MongoDB {
     pub client: Client,
@@ -8,7 +9,7 @@ pub struct MongoDB {
     pub database: Database,
 }
 
-pub async fn connect_to_mongodb() -> MongoDB {
+pub async fn connect_to_mongodb() -> Arc<MongoDB> {
     let env = get_env();
 
     // Parse the connection string into a client
@@ -42,9 +43,9 @@ pub async fn connect_to_mongodb() -> MongoDB {
         }
     };
 
-    return MongoDB {
+    return Arc::new(MongoDB {
         client,
         collection: database.collection("items"),
         database,
-    };
+    });
 }

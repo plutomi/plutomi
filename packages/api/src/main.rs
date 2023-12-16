@@ -31,14 +31,16 @@ async fn main() {
     // Load .env if available (used in development)
     dotenv().ok();
 
-    let env = &get_env().NEXT_PUBLIC_ENVIRONMENT;
-    let is_production = ["production", "staging"].contains(&env.as_str());
+    dotenv().ok();
+    let env_vars = get_env();
+    let is_production =
+        ["production", "staging"].contains(&env_vars.NEXT_PUBLIC_ENVIRONMENT.as_str());
 
-    let logger = Arc::new(Logger::new(is_production));
-    let logger_clone = logger.clone(); // Clone for use tracing middleware
+    // Setup logging
+    let logger = Logger::new(is_production);
 
     // Connect to database
-    let mongodb = Arc::new(connect_to_mongodb().await);
+    let mongodb = connect_to_mongodb().await;
 
     // Routes
     let totp_routes = Router::new().route("/totp", post(create_totp));
@@ -55,30 +57,33 @@ async fn main() {
                         ServiceBuilder::new().layer(
                             TraceLayer::new_for_http()
                                 .on_request({
-                                    let logger = logger_clone.clone();
+                                    let logger: Arc<Logger> = logger.clone(); //
                                     move |_request: &Request<_>, _span: &Span| {
-                                        let logger = logger.clone();
+                                        let logger = logger.clone(); // Clone the Arc for use within this closure
                                         tokio::spawn(async move {
                                             logger.debug("Request received".to_string());
                                         });
                                     }
                                 })
                                 .on_response({
-                                    let logger = logger_clone.clone();
+                                    let logger: Arc<Logger> = logger.clone();
+
                                     move |_response: &Response<_>,
                                           _latency: Duration,
                                           _span: &Span| {
-                                        let logger = logger.clone();
                                         tokio::spawn(async move {
+                                            let logger = logger.clone();
                                             logger.debug("Request completed".to_string());
                                         });
                                     }
                                 })
                                 .on_failure({
+                                    let logger: Arc<Logger> = logger.clone();
+
                                     move |error: ServerErrorsFailureClass,
                                           _latency: Duration,
                                           _span: &Span| {
-                                        let logger = logger_clone.clone();
+                                        let logger = logger.clone();
                                         tokio::spawn(async move {
                                             let error_message =
                                                 format!("Request failed: {:?}", error);
@@ -91,7 +96,7 @@ async fn main() {
                     .layer(TimeoutLayer::new(std::time::Duration::from_secs(5)))
                     .layer(CompressionLayer::new())
                     .layer(Extension(mongodb))
-                    .layer(Extension(logger)),
+                    .layer(Extension(logger.clone())),
             ),
     );
 
@@ -99,8 +104,9 @@ async fn main() {
     let addr = match "[::]:8080".parse::<std::net::SocketAddr>() {
         Ok(addr) => addr,
         Err(e) => {
-            // TODO: Log error
-            panic!("Error parsing address: {}", e);
+            let logger: Arc<Logger> = logger.clone();
+            logger.error(format!("Error parsing address: {}", e));
+            std::process::exit(1);
         }
     };
 
@@ -108,19 +114,21 @@ async fn main() {
     let listener = match tokio::net::TcpListener::bind(&addr).await {
         Ok(listener) => listener,
         Err(e) => {
-            // TODO: Log error
-            panic!("Error binding address: {}", e);
+            let logger: Arc<Logger> = logger.clone();
+            logger.error(format!("Error binding address: {}", e));
+            std::process::exit(1);
         }
     };
 
     // Start the server
     match axum::serve(listener, app).await {
         Ok(_) => {
-            info!("Server started!!!");
+            let logger: Arc<Logger> = logger.clone();
+            logger.debug("Server started".to_string());
         }
         Err(e) => {
-            // TODO: Log error
-            panic!("Error binding address: {}", e)
+            let logger: Arc<Logger> = logger.clone();
+            logger.error(format!("Error starting server: {}", e));
         }
     }
 }
