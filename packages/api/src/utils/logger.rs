@@ -1,15 +1,17 @@
-use std::sync::Arc;
+use std::{fmt, sync::Arc};
 
 use super::get_env::get_env;
 use axiom_rs::Client;
+use serde::Serialize;
 use serde_json::json;
-use time::OffsetDateTime;
+use time::{format_description, macros::format_description, OffsetDateTime};
 use tokio::sync::mpsc::{self, Sender};
 use tracing::{debug, error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
 
 const MAX_LOG_BUFFER_LENGTH: usize = 1000;
 
+#[derive(Serialize, Debug)]
 enum LogLevel {
     Info,
     Error,
@@ -17,15 +19,58 @@ enum LogLevel {
     Warn,
 }
 
+impl fmt::Display for LogLevel {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let level_str = match self {
+            LogLevel::Info => "INFO",
+            LogLevel::Error => "ERROR",
+            LogLevel::Debug => "DEBUG",
+            LogLevel::Warn => "WARN",
+        };
+        write!(f, "{}", level_str)
+    }
+}
+
+#[derive(Serialize, Debug)]
 struct LogMessage {
+    timestamp: String,
     level: LogLevel,
     message: String,
     data: Option<serde_json::Value>,
     error: Option<serde_json::Value>,
 }
 
+impl fmt::Display for LogMessage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Note: Not logging here timestamp or level because the tracing library already does it for us locally
+        let mut components = vec![format!("{}", self.message)];
+
+        if let Some(data) = &self.data {
+            components.push(format!("\nData: {}", data));
+        }
+
+        if let Some(error) = &self.error {
+            components.push(format!("\nError: {}", error));
+        }
+
+        write!(f, "{}", components.join(", "))
+    }
+}
+
 pub struct Logger {
     sender: Sender<LogMessage>,
+}
+
+fn format_timestamp() -> String {
+    // Define the format for the main part of the timestamp
+    let format = format_description!("[year]-[month]-[day]T[hour]:[minute]:[second]");
+
+    let now = OffsetDateTime::now_utc();
+    let formatted = now.format(&format).expect("Timestamp formatting failed");
+
+    // Get the milliseconds and format them with three decimal places
+    let milliseconds = now.millisecond();
+    format!("{}.{:03}", formatted, milliseconds)
 }
 
 impl Logger {
@@ -55,6 +100,8 @@ impl Logger {
         let client_clone = axiom_client.clone();
         tokio::spawn(async move {
             while let Some(log) = receiver.recv().await {
+                let level_str = format!("{:?}", log.level);
+
                 // TODO: In the future we can batch logs instead of one by one
                 match log.level {
                     LogLevel::Info => {
@@ -63,28 +110,29 @@ impl Logger {
                                 .ingest(
                                     &get_env().AXIOM_DATASET,
                                     vec![json!({
-                                        "foo":  log.message,
+                                        "level":    level_str,
+                                        "message":  log.message,
+                                        "data":     log.data,
                                     })],
                                 )
                                 .await
                             {
-                                eprintln!("Failed to send log to Axiom: {}", e);
+                                error!("Failed to send log to Axiom: {}", e);
                             }
                         }
 
-                        let now = OffsetDateTime::now_utc();
-                        info!("{} INFO: {}", now, log.message);
+                        info!("{}", log);
                     }
 
                     LogLevel::Error => {
-                        error!("{}", log.message);
+                        error!("{}", log);
                     }
 
                     LogLevel::Debug => {
-                        debug!("{}", log.message);
+                        debug!("{}", log);
                     }
                     LogLevel::Warn => {
-                        warn!("{}", log.message);
+                        warn!("{}", log);
                     }
                 }
             }
@@ -104,6 +152,7 @@ impl Logger {
         tokio::spawn(async move {
             if sender
                 .send(LogMessage {
+                    timestamp: format_timestamp(),
                     level,
                     message,
                     data,
@@ -131,7 +180,7 @@ impl Logger {
         data: Option<serde_json::Value>,
         error: Option<serde_json::Value>,
     ) {
-        self.log(LogLevel::Error, message, data, None);
+        self.log(LogLevel::Error, message, data, error);
     }
 
     pub fn debug(&self, message: String, data: Option<serde_json::Value>) {

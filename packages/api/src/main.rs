@@ -9,8 +9,9 @@ use axum::{
 use controllers::{create_totp, health_check, not_found};
 use core::panic;
 use dotenv::dotenv;
+use serde_json::json;
 
-use std::{sync::Arc, time::Duration};
+use std::{collections::HashMap, sync::Arc, time::Duration};
 use tower::{Layer, ServiceBuilder};
 use tower_http::{
     classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
@@ -58,14 +59,34 @@ async fn main() {
                             TraceLayer::new_for_http()
                                 .on_request({
                                     let logger: Arc<Logger> = logger.clone(); //
-                                    move |_request: &Request<_>, _span: &Span| {
+                                    move |request: &Request<_>, _span: &Span| {
                                         let logger = logger.clone(); // Clone the Arc for use within this closure
+
+                                        let method = request.method().to_string();
+                                        let uri = request.uri().to_string();
+                                        let headers = request
+                                            .headers()
+                                            .iter()
+                                            .map(|(key, value)| {
+                                                (
+                                                    key.to_string(),
+                                                    value.to_str().unwrap_or_default().to_string(),
+                                                )
+                                            })
+                                            .collect::<HashMap<String, String>>();
+
                                         tokio::spawn(async move {
-                                            logger.debug("Request received".to_string());
+                                            logger.debug(
+                                                "Request received".to_string(),
+                                                Some(json!({ "method": method,
+                                                "uri": uri,
+                                                "headers": headers })),
+                                            );
                                         });
                                     }
                                 })
                                 .on_response({
+                                    // ! TODO: Log response values
                                     let logger: Arc<Logger> = logger.clone();
 
                                     move |_response: &Response<_>,
@@ -73,7 +94,10 @@ async fn main() {
                                           _span: &Span| {
                                         tokio::spawn(async move {
                                             let logger = logger.clone();
-                                            logger.debug("Request completed".to_string());
+                                            logger.debug(
+                                                "Response sent".to_string(),
+                                                Some(json!({"todo": "todo"})),
+                                            );
                                         });
                                     }
                                 })
@@ -87,7 +111,11 @@ async fn main() {
                                         tokio::spawn(async move {
                                             let error_message =
                                                 format!("Request failed: {:?}", error);
-                                            logger.error(error_message);
+                                            logger.error(
+                                                error_message,
+                                                None,
+                                                Some(json!({ "error": error.to_string() })),
+                                            );
                                         });
                                     }
                                 }),
@@ -105,7 +133,11 @@ async fn main() {
         Ok(addr) => addr,
         Err(e) => {
             let logger: Arc<Logger> = logger.clone();
-            logger.error(format!("Error parsing address: {}", e));
+            logger.error(
+                format!("Error parsing address: {}", e),
+                None,
+                Some(json!({ "error": e.to_string() })),
+            );
             std::process::exit(1);
         }
     };
@@ -115,7 +147,11 @@ async fn main() {
         Ok(listener) => listener,
         Err(e) => {
             let logger: Arc<Logger> = logger.clone();
-            logger.error(format!("Error binding address: {}", e));
+            logger.error(
+                format!("Error binding address: {}", e),
+                None,
+                Some(json!({ "error": e.to_string()})),
+            );
             std::process::exit(1);
         }
     };
@@ -124,11 +160,16 @@ async fn main() {
     match axum::serve(listener, app).await {
         Ok(_) => {
             let logger: Arc<Logger> = logger.clone();
-            logger.debug("Server started".to_string());
+            logger.debug("Server started".to_string(), None);
         }
         Err(e) => {
             let logger: Arc<Logger> = logger.clone();
-            logger.error(format!("Error starting server: {}", e));
+            logger.error(
+                format!("Error starting server: {}", e),
+                None,
+                Some(json!({ "error": e.to_string()})),
+            );
+            std::process::exit(1);
         }
     }
 }
