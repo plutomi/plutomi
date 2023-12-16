@@ -13,29 +13,29 @@ use dotenv::dotenv;
 use std::{sync::Arc, time::Duration};
 use tower::{Layer, ServiceBuilder};
 use tower_http::{
-    compression::CompressionLayer, timeout::TimeoutLayer, trace::TraceLayer, BoxError,
+    classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
+    trace::TraceLayer, BoxError,
 };
-use tracing::{debug, error, event, info, instrument, Level, Span};
+use tracing::{info, Span};
 use tracing_subscriber::{prelude::*, Registry};
 
-use utils::{get_env::get_env, logger::Logger, mongodb::connect_to_mongodb};
+use utils::{logger::Logger, mongodb::connect_to_mongodb};
+
+use crate::utils::get_env::get_env;
 mod controllers;
 mod entities;
 mod utils;
-
-#[tracing::instrument]
-pub fn say_hello() {
-    tracing::info!("Hello, world!");
-}
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     // Load .env if available (used in development)
     dotenv().ok();
-    info!("Starting server");
 
-    let logger = Arc::new(Logger::new());
-    let logger_clone = logger.clone();
+    let env = &get_env().NEXT_PUBLIC_ENVIRONMENT;
+    let is_production = ["production", "staging"].contains(&env.as_str());
+
+    let logger = Arc::new(Logger::new(is_production));
+    let logger_clone = logger.clone(); // Clone for use tracing middleware
 
     // Connect to database
     let mongodb = Arc::new(connect_to_mongodb().await);
@@ -51,14 +51,43 @@ async fn main() {
             .fallback(not_found)
             .layer(
                 ServiceBuilder::new()
-                    .layer(TraceLayer::new_for_http().on_request({
-                        move |request: &Request<_>, _span: &Span| {
-                            let logger = logger_clone.clone();
-                            tokio::spawn(async move {
-                                logger.info("Request received".to_string());
-                            });
-                        }
-                    }))
+                    .layer(
+                        ServiceBuilder::new().layer(
+                            TraceLayer::new_for_http()
+                                .on_request({
+                                    let logger = logger_clone.clone();
+                                    move |_request: &Request<_>, _span: &Span| {
+                                        let logger = logger.clone();
+                                        tokio::spawn(async move {
+                                            logger.debug("Request received".to_string());
+                                        });
+                                    }
+                                })
+                                .on_response({
+                                    let logger = logger_clone.clone();
+                                    move |_response: &Response<_>,
+                                          _latency: Duration,
+                                          _span: &Span| {
+                                        let logger = logger.clone();
+                                        tokio::spawn(async move {
+                                            logger.debug("Request completed".to_string());
+                                        });
+                                    }
+                                })
+                                .on_failure({
+                                    move |error: ServerErrorsFailureClass,
+                                          _latency: Duration,
+                                          _span: &Span| {
+                                        let logger = logger_clone.clone();
+                                        tokio::spawn(async move {
+                                            let error_message =
+                                                format!("Request failed: {:?}", error);
+                                            logger.error(error_message);
+                                        });
+                                    }
+                                }),
+                        ),
+                    )
                     .layer(TimeoutLayer::new(std::time::Duration::from_secs(5)))
                     .layer(CompressionLayer::new())
                     .layer(Extension(mongodb))
@@ -88,8 +117,6 @@ async fn main() {
     match axum::serve(listener, app).await {
         Ok(_) => {
             info!("Server started!!!");
-
-            println!("Hello, world!");
         }
         Err(e) => {
             // TODO: Log error
