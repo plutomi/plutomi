@@ -1,11 +1,14 @@
+use crate::utils::get_env::get_env;
 use axum::{
+    body::Body,
     http::{Request, Response},
     routing::{get, post},
     Extension, Router,
 };
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
-use serde_json::json;
+use serde::Serialize;
+use serde_json::{json, Value};
 use std::{collections::HashMap, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
 use tower_http::{
@@ -14,10 +17,50 @@ use tower_http::{
 };
 use tracing::Span;
 use utils::{logger::Logger, mongodb::connect_to_mongodb};
-use crate::utils::get_env::get_env;
 mod controllers;
 mod entities;
 mod utils;
+
+fn collect_headers<B>(request: &Request<B>) -> Value {
+    let headers = request
+        .headers()
+        .iter()
+        .map(|(key, value)| {
+            (
+                key.to_string(),
+                value.to_str().unwrap_or_default().to_string(),
+            )
+        })
+        .collect::<HashMap<String, String>>();
+
+    json!(headers)
+}
+
+#[derive(Serialize)]
+#[serde(untagged)]
+enum StringOrJson {
+    Str(String),
+    Json(Value),
+}
+
+fn parse_request<B>(request: &Request<B>) -> HashMap<String, StringOrJson> {
+    let mut request_map = HashMap::new();
+
+    request_map.insert(
+        "method".to_string(),
+        StringOrJson::Str(request.method().to_string()),
+    );
+    request_map.insert(
+        "uri".to_string(),
+        StringOrJson::Str(request.uri().to_string()),
+    );
+    request_map.insert(
+        "headers".to_string(),
+        StringOrJson::Json(collect_headers(request)),
+    );
+
+    return request_map;
+}
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
@@ -53,27 +96,15 @@ async fn main() {
                                     let logger: Arc<Logger> = logger.clone(); //
                                     move |request: &Request<_>, _span: &Span| {
                                         let logger = logger.clone(); // Clone the Arc for use within this closure
-
-                                        let method = request.method().to_string();
-                                        let uri = request.uri().to_string();
-                                        let headers = request
-                                            .headers()
-                                            .iter()
-                                            .map(|(key, value)| {
-                                                (
-                                                    key.to_string(),
-                                                    value.to_str().unwrap_or_default().to_string(),
-                                                )
-                                            })
-                                            .collect::<HashMap<String, String>>();
+                                        let properties: HashMap<String, StringOrJson> =
+                                            parse_request(request);
 
                                         tokio::spawn(async move {
                                             logger.debug(
+                                                // ! TODO: Add timestamp from headers, format it!
                                                 "Request received".to_string(),
-                                                Some(json!({ "method": method,
-                                                "uri": uri,
-                                                "headers": headers })),
-                                            );
+                                                Some(json!(properties)),
+                                            )
                                         });
                                     }
                                 })
