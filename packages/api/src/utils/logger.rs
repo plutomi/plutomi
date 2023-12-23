@@ -32,7 +32,7 @@ impl fmt::Display for LogLevel {
 }
 
 #[derive(Serialize, Debug)]
-struct LogMessage {
+struct LogObject {
     timestamp: String,
     level: LogLevel,
     message: String,
@@ -40,7 +40,7 @@ struct LogMessage {
     error: Option<serde_json::Value>,
 }
 
-impl fmt::Display for LogMessage {
+impl fmt::Display for LogObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Note: Not logging here timestamp or level because the tracing library already does it for us locally
         let mut components = vec![format!("{}", self.message)];
@@ -58,7 +58,7 @@ impl fmt::Display for LogMessage {
 }
 
 pub struct Logger {
-    sender: Sender<LogMessage>,
+    sender: Sender<LogObject>,
 }
 
 fn format_timestamp() -> String {
@@ -73,17 +73,47 @@ fn format_timestamp() -> String {
     format!("{}.{:03}", formatted, milliseconds)
 }
 
+// Send logs to axiom
+async fn send_to_axiom(
+    level: &String,
+    message: String,
+    data: Option<serde_json::Value>,
+    error: Option<serde_json::Value>,
+    client: &Client,
+) {
+    let axiom_result = client
+        .ingest(
+            &get_env().AXIOM_DATASET,
+            vec![json!({
+                "level":    level,
+                "message":  message,
+                "data":     data,
+                "error":      error,
+            })],
+        )
+        .await;
+
+    match axiom_result {
+        Ok(_) => {}
+        Err(e) => {
+            error!("Failed to send log to Axiom: {}", e);
+        }
+    }
+}
+
 impl Logger {
     pub fn new(use_axiom: bool) -> Arc<Logger> {
         let axiom_client = if use_axiom {
-            Some(
-                Client::builder()
-                    .with_token(&get_env().AXIOM_TOKEN)
-                    .with_org_id(&get_env().AXIOM_ORG_ID)
-                    .build()
-                    .expect("Failed to build Axiom client"),
-            )
+            match Client::builder()
+                .with_token(&get_env().AXIOM_TOKEN)
+                .with_org_id(&get_env().AXIOM_ORG_ID)
+                .build()
+            {
+                Ok(client) => Some(client),
+                Err(_) => panic!("Failed to initialize Axiom client in a production environment"),
+            }
         } else {
+            warn!("Axiom logging is not enabled");
             None
         };
 
@@ -92,48 +122,25 @@ impl Logger {
             .finish();
 
         tracing::subscriber::set_global_default(subscriber)
-            .expect("setting default logging subscriber failed");
+            .expect("Setting default logging subscriber failed");
 
-        let (sender, mut receiver) = mpsc::channel::<LogMessage>(MAX_LOG_BUFFER_LENGTH);
+        let (sender, mut receiver) = mpsc::channel::<LogObject>(MAX_LOG_BUFFER_LENGTH);
 
-        // Spawn the logging thread
-        let client_clone = axiom_client.clone();
         tokio::spawn(async move {
+            // Spawn the logging thread
             while let Some(log) = receiver.recv().await {
-                let level_str = format!("{:?}", log.level);
+                let level_str = format!("{:?}", log.level); // Format log level
 
-                // TODO: In the future we can batch logs instead of one by one
+                // Local logging based on the level
                 match log.level {
-                    LogLevel::Info => {
-                        if let Some(client) = &client_clone {
-                            if let Err(e) = client
-                                .ingest(
-                                    &get_env().AXIOM_DATASET,
-                                    vec![json!({
-                                        "level":    level_str,
-                                        "message":  log.message,
-                                        "data":     log.data,
-                                    })],
-                                )
-                                .await
-                            {
-                                error!("Failed to send log to Axiom: {}", e);
-                            }
-                        }
+                    LogLevel::Info => info!("{}", &log),
+                    LogLevel::Error => error!("{}", &log),
+                    LogLevel::Debug => debug!("{}", &log),
+                    LogLevel::Warn => warn!("{}", &log),
+                }
 
-                        info!("{}", log);
-                    }
-
-                    LogLevel::Error => {
-                        error!("{}", log);
-                    }
-
-                    LogLevel::Debug => {
-                        debug!("{}", log);
-                    }
-                    LogLevel::Warn => {
-                        warn!("{}", log);
-                    }
+                if let Some(ref client) = axiom_client {
+                    send_to_axiom(&level_str, log.message, log.data, log.error, &client).await;
                 }
             }
         });
@@ -151,7 +158,7 @@ impl Logger {
         let sender = self.sender.clone();
         tokio::spawn(async move {
             if sender
-                .send(LogMessage {
+                .send(LogObject {
                     timestamp: format_timestamp(),
                     level,
                     message,

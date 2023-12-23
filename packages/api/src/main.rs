@@ -1,9 +1,8 @@
 use crate::utils::get_env::get_env;
 use axum::{
-    body::Body,
-    extract,
-    http::{HeaderValue, Request},
-    middleware::{from_fn, Next},
+    extract::Request,
+    http::HeaderValue,
+    middleware::{self, Next},
     response::Response,
     routing::{get, post},
     Extension, Json, Router,
@@ -64,7 +63,7 @@ fn parse_request<B>(request: &Request<B>) -> HashMap<String, StringOrJson> {
 
     return request_map;
 }
-async fn add_custom_id(mut request: extract::Request, next: Next) -> Response {
+async fn add_custom_id(mut request: Request, next: Next) -> Response {
     request.headers_mut().insert(
         "x-custom-request-id",
         HeaderValue::from_static("your_custom_id"), // Replace with your custom value
@@ -84,7 +83,7 @@ async fn main() {
         ["production", "staging"].contains(&env_vars.NEXT_PUBLIC_ENVIRONMENT.as_str());
 
     // Setup logging
-    let logger = Logger::new(is_production);
+    let logger = Logger::new(true);
 
     // Connect to database
     let mongodb = connect_to_mongodb().await;
@@ -100,11 +99,9 @@ async fn main() {
             .fallback(not_found)
             .layer(
                 ServiceBuilder::new()
-                    .layer(from_fn(add_custom_id)) // Replace with your middleware
                     .layer(TimeoutLayer::new(Duration::from_secs(5)))
-                    .layer(CompressionLayer::new())
-                    .layer(Extension(mongodb))
-                    .layer(Extension(logger.clone()))
+                    // Layers run from top to bottom - do not remove ServiceBuilder
+                    .layer(middleware::from_fn(add_custom_id))
                     .layer(
                         TraceLayer::new_for_http()
                             .on_request({
@@ -115,8 +112,8 @@ async fn main() {
 
                                     let logger = logger.clone(); // Clone the Arc for use within this closure
                                     let properties: HashMap<String, StringOrJson> =
-                                    // ! TODO: Parse body!!
-                                        parse_request(request);
+                                // ! TODO: Parse body!!
+                                    parse_request(request);
 
                                     tokio::spawn(async move {
                                         logger.debug(
@@ -136,6 +133,7 @@ async fn main() {
                                         let logger = logger.clone();
                                         logger.debug(
                                             "Response sent".to_string(),
+                                            // TODO send response
                                             Some(json!({"todo": "todo"})),
                                         );
                                     });
@@ -158,7 +156,10 @@ async fn main() {
                                     });
                                 }
                             }),
-                    ),
+                    )
+                    .layer(CompressionLayer::new())
+                    .layer(Extension(logger.clone()))
+                    .layer(Extension(mongodb)),
             ),
     );
 
