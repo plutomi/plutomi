@@ -1,23 +1,20 @@
 use crate::utils::get_env::get_env;
 use axum::{
+    error_handling::HandleErrorLayer,
     extract::Request,
-    http::HeaderValue,
-    middleware::{self, Next},
-    response::Response,
+    http::{HeaderValue, Method, StatusCode, Uri},
+    middleware::Next,
+    response::{IntoResponse, Response},
     routing::{get, post},
-    Extension, Json, Router,
+    BoxError, Router,
 };
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use serde::Serialize;
 use serde_json::{json, Value};
-use std::{collections::HashMap, convert::Infallible, sync::Arc, time::Duration};
+use std::{collections::HashMap, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
-use tower_http::{
-    classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
-    trace::TraceLayer,
-};
-use tracing::Span;
+use tower_http::timeout::TimeoutLayer;
 use utils::{logger::Logger, mongodb::connect_to_mongodb};
 mod controllers;
 mod entities;
@@ -74,6 +71,20 @@ async fn add_custom_id(mut request: Request, next: Next) -> Response {
     return response;
 }
 
+fn handle_timeout_error(_method: Method, _uri: Uri, err: BoxError) -> impl IntoResponse {
+    if err.is::<tower::timeout::error::Elapsed>() {
+        (
+            StatusCode::REQUEST_TIMEOUT,
+            "Request took too long".to_string(),
+        )
+    } else {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Unhandled internal error: {}", err),
+        )
+    }
+}
+
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     // Load .env if available (used in development)
@@ -99,67 +110,66 @@ async fn main() {
             .fallback(not_found)
             .layer(
                 ServiceBuilder::new()
-                    .layer(TimeoutLayer::new(Duration::from_secs(5)))
-                    // Layers run from top to bottom - do not remove ServiceBuilder
-                    .layer(middleware::from_fn(add_custom_id))
-                    .layer(
-                        TraceLayer::new_for_http()
-                            .on_request({
-                                let logger: Arc<Logger> = logger.clone(); //
-                                move |request: &Request<_>, _span: &Span| {
-                                    // let (parts, body) = request.into_parts();
-                                    // let payload = request.body();
+                    .layer(HandleErrorLayer::new(handle_timeout_error))
+                    .layer(TimeoutLayer::new(Duration::from_secs(10))), //  // Layers run from top to bottom - do not remove ServiceBuilder
+                                                                        // .layer(middleware::from_fn(add_custom_id))
+                                                                        // .layer(
+                                                                        //     TraceLayer::new_for_http()
+                                                                        //         .on_request({
+                                                                        //             let logger: Arc<Logger> = logger.clone(); //
+                                                                        //             move |request: &Request<_>, _span: &Span| {
+                                                                        //                 // ! TODO: Parse body!!
 
-                                    let logger = logger.clone(); // Clone the Arc for use within this closure
-                                    let properties: HashMap<String, StringOrJson> =
-                                // ! TODO: Parse body!!
-                                    parse_request(request);
+                                                                        //                 let logger = logger.clone(); // Clone the Arc for use within this closure
+                                                                        //                 let properties: HashMap<String, StringOrJson> =
+                                                                        //                     parse_request(request);
+                                                                        //                 let parst = request.extract_parts();
 
-                                    tokio::spawn(async move {
-                                        logger.debug(
-                                            // ! TODO: Add timestamp from headers, format it!
-                                            "Request received".to_string(),
-                                            Some(json!(properties)),
-                                        )
-                                    });
-                                }
-                            })
-                            .on_response({
-                                // ! TODO: Log response values
-                                let logger: Arc<Logger> = logger.clone();
+                                                                        //                 tokio::spawn(async move {
+                                                                        //                     logger.debug(
+                                                                        //                         // ! TODO: Add timestamp from headers, format it!
+                                                                        //                         "Request received".to_string(),
+                                                                        //                         Some(json!(properties)),
+                                                                        //                     )
+                                                                        //                 });
+                                                                        //             }
+                                                                        //         })
+                                                                        //         .on_response({
+                                                                        //             // ! TODO: Log response values
+                                                                        //             let logger: Arc<Logger> = logger.clone();
 
-                                move |_response: &Response<_>, _latency: Duration, _span: &Span| {
-                                    tokio::spawn(async move {
-                                        let logger = logger.clone();
-                                        logger.debug(
-                                            "Response sent".to_string(),
-                                            // TODO send response
-                                            Some(json!({"todo": "todo"})),
-                                        );
-                                    });
-                                }
-                            })
-                            .on_failure({
-                                let logger: Arc<Logger> = logger.clone();
+                                                                        //             move |_response: &Response<_>, _latency: Duration, _span: &Span| {
+                                                                        //                 tokio::spawn(async move {
+                                                                        //                     let logger = logger.clone();
+                                                                        //                     logger.debug(
+                                                                        //                         "Response sent".to_string(),
+                                                                        //                         // TODO send response
+                                                                        //                         Some(json!({"todo": "todo"})),
+                                                                        //                     );
+                                                                        //                 });
+                                                                        //             }
+                                                                        //         })
+                                                                        //         .on_failure({
+                                                                        //             let logger: Arc<Logger> = logger.clone();
 
-                                move |error: ServerErrorsFailureClass,
-                                      _latency: Duration,
-                                      _span: &Span| {
-                                    let logger = logger.clone();
-                                    tokio::spawn(async move {
-                                        let error_message = format!("Request failed: {:?}", error);
-                                        logger.error(
-                                            error_message,
-                                            None,
-                                            Some(json!({ "error": error.to_string() })),
-                                        );
-                                    });
-                                }
-                            }),
-                    )
-                    .layer(CompressionLayer::new())
-                    .layer(Extension(logger.clone()))
-                    .layer(Extension(mongodb)),
+                                                                        //             move |error: ServerErrorsFailureClass,
+                                                                        //                   _latency: Duration,
+                                                                        //                   _span: &Span| {
+                                                                        //                 let logger = logger.clone();
+                                                                        //                 tokio::spawn(async move {
+                                                                        //                     let error_message = format!("Request failed: {:?}", error);
+                                                                        //                     logger.error(
+                                                                        //                         error_message,
+                                                                        //                         None,
+                                                                        //                         Some(json!({ "error": error.to_string() })),
+                                                                        //                     );
+                                                                        //                 });
+                                                                        //             }
+                                                                        //         }),
+                                                                        // )
+                                                                        // .layer(CompressionLayer::new())
+                                                                        // .layer(Extension(logger.clone()))
+                                                                        // .layer(Extension(mongodb)),
             ),
     );
 

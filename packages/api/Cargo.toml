@@ -19,7 +19,7 @@ serde = "1.0.193"
 tracing-axiom = "0.5.0"
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["json"] }
-tower = "0.4.13"
+tower = { version = "0.4.13", features = ["timeout"] }
 axiom-rs = "0.9.0"
 opentelemetry = "0.21.0"
 opentelemetry-otlp = "0.14.0"
