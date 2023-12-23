@@ -21,7 +21,7 @@ use tower_http::{
 use tracing::Span;
 use utils::{
     get_current_time::get_current_time,
-    logger::{BaseLogObject, Logger},
+    logger::{LogLevel, LogObject, Logger},
     mongodb::connect_to_mongodb,
 };
 mod controllers;
@@ -58,21 +58,13 @@ fn collect_res_headers<B>(response: &Response<B>) -> Value {
     json!(headers)
 }
 
-fn req_logger(request: &Request) -> () {
-    let logger = get_logger(request);
-
-    if logger.is_none() {
-        return;
-    }
-
-    let logger = logger.unwrap();
-
-    logger.info(BaseLogObject {
-        error: None,
-        message: "Request received".to_string(),
-        data: Some(json!({"test": "beans"})),
-        timestamp: get_current_time(),
-    });
+/**
+ * Wrapper for the logger in Axum requests
+ */
+fn req_logger(request: &Request, log: LogObject) {
+    get_logger(request)
+        .map(|logger| logger.log(log))
+        .unwrap_or_else(|| tracing::warn!("Logger not found in request extensions"));
 }
 
 fn get_logger(request: &Request) -> Option<&Arc<Logger>> {
@@ -92,15 +84,16 @@ async fn add_request_metadata(mut request: Request, next: Next) -> Response {
         HeaderValue::from_static("your_custom_id"), // Replace with your custom value
     );
 
-    // Access logger from request extensions
-    if let Some(logger) = request.extensions().get::<Arc<Logger>>() {
-        logger.info(BaseLogObject {
+    req_logger(
+        &request,
+        LogObject {
+            level: LogLevel::Debug,
             error: None,
             message: "Request received".to_string(),
-            data: Some(json!({"test": "beans"})),
+            data: Some(json!({"test": "easy"})),
             timestamp: current_time,
-        });
-    }
+        },
+    );
 
     next.run(request).await
 }

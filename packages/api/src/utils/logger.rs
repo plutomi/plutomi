@@ -11,7 +11,7 @@ use tracing_subscriber::FmtSubscriber;
 const MAX_LOG_BUFFER_LENGTH: usize = 1000;
 
 #[derive(Serialize, Debug)]
-enum LogLevel {
+pub enum LogLevel {
     Info,
     Error,
     Debug,
@@ -32,28 +32,25 @@ impl fmt::Display for LogLevel {
 }
 
 #[derive(Serialize, Debug)]
-pub struct BaseLogObject {
+
+pub struct LogObject {
+    pub level: LogLevel,
     pub timestamp: String,
     pub message: String,
     pub data: Option<serde_json::Value>,
     pub error: Option<serde_json::Value>,
 }
 
-struct LogObject {
-    level: LogLevel,
-    log: BaseLogObject,
-}
-
 impl fmt::Display for LogObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Note: Not logging here timestamp or level because the tracing library already does it for us locally
-        let mut components = vec![format!("{}", self.log.message)];
+        let mut components = vec![format!("{}", self.message)];
 
-        if let Some(data) = &self.log.data {
+        if let Some(data) = &self.data {
             components.push(format!("\nData: {}", data));
         }
 
-        if let Some(error) = &self.log.error {
+        if let Some(error) = &self.error {
             components.push(format!("\nError: {}", error));
         }
 
@@ -66,16 +63,16 @@ pub struct Logger {
 }
 
 // Send logs to axiom
-async fn send_to_axiom(log_obj: LogObject, client: &Client) {
+async fn send_to_axiom(log: LogObject, client: &Client) {
     let axiom_result = client
         .ingest(
             &get_env().AXIOM_DATASET,
             vec![json!({
-                "level":    log_obj.level,
-                "timestamp": log_obj.log.timestamp,
-                "message":  log_obj.log.message,
-                "data":     log_obj.log.data,
-                "error":      log_obj.log.error,
+                "level":    log.level,
+                "timestamp": log.timestamp,
+                "message":  log.message,
+                "data":     log.data,
+                "error":      log.error,
             })],
         )
         .await;
@@ -133,41 +130,13 @@ impl Logger {
         return Arc::new(Logger { sender });
     }
 
-    fn log(&self, log: LogObject) {
+    pub fn log(&self, log: LogObject) {
         let sender = self.sender.clone();
 
         tokio::spawn(async move {
             if sender.send(log).await.is_err() {
                 error!("Failed to enqueue log message")
             }
-        });
-    }
-
-    pub fn info(&self, log: BaseLogObject) {
-        self.log(LogObject {
-            level: LogLevel::Info,
-            log,
-        });
-    }
-
-    pub fn warn(&self, log: BaseLogObject) {
-        self.log(LogObject {
-            level: LogLevel::Warn,
-            log,
-        });
-    }
-
-    pub fn error(&self, log: BaseLogObject) {
-        self.log(LogObject {
-            level: LogLevel::Error,
-            log,
-        });
-    }
-
-    pub fn debug(&self, log: BaseLogObject) {
-        self.log(LogObject {
-            level: LogLevel::Debug,
-            log,
         });
     }
 }
