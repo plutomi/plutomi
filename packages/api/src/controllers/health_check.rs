@@ -8,19 +8,15 @@ use tokio::time::sleep;
 pub struct HealthCheckResponse {
     message: &'static str,
     database: bool,
-    timestamp: String,
     environment: String,
 }
 
 pub async fn health_check(
     mongodb: Extension<Arc<MongoDB>>,
-    timestamp: Extension<String>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
-    // sleep(Duration::from_secs(5)).await;
 
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
-        timestamp: timestamp.0,
         database: mongodb.collection.find_one(None, None).await.is_ok(),
         environment: get_env().NEXT_PUBLIC_ENVIRONMENT,
     };

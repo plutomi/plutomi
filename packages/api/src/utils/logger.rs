@@ -1,5 +1,6 @@
 use super::{get_current_time::get_current_time, get_env::get_env};
 use axiom_rs::Client;
+use axum::{extract::Request, http::Response};
 use serde::Serialize;
 use serde_json::json;
 use std::{fmt, sync::Arc};
@@ -31,24 +32,28 @@ impl fmt::Display for LogLevel {
 }
 
 #[derive(Serialize, Debug)]
+pub struct BaseLogObject {
+    pub timestamp: String,
+    pub message: String,
+    pub data: Option<serde_json::Value>,
+    pub error: Option<serde_json::Value>,
+}
+
 struct LogObject {
-    timestamp: String,
     level: LogLevel,
-    message: String,
-    data: Option<serde_json::Value>,
-    error: Option<serde_json::Value>,
+    log: BaseLogObject,
 }
 
 impl fmt::Display for LogObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Note: Not logging here timestamp or level because the tracing library already does it for us locally
-        let mut components = vec![format!("{}", self.message)];
+        let mut components = vec![format!("{}", self.log.message)];
 
-        if let Some(data) = &self.data {
+        if let Some(data) = &self.log.data {
             components.push(format!("\nData: {}", data));
         }
 
-        if let Some(error) = &self.error {
+        if let Some(error) = &self.log.error {
             components.push(format!("\nError: {}", error));
         }
 
@@ -61,16 +66,16 @@ pub struct Logger {
 }
 
 // Send logs to axiom
-async fn send_to_axiom(log: LogObject, client: &Client) {
+async fn send_to_axiom(log_obj: LogObject, client: &Client) {
     let axiom_result = client
         .ingest(
             &get_env().AXIOM_DATASET,
             vec![json!({
-                "timestamp": log.timestamp,
-                "level":    log.level,
-                "message":  log.message,
-                "data":     log.data,
-                "error":      log.error,
+                "level":    log_obj.level,
+                "timestamp": log_obj.log.timestamp,
+                "message":  log_obj.log.message,
+                "data":     log_obj.log.data,
+                "error":      log_obj.log.error,
             })],
         )
         .await;
@@ -128,49 +133,41 @@ impl Logger {
         return Arc::new(Logger { sender });
     }
 
-    fn log(
-        &self,
-        level: LogLevel,
-        message: String,
-        data: Option<serde_json::Value>,
-        error: Option<serde_json::Value>,
-    ) {
+    fn log(&self, log: LogObject) {
         let sender = self.sender.clone();
+
         tokio::spawn(async move {
-            if sender
-                .send(LogObject {
-                    timestamp: get_current_time(),
-                    level,
-                    message,
-                    data,
-                    error,
-                })
-                .await
-                .is_err()
-            {
+            if sender.send(log).await.is_err() {
                 error!("Failed to enqueue log message")
             }
         });
     }
 
-    pub fn info(&self, message: String, data: Option<serde_json::Value>) {
-        self.log(LogLevel::Info, message, data, None);
+    pub fn info(&self, log: BaseLogObject) {
+        self.log(LogObject {
+            level: LogLevel::Info,
+            log,
+        });
     }
 
-    pub fn warn(&self, message: String, data: Option<serde_json::Value>) {
-        self.log(LogLevel::Warn, message, data, None);
+    pub fn warn(&self, log: BaseLogObject) {
+        self.log(LogObject {
+            level: LogLevel::Warn,
+            log,
+        });
     }
 
-    pub fn error(
-        &self,
-        message: String,
-        data: Option<serde_json::Value>,
-        error: Option<serde_json::Value>,
-    ) {
-        self.log(LogLevel::Error, message, data, error);
+    pub fn error(&self, log: BaseLogObject) {
+        self.log(LogObject {
+            level: LogLevel::Error,
+            log,
+        });
     }
 
-    pub fn debug(&self, message: String, data: Option<serde_json::Value>) {
-        self.log(LogLevel::Debug, message, data, None);
+    pub fn debug(&self, log: BaseLogObject) {
+        self.log(LogObject {
+            level: LogLevel::Debug,
+            log,
+        });
     }
 }

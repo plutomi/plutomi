@@ -19,8 +19,11 @@ use tower_http::{
     trace::TraceLayer,
 };
 use tracing::Span;
-use tracing_subscriber::fmt::format::json;
-use utils::{get_current_time::get_current_time, logger::Logger, mongodb::connect_to_mongodb};
+use utils::{
+    get_current_time::get_current_time,
+    logger::{BaseLogObject, Logger},
+    mongodb::connect_to_mongodb,
+};
 mod controllers;
 mod entities;
 mod utils;
@@ -40,7 +43,6 @@ fn collect_headers<B>(request: &Request<B>) -> Value {
     json!(headers)
 }
 
-
 fn collect_res_headers<B>(response: &Response<B>) -> Value {
     let headers = response
         .headers()
@@ -56,9 +58,60 @@ fn collect_res_headers<B>(response: &Response<B>) -> Value {
     json!(headers)
 }
 
-async fn add_request_timestamp(mut request: Request, next: Next) -> Response {
-    request.extensions_mut().insert(get_current_time());
+fn req_logger(request: &Request) -> () {
+    let logger = get_logger(request);
+
+    if logger.is_none() {
+        return;
+    }
+
+    let logger = logger.unwrap();
+
+    logger.info(BaseLogObject {
+        error: None,
+        message: "Request received".to_string(),
+        data: Some(json!({"test": "beans"})),
+        timestamp: get_current_time(),
+    });
+}
+
+fn get_logger(request: &Request) -> Option<&Arc<Logger>> {
+    request.extensions().get::<Arc<Logger>>()
+}
+
+async fn add_request_metadata(mut request: Request, next: Next) -> Response {
+    let current_time = get_current_time();
+    request.headers_mut().insert(
+        "x-plutomi-request-timestamp",
+        HeaderValue::from_str(&current_time).unwrap(),
+    );
+
+    request.headers_mut().insert(
+        "x-plutomi-request-id",
+        // TODO ksuid
+        HeaderValue::from_static("your_custom_id"), // Replace with your custom value
+    );
+
+    // Access logger from request extensions
+    if let Some(logger) = request.extensions().get::<Arc<Logger>>() {
+        logger.info(BaseLogObject {
+            error: None,
+            message: "Request received".to_string(),
+            data: Some(json!({"test": "beans"})),
+            timestamp: current_time,
+        });
+    }
+
     next.run(request).await
+}
+
+async fn add_response_timestamp(request: Request, next: Next) -> Response {
+    let mut response = next.run(request).await;
+    response.headers_mut().insert(
+        "x-plutomi-response-timestamp",
+        HeaderValue::from_str(&get_current_time()).unwrap(),
+    );
+    response
 }
 
 #[derive(Serialize)]
@@ -101,18 +154,9 @@ fn parse_response<B>(response: &Response<B>) -> HashMap<String, StringOrJson> {
 
     return response_map;
 }
-async fn add_custom_id(mut request: Request, next: Next) -> Response {
-    request.headers_mut().insert(
-        "x-custom-request-id",
-        HeaderValue::from_static("your_custom_id"), // Replace with your custom value
-    );
-
-    let response = next.run(request).await;
-
-    return response;
-}
 
 async fn handle_timeout_error(err: BoxError) -> (StatusCode, String) {
+    // TODO add logging
     if err.is::<tower::timeout::error::Elapsed>() {
         (StatusCode::REQUEST_TIMEOUT, "Request timed out".to_string())
     } else {
@@ -148,70 +192,13 @@ async fn main() {
             .fallback(not_found)
             .layer(
                 ServiceBuilder::new()
-                    .layer(middleware::from_fn(add_request_timestamp))
-                    // `Timeout` uses `BoxError` as the error type
-                    // Layers run from top to bottom - do not remove ServiceBuilder
-                    .layer(middleware::from_fn(add_custom_id))
-                    .layer(
-                        TraceLayer::new_for_http()
-                            .on_request({
-                                let logger: Arc<Logger> = logger.clone();
-                                move |request: &Request<_>, _span: &Span| {
-                                    // ! TODO: Parse body!!
-                                    let logger = logger.clone(); // Clone the Arc for use within this closure
-                                    let properties: HashMap<String, StringOrJson> =
-                                        parse_request(request);
-
-                                    tokio::spawn(async move {
-                                        logger.debug(
-                                            // ! TODO: Add timestamp from headers, format it!
-                                            "Request received 4".to_string(),
-                                            Some(json!(properties)),
-                                        )
-                                    });
-                                }
-                            })
-                            .on_response({
-                                let logger: Arc<Logger> = logger.clone();
-                                move |response: &Response<_>, latency: Duration, _span: &Span| {
-                                    let status_code = response.status().as_u16();
-                                    let latency = latency.as_millis();
-
-                                    let properties: HashMap<String, StringOrJson> =
-                                        parse_response(response);
-                                    tokio::spawn(async move {
-                                        logger.debug(
-                                            "Response sent".to_string(),
-                                            Some(json!({
-                                                "status_code": status_code,
-                                                "latency": latency,
-                                            })),
-                                        );
-                                    });
-                                }
-                            })
-                            .on_failure({
-                                let logger: Arc<Logger> = logger.clone();
-                                move |error: ServerErrorsFailureClass,
-                                      _latency: Duration,
-                                      _span: &Span| {
-                                    let logger = logger.clone();
-                                    tokio::spawn(async move {
-                                        let error_message = format!("Request failed: {:?}", error);
-                                        logger.error(
-                                            error_message,
-                                            None,
-                                            Some(json!({ "error": error.to_string() })),
-                                        );
-                                    });
-                                }
-                            }),
-                    )
+                    .layer(Extension(logger.clone()))
+                    .layer(middleware::from_fn(add_request_metadata))
                     .layer(HandleErrorLayer::new(handle_timeout_error))
                     .timeout(Duration::from_secs(1))
                     .layer(CompressionLayer::new())
-                    .layer(Extension(logger.clone()))
-                    .layer(Extension(mongodb)),
+                    .layer(Extension(mongodb))
+                    .layer(middleware::from_fn(add_response_timestamp)),
             ),
     );
 
@@ -219,12 +206,7 @@ async fn main() {
     let addr = match "[::]:8080".parse::<std::net::SocketAddr>() {
         Ok(addr) => addr,
         Err(e) => {
-            let logger: Arc<Logger> = logger.clone();
-            logger.error(
-                format!("Error parsing address: {}", e),
-                None,
-                Some(json!({ "error": e.to_string() })),
-            );
+            // ! TODO logging
             std::process::exit(1);
         }
     };
@@ -233,12 +215,7 @@ async fn main() {
     let listener = match tokio::net::TcpListener::bind(&addr).await {
         Ok(listener) => listener,
         Err(e) => {
-            let logger: Arc<Logger> = logger.clone();
-            logger.error(
-                format!("Error binding address: {}", e),
-                None,
-                Some(json!({ "error": e.to_string()})),
-            );
+            // ! TODO logging
             std::process::exit(1);
         }
     };
@@ -246,16 +223,10 @@ async fn main() {
     // Start the server
     match axum::serve(listener, app).await {
         Ok(_) => {
-            let logger: Arc<Logger> = logger.clone();
-            logger.debug("Server started".to_string(), None);
+            // ! TODO Logging
         }
         Err(e) => {
-            let logger: Arc<Logger> = logger.clone();
-            logger.error(
-                format!("Error starting server: {}", e),
-                None,
-                Some(json!({ "error": e.to_string()})),
-            );
+            // ! TODO logging
             std::process::exit(1);
         }
     }
