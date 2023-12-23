@@ -1,10 +1,8 @@
-use std::{fmt, sync::Arc};
-
-use super::get_env::get_env;
+use super::{get_current_time::get_current_time, get_env::get_env};
 use axiom_rs::Client;
 use serde::Serialize;
 use serde_json::json;
-use time::{format_description, macros::format_description, OffsetDateTime};
+use std::{fmt, sync::Arc};
 use tokio::sync::mpsc::{self, Sender};
 use tracing::{debug, error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
@@ -20,6 +18,7 @@ enum LogLevel {
 }
 
 impl fmt::Display for LogLevel {
+    // Format for easier reading in console
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let level_str = match self {
             LogLevel::Info => "INFO",
@@ -61,34 +60,17 @@ pub struct Logger {
     sender: Sender<LogObject>,
 }
 
-fn format_timestamp() -> String {
-    // Define the format for the main part of the timestamp
-    let format = format_description!("[year]-[month]-[day]T[hour]:[minute]:[second]");
-
-    let now = OffsetDateTime::now_utc();
-    let formatted = now.format(&format).expect("Timestamp formatting failed");
-
-    // Get the milliseconds and format them with three decimal places
-    let milliseconds = now.millisecond();
-    format!("{}.{:03}", formatted, milliseconds)
-}
-
 // Send logs to axiom
-async fn send_to_axiom(
-    level: &String,
-    message: String,
-    data: Option<serde_json::Value>,
-    error: Option<serde_json::Value>,
-    client: &Client,
-) {
+async fn send_to_axiom(log: LogObject, client: &Client) {
     let axiom_result = client
         .ingest(
             &get_env().AXIOM_DATASET,
             vec![json!({
-                "level":    level,
-                "message":  message,
-                "data":     data,
-                "error":      error,
+                "timestamp": log.timestamp,
+                "level":    log.level,
+                "message":  log.message,
+                "data":     log.data,
+                "error":      log.error,
             })],
         )
         .await;
@@ -129,8 +111,6 @@ impl Logger {
         tokio::spawn(async move {
             // Spawn the logging thread
             while let Some(log) = receiver.recv().await {
-                let level_str = format!("{:?}", log.level); // Format log level
-
                 // Local logging based on the level
                 match log.level {
                     LogLevel::Info => info!("{}", &log),
@@ -140,7 +120,7 @@ impl Logger {
                 }
 
                 if let Some(ref client) = axiom_client {
-                    send_to_axiom(&level_str, log.message, log.data, log.error, &client).await;
+                    send_to_axiom(log, &client).await;
                 }
             }
         });
@@ -159,7 +139,7 @@ impl Logger {
         tokio::spawn(async move {
             if sender
                 .send(LogObject {
-                    timestamp: format_timestamp(),
+                    timestamp: get_current_time(),
                     level,
                     message,
                     data,
