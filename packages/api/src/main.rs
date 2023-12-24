@@ -1,7 +1,7 @@
 use crate::utils::get_env::get_env;
 use axum::{
     error_handling::HandleErrorLayer,
-    extract::Request,
+    extract::{Request, State},
     http::{HeaderValue, Method, StatusCode, Uri},
     middleware::{self, Next},
     response::{IntoResponse, Response},
@@ -21,8 +21,8 @@ use tower_http::{
 use tracing::Span;
 use utils::{
     get_current_time::get_current_time,
-    logger::{LogLevel, LogObject, Logger},
-    mongodb::connect_to_mongodb,
+    logger::{self, LogLevel, LogObject, Logger},
+    mongodb::{connect_to_mongodb, MongoDB},
 };
 mod controllers;
 mod entities;
@@ -62,16 +62,18 @@ fn collect_res_headers<B>(response: &Response<B>) -> Value {
  * Wrapper for the logger in Axum requests
  */
 fn req_logger(request: &Request, log: LogObject) {
-    get_logger(request)
+    request
+        .extensions()
+        .get::<Arc<Logger>>()
         .map(|logger| logger.log(log))
         .unwrap_or_else(|| tracing::warn!("Logger not found in request extensions"));
 }
 
-fn get_logger(request: &Request) -> Option<&Arc<Logger>> {
-    request.extensions().get::<Arc<Logger>>()
-}
-
-async fn add_request_metadata(mut request: Request, next: Next) -> Response {
+async fn add_request_metadata(
+    State(state): State<AppState>,
+    mut request: Request,
+    next: Next,
+) -> Response {
     let current_time = get_current_time();
     request.headers_mut().insert(
         "x-plutomi-request-timestamp",
@@ -84,16 +86,14 @@ async fn add_request_metadata(mut request: Request, next: Next) -> Response {
         HeaderValue::from_static("your_custom_id"), // Replace with your custom value
     );
 
-    req_logger(
-        &request,
-        LogObject {
-            level: LogLevel::Debug,
-            error: None,
-            message: "Request received".to_string(),
-            data: Some(json!({"test": "easy"})),
-            timestamp: current_time,
-        },
-    );
+    state.logger.log(LogObject {
+        level: LogLevel::Debug,
+        error: None,
+        message: "Request received".to_string(),
+        data: Some(json!({"test": "easy"})),
+        timestamp: current_time,
+        request: Some(json!(parse_request(&request))),
+    });
 
     next.run(request).await
 }
@@ -160,6 +160,12 @@ async fn handle_timeout_error(err: BoxError) -> (StatusCode, String) {
     }
 }
 
+#[derive(Clone)]
+pub struct AppState {
+    logger: Arc<Logger>,
+    mongodb: Arc<MongoDB>,
+}
+
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     // Load .env if available (used in development)
@@ -174,6 +180,9 @@ async fn main() {
     // Connect to database
     let mongodb = connect_to_mongodb().await;
 
+    // Create an instance of AppState
+    let state = AppState { logger, mongodb };
+
     // Routes
     let totp_routes = Router::new().route("/totp", post(create_totp));
 
@@ -185,14 +194,16 @@ async fn main() {
             .fallback(not_found)
             .layer(
                 ServiceBuilder::new()
-                    .layer(Extension(logger.clone()))
-                    .layer(middleware::from_fn(add_request_metadata))
+                    .layer(middleware::from_fn_with_state(
+                        state.clone(),
+                        add_request_metadata,
+                    ))
                     .layer(HandleErrorLayer::new(handle_timeout_error))
                     .timeout(Duration::from_secs(1))
                     .layer(CompressionLayer::new())
-                    .layer(Extension(mongodb))
                     .layer(middleware::from_fn(add_response_timestamp)),
-            ),
+            )
+            .with_state(state),
     );
 
     // Bind address
