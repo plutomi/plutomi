@@ -1,19 +1,23 @@
 use crate::utils::get_env::get_env;
 use axum::{
+    body::Body,
     error_handling::HandleErrorLayer,
     extract::{Request, State},
     http::{HeaderValue, StatusCode},
     middleware::{self, Next},
-    response::Response,
+    response::{IntoResponse, Response},
     routing::{get, post},
-    BoxError, Router,
+    BoxError, Json, Router,
 };
+use tokio::time::timeout;
+
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use serde::Serialize;
 use serde_json::{json, Value};
 use std::{collections::HashMap, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
+use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer};
 
 use utils::{
     get_current_time::get_current_time,
@@ -23,6 +27,14 @@ use utils::{
 mod controllers;
 mod entities;
 mod utils;
+
+struct ApiError {
+    message: String,
+    code: StatusCode,
+    status_code: u16,
+    docs: String,
+    request_id: String,
+}
 
 fn collect_headers<B>(request: &Request<B>) -> Value {
     let headers = request
@@ -54,17 +66,6 @@ fn collect_res_headers<B>(response: &Response<B>) -> Value {
     json!(headers)
 }
 
-/**
- * Wrapper for the logger in Axum requests
- */
-fn req_logger(request: &Request, log: LogObject) {
-    request
-        .extensions()
-        .get::<Arc<Logger>>()
-        .map(|logger| logger.log(log))
-        .unwrap_or_else(|| tracing::warn!("Logger not found in request extensions"));
-}
-
 async fn add_request_metadata(
     State(state): State<AppState>,
     mut request: Request,
@@ -94,12 +95,27 @@ async fn add_request_metadata(
     next.run(request).await
 }
 
-async fn add_response_timestamp(request: Request, next: Next) -> Response {
+async fn add_response_metadata(
+    State(state): State<AppState>,
+    request: Request,
+    next: Next,
+) -> Response {
     let mut response = next.run(request).await;
     response.headers_mut().insert(
         "x-plutomi-response-timestamp",
         HeaderValue::from_str(&get_current_time()).unwrap(),
     );
+
+    state.logger.log(LogObject {
+        level: LogLevel::Debug,
+        error: None,
+        message: "Response sent".to_string(),
+        data: Some(json!({"resp": "resp", "status": response.status().as_u16()})),
+        timestamp: get_current_time(),
+        request: None,
+        // response: Some(json!(parse_response(&response))),
+    });
+
     response
 }
 
@@ -144,7 +160,12 @@ fn parse_response<B>(response: &Response<B>) -> HashMap<String, StringOrJson> {
     return response_map;
 }
 
-async fn handle_timeout_error(err: BoxError) -> (StatusCode, String) {
+async fn handle_timeout_error(
+    State(state): State<AppState>,
+    mut request: Request,
+    next: Next,
+    err: BoxError,
+) -> (StatusCode, String) {
     // TODO add logging
     if err.is::<tower::timeout::error::Elapsed>() {
         (StatusCode::REQUEST_TIMEOUT, "Request timed out".to_string())
@@ -153,6 +174,40 @@ async fn handle_timeout_error(err: BoxError) -> (StatusCode, String) {
             StatusCode::INTERNAL_SERVER_ERROR,
             format!("Unhandled internal error: {err}"),
         )
+    }
+}
+
+async fn timeout_middleware(State(state): State<AppState>, req: Request, next: Next) -> Response {
+    let duration = Duration::from_secs(1);
+    match timeout(duration, next.run(req)).await {
+        Ok(response) => response,
+        Err(_) => {
+            let error_message = "Request timed out".to_string();
+            // Log the timeout error
+            state.logger.log(LogObject {
+                request: None,
+                message: error_message,
+                timestamp: get_current_time(),
+                data: None,
+                level: LogLevel::Error,
+                error: Some(json!({
+                    "message": error_message,
+                    "code": StatusCode::REQUEST_TIMEOUT.as_u16(),
+                })),
+            });
+
+            (
+                StatusCode::REQUEST_TIMEOUT,
+                ApiError {
+                    message: error_message,
+                    code: StatusCode::REQUEST_TIMEOUT,
+                    status_code: StatusCode::REQUEST_TIMEOUT.as_u16(),
+                    docs: "TBD".to_string(),
+                    request_id: "".to_string(),
+                },
+            )
+                .into_response()
+        }
     }
 }
 
@@ -194,10 +249,14 @@ async fn main() {
                         state.clone(),
                         add_request_metadata,
                     ))
-                    .layer(HandleErrorLayer::new(handle_timeout_error))
-                    .timeout(Duration::from_secs(1))
-                    .layer(CompressionLayer::new())
-                    .layer(middleware::from_fn(add_response_timestamp)),
+                    .layer(middleware::from_fn_with_state(
+                        state.clone(),
+                        add_response_metadata,
+                    ))
+                    .layer(middleware::from_fn_with_state(
+                        state.clone(),
+                        timeout_middleware,
+                    )),
             )
             .with_state(state),
     );
