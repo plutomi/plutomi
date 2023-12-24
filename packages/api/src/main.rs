@@ -34,7 +34,8 @@ enum PlutomiCode {
 }
 struct ApiError {
     message: String,
-    status_code: StatusCode,
+    code: StatusCode,
+    status_code: u16,
     plutomi_code: Option<PlutomiCode>,
     docs: String,
     request_id: String,
@@ -44,7 +45,9 @@ impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         // Serialize your JSON value into a String
         let json_string = json!({
-            "error": self.message,
+            "message": self.message,
+            "code": self.code.canonical_reason().unwrap_or("UNKNOWN"),
+            "status_code": self.status_code,
             "plutomi_code": self.plutomi_code,
             "docs": self.docs,
             "request_id": self.request_id
@@ -216,7 +219,8 @@ async fn timeout_middleware(
                 ApiError {
                     message: error_message,
                     plutomi_code: None,
-                    status_code: StatusCode::REQUEST_TIMEOUT,
+                    code: StatusCode::REQUEST_TIMEOUT,
+                    status_code: StatusCode::REQUEST_TIMEOUT.as_u16(),
                     docs: "TBD".to_string(),
                     request_id: "TBD".to_string(),
                 },
