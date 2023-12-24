@@ -21,6 +21,7 @@ use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer};
 
 use utils::{
     get_current_time::get_current_time,
+    get_env::Env,
     logger::{LogLevel, LogObject, Logger},
     mongodb::{connect_to_mongodb, MongoDB},
 };
@@ -234,15 +235,15 @@ async fn timeout_middleware(
 pub struct AppState {
     logger: Arc<Logger>,
     mongodb: Arc<MongoDB>,
+    env: Env,
 }
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     // Load .env if available (used in development)
     dotenv().ok();
-    let env_vars = get_env();
-    let is_production =
-        ["production", "staging"].contains(&env_vars.NEXT_PUBLIC_ENVIRONMENT.as_str());
+
+    let env = get_env();
 
     // Setup logging
     let logger = Logger::new(true);
@@ -250,8 +251,12 @@ async fn main() {
     // Connect to database
     let mongodb = connect_to_mongodb().await;
 
-    // Create an instance of AppState
-    let state = AppState { logger, mongodb };
+    // Create an instance of AppState to be shared with all routes
+    let state = AppState {
+        logger: logger.clone(),
+        mongodb,
+        env,
+    };
 
     // Routes
     let totp_routes = Router::new().route("/totp", post(create_totp));
@@ -270,42 +275,74 @@ async fn main() {
                     ))
                     .layer(middleware::from_fn_with_state(
                         state.clone(),
-                        add_response_metadata,
+                        timeout_middleware,
                     ))
                     .layer(middleware::from_fn_with_state(
                         state.clone(),
-                        timeout_middleware,
+                        add_response_metadata,
                     )),
             )
             .with_state(state),
     );
 
+    let port = "[::]:8080";
     // Bind address
-    let addr = match "[::]:8080".parse::<std::net::SocketAddr>() {
-        Ok(addr) => addr,
-        Err(e) => {
-            // ! TODO logging
-            std::process::exit(1);
-        }
-    };
+    let addr = port.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {
+        let message = format!("Failed to parse address on startup '{}': {}", port, e);
+        let error_json = json!({ "message": &message });
+        logger.log(LogObject {
+            level: LogLevel::Error,
+            timestamp: get_current_time(),
+            message,
+            data: Some(json!({ "port": port })),
+            error: Some(error_json),
+            request: None,
+        });
+        std::process::exit(1);
+    });
 
     // Bind listener
-    let listener = match tokio::net::TcpListener::bind(&addr).await {
-        Ok(listener) => listener,
-        Err(e) => {
-            // ! TODO logging
+    let listener = tokio::net::TcpListener::bind(&addr)
+        .await
+        .unwrap_or_else(|e| {
+            let message = format!("Failed to bind to address on startup '{}': {}", addr, e);
+            let error_json = json!({ "message": &message });
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                timestamp: get_current_time(),
+                message,
+                data: Some(json!({ "addr": addr })),
+                error: Some(error_json),
+                request: None,
+            });
             std::process::exit(1);
-        }
-    };
+        });
 
     // Start the server
-    match axum::serve(listener, app).await {
-        Ok(_) => {
-            // ! TODO Logging
-        }
-        Err(e) => {
-            // ! TODO logging
+    axum::serve(listener, app)
+        .await
+        .map(|_| {
+            logger.log(LogObject {
+                level: LogLevel::Info,
+                timestamp: get_current_time(),
+                message: "Server started".to_string(),
+                data: None,
+                error: None,
+                request: None,
+            })
+        })
+        .unwrap_or_else(|e| {
+            let logger = logger.clone();
+            let message = format!("Server failed to start: {}", e);
+            let error_json = json!({ "message": &message });
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                timestamp: get_current_time(),
+                message,
+                data: None,
+                error: Some(error_json),
+                request: None,
+            });
             std::process::exit(1);
-        }
-    }
+        })
 }
