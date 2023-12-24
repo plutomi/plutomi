@@ -8,7 +8,7 @@ use tokio::sync::mpsc::{self, Sender};
 use tracing::{debug, error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
 
-const MAX_LOG_BUFFER_LENGTH: usize = 1000;
+const MAX_LOG_BUFFER_LENGTH: usize = 10000;
 
 #[derive(Serialize, Debug)]
 pub enum LogLevel {

@@ -2,11 +2,11 @@ use crate::utils::get_env::get_env;
 use axum::{
     error_handling::HandleErrorLayer,
     extract::{Request, State},
-    http::{HeaderValue, Method, StatusCode, Uri},
+    http::{HeaderValue, StatusCode},
     middleware::{self, Next},
-    response::{IntoResponse, Response},
+    response::Response,
     routing::{get, post},
-    BoxError, Extension, RequestExt, Router,
+    BoxError, Router,
 };
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
@@ -14,14 +14,10 @@ use serde::Serialize;
 use serde_json::{json, Value};
 use std::{collections::HashMap, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
-use tower_http::{
-    classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
-    trace::TraceLayer,
-};
-use tracing::Span;
+
 use utils::{
     get_current_time::get_current_time,
-    logger::{self, LogLevel, LogObject, Logger},
+    logger::{LogLevel, LogObject, Logger},
     mongodb::{connect_to_mongodb, MongoDB},
 };
 mod controllers;
