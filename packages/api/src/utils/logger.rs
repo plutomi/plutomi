@@ -68,13 +68,7 @@ async fn send_to_axiom(log: LogObject, client: &Client) {
     let axiom_result = client
         .ingest(
             &get_env().AXIOM_DATASET,
-            vec![json!({
-                "level":    log.level,
-                "timestamp": log.timestamp,
-                "message":  log.message,
-                "data":     log.data,
-                "error":      log.error,
-            })],
+            vec![serde_json::json!(log)], // Serialize the entire LogObject
         )
         .await;
 
