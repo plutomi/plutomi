@@ -3,13 +3,13 @@ use axum::{
     body::Body,
     error_handling::HandleErrorLayer,
     extract::{Request, State},
-    http::{HeaderValue, StatusCode},
+    http::{header, HeaderValue, StatusCode},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
     BoxError, Json, Router,
 };
-use tokio::time::timeout;
+use tokio::time::{error::Elapsed, timeout};
 
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
@@ -28,12 +28,39 @@ mod controllers;
 mod entities;
 mod utils;
 
+#[derive(Serialize)]
+enum PlutomiCode {
+    // TODO custom error codes for business logic
+}
 struct ApiError {
     message: String,
-    code: StatusCode,
-    status_code: u16,
+    status_code: StatusCode,
+    plutomi_code: Option<PlutomiCode>,
     docs: String,
     request_id: String,
+}
+
+impl IntoResponse for ApiError {
+    fn into_response(self) -> Response {
+        // Serialize your JSON value into a String
+        let json_string = json!({
+            "error": self.message,
+            "plutomi_code": self.plutomi_code,
+            "docs": self.docs,
+            "request_id": self.request_id
+        })
+        .to_string();
+
+        // Convert the String into a Body
+        let body = Body::from(json_string);
+
+        // Build the response
+        Response::builder()
+            .status(self.status_code)
+            .header(header::CONTENT_TYPE, "application/json")
+            .body(body)
+            .unwrap() // This unwrap is safe as long as the header and status code are valid
+    }
 }
 
 fn collect_headers<B>(request: &Request<B>) -> Value {
@@ -160,35 +187,23 @@ fn parse_response<B>(response: &Response<B>) -> HashMap<String, StringOrJson> {
     return response_map;
 }
 
-async fn handle_timeout_error(
+async fn timeout_middleware(
     State(state): State<AppState>,
-    mut request: Request,
+    req: Request,
     next: Next,
-    err: BoxError,
-) -> (StatusCode, String) {
-    // TODO add logging
-    if err.is::<tower::timeout::error::Elapsed>() {
-        (StatusCode::REQUEST_TIMEOUT, "Request timed out".to_string())
-    } else {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Unhandled internal error: {err}"),
-        )
-    }
-}
-
-async fn timeout_middleware(State(state): State<AppState>, req: Request, next: Next) -> Response {
+) -> Result<Response, (StatusCode, ApiError)> {
     let duration = Duration::from_secs(1);
+
     match timeout(duration, next.run(req)).await {
-        Ok(response) => response,
-        Err(_) => {
+        Ok(response) => Ok(response),
+        Err(e) => {
             let error_message = "Request timed out".to_string();
-            // Log the timeout error
+            // Log the error
             state.logger.log(LogObject {
                 request: None,
-                message: error_message,
-                timestamp: get_current_time(),
                 data: None,
+                message: error_message.clone(),
+                timestamp: get_current_time(),
                 level: LogLevel::Error,
                 error: Some(json!({
                     "message": error_message,
@@ -196,22 +211,22 @@ async fn timeout_middleware(State(state): State<AppState>, req: Request, next: N
                 })),
             });
 
-            (
+            Err((
                 StatusCode::REQUEST_TIMEOUT,
                 ApiError {
                     message: error_message,
-                    code: StatusCode::REQUEST_TIMEOUT,
-                    status_code: StatusCode::REQUEST_TIMEOUT.as_u16(),
+                    plutomi_code: None,
+                    status_code: StatusCode::REQUEST_TIMEOUT,
                     docs: "TBD".to_string(),
-                    request_id: "".to_string(),
+                    request_id: "TBD".to_string(),
                 },
-            )
-                .into_response()
+            ))
         }
     }
 }
 
 #[derive(Clone)]
+
 pub struct AppState {
     logger: Arc<Logger>,
     mongodb: Arc<MongoDB>,
