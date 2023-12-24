@@ -30,15 +30,14 @@ mod utils;
 
 #[derive(Serialize)]
 enum PlutomiCode {
-    // TODO custom error codes for business logic
+    TooManyUsers, // TODO custom error codes for business logic
 }
 struct ApiError {
     message: String,
     code: StatusCode,
-    status_code: u16,
-    plutomi_code: Option<PlutomiCode>,
-    docs: String,
     request_id: String,
+    docs: Option<String>,
+    plutomi_code: Option<PlutomiCode>,
 }
 
 impl IntoResponse for ApiError {
@@ -47,9 +46,9 @@ impl IntoResponse for ApiError {
         let json_string = json!({
             "message": self.message,
             "code": self.code.canonical_reason().unwrap_or("UNKNOWN"),
-            "status_code": self.status_code,
+            "status_code": self.code.as_u16(),
             "plutomi_code": self.plutomi_code,
-            "docs": self.docs,
+            "docs": self.docs.unwrap_or("https://plutomi.com/docs/api".to_string()),
             "request_id": self.request_id
         })
         .to_string();
@@ -59,7 +58,7 @@ impl IntoResponse for ApiError {
 
         // Build the response
         Response::builder()
-            .status(self.status_code)
+            .status(self.code)
             .header(header::CONTENT_TYPE, "application/json")
             .body(body)
             .unwrap() // This unwrap is safe as long as the header and status code are valid
@@ -199,8 +198,10 @@ async fn timeout_middleware(
 
     match timeout(duration, next.run(req)).await {
         Ok(response) => Ok(response),
-        Err(e) => {
-            let error_message = "Request timed out".to_string();
+        Err(_) => {
+            let error_message =
+                "Your request took too long to process. Our developers have been notified."
+                    .to_string();
             // Log the error
             state.logger.log(LogObject {
                 request: None,
@@ -220,8 +221,7 @@ async fn timeout_middleware(
                     message: error_message,
                     plutomi_code: None,
                     code: StatusCode::REQUEST_TIMEOUT,
-                    status_code: StatusCode::REQUEST_TIMEOUT.as_u16(),
-                    docs: "TBD".to_string(),
+                    docs: None,
                     request_id: "TBD".to_string(),
                 },
             ))
