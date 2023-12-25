@@ -132,8 +132,24 @@ async fn add_request_metadata(
     mut request: Request,
     next: Next,
 ) -> Response {
-    let request_data: HashMap<String, Value> = collect_request_info(&request);
+    // Start a timer to see how long it takes us to process it
+    let start_time = std::time::Instant::now(); //  TODO Two different timers!
     let current_time: String = get_current_time();
+
+    // On the way in, add some headers so we can search it in the logs
+    request.headers_mut().insert(
+        REQUEST_TIMESTAMP_HEADER,
+        HeaderValue::from_str(&current_time).unwrap(),
+    );
+
+    request.headers_mut().insert(
+        REQUEST_ID_HEADER,
+        // TODO ksuid
+        HeaderValue::from_static("custom_id2"), // TODO use from static in other places
+    );
+
+    // Parse the request
+    let request_data: HashMap<String, Value> = collect_request_info(&request);
 
     state.logger.log(LogObject {
         // Log the raw request that came in
@@ -146,27 +162,14 @@ async fn add_request_metadata(
         response: None,
     });
 
-    // On the way in, add some headers
-    request.headers_mut().insert(
-        REQUEST_TIMESTAMP_HEADER,
-        HeaderValue::from_str(&current_time).unwrap(),
-    );
-
-    request.headers_mut().insert(
-        REQUEST_ID_HEADER,
-        // TODO ksuid
-        HeaderValue::from_static("custom_id"),
-    );
-
-    let start_time = std::time::Instant::now();
-
-    // Call the next middleware
+    // Call the next middleware and await the response
     let mut response = next.run(request).await;
 
     // Note how long the request took
     let end_time = std::time::Instant::now();
     let duration = (end_time - start_time).as_millis();
 
+    // New timer for the logging
     let current_time = get_current_time(); // Todo use this to get the current time up above
 
     // On the way out, add some headers
@@ -175,6 +178,7 @@ async fn add_request_metadata(
         HeaderValue::from_str(&current_time).unwrap(),
     );
 
+    // ! TODO add request id to the response?
     // Log the raw response that went out
     let response_data: HashMap<String, Value> = collect_response_info(&response);
 
