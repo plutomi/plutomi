@@ -1,23 +1,29 @@
 use crate::utils::get_env::get_env;
 use axum::{
-    body::Body,
+    body::{Body, Bytes},
     extract::{Request, State},
-    http::{header, HeaderMap, HeaderValue, StatusCode},
+    http::{header, response, HeaderMap, HeaderValue, Method, Request, StatusCode, Uri},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
     Router,
 };
-use time::OffsetDateTime;
+use futures::TryFutureExt;
+use http_body_util::BodyExt;
+use time::{error::Parse, OffsetDateTime};
 use tokio::time::timeout;
 
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use serde::Serialize;
 use serde_json::{json, to_string, Value};
-use std::{collections::HashMap, net::SocketAddr, sync::Arc};
+use std::{collections::HashMap, net::SocketAddr, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
-use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer};
+use tower_http::{
+    classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
+    trace::TraceLayer,
+};
+use tracing::Span;
 
 use utils::{
     generate_plutomiid::{Entities, PlutomiId},
@@ -35,6 +41,7 @@ const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
 const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
 const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
+const ERROR_PARSING_BODY: &str = "Failed to parse request body";
 
 #[derive(Serialize)]
 enum PlutomiCode {
@@ -79,27 +86,65 @@ impl IntoResponse for ApiError {
 }
 
 /**
+ * Parse the request body. Return it as well as the request again. Axum allows you to consume the body once so you have to re-create it
+ */
+
+struct ParsedRequest {
+    request: Request<Body>,
+    body_bytes: Bytes,
+    method: Method,
+    uri: Uri,
+    headers: HeaderMap,
+}
+
+async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
+    let (parts, body) = request.into_parts();
+
+    // this wont work if the body is an long running stream
+    let collected_bytes = body.collect().await;
+
+    match collected_bytes {
+        Ok(bytes) => {
+            let bytes = bytes.to_bytes();
+            let recreated_request = Request::from_parts(parts.clone(), Body::from(bytes.clone()));
+
+            Ok(ParsedRequest {
+                request: recreated_request,
+                body_bytes: bytes,
+                method: parts.method,
+                uri: parts.uri,
+                headers: parts.headers,
+            })
+        }
+        Err(_) => Err("Failed to parse request body".to_string()),
+    }
+}
+
+/**
  * Collects info into a hashmap for easier logging
  */
-fn collect_request_info(request: &Request) -> HashMap<String, Value> {
+async fn request_to_hashmap(request: ParsedRequest) -> Result<HashMap<String, Value>, String> {
     let mut request_info = HashMap::<String, Value>::new();
 
-    request_info.insert("method".to_string(), json!(request.method().as_str()));
-    request_info.insert("uri".to_string(), json!(request.uri().to_string()));
+    request_info.insert("method".to_string(), json!(request.method.to_string()));
+    request_info.insert("uri".to_string(), json!(request.uri.to_string()));
 
     // Collect and serialize headers
     request_info.insert(
         "headers".to_string(),
-        json!(collect_headers(request.headers())),
+        json!(collect_headers(&request.headers)),
     );
 
     // Note: IP comes from the Cloudflare header if it exists
+    let body_to_json = serde_json::from_slice::<Value>(&request.body_bytes);
 
-    request_info.insert(
-        "headers".to_string(),
-        json!(collect_headers(request.headers())),
-    );
-    request_info
+    match body_to_json {
+        Ok(body) => {
+            request_info.insert("body".to_string(), body);
+            Ok(request_info)
+        }
+        Err(_) => Err(ERROR_PARSING_BODY.to_string()),
+    }
 }
 /**
  * Collects info into a hashmap for easier logging
@@ -144,105 +189,170 @@ async fn add_request_metadata(
     let start_time = OffsetDateTime::now_utc();
     let formatted_start_time = iso_format(start_time);
 
-    // On the way in, add some headers so we can search it in the logs
+    // Add a request ID based on a PlutomiID
+    let request_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
+    let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);
+    // Add a timestamp header
     request.headers_mut().insert(
         REQUEST_TIMESTAMP_HEADER,
         HeaderValue::from_str(&formatted_start_time).unwrap_or(UNKNOWN_HEADER),
     );
 
-    let plutomi_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
-    let request_id_value = HeaderValue::from_str(plutomi_id.as_str()).unwrap_or(UNKNOWN_HEADER);
+    // Add a request ID based on a PlutomiID
     request
         .headers_mut()
         .insert(REQUEST_ID_HEADER, request_id_value.clone());
 
     // Parse the request
-    let request_data: HashMap<String, Value> = collect_request_info(&request);
+    let request_data = parse_request(request).await;
 
-    state.logger.log(LogObject {
-        // Log the request that came in
-        level: LogLevel::Debug,
-        error: None,
-        message: "Request received".to_string(),
-        data: None,
-        timestamp: formatted_start_time,
-        request: Some(json!(&request_data)),
-        response: None,
-    });
+    match request_data {
+        Err(message) => {
+            let end_time = OffsetDateTime::now_utc();
+            let formatted_end_time = iso_format(start_time);
 
-    // Call the next middleware and await the response
-    let mut response = next.run(request).await;
-
-    // Note how long the request took
-    let end_time = OffsetDateTime::now_utc();
-    let formatted_end_time = iso_format(end_time);
-    let duration_ms = (end_time - start_time).whole_milliseconds();
-
-    // On the way out, add some headers
-    response.headers_mut().insert(
-        RESPONSE_TIMESTAMP_HEADER,
-        HeaderValue::from_str(&formatted_end_time).unwrap(),
-    );
-
-    response
-        .headers_mut()
-        .insert(REQUEST_ID_HEADER, request_id_value);
-    // Log the raw response that went out
-    let response_data: HashMap<String, Value> = collect_response_info(&response);
-
-    state.logger.log(LogObject {
-        level: LogLevel::Debug,
-        error: None,
-        message: "Response sent".to_string(),
-        data: Some(json!({ "duration": duration_ms })), // ! TODO get the response body
-        timestamp: formatted_end_time,
-        request: Some(json!(request_data)),
-        response: Some(json!(response_data)),
-    });
-
-    response
-}
-
-async fn timeout_middleware(
-    State(state): State<AppState>,
-    request: Request,
-    next: Next,
-) -> Result<Response, (StatusCode, ApiError)> {
-    let duration = std::time::Duration::from_secs(1);
-
-    let request_data = collect_request_info(&request);
-    match timeout(duration, next.run(request)).await {
-        Ok(response) => Ok(response),
-        Err(_) => {
-            let error_message =
-                "Your request took too long to process. Our developers have been notified."
-                    .to_string();
-
-            let status = StatusCode::REQUEST_TIMEOUT;
+            // If the request failed to parse, log it and return a 400
+            let status = StatusCode::BAD_REQUEST;
             let api_error = ApiError {
-                message: error_message.clone(),
+                message: message.clone(),
                 plutomi_code: None,
                 status_code: status.as_u16(),
                 docs: None,
-                request_id: request_data.get("headers").unwrap()[REQUEST_ID_HEADER]
-                    .as_str()
-                    .unwrap()
-                    .to_string(),
+                request_id,
             };
+
+            let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
 
             // Log the error
             state.logger.log(LogObject {
-                data: None,
-                message: error_message.clone(),
+                data: Some(json!({ "duration": duration_ms })),
+                message,
                 timestamp: iso_format(OffsetDateTime::now_utc()),
                 level: LogLevel::Error,
                 error: Some(json!(api_error)),
-                request: Some(json!(request_data)),
-                response: Some(json!(api_error)),
+                request: None,
+                response: None,
             });
 
-            // Construct the final response
-            return Err((status, api_error));
+            let mut response = api_error.into_response();
+
+            response.headers_mut().insert(
+                RESPONSE_TIMESTAMP_HEADER,
+                HeaderValue::from_str(&formatted_end_time).unwrap(),
+            );
+
+            response
+        }
+
+        Ok(req_data) => {
+            // ! Attempt to convert the request to a serializable hashmap
+            let req_as_hashmap = request_to_hashmap(req_data).await;
+
+            match req_as_hashmap {
+                Ok(req_as_hashmap) => {
+                    // Log the incoming request
+                    state.logger.log(LogObject {
+                        level: LogLevel::Debug,
+                        error: None,
+                        message: "Request received".to_string(),
+                        data: None,
+                        timestamp: formatted_start_time,
+                        request: Some(json!(req_as_hashmap)),
+                        response: None,
+                    });
+
+                    // Call the next middleware and await the response
+                    let mut response = next.run(request).await;
+
+                    // Note how long the request took
+                    let end_time = OffsetDateTime::now_utc();
+                    let formatted_end_time = iso_format(end_time);
+                    let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+
+                    // On the way out, add some headers
+                    response.headers_mut().insert(
+                        RESPONSE_TIMESTAMP_HEADER,
+                        HeaderValue::from_str(&formatted_end_time).unwrap(),
+                    );
+
+                    response
+                        .headers_mut()
+                        .insert(REQUEST_ID_HEADER, request_id_value);
+
+                    // ! TODO;
+                    // // Log the raw response that went out
+                    // let response_data: HashMap<String, Value> = collect_response_info(&response);
+
+                    // state.logger.log(LogObject {
+                    //     level: LogLevel::Debug,
+                    //     error: None,
+                    //     message: "Response sent".to_string(),
+                    //     data: Some(json!({ "duration": duration_ms })), // ! TODO get the response body
+                    //     timestamp: formatted_end_time,
+                    //     request: Some(json!(request_data)),
+                    //     response: Some(json!(response_data)),
+                    // });
+
+                    response
+                }
+                Err(message) => {
+                    // If the request failed to parse into serializable JSON, log it and return a 400
+                    let status = StatusCode::BAD_REQUEST;
+                    let api_error = ApiError {
+                        message: message.clone(),
+                        plutomi_code: None,
+                        status_code: status.as_u16(),
+                        docs: None,
+                        request_id: request_id_value.to_str().unwrap().to_string(),
+                    };
+
+                    // Log the error
+                    state.logger.log(LogObject {
+                        data: Some(json!({ "duration": duration_ms})),
+                        message,
+                        timestamp: iso_format(OffsetDateTime::now_utc()),
+                        level: LogLevel::Error,
+                        error: Some(json!(api_error)),
+                        request: None,
+                        response: None,
+                    });
+
+                    // Construct the final response
+                    return api_error.into_response();
+                }
+            }
+
+            // Call the next middleware and await the response
+            let mut response = next.run(request).await;
+
+            // Note how long the request took
+            let end_time = OffsetDateTime::now_utc();
+            let formatted_end_time = iso_format(end_time);
+            let duration_ms = (end_time - start_time).whole_milliseconds();
+
+            // On the way out, add some headers
+            response.headers_mut().insert(
+                RESPONSE_TIMESTAMP_HEADER,
+                HeaderValue::from_str(&formatted_end_time).unwrap(),
+            );
+
+            response
+                .headers_mut()
+                .insert(REQUEST_ID_HEADER, request_id_value);
+            // Log the raw response that went out
+            let response_data: HashMap<String, Value> = collect_response_info(&response);
+
+            state.logger.log(LogObject {
+                level: LogLevel::Debug,
+                error: None,
+                message: "Response sent".to_string(),
+                data: Some(json!({ "duration": duration_ms })), // ! TODO get the response body
+                timestamp: formatted_end_time,
+                request: Some(json!(req_data)),
+                response: Some(json!(response_data)),
+            });
+
+            response
         }
     }
 }
