@@ -195,12 +195,7 @@ async fn add_request_metadata(
  * After parsing request headers, you can use this to
  * extract a value with a default value if it doesn't exist
  */
-fn get_header_from_hashmap(headers: &HashMap<String, String>, key: &str) -> String {
-    headers
-        .get(key)
-        .cloned()
-        .unwrap_or_else(|| "unknown".to_string())
-}
+
 async fn timeout_middleware(
     State(state): State<AppState>,
     request: Request,
@@ -208,7 +203,8 @@ async fn timeout_middleware(
 ) -> Result<Response, (StatusCode, ApiError)> {
     let duration = std::time::Duration::from_secs(1);
 
-    let request_data: HashMap<String, String> = collect_headers(&request.headers());
+    // ! TODO collect all other data
+    let request_data = collect_request_info(&request);
     match timeout(duration, next.run(request)).await {
         Ok(response) => Ok(response),
         Err(_) => {
@@ -222,7 +218,7 @@ async fn timeout_middleware(
                 plutomi_code: None,
                 status_code: status.as_u16(),
                 docs: None,
-                request_id: "sigh".to_string(), // TODO ksuid
+                request_id: "TODO".to_string(),
             };
 
             // Log the error
