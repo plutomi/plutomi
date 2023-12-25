@@ -40,6 +40,7 @@ pub struct LogObject {
     pub data: Option<serde_json::Value>,
     pub error: Option<serde_json::Value>,
     pub request: Option<serde_json::Value>,
+    pub response: Option<serde_json::Value>,
 }
 
 impl fmt::Display for LogObject {
