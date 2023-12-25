@@ -23,7 +23,7 @@ use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer};
 
 use utils::{
     generate_plutomiid::{Entities, PlutomiId},
-    get_current_time::get_current_time,
+    get_current_time::iso_format,
     get_env::Env,
     logger::{LogLevel, LogObject, Logger},
     mongodb::{connect_to_mongodb, MongoDB},
@@ -36,6 +36,7 @@ const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
 const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
+const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
 
 #[derive(Serialize)]
 enum PlutomiCode {
@@ -59,7 +60,7 @@ impl IntoResponse for ApiError {
         // Serialize your JSON value into a String
         let json_string = json!({
             "message": self.message,
-            "code": StatusCode::from_u16(self.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).canonical_reason().unwrap_or("UNKNOWN"),
+            "code": StatusCode::from_u16(self.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).canonical_reason().unwrap_or("unknown"),
             "status_code": self.status_code,
             "plutomi_code": self.plutomi_code, // null if not set
             "docs": self.docs.unwrap_or("https://plutomi.com/docs/api".to_string()),
@@ -138,19 +139,18 @@ async fn add_request_metadata(
 ) -> Response {
     // Start a timer to see how long it takes us to process it
     let start_time = OffsetDateTime::now_utc();
-    let current_time: String = get_current_time();
+    let formatted_start_time = iso_format(start_time);
 
     // On the way in, add some headers so we can search it in the logs
     request.headers_mut().insert(
         REQUEST_TIMESTAMP_HEADER,
-        HeaderValue::from_str(&current_time).unwrap(),
+        HeaderValue::from_str(&formatted_start_time).unwrap_or(UNKNOWN_HEADER),
     );
 
     let plutomi_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
-
     request.headers_mut().insert(
         REQUEST_ID_HEADER,
-        HeaderValue::from_str(plutomi_id.as_str()).unwrap_or(HeaderValue::from_static("unknown")),
+        HeaderValue::from_str(plutomi_id.as_str()).unwrap_or(UNKNOWN_HEADER),
     );
 
     // Parse the request
@@ -162,7 +162,7 @@ async fn add_request_metadata(
         error: None,
         message: "Request received".to_string(),
         data: None,
-        timestamp: current_time.clone(),
+        timestamp: formatted_start_time,
         request: Some(json!(&request_data)),
         response: None,
     });
@@ -172,18 +172,27 @@ async fn add_request_metadata(
 
     // Note how long the request took
     let end_time = OffsetDateTime::now_utc();
-    let duration = (end_time - start_time).whole_milliseconds();
-
-    // New timer for the logging
-    let current_time = get_current_time(); // Todo use this to get the current time up above
+    let formatted_end_time = iso_format(end_time);
+    let duration_ms = (end_time - start_time).whole_milliseconds();
 
     // On the way out, add some headers
     response.headers_mut().insert(
         RESPONSE_TIMESTAMP_HEADER,
-        HeaderValue::from_str(&current_time).unwrap(),
+        HeaderValue::from_str(&formatted_end_time).unwrap(),
     );
 
-    // ! TODO add request id to the response?
+    response.headers_mut().insert(
+        REQUEST_ID_HEADER,
+        HeaderValue::from_str(
+            &request
+                .headers()
+                .get(REQUEST_ID_HEADER)
+                .unwrap()
+                .to_str()
+                .unwrap(),
+        )
+        .unwrap(),
+    );
     // Log the raw response that went out
     let response_data: HashMap<String, Value> = collect_response_info(&response);
 
@@ -191,8 +200,8 @@ async fn add_request_metadata(
         level: LogLevel::Debug,
         error: None,
         message: "Response sent".to_string(),
-        data: Some(json!({ "duration": duration })), // ! TODO get the response body
-        timestamp: current_time,
+        data: Some(json!({ "duration": duration_ms })), // ! TODO get the response body
+        timestamp: formatted_end_time,
         request: Some(json!(request_data)),
         response: Some(json!(response_data)),
     });
@@ -237,7 +246,7 @@ async fn timeout_middleware(
             state.logger.log(LogObject {
                 data: None,
                 message: error_message.clone(),
-                timestamp: get_current_time(),
+                timestamp: iso_format(OffsetDateTime::now_utc()),
                 level: LogLevel::Error,
                 error: Some(json!(api_error)),
                 request: Some(json!(request_data)),
@@ -309,7 +318,7 @@ async fn main() {
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
-            timestamp: get_current_time(),
+            timestamp: iso_format(OffsetDateTime::now_utc()),
             message,
             data: Some(json!({ "port": port })),
             error: Some(error_json),
@@ -327,7 +336,7 @@ async fn main() {
             let error_json = json!({ "message": &message });
             logger.log(LogObject {
                 level: LogLevel::Error,
-                timestamp: get_current_time(),
+                timestamp: iso_format(OffsetDateTime::now_utc()),
                 message,
                 data: Some(json!({ "addr": addr })),
                 error: Some(error_json),
@@ -343,7 +352,7 @@ async fn main() {
         .map(|_| {
             logger.log(LogObject {
                 level: LogLevel::Info,
-                timestamp: get_current_time(),
+                timestamp: iso_format(OffsetDateTime::now_utc()),
                 message: "Server started".to_string(),
                 data: None,
                 error: None,
@@ -357,7 +366,7 @@ async fn main() {
             let error_json = json!({ "message": &message });
             logger.log(LogObject {
                 level: LogLevel::Error,
-                timestamp: get_current_time(),
+                timestamp: iso_format(OffsetDateTime::now_utc()),
                 message,
                 data: None,
                 error: Some(error_json),

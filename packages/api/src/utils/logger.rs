@@ -35,6 +35,10 @@ impl fmt::Display for LogLevel {
 
 pub struct LogObject {
     pub level: LogLevel,
+    /**
+     * ISO 8601 timestamp
+     * use iso_format() from get_current_time.rs
+     */
     pub timestamp: String,
     pub message: String,
     /**

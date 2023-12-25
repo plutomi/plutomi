@@ -30,7 +30,7 @@ pub async fn health_check(
         environment,
     };
 
-    sleep(Duration::from_secs(20)).await;
+    // sleep(Duration::from_secs(20)).await;
     state.logger.log(LogObject {
         level: LogLevel::Info,
         timestamp: get_current_time(),
