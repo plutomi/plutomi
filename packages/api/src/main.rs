@@ -2,7 +2,7 @@ use crate::utils::get_env::get_env;
 use axum::{
     body::{Body, Bytes},
     extract::{Request, State},
-    http::{header, response, HeaderMap, HeaderValue, Method, Request, StatusCode, Uri},
+    http::{header, response, HeaderMap, HeaderValue, Method, StatusCode, Uri},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
@@ -120,10 +120,37 @@ async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
     }
 }
 
+struct ParsedResponse {
+    response: Response<Body>,
+    body_bytes: Bytes,
+    headers: HeaderMap,
+}
+
+async fn parse_response(response: Response) -> Result<ParsedResponse, String> {
+    let (parts, body) = response.into_parts();
+
+    // this wont work if the body is an long running stream
+    let collected_bytes = body.collect().await;
+
+    match collected_bytes {
+        Ok(bytes) => {
+            let bytes = bytes.to_bytes();
+            let recreated_response = Response::from_parts(parts.clone(), Body::from(bytes.clone()));
+
+            Ok(ParsedResponse {
+                response: recreated_response,
+                body_bytes: bytes,
+                headers: parts.headers,
+            })
+        }
+        Err(_) => Err("Failed to parse request body".to_string()),
+    }
+}
+
 /**
  * Collects info into a hashmap for easier logging
  */
-async fn request_to_hashmap(request: ParsedRequest) -> Result<HashMap<String, Value>, String> {
+async fn request_to_hashmap(request: &ParsedRequest) -> Result<HashMap<String, Value>, String> {
     let mut request_info = HashMap::<String, Value>::new();
 
     request_info.insert("method".to_string(), json!(request.method.to_string()));
@@ -146,22 +173,28 @@ async fn request_to_hashmap(request: ParsedRequest) -> Result<HashMap<String, Va
         Err(_) => Err(ERROR_PARSING_BODY.to_string()),
     }
 }
+
 /**
  * Collects info into a hashmap for easier logging
  */
-
-fn collect_response_info(response: &Response) -> HashMap<String, Value> {
+async fn response_to_hashmap(response: &ParsedResponse) -> Result<HashMap<String, Value>, String> {
     let mut response_info = HashMap::<String, Value>::new();
-
-    response_info.insert("status_code".to_string(), json!(response.status().as_u16()));
 
     // Collect and serialize headers
     response_info.insert(
         "headers".to_string(),
-        json!(collect_headers(response.headers())),
+        json!(collect_headers(&response.headers)),
     );
 
-    response_info
+    let body_to_json = serde_json::from_slice::<Value>(&response.body_bytes);
+
+    match body_to_json {
+        Ok(body) => {
+            response_info.insert("body".to_string(), body);
+            Ok(response_info)
+        }
+        Err(_) => Err(ERROR_PARSING_BODY.to_string()),
+    }
 }
 
 /**
@@ -180,11 +213,7 @@ fn collect_headers(headers: &HeaderMap) -> HashMap<String, String> {
         .collect()
 }
 
-async fn add_request_metadata(
-    State(state): State<AppState>,
-    mut request: Request,
-    next: Next,
-) -> Response {
+async fn log_res_res(State(state): State<AppState>, mut request: Request, next: Next) -> Response {
     // Start a timer to see how long it takes us to process it
     let start_time = OffsetDateTime::now_utc();
     let formatted_start_time = iso_format(start_time);
@@ -208,10 +237,12 @@ async fn add_request_metadata(
 
     match request_data {
         Err(message) => {
+            // If the request failed to parse, log it and return a 400
+
             let end_time = OffsetDateTime::now_utc();
             let formatted_end_time = iso_format(start_time);
+            let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
 
-            // If the request failed to parse, log it and return a 400
             let status = StatusCode::BAD_REQUEST;
             let api_error = ApiError {
                 message: message.clone(),
@@ -220,8 +251,6 @@ async fn add_request_metadata(
                 docs: None,
                 request_id,
             };
-
-            let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
 
             // Log the error
             state.logger.log(LogObject {
@@ -245,58 +274,16 @@ async fn add_request_metadata(
         }
 
         Ok(req_data) => {
-            // ! Attempt to convert the request to a serializable hashmap
-            let req_as_hashmap = request_to_hashmap(req_data).await;
+            // Attempt to convert the request to a serializable hashmap
+            let req_as_hashmap = request_to_hashmap(&req_data).await;
 
             match req_as_hashmap {
-                Ok(req_as_hashmap) => {
-                    // Log the incoming request
-                    state.logger.log(LogObject {
-                        level: LogLevel::Debug,
-                        error: None,
-                        message: "Request received".to_string(),
-                        data: None,
-                        timestamp: formatted_start_time,
-                        request: Some(json!(req_as_hashmap)),
-                        response: None,
-                    });
-
-                    // Call the next middleware and await the response
-                    let mut response = next.run(request).await;
-
-                    // Note how long the request took
-                    let end_time = OffsetDateTime::now_utc();
-                    let formatted_end_time = iso_format(end_time);
-                    let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
-
-                    // On the way out, add some headers
-                    response.headers_mut().insert(
-                        RESPONSE_TIMESTAMP_HEADER,
-                        HeaderValue::from_str(&formatted_end_time).unwrap(),
-                    );
-
-                    response
-                        .headers_mut()
-                        .insert(REQUEST_ID_HEADER, request_id_value);
-
-                    // ! TODO;
-                    // // Log the raw response that went out
-                    // let response_data: HashMap<String, Value> = collect_response_info(&response);
-
-                    // state.logger.log(LogObject {
-                    //     level: LogLevel::Debug,
-                    //     error: None,
-                    //     message: "Response sent".to_string(),
-                    //     data: Some(json!({ "duration": duration_ms })), // ! TODO get the response body
-                    //     timestamp: formatted_end_time,
-                    //     request: Some(json!(request_data)),
-                    //     response: Some(json!(response_data)),
-                    // });
-
-                    response
-                }
                 Err(message) => {
                     // If the request failed to parse into serializable JSON, log it and return a 400
+                    let end_time = OffsetDateTime::now_utc();
+                    let formatted_end_time = iso_format(start_time);
+                    let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+
                     let status = StatusCode::BAD_REQUEST;
                     let api_error = ApiError {
                         message: message.clone(),
@@ -317,42 +304,66 @@ async fn add_request_metadata(
                         response: None,
                     });
 
-                    // Construct the final response
-                    return api_error.into_response();
+                    let mut response = api_error.into_response();
+
+                    response.headers_mut().insert(
+                        RESPONSE_TIMESTAMP_HEADER,
+                        HeaderValue::from_str(&formatted_end_time).unwrap(),
+                    );
+
+                    response
+                }
+                Ok(req_as_hashmap) => {
+                    // Log the incoming request - everything is valid form here on out
+                    state.logger.log(LogObject {
+                        level: LogLevel::Debug,
+                        error: None,
+                        message: "Request received".to_string(),
+                        data: None,
+                        timestamp: formatted_start_time,
+                        request: Some(json!(req_as_hashmap)),
+                        response: None,
+                    });
+
+                    // Call the next middleware and await the response
+                    let mut response = next.run(req_data.request).await;
+
+                    // Note how long the request took
+                    let end_time = OffsetDateTime::now_utc();
+                    let formatted_end_time = iso_format(end_time);
+                    let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+
+                    // On the way out, add some headers
+                    response.headers_mut().insert(
+                        RESPONSE_TIMESTAMP_HEADER,
+                        HeaderValue::from_str(&formatted_end_time).unwrap(),
+                    );
+
+                    response
+                        .headers_mut()
+                        .insert(REQUEST_ID_HEADER, request_id_value);
+
+
+                        return response
+                    // Log the raw response that is going out
+                    // Since we are responding, we can be sure the response is serializable
+                    let parsed_response = parse_response(response).await.unwrap();
+                    let log_able_response: HashMap<String, Value> =
+                        response_to_hashmap(&parsed_response).await.unwrap();
+
+                    state.logger.log(LogObject {
+                        level: LogLevel::Debug,
+                        error: None,
+                        message: "Response sent".to_string(),
+                        data: Some(json!({ "duration": duration_ms })),
+                        timestamp: formatted_end_time,
+                        request: Some(json!(req_as_hashmap)),
+                        response: Some(json!(log_able_response)),
+                    });
+
+                    parsed_response.response
                 }
             }
-
-            // Call the next middleware and await the response
-            let mut response = next.run(request).await;
-
-            // Note how long the request took
-            let end_time = OffsetDateTime::now_utc();
-            let formatted_end_time = iso_format(end_time);
-            let duration_ms = (end_time - start_time).whole_milliseconds();
-
-            // On the way out, add some headers
-            response.headers_mut().insert(
-                RESPONSE_TIMESTAMP_HEADER,
-                HeaderValue::from_str(&formatted_end_time).unwrap(),
-            );
-
-            response
-                .headers_mut()
-                .insert(REQUEST_ID_HEADER, request_id_value);
-            // Log the raw response that went out
-            let response_data: HashMap<String, Value> = collect_response_info(&response);
-
-            state.logger.log(LogObject {
-                level: LogLevel::Debug,
-                error: None,
-                message: "Response sent".to_string(),
-                data: Some(json!({ "duration": duration_ms })), // ! TODO get the response body
-                timestamp: formatted_end_time,
-                request: Some(json!(req_data)),
-                response: Some(json!(response_data)),
-            });
-
-            response
         }
     }
 }
@@ -397,14 +408,7 @@ async fn main() {
             .layer(
                 // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
                 ServiceBuilder::new()
-                    .layer(middleware::from_fn_with_state(
-                        state.clone(),
-                        add_request_metadata,
-                    ))
-                    .layer(middleware::from_fn_with_state(
-                        state.clone(),
-                        timeout_middleware,
-                    )),
+                    .layer(middleware::from_fn_with_state(state.clone(), log_res_res)),
             )
             .with_state(state),
     );
