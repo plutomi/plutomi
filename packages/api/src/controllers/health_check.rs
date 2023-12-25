@@ -38,6 +38,7 @@ pub async fn health_check(
         data: Some(json!({ "response": response })),
         error: None,
         request: None,
+        response: Some(json!(response)),
     });
 
     (StatusCode::OK, Json(response))

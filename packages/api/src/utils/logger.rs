@@ -37,9 +37,18 @@ pub struct LogObject {
     pub level: LogLevel,
     pub timestamp: String,
     pub message: String,
+    /**
+     * Used for adding additional data to the log object
+     */
     pub data: Option<serde_json::Value>,
     pub error: Option<serde_json::Value>,
+    /**
+     * Used for logging the request and response objects
+     */
     pub request: Option<serde_json::Value>,
+    /**
+     * Used for logging the request and response objects
+     */
     pub response: Option<serde_json::Value>,
 }
 

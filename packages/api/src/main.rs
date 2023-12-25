@@ -3,19 +3,21 @@ use axum::{
     body::Body,
     error_handling::HandleErrorLayer,
     extract::{Request, State},
-    http::{header, HeaderValue, StatusCode},
+    http::{header, HeaderMap, HeaderValue, StatusCode},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
     BoxError, Json, Router,
 };
+use time::Duration;
+use time::{macros::datetime, Instant};
 use tokio::time::{error::Elapsed, timeout};
 
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use serde::Serialize;
-use serde_json::{json, Value};
-use std::{collections::HashMap, sync::Arc, time::Duration};
+use serde_json::{json, to_string, Value};
+use std::{collections::HashMap, sync::Arc};
 use tower::ServiceBuilder;
 use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer};
 
@@ -29,26 +31,35 @@ mod controllers;
 mod entities;
 mod utils;
 
+const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
+const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
+const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
+
 #[derive(Serialize)]
 enum PlutomiCode {
-    TooManyUsers, // TODO custom error codes for business logic
+    TooManyUsers, //Sample
 }
+#[derive(Serialize)]
 struct ApiError {
     message: String,
-    code: StatusCode,
+    status_code: u16,
     request_id: String,
     docs: Option<String>,
     plutomi_code: Option<PlutomiCode>,
 }
 
 impl IntoResponse for ApiError {
+    /**
+     * This is called when you return ApiError from a route
+     * It will convert your ApiError into a Response
+     */
     fn into_response(self) -> Response {
         // Serialize your JSON value into a String
         let json_string = json!({
             "message": self.message,
-            "code": self.code.canonical_reason().unwrap_or("UNKNOWN"),
-            "status_code": self.code.as_u16(),
-            "plutomi_code": self.plutomi_code,
+            "code": StatusCode::from_u16(self.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).canonical_reason().unwrap_or("UNKNOWN"),
+            "status_code": self.status_code,
+            "plutomi_code": self.plutomi_code, // null if not set
             "docs": self.docs.unwrap_or("https://plutomi.com/docs/api".to_string()),
             "request_id": self.request_id
         })
@@ -59,179 +70,180 @@ impl IntoResponse for ApiError {
 
         // Build the response
         Response::builder()
-            .status(self.code)
+            .status(self.status_code)
             .header(header::CONTENT_TYPE, "application/json")
             .body(body)
             .unwrap() // This unwrap is safe as long as the header and status code are valid
     }
 }
 
-fn collect_headers<B>(request: &Request<B>) -> Value {
-    let headers = request
-        .headers()
+/**
+ * This helps structured logging
+ */
+fn collect_request_info(request: &Request) -> HashMap<String, Value> {
+    let mut request_info = HashMap::<String, Value>::new();
+
+    request_info.insert("method".to_string(), json!(request.method().as_str()));
+    request_info.insert("uri".to_string(), json!(request.uri().to_string()));
+
+    // Collect and serialize headers
+    request_info.insert(
+        "headers".to_string(),
+        json!(collect_headers(request.headers())),
+    );
+
+    // ! TODO collect IP
+
+    // ! TODO collect body
+
+    request_info
+}
+/**
+ * This helps structured logging
+ */
+
+fn collect_response_info(duration: u128, response: &Response) -> HashMap<String, Value> {
+    let mut response_info = HashMap::<String, Value>::new();
+
+    response_info.insert("status".to_string(), json!(response.status().as_u16()));
+    response_info.insert("duration".to_string(), json!(duration));
+
+    // Collect and serialize headers
+    response_info.insert(
+        "headers".to_string(),
+        json!(collect_headers(response.headers())),
+    );
+
+    response_info
+}
+
+fn collect_headers(headers: &HeaderMap) -> HashMap<String, String> {
+    headers
         .iter()
         .map(|(key, value)| {
             (
                 key.to_string(),
-                value.to_str().unwrap_or_default().to_string(),
+                value.to_str().unwrap_or("unknown").to_string(),
             )
         })
-        .collect::<HashMap<String, String>>();
-
-    json!(headers)
+        .collect()
 }
-
-fn collect_res_headers<B>(response: &Response<B>) -> Value {
-    let headers = response
-        .headers()
-        .iter()
-        .map(|(key, value)| {
-            (
-                key.to_string(),
-                value.to_str().unwrap_or_default().to_string(),
-            )
-        })
-        .collect::<HashMap<String, String>>();
-
-    json!(headers)
-}
-
 async fn add_request_metadata(
     State(state): State<AppState>,
     mut request: Request,
     next: Next,
 ) -> Response {
-    let current_time = get_current_time();
+    let request_data: HashMap<String, Value> = collect_request_info(&request);
+    let current_time: String = get_current_time();
+
+    state.logger.log(LogObject {
+        // Log the raw request that came in
+        level: LogLevel::Debug,
+        error: None,
+        message: "Request received".to_string(),
+        data: None,
+        timestamp: current_time.clone(),
+        request: Some(json!(&request_data)),
+        response: None,
+    });
+
+    // On the way in, add some headers
     request.headers_mut().insert(
-        "x-plutomi-request-timestamp",
+        REQUEST_TIMESTAMP_HEADER,
         HeaderValue::from_str(&current_time).unwrap(),
     );
 
     request.headers_mut().insert(
-        "x-plutomi-request-id",
+        REQUEST_ID_HEADER,
         // TODO ksuid
-        HeaderValue::from_static("your_custom_id"), // Replace with your custom value
+        HeaderValue::from_static("custom_id"),
     );
 
-    state.logger.log(LogObject {
-        level: LogLevel::Debug,
-        error: None,
-        message: "Request received".to_string(),
-        data: Some(json!({"test": "easy"})),
-        timestamp: current_time,
-        request: Some(json!(parse_request(&request))),
-    });
+    let start_time = std::time::Instant::now();
 
-    next.run(request).await
-}
-
-async fn add_response_metadata(
-    State(state): State<AppState>,
-    request: Request,
-    next: Next,
-) -> Response {
+    // Call the next middleware
     let mut response = next.run(request).await;
+
+    // Note how long the request took
+    let end_time = std::time::Instant::now();
+    let duration = (end_time - start_time).as_millis();
+
+    let current_time = get_current_time(); // Todo use this to get the current time up above
+
+    // On the way out, add some headers
     response.headers_mut().insert(
-        "x-plutomi-response-timestamp",
-        HeaderValue::from_str(&get_current_time()).unwrap(),
+        RESPONSE_TIMESTAMP_HEADER,
+        HeaderValue::from_str(&current_time).unwrap(),
     );
+
+    // Log the raw response that went out
+    let response_data: HashMap<String, Value> = collect_response_info(duration, &response);
 
     state.logger.log(LogObject {
         level: LogLevel::Debug,
         error: None,
         message: "Response sent".to_string(),
-        data: Some(json!({"resp": "resp", "status": response.status().as_u16()})),
-        timestamp: get_current_time(),
-        request: None,
-        // response: Some(json!(parse_response(&response))),
+        data: None, // ! TODO get the response body
+        timestamp: current_time,
+        request: Some(json!(request_data)),
+        response: Some(json!(response_data)),
     });
 
     response
 }
 
-#[derive(Serialize)]
-#[serde(untagged)]
-enum StringOrJson {
-    Str(String),
-    Json(Value),
+/**
+ * After parsing request headers, you can use this to
+ * extract a value with a default value if it doesn't exist
+ */
+fn get_header_from_hashmap(headers: &HashMap<String, String>, key: &str) -> String {
+    headers
+        .get(key)
+        .cloned()
+        .unwrap_or_else(|| "unknown".to_string())
 }
-
-fn parse_request<B>(request: &Request<B>) -> HashMap<String, StringOrJson> {
-    let mut request_map = HashMap::new();
-
-    request_map.insert(
-        "method".to_string(),
-        StringOrJson::Str(request.method().to_string()),
-    );
-    request_map.insert(
-        "uri".to_string(),
-        StringOrJson::Str(request.uri().to_string()),
-    );
-    request_map.insert(
-        "headers".to_string(),
-        StringOrJson::Json(collect_headers(request)),
-    );
-
-    return request_map;
-}
-
-fn parse_response<B>(response: &Response<B>) -> HashMap<String, StringOrJson> {
-    let mut response_map = HashMap::new();
-
-    // response_map.insert(
-    //     "uri".to_string(),
-    //     StringOrJson::Str(response.body()),
-    // );
-    response_map.insert(
-        "headers".to_string(),
-        StringOrJson::Json(collect_res_headers(response)),
-    );
-
-    return response_map;
-}
-
 async fn timeout_middleware(
     State(state): State<AppState>,
-    req: Request,
+    request: Request,
     next: Next,
 ) -> Result<Response, (StatusCode, ApiError)> {
-    let duration = Duration::from_secs(1);
+    let duration = std::time::Duration::from_secs(1);
 
-    match timeout(duration, next.run(req)).await {
+    let request_data: HashMap<String, String> = collect_headers(&request.headers());
+    match timeout(duration, next.run(request)).await {
         Ok(response) => Ok(response),
         Err(_) => {
             let error_message =
                 "Your request took too long to process. Our developers have been notified."
                     .to_string();
+
+            let status = StatusCode::REQUEST_TIMEOUT;
+            let api_error = ApiError {
+                message: error_message.clone(),
+                plutomi_code: None,
+                status_code: status.as_u16(),
+                docs: None,
+                request_id: "sigh".to_string(), // TODO ksuid
+            };
+
             // Log the error
             state.logger.log(LogObject {
-                request: None,
                 data: None,
                 message: error_message.clone(),
                 timestamp: get_current_time(),
                 level: LogLevel::Error,
-                error: Some(json!({
-                    "message": error_message,
-                    "code": StatusCode::REQUEST_TIMEOUT.as_u16(),
-                })),
+                error: Some(json!(api_error)),
+                request: Some(json!(request_data)),
+                response: Some(json!(api_error)),
             });
 
-            Err((
-                StatusCode::REQUEST_TIMEOUT,
-                ApiError {
-                    message: error_message,
-                    plutomi_code: None,
-                    code: StatusCode::REQUEST_TIMEOUT,
-                    docs: None,
-                    request_id: "TBD".to_string(),
-                },
-            ))
+            // Construct the final response
+            Err((status, api_error))
         }
     }
 }
 
 #[derive(Clone)]
-
 pub struct AppState {
     logger: Arc<Logger>,
     mongodb: Arc<MongoDB>,
@@ -240,13 +252,14 @@ pub struct AppState {
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
-    // Load .env if available (used in development)
-    dotenv().ok();
-
+    // Get environment variables
+    dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
+    let is_production =
+        env.NEXT_PUBLIC_ENVIRONMENT == "production" || env.NEXT_PUBLIC_ENVIRONMENT == "staging";
     // Setup logging
-    let logger = Logger::new(true);
+    let logger = Logger::new(true); // TODO swap this for is_production
 
     // Connect to database
     let mongodb = connect_to_mongodb().await;
@@ -268,6 +281,7 @@ async fn main() {
             .route("/health", get(health_check))
             .fallback(not_found)
             .layer(
+                // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
                 ServiceBuilder::new()
                     .layer(middleware::from_fn_with_state(
                         state.clone(),
@@ -276,10 +290,6 @@ async fn main() {
                     .layer(middleware::from_fn_with_state(
                         state.clone(),
                         timeout_middleware,
-                    ))
-                    .layer(middleware::from_fn_with_state(
-                        state.clone(),
-                        add_response_metadata,
                     )),
             )
             .with_state(state),
@@ -297,6 +307,7 @@ async fn main() {
             data: Some(json!({ "port": port })),
             error: Some(error_json),
             request: None,
+            response: None,
         });
         std::process::exit(1);
     });
@@ -314,6 +325,7 @@ async fn main() {
                 data: Some(json!({ "addr": addr })),
                 error: Some(error_json),
                 request: None,
+                response: None,
             });
             std::process::exit(1);
         });
@@ -329,6 +341,7 @@ async fn main() {
                 data: None,
                 error: None,
                 request: None,
+                response: None,
             })
         })
         .unwrap_or_else(|e| {
@@ -342,6 +355,7 @@ async fn main() {
                 data: None,
                 error: Some(error_json),
                 request: None,
+                response: None,
             });
             std::process::exit(1);
         })
