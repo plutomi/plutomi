@@ -217,10 +217,6 @@ async fn log_res_res(State(state): State<AppState>, mut request: Request, next: 
     // Start a timer to see how long it takes us to process it
     let start_time = OffsetDateTime::now_utc();
     let formatted_start_time = iso_format(start_time);
-
-    // Add a request ID based on a PlutomiID
-    let request_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
-    let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);
     // Add a timestamp header
     request.headers_mut().insert(
         REQUEST_TIMESTAMP_HEADER,
@@ -228,145 +224,149 @@ async fn log_res_res(State(state): State<AppState>, mut request: Request, next: 
     );
 
     // Add a request ID based on a PlutomiID
+    let request_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
+    let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);
     request
         .headers_mut()
         .insert(REQUEST_ID_HEADER, request_id_value.clone());
 
-    // Parse the request
-    let request_data = parse_request(request).await;
+    let mut response: response::Response<Body> = next.run(request).await;
 
-    match request_data {
-        Err(message) => {
-            // If the request failed to parse, log it and return a 400
-
-            let end_time = OffsetDateTime::now_utc();
-            let formatted_end_time = iso_format(start_time);
-            let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
-
-            let status = StatusCode::BAD_REQUEST;
-            let api_error = ApiError {
-                message: message.clone(),
-                plutomi_code: None,
-                status_code: status.as_u16(),
-                docs: None,
-                request_id,
-            };
-
-            // Log the error
-            state.logger.log(LogObject {
-                data: Some(json!({ "duration": duration_ms })),
-                message,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
-                level: LogLevel::Error,
-                error: Some(json!(api_error)),
-                request: None,
-                response: None,
-            });
-
-            let mut response = api_error.into_response();
-
-            response.headers_mut().insert(
-                RESPONSE_TIMESTAMP_HEADER,
-                HeaderValue::from_str(&formatted_end_time).unwrap(),
-            );
-
-            response
-        }
-
-        Ok(req_data) => {
-            // Attempt to convert the request to a serializable hashmap
-            let req_as_hashmap = request_to_hashmap(&req_data).await;
-
-            match req_as_hashmap {
-                Err(message) => {
-                    // If the request failed to parse into serializable JSON, log it and return a 400
-                    let end_time = OffsetDateTime::now_utc();
-                    let formatted_end_time = iso_format(start_time);
-                    let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
-
-                    let status = StatusCode::BAD_REQUEST;
-                    let api_error = ApiError {
-                        message: message.clone(),
-                        plutomi_code: None,
-                        status_code: status.as_u16(),
-                        docs: None,
-                        request_id: request_id_value.to_str().unwrap().to_string(),
-                    };
-
-                    // Log the error
-                    state.logger.log(LogObject {
-                        data: Some(json!({ "duration": duration_ms})),
-                        message,
-                        timestamp: iso_format(OffsetDateTime::now_utc()),
-                        level: LogLevel::Error,
-                        error: Some(json!(api_error)),
-                        request: None,
-                        response: None,
-                    });
-
-                    let mut response = api_error.into_response();
-
-                    response.headers_mut().insert(
-                        RESPONSE_TIMESTAMP_HEADER,
-                        HeaderValue::from_str(&formatted_end_time).unwrap(),
-                    );
-
-                    response
-                }
-                Ok(req_as_hashmap) => {
-                    // Log the incoming request - everything is valid form here on out
-                    state.logger.log(LogObject {
-                        level: LogLevel::Debug,
-                        error: None,
-                        message: "Request received".to_string(),
-                        data: None,
-                        timestamp: formatted_start_time,
-                        request: Some(json!(req_as_hashmap)),
-                        response: None,
-                    });
-
-                    // Call the next middleware and await the response
-                    let mut response = next.run(req_data.request).await;
-
-                    // Note how long the request took
-                    let end_time = OffsetDateTime::now_utc();
-                    let formatted_end_time = iso_format(end_time);
-                    let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
-
-                    // On the way out, add some headers
-                    response.headers_mut().insert(
-                        RESPONSE_TIMESTAMP_HEADER,
-                        HeaderValue::from_str(&formatted_end_time).unwrap(),
-                    );
-
-                    response
-                        .headers_mut()
-                        .insert(REQUEST_ID_HEADER, request_id_value);
-
-
-                        return response
-                    // Log the raw response that is going out
-                    // Since we are responding, we can be sure the response is serializable
-                    let parsed_response = parse_response(response).await.unwrap();
-                    let log_able_response: HashMap<String, Value> =
-                        response_to_hashmap(&parsed_response).await.unwrap();
-
-                    state.logger.log(LogObject {
-                        level: LogLevel::Debug,
-                        error: None,
-                        message: "Response sent".to_string(),
-                        data: Some(json!({ "duration": duration_ms })),
-                        timestamp: formatted_end_time,
-                        request: Some(json!(req_as_hashmap)),
-                        response: Some(json!(log_able_response)),
-                    });
-
-                    parsed_response.response
-                }
-            }
-        }
-    }
+    response
 }
+
+// // Attempt to parse the request
+// let parsed_req = parse_request(request).await;
+
+// match parsed_req {
+//     Err(message) => {
+//         // If the request failed to parse, log it and return a 400
+//         let end_time = OffsetDateTime::now_utc();
+//         let formatted_end_time = iso_format(start_time);
+//         let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+
+//         let status = StatusCode::BAD_REQUEST;
+//         let api_error = ApiError {
+//             message: message.clone(),
+//             plutomi_code: None,
+//             status_code: status.as_u16(),
+//             docs: None,
+//             request_id,
+//         };
+
+//         // Log the error
+//         state.logger.log(LogObject {
+//             data: Some(json!({ "duration": duration_ms })),
+//             message,
+//             timestamp: iso_format(OffsetDateTime::now_utc()),
+//             level: LogLevel::Error,
+//             error: Some(json!(api_error)),
+//             request: None,
+//             response: None,
+//         });
+
+//         let mut response: response::Response<Body> = api_error.into_response();
+
+//         response.headers_mut().insert(
+//             RESPONSE_TIMESTAMP_HEADER,
+//             HeaderValue::from_str(&formatted_end_time).unwrap(),
+//         );
+
+//         return response;
+//     }
+
+//     Ok(parsed_req_data) => {
+//         // Attempt to convert the request to a serializable hashmap
+//         let req_as_hashmap = request_to_hashmap(&parsed_req_data).await;
+
+//         match req_as_hashmap {
+//             Err(message) => {
+//                 // If the request failed to parse into serializable Hashmap, log it and return a 400
+//                 let end_time = OffsetDateTime::now_utc();
+//                 let formatted_end_time = iso_format(start_time);
+//                 let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+
+//                 let status = StatusCode::BAD_REQUEST;
+//                 let api_error = ApiError {
+//                     message: message.clone(),
+//                     plutomi_code: None,
+//                     status_code: status.as_u16(),
+//                     docs: None,
+//                     request_id: request_id_value.to_str().unwrap().to_string(),
+//                 };
+
+//                 // Log the error
+//                 state.logger.log(LogObject {
+//                     data: Some(json!({ "duration": duration_ms})),
+//                     message,
+//                     timestamp: iso_format(OffsetDateTime::now_utc()),
+//                     level: LogLevel::Error,
+//                     error: Some(json!(api_error)),
+//                     request: None,
+//                     response: None,
+//                 });
+
+//                 let mut response = api_error.into_response();
+
+//                 response.headers_mut().insert(
+//                     RESPONSE_TIMESTAMP_HEADER,
+//                     HeaderValue::from_str(&formatted_end_time).unwrap(),
+//                 );
+
+//                 response
+//             }
+//             Ok(req_as_hashmap) => {
+//                 // Log the incoming request - everything is valid form here on out
+//                 state.logger.log(LogObject {
+//                     level: LogLevel::Debug,
+//                     error: None,
+//                     message: "Request received".to_string(),
+//                     data: None,
+//                     timestamp: formatted_start_time,
+//                     request: Some(json!(req_as_hashmap)),
+//                     response: None,
+//                 });
+
+//                 // Call the next middleware and await the response
+//                 let mut response: response::Response<Body> = next.run(parsed_req_data.request).await;
+
+//                 // Note how long the request took
+//                 let end_time = OffsetDateTime::now_utc();
+//                 let formatted_end_time = iso_format(end_time);
+//                 let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+
+//                 // On the way out, add some headers
+//                 response.headers_mut().insert(
+//                     RESPONSE_TIMESTAMP_HEADER,
+//                     HeaderValue::from_str(&formatted_end_time).unwrap(),
+//                 );
+
+//                 response
+//                     .headers_mut()
+//                     .insert(REQUEST_ID_HEADER, request_id_value);
+
+//                 return response;
+//                 // // Log the raw response that is going out
+//                 // // Since we are responding, we can be sure the response is serializable
+//                 // let parsed_response = parse_response(response).await.unwrap();
+//                 // let log_able_response: HashMap<String, Value> =
+//                 //     response_to_hashmap(&parsed_response).await.unwrap();
+
+//                 // state.logger.log(LogObject {
+//                 //     level: LogLevel::Debug,
+//                 //     error: None,
+//                 //     message: "Response sent".to_string(),
+//                 //     data: Some(json!({ "duration": duration_ms })),
+//                 //     timestamp: formatted_end_time,
+//                 //     request: Some(json!(req_as_hashmap)),
+//                 //     response: Some(json!(log_able_response)),
+//                 // });
+
+//                 // parsed_response.response
+//             }
+//         }
+//     }
+// }
 
 #[derive(Clone)]
 pub struct AppState {
