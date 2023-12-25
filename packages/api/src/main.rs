@@ -2,26 +2,27 @@ use crate::utils::get_env::get_env;
 use axum::{
     body::Body,
     error_handling::HandleErrorLayer,
-    extract::{Request, State},
+    extract::{ConnectInfo, Request, State},
     http::{header, HeaderMap, HeaderValue, StatusCode},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
     BoxError, Json, Router,
 };
-use time::Duration;
-use time::{macros::datetime, Instant};
+use time::{ext::NumericalDuration, macros::datetime, Instant};
+use time::{Duration, OffsetDateTime};
 use tokio::time::{error::Elapsed, timeout};
 
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use serde::Serialize;
 use serde_json::{json, to_string, Value};
-use std::{collections::HashMap, sync::Arc};
+use std::{collections::HashMap, net::SocketAddr, sync::Arc};
 use tower::ServiceBuilder;
 use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer};
 
 use utils::{
+    generate_plutomiid::{Entities, PlutomiId},
     get_current_time::get_current_time,
     get_env::Env,
     logger::{LogLevel, LogObject, Logger},
@@ -34,6 +35,7 @@ mod utils;
 const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
+const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
 
 #[derive(Serialize)]
 enum PlutomiCode {
@@ -92,10 +94,16 @@ fn collect_request_info(request: &Request) -> HashMap<String, Value> {
         json!(collect_headers(request.headers())),
     );
 
-    // ! TODO collect IP
+    // Note: IP comes from the Cloudflare header if it exists
 
     // ! TODO collect body
 
+    let plutomi_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
+
+    request_info.insert(
+        "headers".to_string(),
+        json!(collect_headers(request.headers())),
+    );
     request_info
 }
 /**
@@ -133,7 +141,7 @@ async fn add_request_metadata(
     next: Next,
 ) -> Response {
     // Start a timer to see how long it takes us to process it
-    let start_time = std::time::Instant::now(); //  TODO Two different timers!
+    let start_time = OffsetDateTime::now_utc();
     let current_time: String = get_current_time();
 
     // On the way in, add some headers so we can search it in the logs
@@ -142,10 +150,12 @@ async fn add_request_metadata(
         HeaderValue::from_str(&current_time).unwrap(),
     );
 
+    let plutomi_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
+
     request.headers_mut().insert(
         REQUEST_ID_HEADER,
         // TODO ksuid
-        HeaderValue::from_static("custom_id2"), // TODO use from static in other places
+        HeaderValue::from_static(&plutomi_id), // TODO use from static in other places
     );
 
     // Parse the request
@@ -166,8 +176,8 @@ async fn add_request_metadata(
     let mut response = next.run(request).await;
 
     // Note how long the request took
-    let end_time = std::time::Instant::now();
-    let duration = (end_time - start_time).as_millis();
+    let end_time = OffsetDateTime::now_utc();
+    let duration = (end_time - start_time).whole_milliseconds();
 
     // New timer for the logging
     let current_time = get_current_time(); // Todo use this to get the current time up above
@@ -222,7 +232,10 @@ async fn timeout_middleware(
                 plutomi_code: None,
                 status_code: status.as_u16(),
                 docs: None,
-                request_id: "TODO".to_string(),
+                request_id: request_data.get("headers").unwrap()["x-plutomi-request-id"]
+                    .as_str()
+                    .unwrap()
+                    .to_string(),
             };
 
             // Log the error

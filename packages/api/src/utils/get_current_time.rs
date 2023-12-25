@@ -1,4 +1,4 @@
-use time::{macros::format_description, OffsetDateTime};
+use time::{macros::format_description, Duration, OffsetDateTime};
 
 pub fn get_current_time() -> String {
     // Define the format for the main part of the timestamp
