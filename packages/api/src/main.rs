@@ -102,11 +102,10 @@ fn collect_request_info(request: &Request) -> HashMap<String, Value> {
  * This helps structured logging
  */
 
-fn collect_response_info(duration: u128, response: &Response) -> HashMap<String, Value> {
+fn collect_response_info(response: &Response) -> HashMap<String, Value> {
     let mut response_info = HashMap::<String, Value>::new();
 
-    response_info.insert("status".to_string(), json!(response.status().as_u16()));
-    response_info.insert("duration".to_string(), json!(duration));
+    response_info.insert("status_code".to_string(), json!(response.status().as_u16()));
 
     // Collect and serialize headers
     response_info.insert(
@@ -177,13 +176,13 @@ async fn add_request_metadata(
     );
 
     // Log the raw response that went out
-    let response_data: HashMap<String, Value> = collect_response_info(duration, &response);
+    let response_data: HashMap<String, Value> = collect_response_info(&response);
 
     state.logger.log(LogObject {
         level: LogLevel::Debug,
         error: None,
         message: "Response sent".to_string(),
-        data: None, // ! TODO get the response body
+        data: Some(json!({ "duration": duration })), // ! TODO get the response body
         timestamp: current_time,
         request: Some(json!(request_data)),
         response: Some(json!(response_data)),
@@ -238,7 +237,7 @@ async fn timeout_middleware(
             });
 
             // Construct the final response
-            Err((status, api_error))
+            return Err((status, api_error));
         }
     }
 }
