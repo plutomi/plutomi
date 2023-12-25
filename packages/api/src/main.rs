@@ -1,17 +1,15 @@
 use crate::utils::get_env::get_env;
 use axum::{
     body::Body,
-    error_handling::HandleErrorLayer,
-    extract::{ConnectInfo, Request, State},
+    extract::{Request, State},
     http::{header, HeaderMap, HeaderValue, StatusCode},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
-    BoxError, Json, Router,
+    Router,
 };
-use time::{ext::NumericalDuration, macros::datetime, Instant};
-use time::{Duration, OffsetDateTime};
-use tokio::time::{error::Elapsed, timeout};
+use time::OffsetDateTime;
+use tokio::time::timeout;
 
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
@@ -81,7 +79,7 @@ impl IntoResponse for ApiError {
 }
 
 /**
- * This helps structured logging
+ * Collects info into a hashmap for easier logging
  */
 fn collect_request_info(request: &Request) -> HashMap<String, Value> {
     let mut request_info = HashMap::<String, Value>::new();
@@ -104,7 +102,7 @@ fn collect_request_info(request: &Request) -> HashMap<String, Value> {
     request_info
 }
 /**
- * This helps structured logging
+ * Collects info into a hashmap for easier logging
  */
 
 fn collect_response_info(response: &Response) -> HashMap<String, Value> {
@@ -121,6 +119,10 @@ fn collect_response_info(response: &Response) -> HashMap<String, Value> {
     response_info
 }
 
+/**
+ * Collects headers into a hashmap for easier logging
+ *
+ */
 fn collect_headers(headers: &HeaderMap) -> HashMap<String, String> {
     headers
         .iter()
@@ -132,6 +134,7 @@ fn collect_headers(headers: &HeaderMap) -> HashMap<String, String> {
         })
         .collect()
 }
+
 async fn add_request_metadata(
     State(state): State<AppState>,
     mut request: Request,
@@ -148,16 +151,16 @@ async fn add_request_metadata(
     );
 
     let plutomi_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
-    request.headers_mut().insert(
-        REQUEST_ID_HEADER,
-        HeaderValue::from_str(plutomi_id.as_str()).unwrap_or(UNKNOWN_HEADER),
-    );
+    let request_id_value = HeaderValue::from_str(plutomi_id.as_str()).unwrap_or(UNKNOWN_HEADER);
+    request
+        .headers_mut()
+        .insert(REQUEST_ID_HEADER, request_id_value.clone());
 
     // Parse the request
     let request_data: HashMap<String, Value> = collect_request_info(&request);
 
     state.logger.log(LogObject {
-        // Log the raw request that came in
+        // Log the request that came in
         level: LogLevel::Debug,
         error: None,
         message: "Request received".to_string(),
@@ -181,18 +184,9 @@ async fn add_request_metadata(
         HeaderValue::from_str(&formatted_end_time).unwrap(),
     );
 
-    response.headers_mut().insert(
-        REQUEST_ID_HEADER,
-        HeaderValue::from_str(
-            &request
-                .headers()
-                .get(REQUEST_ID_HEADER)
-                .unwrap()
-                .to_str()
-                .unwrap(),
-        )
-        .unwrap(),
-    );
+    response
+        .headers_mut()
+        .insert(REQUEST_ID_HEADER, request_id_value);
     // Log the raw response that went out
     let response_data: HashMap<String, Value> = collect_response_info(&response);
 
@@ -209,11 +203,6 @@ async fn add_request_metadata(
     response
 }
 
-/**
- * After parsing request headers, you can use this to
- * extract a value with a default value if it doesn't exist
- */
-
 async fn timeout_middleware(
     State(state): State<AppState>,
     request: Request,
@@ -221,7 +210,6 @@ async fn timeout_middleware(
 ) -> Result<Response, (StatusCode, ApiError)> {
     let duration = std::time::Duration::from_secs(1);
 
-    // ! TODO collect all other data
     let request_data = collect_request_info(&request);
     match timeout(duration, next.run(request)).await {
         Ok(response) => Ok(response),
@@ -236,7 +224,7 @@ async fn timeout_middleware(
                 plutomi_code: None,
                 status_code: status.as_u16(),
                 docs: None,
-                request_id: request_data.get("headers").unwrap()["x-plutomi-request-id"]
+                request_id: request_data.get("headers").unwrap()[REQUEST_ID_HEADER]
                     .as_str()
                     .unwrap()
                     .to_string(),

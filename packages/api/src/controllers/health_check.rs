@@ -1,6 +1,6 @@
 use crate::{
     utils::{
-        get_current_time::get_current_time,
+        get_current_time::iso_format,
         get_env::get_env,
         logger::{LogLevel, LogObject},
         mongodb::MongoDB,
@@ -11,6 +11,7 @@ use axum::{extract::State, http::StatusCode, Extension, Json};
 use serde::Serialize;
 use serde_json::json;
 use std::{sync::Arc, time::Duration};
+use time::OffsetDateTime;
 use tokio::time::sleep;
 
 #[derive(Serialize)]
@@ -30,10 +31,10 @@ pub async fn health_check(
         environment,
     };
 
-    // sleep(Duration::from_secs(20)).await;
+    sleep(Duration::from_secs(20)).await;
     state.logger.log(LogObject {
         level: LogLevel::Info,
-        timestamp: get_current_time(),
+        timestamp: iso_format(OffsetDateTime::now_utc()),
         message: "Health check response sent".to_string(),
         data: Some(json!({ "response": response })),
         error: None,

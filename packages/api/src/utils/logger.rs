@@ -1,8 +1,6 @@
-use super::{get_current_time::get_current_time, get_env::get_env};
+use super::get_env::get_env;
 use axiom_rs::Client;
-use axum::{extract::Request, http::Response};
 use serde::Serialize;
-use serde_json::json;
 use std::{fmt, sync::Arc};
 use tokio::sync::mpsc::{self, Sender};
 use tracing::{debug, error, info, warn, Level};

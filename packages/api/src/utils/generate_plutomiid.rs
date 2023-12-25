@@ -22,6 +22,7 @@ pub enum Entities {
     Application,
     Stage,
     Request,
+    Response,
 }
 
 impl Entities {
@@ -35,6 +36,7 @@ impl Entities {
             Entities::Application => "application_",
             Entities::Stage => "stage_",
             Entities::Request => "req_",
+            Entities::Response => "res_",
         };
 
         prefix.to_string()
