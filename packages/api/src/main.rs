@@ -96,10 +96,6 @@ fn collect_request_info(request: &Request) -> HashMap<String, Value> {
 
     // Note: IP comes from the Cloudflare header if it exists
 
-    // ! TODO collect body
-
-    let plutomi_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
-
     request_info.insert(
         "headers".to_string(),
         json!(collect_headers(request.headers())),
@@ -154,8 +150,7 @@ async fn add_request_metadata(
 
     request.headers_mut().insert(
         REQUEST_ID_HEADER,
-        // TODO ksuid
-        HeaderValue::from_static(&plutomi_id), // TODO use from static in other places
+        HeaderValue::from_str(plutomi_id.as_str()).unwrap_or(HeaderValue::from_static("unknown")),
     );
 
     // Parse the request
