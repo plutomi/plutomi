@@ -16,7 +16,7 @@ use tokio::time::timeout;
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
 use serde::Serialize;
-use serde_json::{json, to_string, Value};
+use serde_json::{from_slice, json, to_string, Value};
 use std::{collections::HashMap, net::SocketAddr, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
 use tower_http::{
@@ -90,34 +90,72 @@ impl IntoResponse for ApiError {
  */
 
 struct ParsedRequest {
-    request: Request<Body>,
+    // We need to recreate the request since we consume the body to extract it as bytes
+    // The reason we do this is so that we can actually log it as a json serializable object
+    original_request: Request,
+    // For logging in middleware, we need the body as a json serializable object
+    request_as_hashmap: HashMap<String, Value>,
     body_bytes: Bytes,
     method: Method,
     uri: Uri,
     headers: HeaderMap,
 }
 
+/**
+ * When logging, this helps format the JSON serialized req/res headers
+ *
+ */
+fn headers_to_hashmap(headers: &HeaderMap) -> HashMap<String, String> {
+    headers
+        .iter()
+        .map(|(key, value)| {
+            (
+                key.to_string(),
+                value.to_str().unwrap_or("unknown").to_string(),
+            )
+        })
+        .collect()
+}
+
 async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
+    // Split the request into parts
     let (parts, body) = request.into_parts();
 
-    // this wont work if the body is an long running stream
-    let collected_bytes = body.collect().await;
+    // This wont work if the body is an long running stream
+    // TODO: block non json requests
+    let bytes = body
+        .collect()
+        .await
+        .map_err(|_e| ERROR_PARSING_BODY.to_string())?
+        .to_bytes();
 
-    match collected_bytes {
-        Ok(bytes) => {
-            let bytes = bytes.to_bytes();
-            let recreated_request = Request::from_parts(parts.clone(), Body::from(bytes.clone()));
+    // Once you consume the body, you have to re-create the request
+    let original_request = Request::from_parts(parts.clone(), Body::from(bytes.clone()));
 
-            Ok(ParsedRequest {
-                request: recreated_request,
-                body_bytes: bytes,
-                method: parts.method,
-                uri: parts.uri,
-                headers: parts.headers,
-            })
-        }
-        Err(_) => Err("Failed to parse request body".to_string()),
-    }
+    let mut request_as_hashmap = HashMap::<String, Value>::new();
+
+    request_as_hashmap.insert("method".to_string(), json!(parts.method.to_string()));
+    request_as_hashmap.insert("uri".to_string(), json!(parts.uri.to_string()));
+
+    request_as_hashmap.insert(
+        "headers".to_string(),
+        json!(headers_to_hashmap(&parts.headers)),
+    );
+
+    request_as_hashmap.insert(
+        "body".to_string(),
+        json!(from_slice::<Value>(&bytes).map_err(|_e| { ERROR_PARSING_BODY.to_string() })?),
+    );
+
+    Ok(ParsedRequest {
+        original_request,
+        request_as_hashmap,
+        // ! TODO: These others are probably not needed since the reason we separated them was for logging!
+        body_bytes: bytes,
+        method: parts.method,
+        uri: parts.uri,
+        headers: parts.headers,
+    })
 }
 
 struct ParsedResponse {
@@ -150,33 +188,6 @@ async fn parse_response(response: Response) -> Result<ParsedResponse, String> {
 /**
  * Collects info into a hashmap for easier logging
  */
-async fn request_to_hashmap(request: &ParsedRequest) -> Result<HashMap<String, Value>, String> {
-    let mut request_info = HashMap::<String, Value>::new();
-
-    request_info.insert("method".to_string(), json!(request.method.to_string()));
-    request_info.insert("uri".to_string(), json!(request.uri.to_string()));
-
-    // Collect and serialize headers
-    request_info.insert(
-        "headers".to_string(),
-        json!(collect_headers(&request.headers)),
-    );
-
-    // Note: IP comes from the Cloudflare header if it exists
-    let body_to_json = serde_json::from_slice::<Value>(&request.body_bytes);
-
-    match body_to_json {
-        Ok(body) => {
-            request_info.insert("body".to_string(), body);
-            Ok(request_info)
-        }
-        Err(_) => Err(ERROR_PARSING_BODY.to_string()),
-    }
-}
-
-/**
- * Collects info into a hashmap for easier logging
- */
 async fn response_to_hashmap(response: &ParsedResponse) -> Result<HashMap<String, Value>, String> {
     let mut response_info = HashMap::<String, Value>::new();
 
@@ -201,17 +212,6 @@ async fn response_to_hashmap(response: &ParsedResponse) -> Result<HashMap<String
  * Collects headers into a hashmap for easier logging
  *
  */
-fn collect_headers(headers: &HeaderMap) -> HashMap<String, String> {
-    headers
-        .iter()
-        .map(|(key, value)| {
-            (
-                key.to_string(),
-                value.to_str().unwrap_or("unknown").to_string(),
-            )
-        })
-        .collect()
-}
 
 async fn log_res_res(State(state): State<AppState>, mut request: Request, next: Next) -> Response {
     // Start a timer to see how long it takes us to process it
@@ -230,13 +230,33 @@ async fn log_res_res(State(state): State<AppState>, mut request: Request, next: 
         .headers_mut()
         .insert(REQUEST_ID_HEADER, request_id_value.clone());
 
-    let mut response: response::Response<Body> = next.run(request).await;
+    // let mut response: response::Response<Body> = next.run(request).await;
 
-    response
+    // response
+
+    // Attempt to parse the request
+    let parsed_req = parse_request(request).await;
+
+    match parsed_req {
+        Err(message) => {
+            let api_error = ApiError {
+                message: message.clone(),
+                plutomi_code: None,
+                status_code: 408,
+                docs: None,
+                request_id,
+            };
+
+            let res = api_error.into_response();
+
+            res
+        }
+        Ok(v) => {
+            let mut response: response::Response<Body> = next.run(v.request).await;
+            response
+        }
+    }
 }
-
-// // Attempt to parse the request
-// let parsed_req = parse_request(request).await;
 
 // match parsed_req {
 //     Err(message) => {
