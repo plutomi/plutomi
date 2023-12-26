@@ -322,55 +322,6 @@ async fn log_res_res(
     }
 }
 
-// match parsed_req {
-
-//     Ok(parsed_req_data) => {
-//         // Attempt to convert the request to a serializable hashmap
-//         let req_as_hashmap = request_to_hashmap(&parsed_req_data).await;
-
-//         match req_as_hashmap {
-//             Err(message) => {
-//                 // If the request failed to parse into serializable Hashmap, log it and return a 400
-//                 let end_time = OffsetDateTime::now_utc();
-//                 let formatted_end_time = iso_format(start_time);
-//                 let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
-
-//                 let status = StatusCode::BAD_REQUEST;
-//                 let api_error = ApiError {
-//                     message: message.clone(),
-//                     plutomi_code: None,
-//                     status_code: status.as_u16(),
-//                     docs: None,
-//                     request_id: request_id_value.to_str().unwrap().to_string(),
-//                 };
-
-//                 // Log the error
-//                 state.logger.log(LogObject {
-//                     data: Some(json!({ "duration": duration_ms})),
-//                     message,
-//                     timestamp: iso_format(OffsetDateTime::now_utc()),
-//                     level: LogLevel::Error,
-//                     error: Some(json!(api_error)),
-//                     request: None,
-//                     response: None,
-//                 });
-
-//                 let mut response = api_error.into_response();
-
-//                 response.headers_mut().insert(
-//                     RESPONSE_TIMESTAMP_HEADER,
-//                     HeaderValue::from_str(&formatted_end_time).unwrap(),
-//                 );
-
-//                 response
-//             }
-//             Ok(req_as_hashmap) => {
-
-//             }
-//         }
-//     }
-// }
-
 #[derive(Clone)]
 pub struct AppState {
     logger: Arc<Logger>,
