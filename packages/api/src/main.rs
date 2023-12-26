@@ -200,12 +200,7 @@ async fn parse_response(response: Response<Body>) -> Result<ParsedResponse, Stri
     })
 }
 
-/**
- * Collects headers into a hashmap for easier logging
- *
- */
-
-async fn log_res_res(
+async fn log_req_res(
     State(state): State<AppState>,
     mut request: Request,
     next: Next,
@@ -362,7 +357,7 @@ async fn main() {
             .layer(
                 // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
                 ServiceBuilder::new()
-                    .layer(middleware::from_fn_with_state(state.clone(), log_res_res)),
+                    .layer(middleware::from_fn_with_state(state.clone(), log_req_res)),
             )
             .with_state(state),
     );
