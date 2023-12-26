@@ -94,10 +94,11 @@ async fn send_to_axiom(log: LogObject, client: &Client) {
 
 impl Logger {
     pub fn new(use_axiom: bool) -> Arc<Logger> {
+        let env = &get_env();
         let axiom_client = if use_axiom {
             match Client::builder()
-                .with_token(&get_env().AXIOM_TOKEN)
-                .with_org_id(&get_env().AXIOM_ORG_ID)
+                .with_token(&env.AXIOM_TOKEN)
+                .with_org_id(&env.AXIOM_ORG_ID)
                 .build()
             {
                 Ok(client) => Some(client),
