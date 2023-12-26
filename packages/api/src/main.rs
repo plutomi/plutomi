@@ -1,12 +1,12 @@
 use crate::utils::get_env::get_env;
 use axum::{
     body::{Body, Bytes},
-    extract::{Request, State},
-    http::{header, response, HeaderMap, HeaderValue, Method, Response, StatusCode, Uri},
+    extract::{OriginalUri, Request, State},
+    http::{header, request, response, HeaderMap, HeaderValue, Method, Response, StatusCode, Uri},
     middleware::{self, Next},
     response::IntoResponse,
     routing::{get, post},
-    Router,
+    Extension, Json, Router,
 };
 use futures::TryFutureExt;
 use http_body_util::BodyExt;
@@ -15,7 +15,7 @@ use tokio::time::timeout;
 
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{from_slice, json, to_string, Value};
 use std::{collections::HashMap, net::SocketAddr, sync::Arc, time::Duration};
 use tower::ServiceBuilder;
@@ -41,13 +41,12 @@ const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
 const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
 const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
-const ERROR_PARSING_BODY: &str = "Failed to parse request body";
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Deserialize)]
 enum PlutomiCode {
     TooManyUsers, //Sample
 }
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Deserialize)]
 struct ApiError {
     message: String,
     status_code: u16,
@@ -85,10 +84,6 @@ impl IntoResponse for ApiError {
     }
 }
 
-/**
- * Parse the request body. Return it as well as the request again. Axum allows you to consume the body once so you have to re-create it
- */
-
 struct ParsedRequest {
     // We need to recreate the request since we consume the body to extract it as bytes
     // The reason we do this is so that we can actually log it as a json serializable object
@@ -97,10 +92,7 @@ struct ParsedRequest {
     request_as_hashmap: HashMap<String, Value>,
 }
 
-/**
- * When logging, this helps format the JSON serialized req/res headers
- *
- */
+// When logging, this helps format the JSON serialized req/res headers
 fn headers_to_hashmap(headers: &HeaderMap) -> HashMap<String, String> {
     headers
         .iter()
@@ -113,6 +105,66 @@ fn headers_to_hashmap(headers: &HeaderMap) -> HashMap<String, String> {
         .collect()
 }
 
+#[derive(Serialize, Debug)]
+pub struct Error {
+    pub response: String,
+    pub text: String,
+}
+
+impl Error {
+    pub fn new(text: &str) -> Self {
+        Self {
+            response: "ERROR".to_string(),
+            text: text.to_string(),
+        }
+    }
+}
+
+pub async fn method_not_allowed(
+    State(state): State<AppState>,
+    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
+    OriginalUri(uri): OriginalUri,
+    method: Method,
+    req: Request,
+    next: Next,
+) -> impl IntoResponse {
+    // https://github.com/tokio-rs/axum/discussions/932
+    // 405 fallback handler
+    let original_response = next.run(req).await;
+    let status = original_response.status();
+
+    let message = format!("Method '{}' not allowed at route '{}'", method, uri.path());
+    let api_error = ApiError {
+        message: message.clone(),
+        plutomi_code: None,
+        status_code: status.as_u16(),
+        docs: None,
+        request_id: request_as_hashmap
+            .get("headers")
+            .and_then(|headers| headers.get(REQUEST_ID_HEADER))
+            .and_then(|value| value.as_str())
+            .unwrap_or("unknown")
+            .to_string(),
+    };
+    match status {
+        StatusCode::METHOD_NOT_ALLOWED => {
+            state.logger.log(LogObject {
+                level: LogLevel::Error,
+                error: Some(json!(api_error.clone())),
+                message,
+                data: None,
+                timestamp: iso_format(OffsetDateTime::now_utc()),
+                request: Some(json!(request_as_hashmap)),
+                response: None,
+            });
+
+            api_error.into_response()
+        }
+
+        _ => original_response,
+    }
+}
+
 async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
     // Split the request into parts
     let (parts, body) = request.into_parts();
@@ -121,7 +173,6 @@ async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
 
     request_as_hashmap.insert("method".to_string(), json!(parts.method.to_string()));
     request_as_hashmap.insert("uri".to_string(), json!(parts.uri.to_string()));
-
     request_as_hashmap.insert(
         "headers".to_string(),
         json!(headers_to_hashmap(&parts.headers)),
@@ -133,12 +184,13 @@ async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
             let bytes = body
                 .collect()
                 .await
-                .map_err(|_e| ERROR_PARSING_BODY.to_string())?
+                .map_err(|_e| "error parsing into bytes".to_string())?
                 .to_bytes();
 
             request_as_hashmap.insert(
                 "body".to_string(),
-                json!(from_slice::<Value>(&bytes).map_err(|_e| { ERROR_PARSING_BODY.to_string() })?),
+                json!(from_slice::<Value>(&bytes)
+                    .map_err(|_e| { "error putting into hashmap".to_string() })?),
             );
 
             bytes
@@ -170,7 +222,7 @@ async fn parse_response(response: Response<Body>) -> Result<ParsedResponse, Stri
     let bytes = body
         .collect()
         .await
-        .map_err(|_e| ERROR_PARSING_BODY.to_string())?
+        .map_err(|_e| "Error parsing response body".to_string())?
         .to_bytes();
 
     // Once you consume the body, you have to re-create the request
@@ -186,17 +238,13 @@ async fn parse_response(response: Response<Body>) -> Result<ParsedResponse, Stri
     response_as_hashmap.insert("status_code".to_string(), json!(parts.status.as_u16()));
     response_as_hashmap.insert(
         "body".to_string(),
-        json!(from_slice::<Value>(&bytes).map_err(|_e| { ERROR_PARSING_BODY.to_string() })?),
+        json!(from_slice::<Value>(&bytes)
+            .map_err(|_e| { "Error parsing response body".to_string() })?),
     );
 
     Ok(ParsedResponse {
         original_response,
         response_as_hashmap,
-        // // ! TODO: These others are probably not needed since the reason we separated them was for logging!
-        // body_bytes: bytes,
-        // method: parts.method,
-        // uri: parts.uri,
-        // headers: parts.headers,
     })
 }
 
@@ -221,16 +269,12 @@ async fn log_req_res(
         .headers_mut()
         .insert(REQUEST_ID_HEADER, request_id_value.clone());
 
-    // let mut response: response::Response<Body> = next.run(request).await;
-
-    // response
-
     // Attempt to parse the request
     let all_request_data = parse_request(request).await;
 
     match all_request_data {
         Err(message) => {
-            // If the request failed to parse, log it and return a 400
+            // If the REQUEST failed to parse, log it and return a 400
             let end_time = OffsetDateTime::now_utc();
             let formatted_end_time = iso_format(start_time);
             let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
@@ -244,6 +288,15 @@ async fn log_req_res(
                 request_id,
             };
 
+            let response = api_error.clone().into_response();
+
+            let mut parsed_response = parse_response(response).await.unwrap();
+
+            parsed_response.original_response.headers_mut().insert(
+                RESPONSE_TIMESTAMP_HEADER,
+                HeaderValue::from_str(&formatted_end_time).unwrap(),
+            );
+
             // Log the error
             state.logger.log(LogObject {
                 data: Some(json!({ "duration": duration_ms })),
@@ -252,20 +305,13 @@ async fn log_req_res(
                 level: LogLevel::Error,
                 error: Some(json!(api_error)),
                 request: None,
-                response: None,
+                response: Some(json!(parsed_response.response_as_hashmap)),
             });
 
-            let mut response: response::Response<Body> = api_error.into_response();
-
-            response.headers_mut().insert(
-                RESPONSE_TIMESTAMP_HEADER,
-                HeaderValue::from_str(&formatted_end_time).unwrap(),
-            );
-
-            return response;
+            parsed_response.original_response
         }
-        Ok(request_data) => {
-            // Log the incoming request - everything is valid form here on out
+        Ok(mut request_data) => {
+            // Log the incoming parsed request - everything is valid form here on out
             state.logger.log(LogObject {
                 level: LogLevel::Debug,
                 error: None,
@@ -276,9 +322,13 @@ async fn log_req_res(
                 response: None,
             });
 
+            request_data
+                .original_request
+                .extensions_mut()
+                .insert(request_data.request_as_hashmap.clone());
+
             // Call the next middleware and await the response
-            let mut response: response::Response<Body> =
-                next.run(request_data.original_request).await;
+            let mut response = next.run(request_data.original_request).await;
 
             // Note how long the request took
             let end_time = OffsetDateTime::now_utc();
@@ -308,7 +358,7 @@ async fn log_req_res(
                 message: "Response sent".to_string(),
                 data: Some(json!({ "duration": duration_ms })),
                 timestamp: formatted_end_time,
-                request: Some(json!(request_data.request_as_hashmap)),
+                request: Some(json!(&request_data.request_as_hashmap)),
                 response: Some(json!(parsed_response.response_as_hashmap)),
             });
 
@@ -352,12 +402,16 @@ async fn main() {
         "/api",
         Router::new()
             .merge(totp_routes)
-            .route("/health", get(health_check))
+            .route("/health", post(health_check))
             .fallback(not_found)
             .layer(
                 // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
                 ServiceBuilder::new()
-                    .layer(middleware::from_fn_with_state(state.clone(), log_req_res)),
+                    .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
+                    .layer(middleware::from_fn_with_state(
+                        state.clone(),
+                        method_not_allowed,
+                    )),
             )
             .with_state(state),
     );
