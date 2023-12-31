@@ -9,11 +9,13 @@ use serde_json::{json, Value};
 use std::collections::HashMap;
 use time::OffsetDateTime;
 
-use crate::{structs::{app_state::AppState, api_error::ApiError}, utils::{logger::{LogObject, LogLevel}, get_current_time::iso_format}};
-
-// ! TODO this is being duplicated
-const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
-
+use crate::{
+    structs::{api_error::ApiError, app_state::AppState},
+    utils::{
+        get_current_time::iso_format,
+        logger::{LogLevel, LogObject},
+    }, consts::REQUEST_ID_HEADER,
+};
 
 pub async fn method_not_allowed(
     State(state): State<AppState>,

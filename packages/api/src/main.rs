@@ -1,9 +1,9 @@
 use axum::{
     middleware::{self},
-    routing::post,
+    routing::{post, get},
     Router,
 };
-use controllers::{create_totp, health_check, not_found, method_not_allowed::method_not_allowed};
+use controllers::{create_totp, health_check, method_not_allowed::method_not_allowed, not_found};
 use dotenv::dotenv;
 use serde_json::json;
 use structs::app_state::AppState;
@@ -18,6 +18,7 @@ use utils::{
     mongodb::connect_to_mongodb,
 };
 
+mod consts;
 mod controllers;
 mod entities;
 mod structs;
@@ -51,7 +52,7 @@ async fn main() {
         "/api",
         Router::new()
             .merge(totp_routes)
-            .route("/health", post(health_check))
+            .route("/health", get(health_check))
             .fallback(not_found)
             .layer(
                 // Middleware is applied top to bottom as long as its attached to this ServiceBuilder

@@ -1,11 +1,11 @@
 use super::{
-    generate_plutomiid::{Entities, PlutomiId},
+    generate_id::{Entities, PlutomiId},
     get_current_time::iso_format,
     logger::{LogLevel, LogObject},
     parse_request::parse_request,
     parse_response::parse_response,
 };
-use crate::{structs::api_error::ApiError, AppState};
+use crate::{consts, structs::api_error::ApiError, AppState};
 use axum::{
     body::Body,
     extract::{Request, State},
@@ -16,12 +16,16 @@ use axum::{
 use serde_json::json;
 use time::OffsetDateTime;
 
-const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
-// const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
 const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
+// const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
+use consts::REQUEST_ID_HEADER;
 
+/**
+ * Logs the incoming request and outgoing response. This should be the first AND last middleware every time.
+ *
+ */
 pub async fn log_req_res(
     State(state): State<AppState>,
     mut request: Request,
@@ -30,14 +34,15 @@ pub async fn log_req_res(
     // Start a timer to see how long it takes us to process it
     let start_time = OffsetDateTime::now_utc();
     let formatted_start_time = iso_format(start_time);
-    // Add a timestamp header
+
+    // On the way in, add a timestamp header
     request.headers_mut().insert(
         REQUEST_TIMESTAMP_HEADER,
         HeaderValue::from_str(&formatted_start_time).unwrap_or(UNKNOWN_HEADER),
     );
 
-    // Add a request ID based on a PlutomiID
-    let request_id = PlutomiId::new(OffsetDateTime::now_utc(), Entities::Request);
+    // Add a request ID header
+    let request_id = PlutomiId::new(&start_time, Entities::Request);
     let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);
     request
         .headers_mut()
@@ -48,7 +53,7 @@ pub async fn log_req_res(
 
     match all_request_data {
         Err(message) => {
-            // If the REQUEST failed to parse, log it and return a 400
+            // If the incoming request failed to parse, log it and return a 400
             let end_time = OffsetDateTime::now_utc();
             let formatted_end_time = iso_format(start_time);
             let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
@@ -66,6 +71,7 @@ pub async fn log_req_res(
 
             let mut parsed_response = parse_response(response).await.unwrap();
 
+            // On the way out, add a timestamp header
             parsed_response.original_response.headers_mut().insert(
                 RESPONSE_TIMESTAMP_HEADER,
                 HeaderValue::from_str(&formatted_end_time).unwrap(),
@@ -85,7 +91,7 @@ pub async fn log_req_res(
             parsed_response.original_response
         }
         Ok(mut request_data) => {
-            // Log the incoming parsed request - everything is valid form here on out
+            // If we successfully parsed the request, log it
             state.logger.log(LogObject {
                 level: LogLevel::Debug,
                 error: None,
@@ -96,6 +102,7 @@ pub async fn log_req_res(
                 response: None,
             });
 
+            // Add the request as an extension so we can access it later
             request_data
                 .original_request
                 .extensions_mut()
@@ -104,25 +111,26 @@ pub async fn log_req_res(
             // Call the next middleware and await the response
             let mut response = next.run(request_data.original_request).await;
 
-            // Note how long the request took
+            // Note how long the req -> res took
             let end_time = OffsetDateTime::now_utc();
             let formatted_end_time = iso_format(end_time);
-            let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+            let duration_ms = (end_time - start_time).whole_milliseconds();
 
-            // On the way out, add some headers
+            // Add a timestamp header on the way out
             response.headers_mut().insert(
                 RESPONSE_TIMESTAMP_HEADER,
                 HeaderValue::from_str(&formatted_end_time).unwrap(),
             );
 
+            // Add the request ID header on the way out incase of client debugging
             response
                 .headers_mut()
                 .insert(REQUEST_ID_HEADER, request_id_value);
 
-            // Log the raw response that is going out
-            // Since we are responding, we can be sure the response is serializable
+            // Since we are responding, we can be sure the response is serializable as it will always be JSON
             let parsed_response = parse_response(response).await.unwrap();
 
+            // Log the response
             state.logger.log(LogObject {
                 level: match parsed_response.original_response.status().as_u16() {
                     400..=599 => LogLevel::Error,
