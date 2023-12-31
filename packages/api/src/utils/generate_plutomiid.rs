@@ -24,7 +24,6 @@ pub enum Entities {
     Request,
     Response,
 }
-
 impl Entities {
     fn to_prefix(&self) -> String {
         let prefix = match self {
@@ -47,7 +46,7 @@ impl PlutomiId {
     // Creates a new PlutomiId with the specified OffsetDateTime
     pub fn new(datetime: OffsetDateTime, entity: Entities) -> String {
         let timestamp_since_epoch = datetime.unix_timestamp() - KSUID_EPOCH;
-        let timestamp_s = timestamp_since_epoch as u64;
+        let timestamp_s: u64 = timestamp_since_epoch as u64;
         let timestamp_ms = (datetime.nanosecond() / 1_000_000) as u64;
         let timestamp = (timestamp_s << 10) | timestamp_ms; // Encoding seconds and milliseconds
 
@@ -55,19 +54,14 @@ impl PlutomiId {
         BigEndian::write_u48(&mut buf, timestamp); // Write 48-bit timestamp
         getrandom::getrandom(&mut buf[TIMESTAMP_BYTES..]).unwrap(); // Random payload
 
-        // Concat prefix and base62 encoded string
         // user_2a2pyd9xkCALnkGwHzU1MkAza
         entity.to_prefix() + &PlutomiId(buf).to_base62()
     }
+}
 
+impl PlutomiId {
     // Convert the PlutomiId to a Base62 encoded string
     pub fn to_base62(&self) -> String {
         base_encode::to_string(&self.0, 62, BASE62_CHARS).unwrap()
-    }
-}
-
-impl fmt::Display for PlutomiId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_base62())
     }
 }

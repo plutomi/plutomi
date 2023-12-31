@@ -2,28 +2,20 @@ use crate::utils::get_env::get_env;
 use axum::{
     body::{Body, Bytes},
     extract::{OriginalUri, Request, State},
-    http::{header, request, response, HeaderMap, HeaderValue, Method, Response, StatusCode, Uri},
+    http::{header, HeaderMap, HeaderValue, Method, Response, StatusCode},
     middleware::{self, Next},
     response::IntoResponse,
-    routing::{get, post},
-    Extension, Json, Router,
+    routing::post,
+    Extension, Router,
 };
-use futures::TryFutureExt;
-use http_body_util::BodyExt;
-use time::{error::Parse, OffsetDateTime};
-use tokio::time::timeout;
-
 use controllers::{create_totp, health_check, not_found};
 use dotenv::dotenv;
+use http_body_util::BodyExt;
 use serde::{Deserialize, Serialize};
-use serde_json::{from_slice, json, to_string, Value};
-use std::{collections::HashMap, net::SocketAddr, sync::Arc, time::Duration};
+use serde_json::{from_slice, json, Value};
+use std::{collections::HashMap, sync::Arc};
+use time::OffsetDateTime;
 use tower::ServiceBuilder;
-use tower_http::{
-    classify::ServerErrorsFailureClass, compression::CompressionLayer, timeout::TimeoutLayer,
-    trace::TraceLayer,
-};
-use tracing::Span;
 
 use utils::{
     generate_plutomiid::{Entities, PlutomiId},
@@ -39,7 +31,7 @@ mod utils;
 const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
-const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
+// const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
 const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
 
 #[derive(Serialize, Clone, Deserialize)]
@@ -195,7 +187,6 @@ async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
 
             bytes
         }
-
         // Empty body for GET, DELETE, etc
         _ => Bytes::new(),
     };
