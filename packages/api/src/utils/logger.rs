@@ -80,7 +80,8 @@ async fn send_to_axiom(log: LogObject, client: &Client) {
     let axiom_result = client
         .ingest(
             &get_env().AXIOM_DATASET,
-            vec![serde_json::json!(log)], // Serialize the entire LogObject
+            // Serialize the entire LogObject
+            vec![serde_json::json!(log)],
         )
         .await;
 
