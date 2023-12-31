@@ -4,9 +4,8 @@ use time::OffsetDateTime;
 // Similar to KSUID - prefix_[48 bit timestamp][14 bit random payload]
 const TIMESTAMP_BYTES: usize = 6; // 48 bits for timestamp
 const TOTAL_BYTES: usize = 20; // Total bytes
-                               // const PAYLOAD_BYTES: usize = 14; - Not being used, but should match to TOTAL_BYTES - TIMESTAMP_BYTES
 
-pub const KSUID_EPOCH: i64 = 1_600_000_000; // Custom KSUID epoch
+const CUSTOM_EPOCH: i64 = 1_700_000_000;
 const BASE62_CHARS: &[u8] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 #[derive(Debug, PartialOrd, Ord, Clone, Copy, PartialEq, Eq)]
@@ -42,16 +41,23 @@ impl Entities {
 impl PlutomiId {
     // Creates a new PlutomiId with the specified OffsetDateTime
     pub fn new(datetime: &OffsetDateTime, entity: Entities) -> String {
-        let timestamp_since_epoch = datetime.unix_timestamp() - KSUID_EPOCH;
-        let timestamp_s: u64 = timestamp_since_epoch as u64;
-        let timestamp_ms = (datetime.nanosecond() / 1_000_000) as u64;
-        let timestamp = (timestamp_s << 10) | timestamp_ms;
+        // Calculate the number of milliseconds since a custom epoch
+        // This extends the useful life by ~2024 years
+        // The 48 bit timestamp allows for 281,474,976,710,656 milliseconds which is ~8,921 years of useful life
+        let seconds_since_epoch: u64 = (datetime.unix_timestamp() - CUSTOM_EPOCH) as u64;
+        let milliseconds_since_epoch = seconds_since_epoch * 1000 + datetime.millisecond() as u64;
 
+        // Initialize a buffer to hold the total bytes of the PlutomiId
         let mut buf = [0u8; TOTAL_BYTES];
-        BigEndian::write_u48(&mut buf, timestamp);
+
+        // Write the 48-bit timestamp into the first 6 bytes of the buffer
+        BigEndian::write_u48(&mut buf, milliseconds_since_epoch);
+
+        // Fill the remaining bytes in the buffer with random data for the payload
         getrandom::getrandom(&mut buf[TIMESTAMP_BYTES..]).unwrap();
 
-        // user_2a2pyd9xkCALnkGwHzU1MkAza
+        // Combine the entity prefix with the base62 encoded PlutomiId
+        // req_0021J7zl6n38lTB2TwiTkIIQ9KF
         entity.to_prefix() + &PlutomiId(buf).to_base62()
     }
 }

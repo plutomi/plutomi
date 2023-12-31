@@ -31,14 +31,13 @@ pub async fn health_check(
         environment: state.env.NEXT_PUBLIC_ENVIRONMENT,
     };
 
-
     state.logger.log(LogObject {
         level: match database {
             true => LogLevel::Info,
             false => LogLevel::Error,
         },
         timestamp: iso_format(OffsetDateTime::now_utc()),
-        message: "Health check response sent".to_string(),
+        message: "Health check response".to_string(),
         data: None,
         error: None,
         request: Some(json!(request_as_hashmap)),
