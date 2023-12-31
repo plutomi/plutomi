@@ -1,9 +1,9 @@
 use byteorder::{BigEndian, ByteOrder};
 use time::OffsetDateTime;
 
-// Similar to KSUID - prefix_[48 bit timestamp][14 bit random payload]
+// prefix_[48 bit timestamp][80 bit random payload]
 const TIMESTAMP_BYTES: usize = 6; // 48 bits for timestamp
-const TOTAL_BYTES: usize = 20; // Total bytes
+const TOTAL_BYTES: usize = 16; // 128 bits total
 
 const CUSTOM_EPOCH: i64 = 1_700_000_000;
 const BASE62_CHARS: &[u8] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
