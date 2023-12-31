@@ -1,18 +1,14 @@
 use crate::{
     utils::{
         get_current_time::iso_format,
-        get_env::get_env,
         logger::{LogLevel, LogObject},
-        mongodb::MongoDB,
     },
     AppState,
 };
-use axum::{extract::State, http::StatusCode, Extension, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use serde::Serialize;
 use serde_json::json;
-use std::{sync::Arc, time::Duration};
 use time::OffsetDateTime;
-use tokio::time::sleep;
 
 #[derive(Serialize)]
 pub struct HealthCheckResponse {
