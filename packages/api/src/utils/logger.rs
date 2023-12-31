@@ -35,7 +35,7 @@ pub struct LogObject {
     pub level: LogLevel,
     /**
      * ISO 8601 timestamp
-     * use iso_format() from get_current_time.rs
+     * use iso_format()
      */
     pub timestamp: String,
     pub message: String,
@@ -45,11 +45,11 @@ pub struct LogObject {
     pub data: Option<serde_json::Value>,
     pub error: Option<serde_json::Value>,
     /**
-     * Used for logging the request and response objects
+     * Used for logging the request
      */
     pub request: Option<serde_json::Value>,
     /**
-     * Used for logging the request and response objects
+     * Used for logging the response
      */
     pub response: Option<serde_json::Value>,
 }

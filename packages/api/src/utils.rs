@@ -1,6 +1,7 @@
 pub mod generate_id;
 pub mod get_current_time;
 pub mod get_env;
+pub mod get_header_value;
 pub mod headers_to_hashmap;
 pub mod log_req_res;
 pub mod logger;

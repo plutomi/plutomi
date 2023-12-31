@@ -38,11 +38,12 @@ pub async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
                 .map_err(|_e| "error parsing into bytes".to_string())?
                 .to_bytes();
 
-            request_as_hashmap.insert(
-                "body".to_string(),
-                json!(from_slice::<Value>(&bytes)
-                    .map_err(|_e| { "error putting into hashmap".to_string() })?),
-            );
+            if !bytes.is_empty() {
+                // Only parse the body if it is not empty
+                let body_json = from_slice::<Value>(&bytes)
+                    .map_err(|_e| "error putting into hashmap".to_string())?;
+                request_as_hashmap.insert("body".to_string(), body_json);
+            }
 
             bytes
         }

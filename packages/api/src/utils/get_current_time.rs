@@ -1,5 +1,9 @@
 use time::{macros::format_description, OffsetDateTime};
 
+/**
+ * Formats a time into an ISO 8601 string
+ * Use OffsetDateTime::now_utc() when passing it in
+ */
 pub fn iso_format(time: OffsetDateTime) -> String {
     // Define the format for the main part of the timestamp
     let format = format_description!("[year]-[month]-[day]T[hour]:[minute]:[second]");

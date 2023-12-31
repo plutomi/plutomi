@@ -1,15 +1,14 @@
 use axum::{
     middleware::{self},
-    routing::{post, get},
+    routing::{get, post},
     Router,
 };
-use controllers::{create_totp, health_check, method_not_allowed::method_not_allowed, not_found};
+use controllers::{create_totp, health_check, method_not_allowed, not_found};
 use dotenv::dotenv;
 use serde_json::json;
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
-
 use utils::{
     get_current_time::iso_format,
     get_env::get_env,
@@ -36,7 +35,7 @@ async fn main() {
     let logger = Logger::new(true); // TODO swap this for is_production
 
     // Connect to database
-    let mongodb = connect_to_mongodb().await;
+    let mongodb = connect_to_mongodb(&logger).await;
 
     // Create an instance of AppState to be shared with all routes
     let state = AppState {
