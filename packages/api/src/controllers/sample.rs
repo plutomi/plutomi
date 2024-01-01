@@ -1,16 +1,14 @@
-use crate::utils::connect_to_database::Database;
-use axum::{http::StatusCode, Extension, Json};
-use futures::stream::TryStreamExt;
+use crate::structs::app_state::AppState;
+use axum::{extract::State, http::StatusCode, Json};
+use futures::TryStreamExt;
 use mongodb::bson::Document;
 use serde_json::{json, Value};
-use std::sync::Arc;
 
-pub async fn health_check(
-    mongodb: Extension<Arc<mongodb>>,
-    // TODO update types
+pub async fn sample(
+    State(state): State<AppState>, // TODO update types
 ) -> Result<(StatusCode, Json<Vec<Document>>), (StatusCode, Json<Value>)> {
     // Get a cursor with all items
-    let mut items_cursor = match mongodb.collection.find(None, None).await {
+    let mut items_cursor = match state.mongodb.collection.find(None, None).await {
         Ok(cursor) => cursor,
         Err(e) => {
             return Err((
