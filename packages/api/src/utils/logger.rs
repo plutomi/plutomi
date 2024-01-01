@@ -32,7 +32,6 @@ impl fmt::Display for LogLevel {
 #[derive(Serialize, Debug)]
 
 pub struct LogObject {
-    // TODO add environment
     pub level: LogLevel,
     /**
      * ISO 8601 timestamp
