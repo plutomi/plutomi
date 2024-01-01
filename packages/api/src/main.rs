@@ -29,10 +29,8 @@ async fn main() {
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
-    let is_production =
-        env.NEXT_PUBLIC_ENVIRONMENT == "production" || env.NEXT_PUBLIC_ENVIRONMENT == "staging";
     // Setup logging
-    let logger = Logger::new(true); // TODO swap this for is_production
+    let logger = Logger::new(true);
 
     // Connect to database
     let mongodb = connect_to_mongodb(&logger).await;
@@ -56,6 +54,8 @@ async fn main() {
             .layer(
                 // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
                 ServiceBuilder::new()
+                    // log_req_res should be the first middleware *always* as it handles incoming
+                    // and outgoing requests logging
                     .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
                     .layer(middleware::from_fn_with_state(
                         state.clone(),
