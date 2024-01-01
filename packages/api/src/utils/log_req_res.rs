@@ -55,7 +55,7 @@ pub async fn log_req_res(
         Err(message) => {
             // If the incoming request failed to parse, log it and return a 400
             let end_time = OffsetDateTime::now_utc();
-            let formatted_end_time = iso_format(start_time);
+            let formatted_end_time = iso_format(end_time);
             let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
 
             let status = StatusCode::BAD_REQUEST;
@@ -97,7 +97,7 @@ pub async fn log_req_res(
                 error: None,
                 message: "Request received".to_string(),
                 data: None,
-                timestamp: formatted_start_time,
+                timestamp: iso_format(OffsetDateTime::now_utc()),
                 request: Some(json!(request_data.request_as_hashmap)),
                 response: None,
             });
@@ -139,7 +139,7 @@ pub async fn log_req_res(
                 error: None,
                 message: "Response sent".to_string(),
                 data: Some(json!({ "duration": duration_ms })),
-                timestamp: formatted_end_time,
+                timestamp: iso_format(OffsetDateTime::now_utc()),
                 request: Some(json!(&request_data.request_as_hashmap)),
                 response: Some(json!(parsed_response.response_as_hashmap)),
             });
