@@ -41,9 +41,6 @@ pub async fn log_req_res(
         HeaderValue::from_str(&formatted_start_time).unwrap_or(UNKNOWN_HEADER),
     );
 
-    // Remove the header set by Axum and use ours as the source of truth
-    request.headers_mut().remove("request-start-time");
-
     // Add a request ID header
     let request_id = PlutomiId::new(&start_time, Entities::Request);
     let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);

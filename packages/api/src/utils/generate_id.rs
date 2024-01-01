@@ -22,7 +22,7 @@ pub enum Entities {
     Request,
 }
 impl Entities {
-    fn to_prefix(&self) -> String {
+    fn as_prefix(&self) -> String {
         let prefix = match self {
             Entities::User => "user_",
             Entities::Org => "org_",
@@ -58,7 +58,7 @@ impl PlutomiId {
 
         // Combine the entity prefix with the base62 encoded PlutomiId
         // req_0021J7zl6n38lTB2TwiTkIIQ9KF
-        entity.to_prefix() + &PlutomiId(buf).to_base62()
+        entity.as_prefix() + &PlutomiId(buf).to_base62()
     }
 }
 
