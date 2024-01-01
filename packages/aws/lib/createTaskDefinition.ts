@@ -53,6 +53,10 @@ export const createTaskDefinition = ({
         // Make sure to update the Docker image with the latest env vars
         NEXT_PUBLIC_ENVIRONMENT: env.NEXT_PUBLIC_ENVIRONMENT,
         NEXT_PUBLIC_BASE_URL: env.NEXT_PUBLIC_BASE_URL,
+        AXIOM_DATASET: env.AXIOM_DATASET,
+        AXIOM_TOKEN: env.AXIOM_TOKEN,
+        AXIOM_ORG_ID: env.AXIOM_ORG_ID,
+
       },
     },
     {

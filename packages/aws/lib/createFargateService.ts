@@ -74,6 +74,8 @@ export const createFargateService = ({
 
   const listener = loadBalancer.addListener(listenerName, {
     port: 443,
+    // Only allow from Cloudflare
+    open: false,
     certificates: [
       new Certificate(stack, certificateName, {
         domainName: `*.plutomi.com`, // Do not use .env.NEXT_PUBLIC_BASE_URL here
