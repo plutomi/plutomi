@@ -24,3 +24,18 @@ getrandom = "0.2.11"
 byteorder = "1.5.0"
 base-encode = "0.3.1"
 tracing-subscriber = "0.3.18"
+# Vendored is required to compile OpenSSL on systems without it installed.
+# https://stackoverflow.com/questions/70561544/rust-openssl-could-not-find-directory-of-openssl-installation
+openssl = { version = "0.10.62", features = ["vendored"] }
+
+
+[profile.release]
+strip = true # Automatically strip symbols from the binary.
+lto = true   # Enable link-time optimizations.
+
+
+# If compiling on a system without OpenSSL installed, or cross-compiling for a different
+# architecture, enable this feature to compile OpenSSL as part of the build.
+# See https://docs.rs/openssl/#vendored for more.
+[features]
+static_ssl = ['openssl/vendored']
