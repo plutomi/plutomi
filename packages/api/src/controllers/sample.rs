@@ -5,7 +5,7 @@ use mongodb::bson::Document;
 use serde_json::{json, Value};
 
 pub async fn sample(
-    State(state): State<AppState>, // TODO update types
+    State(state): State<AppState>,
 ) -> Result<(StatusCode, Json<Vec<Document>>), (StatusCode, Json<Value>)> {
     // Get a cursor with all items
     let mut items_cursor = match state.mongodb.collection.find(None, None).await {
