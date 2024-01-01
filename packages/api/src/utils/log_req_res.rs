@@ -67,8 +67,8 @@ pub async fn log_req_res(
                 request_id,
             };
 
+            // Create a response
             let response = api_error.clone().into_response();
-
             let mut parsed_response = parse_response(response).await.unwrap();
 
             // On the way out, add a timestamp header
@@ -102,7 +102,7 @@ pub async fn log_req_res(
                 response: None,
             });
 
-            // Add the request as an extension so we can access it later
+            // Add the request data as an Axum extension so we can access it later if needed
             request_data
                 .original_request
                 .extensions_mut()
@@ -122,7 +122,7 @@ pub async fn log_req_res(
                 HeaderValue::from_str(&formatted_end_time).unwrap(),
             );
 
-            // Add the request ID header on the way out incase of client debugging
+            // Add the request ID header on the way out to help with debugging if needed
             response
                 .headers_mut()
                 .insert(REQUEST_ID_HEADER, request_id_value);

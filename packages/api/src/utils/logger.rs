@@ -94,6 +94,10 @@ async fn send_to_axiom(log: LogObject, client: &Client) {
 }
 
 impl Logger {
+    /**
+     * Create a new logger instance.
+     * This also spawns a long lived thread that will handle logging.
+     */
     pub fn new(use_axiom: bool) -> Arc<Logger> {
         let env = &get_env();
         let axiom_client = if use_axiom {
@@ -140,8 +144,9 @@ impl Logger {
     }
 
     pub fn log(&self, log: LogObject) {
-        let sender = self.sender.clone();
+        let sender: Sender<LogObject> = self.sender.clone();
 
+        // Spawn a new thread to send the log to the logger thread
         tokio::spawn(async move {
             if sender.send(log).await.is_err() {
                 error!("Failed to enqueue log message")
