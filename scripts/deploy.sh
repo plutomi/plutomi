@@ -45,7 +45,7 @@ deploy_aws() {
     echo "Deploying AWS with environment: $environment and profile: $AWS_PROFILE"
     
     cd packages/aws
-    # export NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=$environment
+    # export NEXT_PUBLIC_ENVIRONMENT=$environment
     npm run deploy -- --profile $AWS_PROFILE
     )
 }

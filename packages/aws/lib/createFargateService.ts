@@ -11,7 +11,7 @@ import {
   type ICertificate,
 } from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
-import { Port, SecurityGroup, type Vpc } from "aws-cdk-lib/aws-ec2";
+import { Peer, Port, SecurityGroup, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
 import {
   ApplicationLoadBalancedFargateService,
@@ -29,6 +29,7 @@ import {
   ListenerAction,
   ListenerCondition,
 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { cloudflareIpv4, cloudflareIpv6 } from "../utils/cloudflareIps";
 
 type CreateFargateServiceProps = {
   stack: Stack;
@@ -71,10 +72,6 @@ export const createFargateService = ({
     loadBalancerName,
   });
 
-  //   loadBalancer.connections.securityGroups.forEach((sg: SecurityGroup) => {
-  //     sg. // ! TODO: Add cloudflare IPS @ LB
-  //   });
-
   const listener = loadBalancer.addListener(listenerName, {
     port: 443,
     certificates: [
@@ -84,6 +81,15 @@ export const createFargateService = ({
         certificateName,
       }),
     ],
+  });
+
+  // Limit the load balancer to only accept traffic from Cloudflare
+  cloudflareIpv4.forEach((ip) => {
+    listener.connections.allowFrom(Peer.ipv4(ip), Port.tcp(443));
+  });
+
+  cloudflareIpv6.forEach((ip) => {
+    listener.connections.allowFrom(Peer.ipv6(ip), Port.tcp(443));
   });
 
   const defaultHealthCheck: HealthCheck = {

@@ -2,12 +2,17 @@ import { orderBy } from "lodash";
 import { Commit, type CommitType } from "./Commit";
 import { delay } from "@/utils";
 
+const numOfCommits = 3;
+const revalidateHours = 24;
+
 async function getCommits() {
-  const commitsFromEachBranch = 8;
   const allCommits: CommitType[] = [];
 
   let response = await fetch(
-    `https://api.github.com/repos/plutomi/plutomi/commits?sha=main&per_page=${commitsFromEachBranch}&u=joswayski`
+    `https://api.github.com/repos/plutomi/plutomi/commits`,
+    {
+      next: { revalidate: 60 * 60 * revalidateHours }
+    }
   );
 
   if (!response.ok) {
@@ -60,7 +65,7 @@ async function getCommits() {
       self.findIndex((t) => t.url === value.url && t.date === value.date)
   );
 
-  return commits;
+  return commits.slice(0, numOfCommits);
 }
 
 const noCommits = (

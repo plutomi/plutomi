@@ -1,23 +1,48 @@
-use crate::utils::{connect_to_mongodb::MongoDB, get_env::get_env};
-use axum::{http::StatusCode, Extension, Json};
+use std::collections::HashMap;
+
+use crate::{
+    utils::{
+        get_current_time::iso_format,
+        logger::{LogLevel, LogObject},
+    },
+    AppState,
+};
+use axum::{extract::State, http::StatusCode, Extension, Json};
 use serde::Serialize;
-use std::sync::Arc;
+use serde_json::{json, Value};
+use time::OffsetDateTime;
 
 #[derive(Serialize)]
 pub struct HealthCheckResponse {
     message: &'static str,
     database: bool,
-    deployment_environment: String,
+    environment: String,
 }
 
 pub async fn health_check(
-    mongodb: Extension<Arc<MongoDB>>,
+    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
+    State(state): State<AppState>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
+    let database = state.mongodb.collection.find_one(None, None).await.is_ok();
+
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
-        database: mongodb.collection.find_one(None, None).await.is_ok(),
-        deployment_environment: get_env().NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
+        database,
+        environment: state.env.NEXT_PUBLIC_ENVIRONMENT,
     };
+
+    state.logger.log(LogObject {
+        level: match database {
+            true => LogLevel::Info,
+            false => LogLevel::Error,
+        },
+        timestamp: iso_format(OffsetDateTime::now_utc()),
+        message: "Health check response".to_string(),
+        data: None,
+        error: None,
+        request: Some(json!(request_as_hashmap)),
+        response: Some(json!(&response)),
+    });
 
     (StatusCode::OK, Json(response))
 }

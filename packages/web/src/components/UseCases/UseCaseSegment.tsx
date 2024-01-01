@@ -15,8 +15,8 @@ export const UseCaseSegment: React.FC = () => {
           }}
           className={`rounded-md py-3 px-4 text-lg text-slate-500 font-medium  ${
             isSelected(title)
-              ? "bg-white shadow-md text-slate-800 "
-              : "hover:bg-slate-100"
+              ? "bg-white shadow-md text-slate-700 "
+              : "hover:bg-slate-100 transition ease-in-out duration-100"
           }`}
           type="button"
         >

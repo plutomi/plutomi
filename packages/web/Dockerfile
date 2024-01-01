@@ -25,7 +25,7 @@ COPY . .
 
 
 # Make sure to update task defintion
-ARG NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT 
+ARG NEXT_PUBLIC_ENVIRONMENT 
 ARG NEXT_PUBLIC_BASE_URL
 
 # If using npm comment out above and use below instead
