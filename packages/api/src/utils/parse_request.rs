@@ -23,6 +23,13 @@ pub async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
     let mut request_as_hashmap = HashMap::<String, Value>::new();
 
     request_as_hashmap.insert("method".to_string(), json!(parts.method.to_string()));
+
+    request_as_hashmap.insert("path".to_string(), json!(parts.uri.path().to_string()));
+    request_as_hashmap.insert(
+        "query".to_string(),
+        json!(parts.uri.query().map(|q| q.to_string())),
+    );
+
     request_as_hashmap.insert("uri".to_string(), json!(parts.uri.to_string()));
     request_as_hashmap.insert(
         "headers".to_string(),
