@@ -5,7 +5,11 @@ use crate::utils::{
 
 use super::{get_env::get_env, logger::Logger};
 use core::panic;
-use mongodb::{bson::Document, options::ClientOptions, Client, Collection, Database};
+use mongodb::{
+    bson::Document,
+    options::{ClientOptions, ReadConcern, WriteConcern},
+    Client, Collection, Database,
+};
 use serde_json::json;
 use std::sync::Arc;
 use time::OffsetDateTime;
@@ -20,7 +24,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
     let env = get_env();
 
     // Parse the connection string into a client
-    let client_options = match ClientOptions::parse(env.DATABASE_URL).await {
+    let mut client_options = match ClientOptions::parse(env.DATABASE_URL).await {
         Ok(client_options) => client_options,
         Err(e) => {
             logger.log(LogObject {
@@ -36,6 +40,13 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
             panic!("Error parsing client options for DB: {}", e);
         }
     };
+
+    // Some DB options
+    client_options.min_pool_size = Some(50);
+    client_options.max_pool_size = Some(150);
+
+    client_options.read_concern = Some(ReadConcern::MAJORITY);
+    client_options.write_concern = Some(WriteConcern::MAJORITY);
 
     // Get the DB client that's connected to the DB
     let client = match Client::with_options(client_options) {
