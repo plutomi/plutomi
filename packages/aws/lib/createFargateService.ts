@@ -68,7 +68,7 @@ export const createFargateService = ({
     serviceName,
   });
 
-  // Define the auto-scaling for your service
+  // "Scaling"
   const scaling = fargateService.autoScaleTaskCount({
     minCapacity: 1,
     maxCapacity: 1,

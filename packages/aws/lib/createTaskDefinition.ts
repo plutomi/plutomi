@@ -39,15 +39,14 @@ export const createTaskDefinition = ({
     containerName: string;
     imageDirectory: string;
     containerPort: number;
-    cpu: number;
-    memoryReservationMiB: number;
+    // You can set `cpu` and `memoryReservationMiB` if you want to, but it's not necessary
+    // CPU is a hard limit, memoryReservationMiB is a soft limit
+    // If you don't set it, API and WEB will share the same resources which is fine for now
     environment: Record<string, string>;
   }[] = [
     {
       containerName: "plutomi-web-container",
       imageDirectory: "../../packages/web",
-      cpu: 100,
-      memoryReservationMiB: 150,
       containerPort: 3000,
       environment: {
         // Make sure to update the Docker image with the latest env vars
@@ -61,8 +60,6 @@ export const createTaskDefinition = ({
     {
       containerName: "plutomi-api-container",
       imageDirectory: "../../packages/api",
-      cpu: 140,
-      memoryReservationMiB: 300,
       containerPort: 8080,
       environment: env,
     },
@@ -73,8 +70,7 @@ export const createTaskDefinition = ({
       containerName,
       containerPort,
       imageDirectory,
-      cpu,
-      memoryReservationMiB,
+
       environment,
     }) => {
       taskDefinition.addContainer(containerName, {
@@ -85,8 +81,6 @@ export const createTaskDefinition = ({
           },
         ],
         containerName,
-        // cpu,
-        // memoryReservationMiB,
         image: ContainerImage.fromAsset(imageDirectory, {
           // Get the NextJS docker image, build it, and push it to ECR
         }),
