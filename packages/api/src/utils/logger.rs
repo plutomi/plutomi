@@ -2,8 +2,10 @@ use super::get_env::get_env;
 use axiom_rs::Client;
 use serde::Serialize;
 use std::{fmt, sync::Arc};
-use time::{Duration, Instant};
-use tokio::sync::mpsc::{self, Sender};
+use tokio::{
+    sync::mpsc::{self, Sender},
+    time::{sleep, Duration, Instant},
+};
 use tracing::{debug, error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
 
@@ -11,7 +13,7 @@ const MAX_LOG_BUFFER_LENGTH: usize = 10000;
 // max number of logs to send in a batch
 const LOG_BATCH_SIZE: usize = 100;
 // time to wait before sending the batch
-const LOG_BATCH_TIME: Duration = Duration::seconds(5);
+const LOG_BATCH_TIME: Duration = Duration::from_secs(5);
 
 #[derive(Serialize, Debug)]
 pub enum LogLevel {
@@ -122,24 +124,40 @@ impl Logger {
             let mut log_batch: Vec<LogObject> = Vec::new();
             let mut timer = Instant::now() + LOG_BATCH_TIME;
 
-            while let Some(log) = receiver.recv().await {
-                // Local logging based on the level
-                match log.level {
-                    LogLevel::Info => info!("{}", &log),
-                    LogLevel::Error => error!("{}", &log),
-                    LogLevel::Debug => debug!("{}", &log),
-                    LogLevel::Warn => warn!("{}", &log),
-                }
+            loop {
+                // Check for messages & start a timer, whichever comes first
+                tokio::select! {
+                    // Receive log messages
+                    Some(log) = receiver.recv().await => {
 
-                // Push the log to the buffer
-                log_batch.push(log);
+                        // Local logging based on the level
+                        match log.level {
+                            LogLevel::Info => info!("{}", &log),
+                            LogLevel::Error => error!("{}", &log),
+                            LogLevel::Debug => debug!("{}", &log),
+                            LogLevel::Warn => warn!("{}", &log),
+                        }
 
-                if log_batch.len() >= LOG_BATCH_SIZE || time_limit_reached {
-                    if let Some(ref client) = axiom_client {
-                        // Send batch of logs
-                        send_to_axiom(&log_batch, &client).await;
-                        // Clear the buffer
-                        log_batch.clear();
+                        log_batch.push(log);
+                        // Check if the buffer is full and send it if so
+                        if log_batch.len() >= LOG_BATCH_SIZE {
+                            if let Some(ref client) = axiom_client {
+                                send_to_axiom(&log_batch, &client).await;
+                            }
+                            log_batch.clear();
+                            timer = Instant::now() + LOG_BATCH_TIME; // Reset the timer
+                        }
+                    },
+                    // Timer triggers when time limit is reached
+                    _ = sleep_until(timer) => {
+                        if !log_batch.is_empty() {
+                            // Time limit reached, send whatever is in the buffer
+                            if let Some(ref client) = axiom_client {
+                                send_to_axiom(&log_batch, &client).await;
+                            }
+                            log_batch.clear();
+                        }
+                        timer = Instant::now() + LOG_BATCH_TIME; // Reset the timer
                     }
                 }
             }
@@ -148,21 +166,17 @@ impl Logger {
         return Arc::new(Logger { sender });
     }
 
-    // pub fn log(&self, log: LogObject) {
-    //     let sender: Sender<LogObject> = self.sender.clone(); ! <--
-
-    //      Spawn a new thread to send the log to the logger thread
-    //     tokio::spawn(async move {
-    //         if sender.send(log).await.is_err() {
-    //             error!("Failed to enqueue log message")
-    //         }
-    //     });
-    // }
-
     pub fn log(&self, log: LogObject) {
         // Send the log message to the channel
         if let Err(e) = self.sender.try_send(log) {
             error!("Failed to enqueue log message: {}", e);
         }
+    }
+}
+
+async fn sleep_until(deadline: Instant) {
+    let now = Instant::now();
+    if deadline > now {
+        sleep(deadline - now).await;
     }
 }
