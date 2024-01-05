@@ -55,15 +55,23 @@ export const createFargateService = ({
   const cluster = new Cluster(stack, clusterName, {
     clusterName,
     vpc,
+    containerInsights: true,
   });
+  // ! TODO: BUMP RESOURCES
   const fargateService = new FargateService(stack, "plutomi-fargate-service", {
     cluster,
     vpcSubnets: {
       subnets: vpc.privateSubnets,
     },
     taskDefinition,
-    desiredCount: 2,
+    // desiredCount: 1, // Do not use this
     serviceName,
+  });
+
+  // Define the auto-scaling for your service
+  const scaling = fargateService.autoScaleTaskCount({
+    minCapacity: 1,
+    maxCapacity: 1,
   });
 
   const loadBalancer = new ApplicationLoadBalancer(stack, loadBalancerName, {
@@ -107,6 +115,7 @@ export const createFargateService = ({
     port: 8080,
     protocol: ApplicationProtocol.HTTP,
     targetGroupName: apiTargetGroupName,
+
     targets: [
       fargateService.loadBalancerTarget({
         containerName: "plutomi-api-container",

@@ -27,8 +27,8 @@ export const createTaskDefinition = ({
   const taskDefinition = new FargateTaskDefinition(stack, taskDefinitionName, {
     taskRole,
     executionRole: taskRole,
-    cpu: 256,
-    memoryLimitMiB: 512,
+    cpu: 1024,
+    memoryLimitMiB: 2048,
     runtimePlatform: {
       operatingSystemFamily: OperatingSystemFamily.LINUX,
       cpuArchitecture: CpuArchitecture.ARM64,
@@ -40,14 +40,14 @@ export const createTaskDefinition = ({
     imageDirectory: string;
     containerPort: number;
     cpu: number;
-    memoryLimitMiB: number;
+    memoryReservationMiB: number;
     environment: Record<string, string>;
   }[] = [
     {
       containerName: "plutomi-web-container",
       imageDirectory: "../../packages/web",
-      cpu: 120,
-      memoryLimitMiB: 220,
+      cpu: 100,
+      memoryReservationMiB: 150,
       containerPort: 3000,
       environment: {
         // Make sure to update the Docker image with the latest env vars
@@ -56,14 +56,13 @@ export const createTaskDefinition = ({
         AXIOM_DATASET: env.AXIOM_DATASET,
         AXIOM_TOKEN: env.AXIOM_TOKEN,
         AXIOM_ORG_ID: env.AXIOM_ORG_ID,
-
       },
     },
     {
       containerName: "plutomi-api-container",
       imageDirectory: "../../packages/api",
-      cpu: 120,
-      memoryLimitMiB: 220,
+      cpu: 140,
+      memoryReservationMiB: 300,
       containerPort: 8080,
       environment: env,
     },
@@ -75,7 +74,7 @@ export const createTaskDefinition = ({
       containerPort,
       imageDirectory,
       cpu,
-      memoryLimitMiB,
+      memoryReservationMiB,
       environment,
     }) => {
       taskDefinition.addContainer(containerName, {
@@ -86,8 +85,8 @@ export const createTaskDefinition = ({
           },
         ],
         containerName,
-        cpu,
-        memoryLimitMiB,
+        // cpu,
+        // memoryReservationMiB,
         image: ContainerImage.fromAsset(imageDirectory, {
           // Get the NextJS docker image, build it, and push it to ECR
         }),

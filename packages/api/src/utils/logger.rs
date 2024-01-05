@@ -2,11 +2,16 @@ use super::get_env::get_env;
 use axiom_rs::Client;
 use serde::Serialize;
 use std::{fmt, sync::Arc};
+use time::{Duration, Instant};
 use tokio::sync::mpsc::{self, Sender};
 use tracing::{debug, error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
 
 const MAX_LOG_BUFFER_LENGTH: usize = 10000;
+// max number of logs to send in a batch
+const LOG_BATCH_SIZE: usize = 100;
+// time to wait before sending the batch
+const LOG_BATCH_TIME: Duration = Duration::seconds(5);
 
 #[derive(Serialize, Debug)]
 pub enum LogLevel {
@@ -76,20 +81,9 @@ pub struct Logger {
 }
 
 // Send logs to axiom
-async fn send_to_axiom(log: LogObject, client: &Client) {
-    let axiom_result = client
-        .ingest(
-            &get_env().AXIOM_DATASET,
-            // Serialize the entire LogObject
-            vec![serde_json::json!(log)],
-        )
-        .await;
-
-    match axiom_result {
-        Ok(_) => {}
-        Err(e) => {
-            error!("Failed to send log to Axiom: {}", e);
-        }
+async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client) {
+    if let Err(e) = client.ingest(&get_env().AXIOM_DATASET, log_batch).await {
+        error!("Failed to send log to Axiom: {}", e);
     }
 }
 
@@ -101,14 +95,13 @@ impl Logger {
     pub fn new(use_axiom: bool) -> Arc<Logger> {
         let env = &get_env();
         let axiom_client = if use_axiom {
-            match Client::builder()
-                .with_token(&env.AXIOM_TOKEN)
-                .with_org_id(&env.AXIOM_ORG_ID)
-                .build()
-            {
-                Ok(client) => Some(client),
-                Err(_) => panic!("Failed to initialize Axiom client in a production environment"),
-            }
+            Some(
+                Client::builder()
+                    .with_token(&env.AXIOM_TOKEN)
+                    .with_org_id(&env.AXIOM_ORG_ID)
+                    .build()
+                    .expect("Failed to initialize Axiom client in a production environment"),
+            )
         } else {
             warn!("Axiom logging is not enabled");
             None
@@ -123,8 +116,12 @@ impl Logger {
 
         let (sender, mut receiver) = mpsc::channel::<LogObject>(MAX_LOG_BUFFER_LENGTH);
 
+        // Spawn the logging thread
         tokio::spawn(async move {
-            // Spawn the logging thread
+            //
+            let mut log_batch: Vec<LogObject> = Vec::new();
+            let mut timer = Instant::now() + LOG_BATCH_TIME;
+
             while let Some(log) = receiver.recv().await {
                 // Local logging based on the level
                 match log.level {
@@ -134,8 +131,16 @@ impl Logger {
                     LogLevel::Warn => warn!("{}", &log),
                 }
 
-                if let Some(ref client) = axiom_client {
-                    send_to_axiom(log, &client).await;
+                // Push the log to the buffer
+                log_batch.push(log);
+
+                if log_batch.len() >= LOG_BATCH_SIZE || time_limit_reached {
+                    if let Some(ref client) = axiom_client {
+                        // Send batch of logs
+                        send_to_axiom(&log_batch, &client).await;
+                        // Clear the buffer
+                        log_batch.clear();
+                    }
                 }
             }
         });
@@ -143,14 +148,21 @@ impl Logger {
         return Arc::new(Logger { sender });
     }
 
-    pub fn log(&self, log: LogObject) {
-        let sender: Sender<LogObject> = self.sender.clone();
+    // pub fn log(&self, log: LogObject) {
+    //     let sender: Sender<LogObject> = self.sender.clone(); ! <--
 
-        // Spawn a new thread to send the log to the logger thread
-        tokio::spawn(async move {
-            if sender.send(log).await.is_err() {
-                error!("Failed to enqueue log message")
-            }
-        });
+    //      Spawn a new thread to send the log to the logger thread
+    //     tokio::spawn(async move {
+    //         if sender.send(log).await.is_err() {
+    //             error!("Failed to enqueue log message")
+    //         }
+    //     });
+    // }
+
+    pub fn log(&self, log: LogObject) {
+        // Send the log message to the channel
+        if let Err(e) = self.sender.try_send(log) {
+            error!("Failed to enqueue log message: {}", e);
+        }
     }
 }
