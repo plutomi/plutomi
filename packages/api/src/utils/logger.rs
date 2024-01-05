@@ -124,11 +124,12 @@ impl Logger {
             let mut log_batch: Vec<LogObject> = Vec::new();
             let mut timer = Instant::now() + LOG_BATCH_TIME;
 
+            receiver.recv().await;
             loop {
-                // Check for messages & start a timer, whichever comes first
+                // Check for messages & start a timer, call whichever comes first
                 tokio::select! {
                     // Receive log messages
-                    Some(log) = receiver.recv().await => {
+                    Some(log) = receiver.recv() => {
 
                         // Local logging based on the level
                         match log.level {
@@ -138,25 +139,34 @@ impl Logger {
                             LogLevel::Warn => warn!("{}", &log),
                         }
 
+                        // Push the log to the batch
                         log_batch.push(log);
-                        // Check if the buffer is full and send it if so
+
+                        // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
                             if let Some(ref client) = axiom_client {
                                 send_to_axiom(&log_batch, &client).await;
                             }
+                            // Clear the batch for the next batch
                             log_batch.clear();
-                            timer = Instant::now() + LOG_BATCH_TIME; // Reset the timer
+
+                            // Reset the timer
+                            timer = Instant::now() + LOG_BATCH_TIME;
                         }
                     },
-                    // Timer triggers when time limit is reached
+                    // Start a timer for LOG_BATCH_TIME.
+                    // If the timer triggers before  the batch is full, send the batch
                     _ = sleep_until(timer) => {
                         if !log_batch.is_empty() {
-                            // Time limit reached, send whatever is in the buffer
+                            // Send whatever is in the batch
                             if let Some(ref client) = axiom_client {
                                 send_to_axiom(&log_batch, &client).await;
                             }
+
+                            // Clear the batch for the next batch
                             log_batch.clear();
                         }
+                        // Reset the timer if we didn't send anything
                         timer = Instant::now() + LOG_BATCH_TIME; // Reset the timer
                     }
                 }
@@ -174,6 +184,7 @@ impl Logger {
     }
 }
 
+// Sleep until the given instant
 async fn sleep_until(deadline: Instant) {
     let now = Instant::now();
     if deadline > now {
