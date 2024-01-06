@@ -42,8 +42,8 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
     };
 
     // Some DB options
-    client_options.min_pool_size = Some(120);
-    client_options.max_pool_size = Some(200);
+    client_options.min_pool_size = Some(20);
+    client_options.max_pool_size = Some(50);
 
     client_options.read_concern = Some(ReadConcern::MAJORITY);
     client_options.write_concern = Some(WriteConcern::MAJORITY);

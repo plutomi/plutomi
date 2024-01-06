@@ -3,7 +3,7 @@ use time::OffsetDateTime;
 
 // prefix_[48 bit timestamp][80 bit random payload]
 const TIMESTAMP_BYTES: usize = 6; // 48 bits for timestamp
-const TOTAL_BYTES: usize = 16; // 128 bits total
+const TOTAL_BYTES: usize = 20; // 128 bits total
 
 const CUSTOM_EPOCH: i64 = 1_700_000_000;
 const BASE62_CHARS: &[u8] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -20,6 +20,7 @@ pub enum Entities {
     Application,
     Stage,
     Request,
+    Book,
 }
 impl Entities {
     fn as_prefix(&self) -> String {
@@ -32,6 +33,7 @@ impl Entities {
             Entities::Application => "application_",
             Entities::Stage => "stage_",
             Entities::Request => "req_",
+            Entities::Book => "book_",
         };
 
         prefix.to_string()
@@ -39,7 +41,7 @@ impl Entities {
 }
 
 impl PlutomiId {
-    // Creates a new PlutomiId with the specified OffsetDateTime
+    // Creates a new PlutomiId with the specified OffsetDateTime. Use OffsetDateTime::now_utc()
     pub fn new(datetime: &OffsetDateTime, entity: Entities) -> String {
         // Calculate the number of milliseconds since a custom epoch
         // This extends the useful life by ~2024 years

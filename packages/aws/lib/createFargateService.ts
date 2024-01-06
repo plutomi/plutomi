@@ -70,8 +70,8 @@ export const createFargateService = ({
 
   // "Scaling"
   const scaling = fargateService.autoScaleTaskCount({
-    minCapacity: 1,
-    maxCapacity: 1,
+    minCapacity: 4,
+    maxCapacity: 4,
   });
 
   const loadBalancer = new ApplicationLoadBalancer(stack, loadBalancerName, {

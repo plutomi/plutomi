@@ -1,0 +1,14 @@
+config:
+  target: "https://plutomi.com"
+  phases:
+    - duration: 90
+      arrivalRate: 1
+      rampTo: 500
+      name: "Ramp up to 200 requests per second"
+    - duration: 600
+      arrivalRate: 500
+      name: Sustained peak load
+scenarios:
+  - flow:
+      - get:
+          url: "/api/health?josetesting"
