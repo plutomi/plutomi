@@ -27,8 +27,8 @@ export const createTaskDefinition = ({
   const taskDefinition = new FargateTaskDefinition(stack, taskDefinitionName, {
     taskRole,
     executionRole: taskRole,
-    cpu: 256,
-    memoryLimitMiB: 512,
+    cpu: 1024,
+    memoryLimitMiB: 2048,
     runtimePlatform: {
       operatingSystemFamily: OperatingSystemFamily.LINUX,
       cpuArchitecture: CpuArchitecture.ARM64,
