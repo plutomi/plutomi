@@ -28,7 +28,7 @@ export const createTaskDefinition = ({
     taskRole,
     executionRole: taskRole,
     cpu: 1024,
-    memoryLimitMiB: 2048,
+    memoryLimitMiB: 4096,
     runtimePlatform: {
       operatingSystemFamily: OperatingSystemFamily.LINUX,
       cpuArchitecture: CpuArchitecture.ARM64,

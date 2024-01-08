@@ -29,7 +29,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
         Err(e) => {
             logger.log(LogObject {
                 level: LogLevel::Error,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 message: "Error parsing client options for DB".to_string(),
                 data: None,
                 error: Some(json!(e.to_string())),
@@ -42,8 +42,8 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
     };
 
     // Some DB options
-    client_options.min_pool_size = Some(100);
-    client_options.max_pool_size = Some(500);
+    client_options.min_pool_size = Some(80);
+    client_options.max_pool_size = Some(300);
 
     client_options.read_concern = Some(ReadConcern::MAJORITY);
     client_options.write_concern = Some(WriteConcern::MAJORITY);
@@ -54,7 +54,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
         Err(e) => {
             logger.log(LogObject {
                 level: LogLevel::Error,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 message: "Error connecting to database".to_string(),
                 data: None,
                 error: Some(json!(e.to_string())),
@@ -72,7 +72,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
             let error_message = "Unable to find default database.\nMake sure you include it in the connection string like: mongodb://localhost:27017/this-part-is-missing";
             logger.log(LogObject {
                 level: LogLevel::Error,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 message: error_message.to_string(),
                 data: None,
                 error: None,

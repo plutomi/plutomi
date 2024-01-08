@@ -1,3 +1,9 @@
+/**
+ * ! TODO: REMVOE OTHER STUFF OUT OF HEALTH CHECK
+ * UPDATE CLOUDFLARE FOR RL
+ * TEST HERE SO SERVER DONT CRASH
+ *
+ */
 use std::collections::HashMap;
 
 use crate::{

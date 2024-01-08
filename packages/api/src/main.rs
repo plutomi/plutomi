@@ -45,6 +45,7 @@ async fn main() {
     // Routes
     let totp_routes = Router::new().route("/totp", post(create_totp));
 
+    // ! TODO: ADD TIMEOUT MIDDLEWARE
     let app = Router::new().nest(
         "/api",
         Router::new()
@@ -73,7 +74,7 @@ async fn main() {
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
-            timestamp: iso_format(OffsetDateTime::now_utc()),
+            _time: iso_format(OffsetDateTime::now_utc()),
             message,
             data: Some(json!({ "port": port })),
             error: Some(error_json),
@@ -91,7 +92,7 @@ async fn main() {
             let error_json = json!({ "message": &message });
             logger.log(LogObject {
                 level: LogLevel::Error,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 message,
                 data: Some(json!({ "addr": addr })),
                 error: Some(error_json),
@@ -107,7 +108,7 @@ async fn main() {
         .map(|_| {
             logger.log(LogObject {
                 level: LogLevel::Info,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 message: "Server started".to_string(),
                 data: None,
                 error: None,
@@ -121,7 +122,7 @@ async fn main() {
             let error_json = json!({ "message": &message });
             logger.log(LogObject {
                 level: LogLevel::Error,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 message,
                 data: None,
                 error: Some(error_json),

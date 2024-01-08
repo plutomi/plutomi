@@ -64,14 +64,16 @@ export const createFargateService = ({
       subnets: vpc.privateSubnets,
     },
     taskDefinition,
-    // desiredCount: 1, // Do not use this
+    // desiredCount: 1, // Do not use this as it resets the deployment
     serviceName,
+    minHealthyPercent: 50,
+    maxHealthyPercent: 600,
   });
 
   // "Scaling"
   const scaling = fargateService.autoScaleTaskCount({
-    minCapacity: 1,
-    maxCapacity: 1,
+    minCapacity: 10,
+    maxCapacity: 10,
   });
 
   const loadBalancer = new ApplicationLoadBalancer(stack, loadBalancerName, {

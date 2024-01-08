@@ -41,7 +41,7 @@ impl Entities {
 }
 
 impl PlutomiId {
-    // Creates a new PlutomiId with the specified OffsetDateTime. Use OffsetDateTime::now_utc()
+    // Creates a new PlutomiId with the specified OffsetDateTime. Use OffsetDateTime::now_utc():
     pub fn new(datetime: &OffsetDateTime, entity: Entities) -> String {
         // Calculate the number of milliseconds since a custom epoch
         // This extends the useful life by ~2024 years

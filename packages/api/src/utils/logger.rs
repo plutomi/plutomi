@@ -43,8 +43,10 @@ pub struct LogObject {
     /**
      * ISO 8601 timestamp
      * use iso_format()
+     *
+     * Axiom uses `_time` so we can use it as well
      */
-    pub timestamp: String,
+    pub _time: String,
     pub message: String,
     /**
      * Used for adding additional data to the log object
