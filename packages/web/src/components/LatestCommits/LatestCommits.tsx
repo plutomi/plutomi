@@ -34,11 +34,11 @@ async function getCommits() {
   (data ?? []).map(
     async (commit: {
       commit: {
-        author: { name: string; email: any; date: any };
-        message: any;
+        author: { name: string; email: string; date: string };
+        message: string;
       };
-      author: { login: any; avatar_url: any };
-      html_url: any;
+      author: { login: string; avatar_url: string };
+      html_url: string;
     }) => {
       const author = commit.author.login;
       const isBot =
