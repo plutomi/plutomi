@@ -46,27 +46,32 @@ async fn main() {
     let totp_routes = Router::new().route("/totp", post(create_totp));
 
     // ! TODO: ADD TIMEOUT MIDDLEWARE
-    let app = Router::new().nest(
-        "/api",
-        Router::new()
-            .merge(totp_routes)
-            .route("/health", get(health_check))
-            .route("/delete", delete(delete_many))
-            .route("/write", get(write))
-            .fallback(not_found)
-            .layer(
-                // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
-                ServiceBuilder::new()
-                    // log_req_res should be the first middleware *always* as it handles incoming
-                    // and outgoing requests logging
-                    .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
-                    .layer(middleware::from_fn_with_state(
-                        state.clone(),
-                        method_not_allowed,
-                    )),
-            )
-            .with_state(state),
-    );
+    let app = Router::new()
+        .fallback(get(|| async {
+            // Load balancer will prevent this from being hit in prod
+            "It looks like you're testing locally! Make sure to add `/api/` - checkout the main.rs file for the routes."
+        }))
+        .nest(
+            "/api",
+            Router::new()
+                .merge(totp_routes)
+                .route("/health", get(health_check))
+                .route("/delete", delete(delete_many))
+                .route("/write", get(write))
+                .fallback(not_found)
+                .layer(
+                    // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
+                    ServiceBuilder::new()
+                        // log_req_res should be the first middleware *always* as it handles incoming
+                        // and outgoing requests logging
+                        .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
+                        .layer(middleware::from_fn_with_state(
+                            state.clone(),
+                            method_not_allowed,
+                        )),
+                )
+                .with_state(state),
+        );
 
     let port = "[::]:8080";
     // Bind address

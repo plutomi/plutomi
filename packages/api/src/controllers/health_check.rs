@@ -47,7 +47,7 @@ pub async fn health_check(
         .unwrap();
 
     let response: HealthCheckResponse = HealthCheckResponse {
-        message: "Deleted Many",
+        message: "Health Check Response",
         database,
         environment: state.env.NEXT_PUBLIC_ENVIRONMENT,
     };
