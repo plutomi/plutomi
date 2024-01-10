@@ -46,7 +46,7 @@ async function getCommits() {
 
       if (!isBot) {
         const customCommit = {
-          name: author,
+          name: commit.commit.author.name,
           username: author,
           image: commit.author.avatar_url,
           email: commit.commit.author.email,
