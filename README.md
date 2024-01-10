@@ -57,6 +57,8 @@ The script also has hot reloading for both so you can make changes and see them 
 
 ### Deploying
 
+TODO also make sure to add a cache rule to cloudflare to ignore /api routes
+
 ```bash
 $ scripts/deploy.sh --stack <aws> --env <development|staging|production>
 ```
