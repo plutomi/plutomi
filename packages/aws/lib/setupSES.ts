@@ -35,6 +35,8 @@ export const setupSES = ({ stack }: SetupSESProps) => {
   const sesEventsQueue = new Queue(stack, sesEventsQueueName, {
     queueName: sesEventsQueueName,
     retentionPeriod: Duration.days(14),
+    visibilityTimeout: Duration.seconds(30),
+    // Long polling
     receiveMessageWaitTime: Duration.seconds(20),
   });
 
