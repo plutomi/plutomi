@@ -19,13 +19,13 @@ export const Commit: React.FC<CommitType> = ({
 }) => {
   return (
     <div
-      className="p-2 bg-white  w-full max-w-3xl rounded-lg shadow hover:shadow-md transition ease-in-out duration-100  cursor-pointer"
+      className="p-2 bg-white  w-full max-w-3xl rounded-[0.75rem] shadow hover:shadow-md transition ease-in-out duration-100  cursor-pointer"
       onClick={() => window.open(url, "_blank", "noopener noreferrer")}
     >
       <div className="flex items-center">
         <div className="shrink-0">
           <img
-            className="inline-block h-16 w-16 md:h-24 md:w-24 rounded-lg "
+            className="inline-block h-16 w-16 md:h-24 md:w-24 rounded-[0.25rem]"
             src={image}
             alt={`@${username} GitHub avatar`}
           />
