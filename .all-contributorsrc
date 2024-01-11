@@ -54,6 +54,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jlittlewood-scottlogic",
+      "name": "jlittlewood-scottlogic",
+      "avatar_url": "https://avatars.githubusercontent.com/u/124571917?v=4",
+      "profile": "https://github.com/jlittlewood-scottlogic",
+      "contributions": [
+        "code",
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,
