@@ -13,7 +13,7 @@ export const UseCaseSegment: React.FC = () => {
           onClick={() => {
             setUseCase(title);
           }}
-          className={`rounded-md py-3 px-4 text-lg text-slate-500 font-medium  ${
+          className={`rounded-[6px] py-3 px-4 text-lg text-slate-500 font-medium  ${
             isSelected(title)
               ? "bg-white shadow-md text-slate-700 "
               : "hover:bg-slate-100 transition ease-in-out duration-100"
