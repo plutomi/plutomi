@@ -115,7 +115,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const classes = [
       // common classes
-      "rounded-md flex flex-grow-0 items-center flex-none transition  ease-in-out duration-200 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-none focus:ring",
+      "rounded flex flex-grow-0 items-center flex-none transition  ease-in-out duration-200 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-none focus:ring",
       getCursorClasses(),
       getSizeClasses(),
       getVariantClasses(),
