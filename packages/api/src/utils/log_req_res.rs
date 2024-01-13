@@ -81,7 +81,7 @@ pub async fn log_req_res(
             state.logger.log(LogObject {
                 data: Some(json!({ "duration": duration_ms })),
                 message,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 level: LogLevel::Error,
                 error: Some(json!(api_error)),
                 request: None,
@@ -97,7 +97,7 @@ pub async fn log_req_res(
                 error: None,
                 message: "Request received".to_string(),
                 data: None,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 request: Some(json!(request_data.request_as_hashmap)),
                 response: None,
             });
@@ -139,7 +139,7 @@ pub async fn log_req_res(
                 error: None,
                 message: "Response sent".to_string(),
                 data: Some(json!({ "duration": duration_ms })),
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 request: Some(json!(&request_data.request_as_hashmap)),
                 response: Some(json!(parsed_response.response_as_hashmap)),
             });

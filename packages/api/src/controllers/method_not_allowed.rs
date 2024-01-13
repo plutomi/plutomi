@@ -52,7 +52,7 @@ pub async fn method_not_allowed(
                 error: Some(json!(api_error.clone())),
                 message,
                 data: None,
-                timestamp: iso_format(OffsetDateTime::now_utc()),
+                _time: iso_format(OffsetDateTime::now_utc()),
                 request: Some(json!(request_as_hashmap)),
                 response: None,
             });

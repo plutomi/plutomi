@@ -5,7 +5,7 @@ export type CommitType = {
   username: string;
   name: string;
   image: string;
-  date: Date;
+  date: string;
   email: string;
   message: string;
 };

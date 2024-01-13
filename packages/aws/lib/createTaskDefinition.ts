@@ -39,15 +39,14 @@ export const createTaskDefinition = ({
     containerName: string;
     imageDirectory: string;
     containerPort: number;
-    cpu: number;
-    memoryLimitMiB: number;
+    // You can set `cpu` and `memoryReservationMiB` if you want to, but it's not necessary
+    // CPU is a hard limit, memoryReservationMiB is a soft limit
+    // If you don't set it, API and WEB will share the same resources which is fine for now
     environment: Record<string, string>;
   }[] = [
     {
       containerName: "plutomi-web-container",
       imageDirectory: "../../packages/web",
-      cpu: 120,
-      memoryLimitMiB: 220,
       containerPort: 3000,
       environment: {
         // Make sure to update the Docker image with the latest env vars
@@ -56,14 +55,11 @@ export const createTaskDefinition = ({
         AXIOM_DATASET: env.AXIOM_DATASET,
         AXIOM_TOKEN: env.AXIOM_TOKEN,
         AXIOM_ORG_ID: env.AXIOM_ORG_ID,
-
       },
     },
     {
       containerName: "plutomi-api-container",
       imageDirectory: "../../packages/api",
-      cpu: 120,
-      memoryLimitMiB: 220,
       containerPort: 8080,
       environment: env,
     },
@@ -74,8 +70,7 @@ export const createTaskDefinition = ({
       containerName,
       containerPort,
       imageDirectory,
-      cpu,
-      memoryLimitMiB,
+
       environment,
     }) => {
       taskDefinition.addContainer(containerName, {
@@ -86,8 +81,6 @@ export const createTaskDefinition = ({
           },
         ],
         containerName,
-        cpu,
-        memoryLimitMiB,
         image: ContainerImage.fromAsset(imageDirectory, {
           // Get the NextJS docker image, build it, and push it to ECR
         }),

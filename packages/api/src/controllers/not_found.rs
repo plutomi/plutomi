@@ -37,7 +37,7 @@ pub async fn not_found(
 
     state.logger.log(LogObject {
         level: LogLevel::Error,
-        timestamp: iso_format(time::OffsetDateTime::now_utc()),
+        _time: iso_format(time::OffsetDateTime::now_utc()),
         message: not_found_message,
         data: None,
         error: None,

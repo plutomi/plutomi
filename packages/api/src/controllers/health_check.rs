@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::{
     utils::{
         get_current_time::iso_format,
@@ -8,11 +6,13 @@ use crate::{
     AppState,
 };
 use axum::{extract::State, http::StatusCode, Extension, Json};
-use serde::Serialize;
+use mongodb::{bson::doc, options::FindOneOptions};
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::collections::HashMap;
 use time::OffsetDateTime;
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct HealthCheckResponse {
     message: &'static str,
     database: bool,
@@ -20,10 +20,23 @@ pub struct HealthCheckResponse {
 }
 
 pub async fn health_check(
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     State(state): State<AppState>,
+    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
-    let database = state.mongodb.collection.find_one(None, None).await.is_ok();
+    let options: FindOneOptions = {
+        let mut options = FindOneOptions::default();
+        // This should be less than health check or you can get into a weird state where the health check fails
+        // Because the DB is down but the health check is still running and expecting a response
+        options.max_time = Some(std::time::Duration::from_millis(1000));
+        options
+    };
+
+    let database = state
+        .mongodb
+        .collection
+        .find_one(None, options)
+        .await
+        .is_ok();
 
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
@@ -36,7 +49,7 @@ pub async fn health_check(
             true => LogLevel::Info,
             false => LogLevel::Error,
         },
-        timestamp: iso_format(OffsetDateTime::now_utc()),
+        _time: iso_format(OffsetDateTime::now_utc()),
         message: "Health check response".to_string(),
         data: None,
         error: None,

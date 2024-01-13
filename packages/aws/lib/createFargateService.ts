@@ -55,6 +55,7 @@ export const createFargateService = ({
   const cluster = new Cluster(stack, clusterName, {
     clusterName,
     vpc,
+    containerInsights: true,
   });
   const fargateService = new FargateService(stack, "plutomi-fargate-service", {
     cluster,
@@ -62,8 +63,16 @@ export const createFargateService = ({
       subnets: vpc.privateSubnets,
     },
     taskDefinition,
-    desiredCount: 2,
+    // desiredCount: 1, // Do not use this as it resets the deployment
     serviceName,
+    minHealthyPercent: 100,
+    maxHealthyPercent: 200,
+  });
+
+  // "Scaling"
+  const scaling = fargateService.autoScaleTaskCount({
+    minCapacity: 2,
+    maxCapacity: 2,
   });
 
   const loadBalancer = new ApplicationLoadBalancer(stack, loadBalancerName, {
@@ -84,7 +93,6 @@ export const createFargateService = ({
       }),
     ],
   });
-
   // Limit the load balancer to only accept traffic from Cloudflare
   cloudflareIpv4.forEach((ip) => {
     listener.connections.allowFrom(Peer.ipv4(ip), Port.tcp(443));
@@ -107,6 +115,7 @@ export const createFargateService = ({
     port: 8080,
     protocol: ApplicationProtocol.HTTP,
     targetGroupName: apiTargetGroupName,
+
     targets: [
       fargateService.loadBalancerTarget({
         containerName: "plutomi-api-container",
