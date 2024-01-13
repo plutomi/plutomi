@@ -39,13 +39,6 @@ pub async fn health_check(
         .await
         .is_ok();
 
-    state
-        .mongodb
-        .collection
-        .delete_many(doc! {}, None)
-        .await
-        .unwrap();
-
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Health Check Response",
         database,

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     utils::{
-        generate_id::{self, Entities, PlutomiId},
+        generate_id::{Entities, PlutomiId},
         get_current_time::iso_format,
         logger::{LogLevel, LogObject},
     },
@@ -54,6 +54,8 @@ pub async fn write(
     Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     State(state): State<AppState>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
+    // let _x = state.mongodb.collection.find_one(None, None).await.is_ok();
+
     let book = Book {
           _id: PlutomiId::new(&OffsetDateTime::now_utc(), Entities::Book),
           index: 0,
@@ -120,8 +122,6 @@ pub async fn write(
         .unwrap();
 
     println!("Inserted book with id {:?}", insert_one_result.inserted_id);
-
-    println!("Inserted book with id {:?}", insert_one_result.inserted_id);
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
         database: true,
@@ -134,7 +134,7 @@ pub async fn write(
             false => LogLevel::Error,
         },
         _time: iso_format(OffsetDateTime::now_utc()),
-        message: "Health check response".to_string(),
+        message: "Inserted 1".to_string(),
         data: None,
         error: None,
         request: Some(json!(request_as_hashmap)),
