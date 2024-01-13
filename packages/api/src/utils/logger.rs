@@ -167,7 +167,7 @@ impl Logger {
                             // Clear the batch for the next batch
                             log_batch.clear();
                         }
-                        // Reset the timer if we didn't send anything
+                        // Reset the timer to start counting up again
                         timer = Instant::now() + LOG_BATCH_TIME;
                     }
                 }
