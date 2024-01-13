@@ -25,7 +25,6 @@ pub async fn health_check(
 ) -> (StatusCode, Json<HealthCheckResponse>) {
     let options: FindOneOptions = {
         let mut options = FindOneOptions::default();
-        options.projection = Some(doc! { "_id": 1 });
         // This should be less than health check or you can get into a weird state where the health check fails
         // Because the DB is down but the health check is still running and expecting a response
         options.max_time = Some(std::time::Duration::from_millis(1000));
