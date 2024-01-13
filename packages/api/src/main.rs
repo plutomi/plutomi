@@ -47,10 +47,10 @@ async fn main() {
 
     // ! TODO: ADD TIMEOUT MIDDLEWARE
     let app = Router::new()
-        .fallback(get(|| async {
-            // Load balancer will prevent this from being hit in prod
-            "It looks like you're testing locally! Make sure to add `/api/` - checkout the main.rs file for the routes."
-        }))
+        .fallback(|| async {
+            // Load balancer targets will prevent this from being hit in prod
+            "It looks like you're testing locally! Make sure to add `/api/` to the API route - checkout the `main.rs` file for more info."
+        })
         .nest(
             "/api",
             Router::new()
