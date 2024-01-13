@@ -20,6 +20,9 @@ pub enum Entities {
     // Invite,
     // Application,
     // Stage,
+    // We don't need a `Response` entity because Responses will
+    // have the Request + ID so for any debugging purposes, we can retrieve
+    // everything for a request including the response, by using the Request ID
     Request,
     // Webhook,
     // ApiKey,
