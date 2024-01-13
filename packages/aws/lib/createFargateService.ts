@@ -57,7 +57,6 @@ export const createFargateService = ({
     vpc,
     containerInsights: true,
   });
-  // ! TODO: BUMP RESOURCES
   const fargateService = new FargateService(stack, "plutomi-fargate-service", {
     cluster,
     vpcSubnets: {
@@ -66,14 +65,14 @@ export const createFargateService = ({
     taskDefinition,
     // desiredCount: 1, // Do not use this as it resets the deployment
     serviceName,
-    minHealthyPercent: 50,
-    maxHealthyPercent: 600,
+    minHealthyPercent: 100,
+    maxHealthyPercent: 200,
   });
 
   // "Scaling"
   const scaling = fargateService.autoScaleTaskCount({
-    minCapacity: 6,
-    maxCapacity: 6,
+    minCapacity: 2,
+    maxCapacity: 2,
   });
 
   const loadBalancer = new ApplicationLoadBalancer(stack, loadBalancerName, {
@@ -94,7 +93,6 @@ export const createFargateService = ({
       }),
     ],
   });
-
   // Limit the load balancer to only accept traffic from Cloudflare
   cloudflareIpv4.forEach((ip) => {
     listener.connections.allowFrom(Peer.ipv4(ip), Port.tcp(443));

@@ -3,7 +3,7 @@ use axum::{
     routing::{delete, get, post},
     Router,
 };
-use controllers::{create_totp, delete_many, health_check, method_not_allowed, not_found, write};
+use controllers::{create_totp, delete_many, health_check, method_not_allowed, not_found};
 use dotenv::dotenv;
 use serde_json::json;
 use structs::app_state::AppState;
@@ -57,7 +57,6 @@ async fn main() {
                 .merge(totp_routes)
                 .route("/health", get(health_check))
                 .route("/delete", delete(delete_many))
-                .route("/write", get(write))
                 .fallback(not_found)
                 .layer(
                     // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
