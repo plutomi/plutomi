@@ -123,13 +123,11 @@ impl Logger {
 
         // Spawn the logging thread
         tokio::spawn(async move {
-            //
             let mut log_batch: Vec<LogObject> = Vec::new();
             let mut timer = Instant::now() + LOG_BATCH_TIME;
 
-            receiver.recv().await;
             loop {
-                // Check for messages & start a timer, call whichever comes first
+                // Check for messages & start a timer in parallel, call whichever comes first
                 tokio::select! {
                     // Receive log messages
                     Some(log) = receiver.recv() => {
@@ -170,7 +168,7 @@ impl Logger {
                             log_batch.clear();
                         }
                         // Reset the timer if we didn't send anything
-                        timer = Instant::now() + LOG_BATCH_TIME; // Reset the timer
+                        timer = Instant::now() + LOG_BATCH_TIME;
                     }
                 }
             }
