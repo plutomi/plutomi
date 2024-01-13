@@ -15,7 +15,7 @@ pub struct PlutomiId([u8; TOTAL_BYTES]);
 pub enum Entities {
     // User,
     // Org,
-    // Membership, 
+    // Membership,
     // Workspace,
     // Invite,
     // Application,
@@ -64,8 +64,7 @@ impl PlutomiId {
 
         // Fill the remaining bytes in the buffer with random data for the payload
         // thread_rng is much faster than getrandom
-        let mut rng = thread_rng();
-        rng.fill(&mut buf[TIMESTAMP_BYTES..]);
+        thread_rng().fill(&mut buf[TIMESTAMP_BYTES..]);
 
         // Combine the entity prefix with the base62 encoded PlutomiId
         // req_0021J7zl6n38lTB2TwiTkIIQ9KF
