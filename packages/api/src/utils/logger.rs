@@ -9,10 +9,11 @@ use tokio::{
 use tracing::{debug, error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
 
+// Max number of logs to buffer in a channel before overflowing
 const MAX_LOG_BUFFER_LENGTH: usize = 10000;
-// max number of logs to send in a batch
+// Max number of logs to send in a batch
 const LOG_BATCH_SIZE: usize = 100;
-// time to wait before sending the batch
+// Time to wait before sending the batch of logs
 const LOG_BATCH_TIME: Duration = Duration::from_secs(5);
 
 #[derive(Serialize, Debug)]
