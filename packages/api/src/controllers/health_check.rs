@@ -40,13 +40,13 @@ pub async fn health_check(
         .is_ok();
 
     let response: HealthCheckResponse = HealthCheckResponse {
-        message: "Health Check Response",
+        message: "Saul Goodman",
         database,
         environment: state.env.NEXT_PUBLIC_ENVIRONMENT,
     };
 
     state.logger.log(LogObject {
-        level: match true {
+        level: match database {
             true => LogLevel::Info,
             false => LogLevel::Error,
         },
