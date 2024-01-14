@@ -83,6 +83,8 @@ export const setupSES = ({ stack }: SetupSESProps) => {
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../functions/sesEventProcessor.ts"),
       logRetention: RetentionDays.ONE_WEEK,
+      // This needs to be higher than maxConcurrency in the event source
+      reservedConcurrentExecutions: 3,
       memorySize: 128,
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
@@ -93,6 +95,7 @@ export const setupSES = ({ stack }: SetupSESProps) => {
   eventProcessor.addEventSource(
     new SqsEventSource(sesEventsQueue, {
       batchSize: 1,
+      maxConcurrency: 2,
     })
   );
 };
