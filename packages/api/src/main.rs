@@ -1,6 +1,6 @@
 use axum::{
     middleware::{self},
-    routing::{delete, get, post},
+    routing::{get, post},
     Router,
 };
 use controllers::{create_totp, health_check, method_not_allowed, not_found};
@@ -15,6 +15,7 @@ use utils::{
     log_req_res::log_req_res,
     logger::{LogLevel, LogObject, Logger},
     mongodb::connect_to_mongodb,
+    timeout::timeout,
 };
 
 mod consts;
@@ -63,6 +64,7 @@ async fn main() {
                         // log_req_res should be the first middleware *always* as it handles incoming
                         // and outgoing requests logging
                         .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
+                        .layer(middleware::from_fn_with_state(state.clone(), timeout))
                         .layer(middleware::from_fn_with_state(
                             state.clone(),
                             method_not_allowed,
