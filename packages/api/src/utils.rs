@@ -9,3 +9,4 @@ pub mod logger;
 pub mod mongodb;
 pub mod parse_request;
 pub mod parse_response;
+pub mod timeout;
