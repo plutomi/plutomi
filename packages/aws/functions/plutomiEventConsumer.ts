@@ -1,5 +1,5 @@
 export const handler = async (event: any) => {
-  console.log("LAMBDA START");
+  console.log("EVENT PROCESSOR LAMBDA START");
 
   console.log(event);
 

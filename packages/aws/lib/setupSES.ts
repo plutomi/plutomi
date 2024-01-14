@@ -74,14 +74,14 @@ export const setupSES = ({ stack }: SetupSESProps) => {
     mailFromDomain,
   });
 
-  const eventProcessor = new NodejsFunction(
+  const eventConsumerFunction = new NodejsFunction(
     // ! TODO: Switch to rust
     stack,
     sesEventsProcessorFunctionName,
     {
       functionName: sesEventsProcessorFunctionName,
       runtime: Runtime.NODEJS_LATEST,
-      entry: path.join(__dirname, "../functions/sesEventProcessor.ts"),
+      entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
       logRetention: RetentionDays.ONE_WEEK,
       // This needs to be higher than maxConcurrency in the event source
       reservedConcurrentExecutions: 3,
@@ -92,7 +92,7 @@ export const setupSES = ({ stack }: SetupSESProps) => {
     }
   );
 
-  eventProcessor.addEventSource(
+  eventConsumerFunction.addEventSource(
     new SqsEventSource(sesEventsQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
       // Implement batch processing AND partial failures

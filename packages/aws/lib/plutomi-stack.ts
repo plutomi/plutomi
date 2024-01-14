@@ -19,11 +19,13 @@ export class PlutomiStack extends Stack {
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
+
     const fargateService = createFargateService({
       stack: this,
       taskDefinition,
       vpc,
       natGatewayProvider,
+      eventBus,
     });
   }
 }
