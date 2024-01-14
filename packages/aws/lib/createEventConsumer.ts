@@ -35,6 +35,7 @@ export const createEventConsumer = ({
     stack,
     eventConsumerFunctionName,
     {
+      // TODO should be in rust
       functionName: eventConsumerFunctionName,
       entry: path.join(__dirname, "../functions/plutomiEventConsumer.ts"),
       handler: "handler",
@@ -64,5 +65,7 @@ export const createEventConsumer = ({
   );
 
   // Allow the lambda function to put events back into the event bus if needed
+  // For example, we might consume a scheduled.rule.deleted event so we should delete any pending scheduled events for that rule
+  // ie: "Move applicants to the next stage if idle for 30 days" -> If that rule is deleted, we no longer want to do this so we should delete all scheduled events.
   eventBus.grantPutEventsTo(eventConsumerFunction);
 };
