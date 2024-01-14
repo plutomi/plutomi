@@ -40,7 +40,8 @@ export const createEventConsumer = ({
       entry: path.join(__dirname, "../functions/plutomiEventConsumer.ts"),
       handler: "handler",
       runtime: Runtime.NODEJS_LATEST,
-      reservedConcurrentExecutions: 3,
+      // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/
+      //  reservedConcurrentExecutions: 3,
       memorySize: 128,
       timeout: Duration.seconds(30),
       logRetention: RetentionDays.ONE_WEEK,

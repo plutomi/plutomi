@@ -84,7 +84,8 @@ export const setupSES = ({ stack }: SetupSESProps) => {
       entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
       logRetention: RetentionDays.ONE_WEEK,
       // This needs to be higher than maxConcurrency in the event source
-      reservedConcurrentExecutions: 3,
+      // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
+      //  reservedConcurrentExecutions: 3,
       memorySize: 128,
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
