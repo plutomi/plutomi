@@ -94,8 +94,13 @@ export const setupSES = ({ stack }: SetupSESProps) => {
 
   eventProcessor.addEventSource(
     new SqsEventSource(sesEventsQueue, {
-      batchSize: 1,
+      // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
+      // Implement batch processing AND partial failures
+      // https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html event.Records
+      batchSize: 100,
+      maxBatchingWindow: Duration.minutes(1),
       maxConcurrency: 2,
+      reportBatchItemFailures: true,
     })
   );
 };
