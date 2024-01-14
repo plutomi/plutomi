@@ -89,6 +89,10 @@ export const setupSES = ({ stack }: SetupSESProps) => {
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
       description: "Processes SES events.",
+      environment: {
+        QUEUE_URL: sesEventsQueue.queueUrl,
+        ...env,
+      },
     }
   );
 

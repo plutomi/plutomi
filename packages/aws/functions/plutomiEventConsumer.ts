@@ -1,5 +1,5 @@
 export const handler = async (event: any) => {
-  console.log("EVENT PROCESSOR LAMBDA START");
+  console.log("PLUTOMI EVENT CONSUMER LAMBDA START");
 
   console.log(event);
 
