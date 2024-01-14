@@ -23,7 +23,7 @@ pub async fn timeout(
 ) -> impl IntoResponse {
     // Call the next middleware and timeout after 5 seconds
     // Send a response if the timeout is hit
-    match tokio::time::timeout(std::time::Duration::from_secs(1), next.run(request)).await {
+    match tokio::time::timeout(std::time::Duration::from_secs(10), next.run(request)).await {
         Ok(response) => response,
         Err(_) => {
             let status = StatusCode::REQUEST_TIMEOUT;
