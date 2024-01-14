@@ -74,7 +74,7 @@ export const setupSES = ({ stack }: SetupSESProps) => {
     mailFromDomain,
   });
 
-  const eventConsumerFunction = new NodejsFunction(
+  const sesEventConsumerFunction = new NodejsFunction(
     // ! TODO: Switch to rust
     stack,
     sesEventsProcessorFunctionName,
@@ -96,7 +96,7 @@ export const setupSES = ({ stack }: SetupSESProps) => {
     }
   );
 
-  eventConsumerFunction.addEventSource(
+  sesEventConsumerFunction.addEventSource(
     new SqsEventSource(sesEventsQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
       // Implement batch processing AND partial failures
