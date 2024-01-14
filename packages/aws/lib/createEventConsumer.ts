@@ -42,7 +42,7 @@ export const createEventConsumer = ({
       runtime: Runtime.NODEJS_LATEST,
       reservedConcurrentExecutions: 3,
       memorySize: 128,
-      timeout: Duration.seconds(600),
+      timeout: Duration.seconds(30),
       logRetention: RetentionDays.ONE_WEEK,
       environment: {
         EVENT_BUS_NAME: eventBus.eventBusName,
