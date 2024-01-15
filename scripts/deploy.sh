@@ -13,7 +13,7 @@ print_error_and_exit() {
 
 # Default values
 stack=""
-environment="development" # Default to 'development' if no environment is provided
+environment="" # Default to 'development' if no environment is provided
 
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
@@ -27,6 +27,7 @@ done
 
 # Validate environment
 [[ "$environment" =~ ^(staging|production|development)$ ]] || print_error_and_exit "Invalid environment: '$environment'. Must be 'staging', 'production', or 'development'."
+
 
 
 deploy_aws() {
@@ -44,8 +45,17 @@ deploy_aws() {
 
     echo "Deploying AWS with environment: $environment and profile: $AWS_PROFILE"
     
-    cd packages/aws
-    # export NEXT_PUBLIC_ENVIRONMENT=$environment
+
+    # Build the SES events processor
+    cd packages/consumers/ses-events
+    cargo lambda build --release --output-format zip --arm64
+
+    # Build the Plutomi events processor
+    cd ../plutomi-events
+    cargo lambda build --release --output-format zip --arm64
+
+
+    cd ../../aws
     npm run deploy -- --profile $AWS_PROFILE
     )
 }

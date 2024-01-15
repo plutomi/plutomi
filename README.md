@@ -14,6 +14,8 @@ You can create `applications` which people can apply to. An application can be a
 
 In these applications, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `responses` or after a certain time period.
 
+## TODO update diagram to show rust lambda functions
+
 An application for a delivery company might look like this:
 
 **New York City**
@@ -64,6 +66,10 @@ $ scripts/deploy.sh --stack <aws> --env <development|staging|production>
 If you omit a stack, all of them (just 1 for now!) will be deployed. If you omit an environment, `development` will be used.
 
 ## AWS
+
+### TDO add this to consumers
+
+https://github.com/awslabs/aws-lambda-rust-runtime
 
 To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [setupSES.ts](./packages/aws/lib/setupSES.ts). Change directories into `packages/aws` and install dependencies and copy the `.env.sample` file...
 

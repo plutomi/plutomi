@@ -1,8 +1,8 @@
 import { Duration, Stack } from "aws-cdk-lib";
 import { EventBus } from "aws-cdk-lib/aws-events";
-import { Runtime } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { Function } from "aws-cdk-lib/aws-lambda";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import path = require("path");
@@ -13,8 +13,8 @@ type CreateEventConsumerProps = {
   eventBus: EventBus;
 };
 
-const plutomiEventConsumerQueueName = "plutomi-event-consumer-queue";
-const plutomiEventConsumerFunctionName = "plutomi-event-consumer";
+const plutomiEventConsumerQueueName = "plutomi-events-consumer-queue";
+const plutomiEventConsumerFunctionName = "plutomi-events-consumer";
 /**
  * Creates a queue and a lambda function that consumes events from the event bus.
  * In the future, we would like to support multiple event consumers / queues but for now this is fine.
@@ -31,25 +31,29 @@ export const createEventConsumer = ({
     receiveMessageWaitTime: Duration.seconds(20),
   });
 
-  const plutomiEventConsumerFunction = new NodejsFunction(
+  const plutomiEventConsumerFunction = new Function(
     stack,
     plutomiEventConsumerFunctionName,
     {
-      // TODO should be in rust
+      runtime: Runtime.PROVIDED_AL2,
+      handler: "main",
       functionName: plutomiEventConsumerFunctionName,
-      entry: path.join(__dirname, "../functions/plutomiEventConsumer.ts"),
-      handler: "handler",
-      runtime: Runtime.NODEJS_LATEST,
-      // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/
-      //  reservedConcurrentExecutions: 3,
       memorySize: 128,
-      timeout: Duration.seconds(30),
       logRetention: RetentionDays.ONE_WEEK,
+      timeout: Duration.seconds(30),
+      architecture: Architecture.ARM_64,
+      description: "Processes SES events.",
       environment: {
         EVENT_BUS_NAME: eventBus.eventBusName,
         QUEUE_URL: eventConsumerQueue.queueUrl,
         ...env,
       },
+      code: Code.fromAsset(
+        path.join(
+          __dirname,
+          "../../../packages/consumers/ses-events/target/lambda/plutomi-events/Bootstrap.zip"
+        )
+      ),
     }
   );
 
@@ -59,6 +63,7 @@ export const createEventConsumer = ({
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
       // Implement batch processing AND partial failures
       // https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html event.Records
+      // TODO Do we want to do this or process right away?
       batchSize: 100,
       maxBatchingWindow: Duration.minutes(1),
       maxConcurrency: 2,

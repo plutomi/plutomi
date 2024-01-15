@@ -1,6 +1,7 @@
 import { Stack, Duration } from "aws-cdk-lib";
-import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { Function } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import {
@@ -21,7 +22,7 @@ type SetupSESProps = {
 
 const sesEventsTopicName = "ses-events-topic";
 const configurationSetEventDestinationName = "ses-event-destination";
-const sesEventsProcessorFunctionName = "ses-events-processor";
+const sesEventsProcessorFunctionName = "ses-events-consumer";
 const sesEmailIdentityName = `ses-identity`;
 const configurationSetName = `ses-configuration-set`;
 const sesEventsQueueName = `ses-events-queue`;
@@ -74,19 +75,15 @@ export const setupSES = ({ stack }: SetupSESProps) => {
     mailFromDomain,
   });
 
-  const sesEventConsumerFunction = new NodejsFunction(
-    // ! TODO: Switch to rust
+  const sesEventConsumerFunction = new Function(
     stack,
     sesEventsProcessorFunctionName,
     {
+      runtime: Runtime.PROVIDED_AL2,
+      handler: "main",
       functionName: sesEventsProcessorFunctionName,
-      runtime: Runtime.NODEJS_LATEST,
-      entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
-      logRetention: RetentionDays.ONE_WEEK,
-      // This needs to be higher than maxConcurrency in the event source
-      // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
-      //  reservedConcurrentExecutions: 3,
       memorySize: 128,
+      logRetention: RetentionDays.ONE_WEEK,
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
       description: "Processes SES events.",
@@ -94,8 +91,36 @@ export const setupSES = ({ stack }: SetupSESProps) => {
         QUEUE_URL: sesEventsQueue.queueUrl,
         ...env,
       },
+      code: Code.fromAsset(
+        path.join(
+          __dirname,
+          "../../../packages/consumers/ses-events/target/lambda/ses-events/Bootstrap.zip"
+        )
+      ),
     }
   );
+  // const sesEventConsumerFunction = new NodejsFunction(
+  //   // ! TODO: Switch to rust
+  //   stack,
+  //   sesEventsProcessorFunctionName,
+  //   {
+  //     functionName: sesEventsProcessorFunctionName,
+  //     runtime: Runtime.NODEJS_LATEST,
+  //     entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
+  //     logRetention: RetentionDays.ONE_WEEK,
+  //     // This needs to be higher than maxConcurrency in the event source
+  //     // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
+  //     //  reservedConcurrentExecutions: 3,
+  //     memorySize: 128,
+  //     timeout: Duration.seconds(30),
+  //     architecture: Architecture.ARM_64,
+  //     description: "Processes SES events.",
+  //     environment: {
+  //       QUEUE_URL: sesEventsQueue.queueUrl,
+  //       ...env,
+  //     },
+  //   }
+  // );
 
   sesEventConsumerFunction.addEventSource(
     new SqsEventSource(sesEventsQueue, {
