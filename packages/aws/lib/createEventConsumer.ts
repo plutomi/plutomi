@@ -13,7 +13,7 @@ type CreateEventConsumerProps = {
   eventBus: EventBus;
 };
 
-const plutomiEventConsumerQueueName = "plutomi-events-consumer-queue";
+const plutomiEventConsumerQueueName = "plutomi-events-queue";
 const plutomiEventConsumerFunctionName = "plutomi-events-consumer";
 /**
  * Creates a queue and a lambda function that consumes events from the event bus.
