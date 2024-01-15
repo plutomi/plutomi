@@ -84,6 +84,9 @@ export const setupSES = ({ stack }: SetupSESProps) => {
       functionName: sesEventsProcessorFunctionName,
       memorySize: 128,
       logRetention: RetentionDays.ONE_WEEK,
+      // This needs to be higher than maxConcurrency in the event source
+      // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
+      //  reservedConcurrentExecutions: 3,
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
       description: "Processes SES events.",
@@ -99,28 +102,6 @@ export const setupSES = ({ stack }: SetupSESProps) => {
       ),
     }
   );
-  // const sesEventConsumerFunction = new NodejsFunction(
-  //   // ! TODO: Switch to rust
-  //   stack,
-  //   sesEventsProcessorFunctionName,
-  //   {
-  //     functionName: sesEventsProcessorFunctionName,
-  //     runtime: Runtime.NODEJS_LATEST,
-  //     entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
-  //     logRetention: RetentionDays.ONE_WEEK,
-  //     // This needs to be higher than maxConcurrency in the event source
-  //     // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
-  //     //  reservedConcurrentExecutions: 3,
-  //     memorySize: 128,
-  //     timeout: Duration.seconds(30),
-  //     architecture: Architecture.ARM_64,
-  //     description: "Processes SES events.",
-  //     environment: {
-  //       QUEUE_URL: sesEventsQueue.queueUrl,
-  //       ...env,
-  //     },
-  //   }
-  // );
 
   sesEventConsumerFunction.addEventSource(
     new SqsEventSource(sesEventsQueue, {

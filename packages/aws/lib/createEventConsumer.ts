@@ -42,6 +42,9 @@ export const createEventConsumer = ({
       logRetention: RetentionDays.ONE_WEEK,
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
+      // This needs to be higher than maxConcurrency in the event source
+      // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
+      //  reservedConcurrentExecutions: 3,
       description: "Processes SES events.",
       environment: {
         EVENT_BUS_NAME: eventBus.eventBusName,
@@ -51,7 +54,7 @@ export const createEventConsumer = ({
       code: Code.fromAsset(
         path.join(
           __dirname,
-          "../../../packages/consumers/ses-events/target/lambda/plutomi-events/Bootstrap.zip"
+          "../../../packages/consumers/plutomi-events/target/lambda/plutomi-events/Bootstrap.zip"
         )
       ),
     }
