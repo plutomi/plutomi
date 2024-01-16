@@ -25,6 +25,8 @@ export const createEventConsumer = ({
 }: CreateEventConsumerProps) => {
   const eventConsumerQueue = new Queue(stack, plutomiEventConsumerQueueName, {
     queueName: plutomiEventConsumerQueueName,
+    // ! TODO: ADD VPC ADD VPC
+
     retentionPeriod: Duration.days(14),
     visibilityTimeout: Duration.seconds(30),
     // Long polling

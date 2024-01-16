@@ -14,7 +14,6 @@ export default function Page() {
           <div className="w-full ">
             <UseCaseCards />
           </div>
-
           <div className="pt-8 flex flex-col items-center space-y-4">
             <LatestCommits />
             <HomepageFooter />

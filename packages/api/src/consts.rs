@@ -27,6 +27,7 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "docs",
     "documentation",
     "blog",
+    "stats",
     "news",
     "press",
     "about",

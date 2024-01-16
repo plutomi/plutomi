@@ -1,18 +1,17 @@
-import { orderBy } from "lodash";
-import { Commit, type CommitType } from "./Commit";
-import { delay } from "@/utils";
+import { Commit } from "./Commit";
 
-const numOfCommits = 3;
+import { CommitType } from "@/components";
+import { orderBy } from "lodash";
+
+const numOfCommits = 2;
 const revalidateHours = 24;
 
-async function getCommits() {
+export async function getCommits() {
+  "use server";
   const allCommits: CommitType[] = [];
 
   let response = await fetch(
-    `https://api.github.com/repos/plutomi/plutomi/commits`,
-    {
-      next: { revalidate: 60 * 60 * revalidateHours }
-    }
+    `https://api.github.com/repos/plutomi/plutomi/commits`
   );
 
   if (!response.ok) {
@@ -108,7 +107,7 @@ export default async function LatestCommits() {
     <div className="space-y-2">
       {commits ? (
         <>
-          <p className="text-2xl font-bold">Latest changes</p>
+          <p className="text-2xl font-bold">Latest changes should be 2</p>
           <hr></hr>
           {commits.map((commit) => (
             <Commit {...commit} key={commit.message} />
