@@ -57,22 +57,19 @@ The script also has hot reloading for both so you can make changes and see them 
 
 ### Deploying
 
-```bash
-$ scripts/deploy.sh --stack <aws> --env <development|staging|production>
-```
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [setupSES.ts](./packages/aws/lib/setupSES.ts).
 
-If you omit a stack, all of them (just 1 for now!) will be deployed. If you omit an environment, `development` will be used.
-
-## AWS
-
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [setupSES.ts](./packages/aws/lib/setupSES.ts). Change directories into `packages/aws` and install dependencies and copy the `.env.sample` file...
+Change directories into `packages/aws`, install dependencies, and set up the environment-specific `.env` files and modify the values as needed.
 
 ```bash
+$ cd packages/aws
 $ npm install
-$ cp .env.sample .env
+$ cp .env.sample .env.development
+$ cp .env.sample .env.staging
+$ cp .env.sample .env.production
 ```
 
-...modify the values as needed, then you can go back to the root and deploy.
+Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`.
 
 After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
 
