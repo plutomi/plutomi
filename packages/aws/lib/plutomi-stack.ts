@@ -6,7 +6,7 @@ import { createTaskRole } from "./createTaskRole";
 import { createTaskDefinition } from "./createTaskDefinition";
 import { createFargateService } from "./createFargateService";
 import { env } from "../utils/env";
-import { createEventConsumer } from "./createEventConsumer";
+import { createEventsArchitecture } from "./createEventsArchitecture";
 
 export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -19,7 +19,7 @@ export class PlutomiStack extends Stack {
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
 
-    createEventConsumer({ stack: this });
+    createEventsArchitecture({ stack: this });
 
     createFargateService({
       stack: this,

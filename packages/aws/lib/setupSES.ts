@@ -21,7 +21,7 @@ type SetupSESProps = {
 
 const sesEventsTopicName = "ses-events-topic";
 const configurationSetEventDestinationName = "ses-event-destination";
-const sesEventsProcessorFunctionName = "ses-events-processor";
+const sesEventsConsumerName = "ses-events-consumer";
 const sesEmailIdentityName = `ses-identity`;
 const configurationSetName = `ses-configuration-set`;
 const sesEventsQueueName = `ses-events-queue`;
@@ -79,9 +79,9 @@ export const setupSES = ({ stack }: SetupSESProps) => {
   const sesEventConsumerFunction = new NodejsFunction(
     // ! TODO: Switch to rust
     stack,
-    sesEventsProcessorFunctionName,
+    sesEventsConsumerName,
     {
-      functionName: sesEventsProcessorFunctionName,
+      functionName: sesEventsConsumerName,
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
       logRetention: RetentionDays.ONE_WEEK,

@@ -4,35 +4,50 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
-import { Queue } from "aws-cdk-lib/aws-sqs";
+import {
+  DeduplicationScope,
+  FifoThroughputLimit,
+  Queue,
+} from "aws-cdk-lib/aws-sqs";
 import path = require("path");
 import { env } from "../utils/env";
 
-type CreateEventConsumerProps = {
+type createEventsArchitectureProps = {
   stack: Stack;
 };
 
-const plutomiEventConsumerQueueName = "plutomi-event-consumer-queue";
-const plutomiEventConsumerFunctionName = "plutomi-event-consumer";
+const queueName = "plutomi-events-queue.fifo";
+const eventConsumerName = "plutomi-events-consumer";
 /**
- * Creates a queue and a lambda function that consumes events from the event bus.
- * In the future, we would like to support multiple event consumers / queues but for now this is fine.
+ * Creates a FIFO queue and a lambda function that consumes events sent into it.
+ * This does not include SES events, which are handled in setupSES.ts due to it not supporting FIFO
+ * and us not caring about that being FIFO.
+ * In the future, we would like to support multiple event consumers / queues but this is more than fine for now
+ * especially due to high throughput mode.
  */
-export const createEventConsumer = ({ stack }: CreateEventConsumerProps) => {
-  const eventConsumerQueue = new Queue(stack, plutomiEventConsumerQueueName, {
-    queueName: plutomiEventConsumerQueueName,
+export const createEventsArchitecture = ({
+  stack,
+}: createEventsArchitectureProps) => {
+  const eventConsumerQueue = new Queue(stack, queueName, {
+    queueName,
     retentionPeriod: Duration.days(14),
     visibilityTimeout: Duration.seconds(30),
     // Long polling
     receiveMessageWaitTime: Duration.seconds(20),
+    // FIFO related stuff
+    fifo: true,
+    contentBasedDeduplication: true,
+    // Required for high throughput mode
+    deduplicationScope: DeduplicationScope.MESSAGE_GROUP,
+    fifoThroughputLimit: FifoThroughputLimit.PER_MESSAGE_GROUP_ID,
   });
 
   const plutomiEventConsumerFunction = new NodejsFunction(
     stack,
-    plutomiEventConsumerFunctionName,
+    eventConsumerName,
     {
       // TODO should be in rust
-      functionName: plutomiEventConsumerFunctionName,
+      functionName: eventConsumerName,
       entry: path.join(__dirname, "../functions/plutomiEventConsumer.ts"),
       handler: "handler",
       runtime: Runtime.NODEJS_LATEST,
@@ -47,14 +62,12 @@ export const createEventConsumer = ({ stack }: CreateEventConsumerProps) => {
     }
   );
 
-  //  Add the queue as an event source to the lambda function
+  // Add the queue as an event source to the lambda function
   plutomiEventConsumerFunction.addEventSource(
     new SqsEventSource(eventConsumerQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
-      // Implement batch processing AND partial failures
-      // https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html event.Records
-      batchSize: 100,
-      maxBatchingWindow: Duration.minutes(1),
+      // batchSize: 100, // FIFO max is 10, and since we're doing fifo just process them as they come in
+      // maxBatchingWindow // Not supported for FIFO
       maxConcurrency: 2,
       reportBatchItemFailures: true,
     })
