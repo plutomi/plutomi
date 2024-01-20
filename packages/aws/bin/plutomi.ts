@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+import * as dotenv from "dotenv";
+const environment = process.env.NEXT_PUBLIC_ENVIRONMENT || "development";
+dotenv.config({ path: `../.env.${environment}` });
+
 require("dotenv").config();
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
