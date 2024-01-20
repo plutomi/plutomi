@@ -37,6 +37,7 @@ type CreateFargateServiceProps = {
   taskDefinition: FargateTaskDefinition;
   vpc: Vpc;
   natGatewayProvider: FckNatInstanceProvider;
+  eventBus: EventBus;
 };
 
 const serviceName = "plutomi-service";
@@ -52,6 +53,7 @@ export const createFargateService = ({
   taskDefinition,
   vpc,
   natGatewayProvider,
+  eventBus,
 }: CreateFargateServiceProps): FargateService => {
   const cluster = new Cluster(stack, clusterName, {
     clusterName,
@@ -181,6 +183,9 @@ export const createFargateService = ({
       deregistrationDelaySeconds.toString()
     );
   });
+
+  // Allow the task definition to put events on the event bus
+  eventBus.grantPutEventsTo(taskDefinition.taskRole);
 
   // Scaling
   //   const scalingPeriodInSeconds = 60;
