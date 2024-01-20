@@ -22,8 +22,9 @@ const eventConsumerName = "plutomi-events-consumer";
  * Creates a FIFO queue and a lambda function that consumes events sent into it.
  * This does not include SES events, which are handled in setupSES.ts due to it not supporting FIFO
  * and us not caring about that being FIFO.
- * In the future, we would like to support multiple event consumers / queues but this is more than fine for now
- * especially due to high throughput mode.
+ * In the future, we would like to support multiple event consumers / queues
+ * but this is more than fine for now especially due to high throughput mode.
+ *
  */
 export const createEventsArchitecture = ({
   stack,
