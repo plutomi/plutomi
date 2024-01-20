@@ -69,9 +69,7 @@ $ cp .env.sample .env.staging
 $ cp .env.sample .env.production
 ```
 
-Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`.
-
-After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
+Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`. 
 
 ![SES DNS Records](./images/ses-setup.png)
 
