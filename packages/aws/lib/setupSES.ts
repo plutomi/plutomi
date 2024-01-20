@@ -30,6 +30,7 @@ export const setupSES = ({ stack }: SetupSESProps) => {
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
     displayName: sesEventsTopicName,
     topicName: sesEventsTopicName,
+    // fifo: true,
   });
 
   const sesEventsQueue = new Queue(stack, sesEventsQueueName, {
