@@ -30,6 +30,7 @@ export const setupSES = ({ stack }: SetupSESProps) => {
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
     displayName: sesEventsTopicName,
     topicName: sesEventsTopicName,
+    // Not available :( https://docs.aws.amazon.com/ses/latest/dg/configure-sns-notifications.html
     // fifo: true,
   });
 
