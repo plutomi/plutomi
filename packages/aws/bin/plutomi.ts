@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import * as dotenv from "dotenv";
+import * as path from "path";
 const environment = process.env.NEXT_PUBLIC_ENVIRONMENT || "development";
-dotenv.config({ path: `../.env.${environment}` });
+dotenv.config({ path: path.resolve(__dirname, `../.env.${environment}`) });
 
-require("dotenv").config();
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 import { PlutomiStack } from "../lib/plutomi-stack";

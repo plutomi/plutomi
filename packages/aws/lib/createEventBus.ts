@@ -9,7 +9,6 @@ type CreateEventBusProps = {
 };
 
 /**
- *
  * Creates a custom event bus to process Plutomi events.
  */
 export const createEventBus = ({ stack }: CreateEventBusProps): EventBus => {

@@ -8,23 +8,24 @@ import { Queue } from "aws-cdk-lib/aws-sqs";
 import path = require("path");
 import { env } from "../utils/env";
 
-type CreateEventConsumerProps = {
+type CreateEventsConsumerProps = {
   stack: Stack;
   eventBus: EventBus;
 };
 
-const plutomiEventConsumerQueueName = "plutomi-event-consumer-queue";
-const plutomiEventConsumerFunctionName = "plutomi-event-consumer";
+const queueName = "plutomi-events-queue";
+const eventConsumerName = "plutomi-events-consumer";
 /**
  * Creates a queue and a lambda function that consumes events from the event bus.
- * In the future, we would like to support multiple event consumers / queues but for now this is fine.
+ * In the future we would like to support multiple event consumers / queues but for now this is fine.
+ * The EventBridge setup that we have allows that easily.
  */
-export const createEventConsumer = ({
+export const createEventsConsumer = ({
   stack,
   eventBus,
-}: CreateEventConsumerProps) => {
-  const eventConsumerQueue = new Queue(stack, plutomiEventConsumerQueueName, {
-    queueName: plutomiEventConsumerQueueName,
+}: CreateEventsConsumerProps) => {
+  const eventConsumerQueue = new Queue(stack, queueName, {
+    queueName,
     retentionPeriod: Duration.days(14),
     visibilityTimeout: Duration.seconds(30),
     // Long polling
@@ -33,13 +34,14 @@ export const createEventConsumer = ({
 
   const plutomiEventConsumerFunction = new NodejsFunction(
     stack,
-    plutomiEventConsumerFunctionName,
+    eventConsumerName,
     {
       // TODO should be in rust
-      functionName: plutomiEventConsumerFunctionName,
+      functionName: eventConsumerName,
       entry: path.join(__dirname, "../functions/plutomiEventConsumer.ts"),
       handler: "handler",
       runtime: Runtime.NODEJS_LATEST,
+      // Needs to be higher than maxConcurrency in addEventSource
       reservedConcurrentExecutions: 3,
       memorySize: 128,
       timeout: Duration.seconds(30),
@@ -52,21 +54,22 @@ export const createEventConsumer = ({
     }
   );
 
-  //  Add the queue as an event source to the lambda function
+  // Add the queue as an event source to the lambda function
   plutomiEventConsumerFunction.addEventSource(
     new SqsEventSource(eventConsumerQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
-      // Implement batch processing AND partial failures
-      // https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html event.Records
-      batchSize: 100,
-      maxBatchingWindow: Duration.minutes(1),
-      maxConcurrency: 2,
+
+      // Disabling for now, process events one by one as they come in
+      // batchSize: 100,
+      // maxBatchingWindow: Duration.minutes(1),
+      maxConcurrency: 2, // TODO remove if backlog is too big
       reportBatchItemFailures: true,
     })
   );
 
-  // Allow the lambda function to put events back into the event bus if needed
-  // For example, we might consume a scheduled.rule.deleted event so we should delete any pending scheduled events for that rule
-  // ie: "Move applicants to the next stage if idle for 30 days" -> If that rule is deleted, we no longer want to do this so we should delete all scheduled events.
+  // Incase events need to be chained, allow the lambda function to put events back into the event bus if needed
+  // For example, we might consume a scheduledRule.deleted event so we should delete any pending scheduled events for that rule
+  // ie: If a rule exists like "Move applicants to the next stage if idle for 30 days"
+  // but then that rule is deleted, we no longer want to do take action on it so we should delete all scheduled events
   eventBus.grantPutEventsTo(plutomiEventConsumerFunction);
 };
