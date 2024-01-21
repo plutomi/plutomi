@@ -55,7 +55,7 @@ You can also run either individually:
 $ scripts/run.sh --stack <web|api>
 ```
 
-The script also has hot reloading for both so you can make changes and see them reflected immediately once you change & save a file. Update the `.env` in `packages/<api|web>`for any environment variables needed.
+The script also has hot reloading for both so you can make changes and see them reflected immediately once you change and save a file. Update the `.env` in `packages/<api|web>`for any environment variables needed.
 
 ### Deploying
 
