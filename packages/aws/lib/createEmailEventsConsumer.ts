@@ -1,5 +1,5 @@
 import { Stack, Duration } from "aws-cdk-lib";
-import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
@@ -11,9 +11,14 @@ import * as path from "path";
 import { env } from "../utils/env";
 import { EventBus } from "aws-cdk-lib/aws-events";
 
-type configureEmailsProps = {
+type ConfigureEmailsProps = {
   stack: Stack;
   eventBus: EventBus;
+};
+
+type ConfigureEmailsConsumerResponse = {
+  configurationSet: ConfigurationSet;
+  emailEventsConsumer: Function;
 };
 
 const sesEventsTopicName = "ses-events-topic";
@@ -39,7 +44,7 @@ const sesEventsQueueName = `ses-events-queue`;
 export const createEmailEventsConsumer = ({
   stack,
   eventBus,
-}: configureEmailsProps): ConfigurationSet => {
+}: ConfigureEmailsProps): ConfigureEmailsConsumerResponse => {
   // SNS Topic for all events, they have to go through here :(
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
     displayName: sesEventsTopicName,
@@ -109,5 +114,8 @@ export const createEmailEventsConsumer = ({
   // Give the lambda function permission to publish to the event bus
   eventBus.grantPutEventsTo(sesEventConsumerFunction);
 
-  return configurationSet;
+  return {
+    configurationSet,
+    emailEventsConsumer: sesEventConsumerFunction,
+  };
 };

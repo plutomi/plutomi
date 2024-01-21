@@ -116,9 +116,8 @@ impl Logger {
             // Only log if testing locally because CloudWatch is expensive
             // We are using Axiom for production logging
             // https://github.com/plutomi/plutomi/issues/944
-            // We can log errors I guess but everything else is too much
             "local" => LevelFilter::DEBUG,
-            _ => LevelFilter::ERROR,
+            _ => LevelFilter::OFF,
         };
         let subscriber = FmtSubscriber::builder()
             .with_max_level(max_log_level)

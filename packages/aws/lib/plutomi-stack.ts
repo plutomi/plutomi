@@ -9,6 +9,7 @@ import { env } from "../utils/env";
 import { createEventBus } from "./createEventBus";
 import { createEventsConsumer } from "./createPlutomiEventsConsumer";
 import { createEmailEventsConsumer } from "./createEmailEventsConsumer";
+import { disableCloudWatchLogging } from "./disableLogging";
 
 export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -16,10 +17,12 @@ export class PlutomiStack extends Stack {
 
     const eventBus = createEventBus({ stack: this });
 
-    const configurationSet = createEmailEventsConsumer({
-      stack: this,
-      eventBus,
-    });
+    const { emailEventsConsumer, configurationSet } = createEmailEventsConsumer(
+      {
+        stack: this,
+        eventBus,
+      }
+    );
 
     configureEmails({
       stack: this,
@@ -30,17 +33,23 @@ export class PlutomiStack extends Stack {
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
 
-    createEventsConsumer({
+    const plutomiEventsConsumer = createEventsConsumer({
       stack: this,
       eventBus,
     });
 
-    createFargateService({
+    const fargateService = createFargateService({
       stack: this,
       taskDefinition,
       vpc,
       natGatewayProvider,
       eventBus,
+    });
+
+    disableCloudWatchLogging({
+      fargateService,
+      emailEventsConsumer,
+      plutomiEventsConsumer,
     });
   }
 }

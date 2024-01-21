@@ -72,4 +72,6 @@ export const createEventsConsumer = ({
   // ie: If a rule exists like "Move applicants to the next stage if idle for 30 days"
   // but then that rule is deleted, we no longer want to do take action on it so we should delete all scheduled events
   eventBus.grantPutEventsTo(plutomiEventConsumerFunction);
+
+  return plutomiEventConsumerFunction;
 };
