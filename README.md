@@ -39,7 +39,7 @@ Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of
 
 For the database, we are using [MongoDB on Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
-Logging is handled by [Axiom](https://axiom.co/) but this isn't required.
+Logging is handled by [Axiom](https://axiom.co/) but this isn't required. Do note that we disabled local logging in production [due to cost reasons](https://github.com/plutomi/plutomi/issues/944).
 
 ### Running Locally
 
@@ -55,7 +55,7 @@ You can also run either individually:
 $ scripts/run.sh --stack <web|api>
 ```
 
-The script also has hot reloading for both so you can make changes and see them reflected immediately once you change & save a file. Update the `.env` in `packages/api`
+The script also has hot reloading for both so you can make changes and see them reflected immediately once you change & save a file. Update the `.env` in `packages/<api|web>`for any environment variables needed.
 
 ### Deploying
 
