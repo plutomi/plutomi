@@ -4,11 +4,7 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
-import {
-  DeduplicationScope,
-  FifoThroughputLimit,
-  Queue,
-} from "aws-cdk-lib/aws-sqs";
+import { Queue } from "aws-cdk-lib/aws-sqs";
 import path = require("path");
 import { env } from "../utils/env";
 
@@ -34,12 +30,6 @@ export const createEventsConsumer = ({
     visibilityTimeout: Duration.seconds(30),
     // Long polling
     receiveMessageWaitTime: Duration.seconds(20),
-    // FIFO related stuff
-    fifo: true,
-    contentBasedDeduplication: true,
-    // Required for high throughput mode
-    deduplicationScope: DeduplicationScope.MESSAGE_GROUP,
-    fifoThroughputLimit: FifoThroughputLimit.PER_MESSAGE_GROUP_ID,
   });
 
   const plutomiEventConsumerFunction = new NodejsFunction(
