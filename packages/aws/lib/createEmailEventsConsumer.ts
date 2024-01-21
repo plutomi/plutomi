@@ -32,7 +32,7 @@ const sesEventsQueueName = `ses-events-queue`;
  * - Cannot publish events directly to SQS
  * - We don't want all events, and some events might need more data before forwarding,
  *  so we need a lambda function to process the events before sending them to EventBridge to be handled
- *  by any other services that need to know about them.
+ *  by any other services that need to know about them. This allows us to standardize the event format as well.
  *
  * @returns ConfigurationSet to pass in to configureEmails
  */
@@ -69,7 +69,7 @@ export const createEmailEventsConsumer = ({
   });
 
   // Lambda function to consume the events
-  // In reality this will transform them into a standard format for EventBridge
+  // This will also transform them into a standard format for EventBridge
   const sesEventConsumerFunction = new NodejsFunction(
     // ! TODO: Switch to rust
     stack,
