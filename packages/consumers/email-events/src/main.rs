@@ -1,5 +1,5 @@
-use aws_lambda_events::event::sqs::SqsEvent;use lambda_runtime::{run, service_fn, Error, LambdaEvent};
-
+use aws_lambda_events::event::sqs::SqsEvent;
+use lambda_runtime::{run, service_fn, Error, LambdaEvent};
 
 /// This is the main body for the function.
 /// Write your code inside it.
@@ -25,6 +25,3 @@ async fn main() -> Result<(), Error> {
 
     run(service_fn(function_handler)).await
 }
-
-
-// cargo lambda build --release --output-format zip --arm64

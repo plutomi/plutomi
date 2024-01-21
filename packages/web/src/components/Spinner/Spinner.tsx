@@ -13,21 +13,13 @@ export const Spinner: React.FC<SpinnerProps> = ({
   fillColor = "fill-blue-600"
 }) => {
   const getSize = () => {
-    if (size === "small") {
-      return "w-4 h-4";
-    }
+    if (size === "small") return "w-4 h-4";
 
-    if (size === "large") {
-      return "w-8 h-8";
-    }
+    if (size === "large") return "w-8 h-8";
 
-    if (size === "extra-large") {
-      return "w-10 h-10";
-    }
+    if (size === "extra-large") return "w-10 h-10";
 
-    if (size === "giant") {
-      return "w-14 h-14";
-    }
+    if (size === "giant") return "w-14 h-14";
 
     // Medium
     return "w-6 h-6";

@@ -46,11 +46,10 @@ export class PlutomiStack extends Stack {
       eventBus,
     });
 
-    // TEmp disabling for rust testing
-    // disableCloudWatchLogging({
-    //   fargateService,
-    //   emailEventsConsumer,
-    //   plutomiEventsConsumer,
-    // });
+    disableCloudWatchLogging({
+      fargateService,
+      emailEventsConsumer,
+      plutomiEventsConsumer,
+    });
   }
 }
