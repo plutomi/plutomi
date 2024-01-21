@@ -14,8 +14,6 @@ You can create `applications` which people can apply to. An application can be a
 
 In these applications, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `responses` or after a certain time period.
 
-## TODO update diagram to show rust lambda functions
-
 An application for a delivery company might look like this:
 
 **New York City**
@@ -37,7 +35,9 @@ Stages:
 
 ## Infra
 
-Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, and custom app events like `totp.requested` or `invite.sent`. We use Cloudflare for DNS, CDN, WAF and other goodies - make sure to add a [Cache Rule](https://developers.cloudflare.com/cache/how-to/cache-rules/) to ignore `/api` routes.
+Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, and custom app events like `totp.requested` or `invite.sent`. We use [Lambda](https://aws.amazon.com/lambda/) to process events and they are written in Rust with [Cargo Lambda](https://www.cargo-lambda.info/). We use Cloudflare for DNS, CDN, WAF and other goodies - make sure to add a [Cache Rule](https://developers.cloudflare.com/cache/how-to/cache-rules/) to ignore `/api` routes.
+
+## TODO Remove the below, copied and pasted for some notes while testing out remix
 
 Then...
 Cache eligibility
