@@ -75,7 +75,7 @@ export const createEmailEventsConsumer = ({
 
   // Lambda function to consume the events
   // This will also transform them into a standard format for EventBridge
-  const sesEventConsumerFunction = new NodejsFunction(
+  const sesEventsConsumerFunction = new NodejsFunction(
     // ! TODO: Switch to rust
     stack,
     sesEventsConsumerName,
@@ -99,7 +99,7 @@ export const createEmailEventsConsumer = ({
   );
 
   // Add the queue as an event source to the lambda function
-  sesEventConsumerFunction.addEventSource(
+  sesEventsConsumerFunction.addEventSource(
     new SqsEventSource(sesEventsQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
       // Implement batch processing AND partial failures
@@ -112,10 +112,10 @@ export const createEmailEventsConsumer = ({
   );
 
   // Give the lambda function permission to publish to the event bus
-  eventBus.grantPutEventsTo(sesEventConsumerFunction);
+  eventBus.grantPutEventsTo(sesEventsConsumerFunction);
 
   return {
     configurationSet,
-    emailEventsConsumer: sesEventConsumerFunction,
+    emailEventsConsumer: sesEventsConsumerFunction,
   };
 };
