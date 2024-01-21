@@ -52,7 +52,6 @@ export const createEmailEventsConsumer = ({
   // Queue for our lambda function to consume
   const sesEventsQueue = new Queue(stack, sesEventsQueueName, {
     queueName: sesEventsQueueName,
-    // ! TODO: ADD VPC ADD VPC
     retentionPeriod: Duration.days(14),
     visibilityTimeout: Duration.seconds(30),
     // Long polling
