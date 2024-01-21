@@ -1,4 +1,4 @@
 #### Processes plutomi events
 
-These are things like TOTP codes, notification emails etc that we do not necessarily want to handle on the API server.
-Eventually we will fan-out to multiple consumers for each event type, but right now that is overkill
+This consumes all Plutomi events and takes action on them. This is the main consumer for Plutomi. Eventually,
+we will fan out from EventBridge to many different consumers but that is overkill for now.
