@@ -99,7 +99,7 @@ export const createEmailEventsConsumer = ({
       code: Code.fromAsset(
         path.join(
           __dirname,
-          "../../../packages/consumers/ses-events/target/lambda/ses-events/Bootstrap.zip"
+          "../../../packages/consumers/email-events/target/lambda/email-events/Bootstrap.zip"
         )
       ),
     }

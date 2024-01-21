@@ -191,6 +191,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "email-events"
+version = "0.1.0"
+dependencies = [
+ "aws_lambda_events",
+ "lambda_runtime",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "equivalent"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -704,17 +715,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "ses-events"
-version = "0.1.0"
-dependencies = [
- "aws_lambda_events",
- "lambda_runtime",
- "tokio",
- "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]

@@ -4,6 +4,6 @@
     "./packages/api/Cargo.toml",
     "./packages/api/Cargo.toml",
     "./packages/consumers/plutomi-events/Cargo.toml",
-    "./packages/consumers/ses-events/Cargo.toml"
+    "./packages/consumers/email-events/Cargo.toml"
   ]
 }
