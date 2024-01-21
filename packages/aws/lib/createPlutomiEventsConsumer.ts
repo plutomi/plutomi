@@ -3,7 +3,6 @@ import { EventBus } from "aws-cdk-lib/aws-events";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import path = require("path");
 import { env } from "../utils/env";
@@ -45,7 +44,6 @@ export const createEventsConsumer = ({
       reservedConcurrentExecutions: 3,
       memorySize: 128,
       timeout: Duration.seconds(30),
-      logRetention: RetentionDays.ONE_WEEK,
       environment: {
         EVENT_BUS_NAME: eventBus.eventBusName,
         QUEUE_URL: eventConsumerQueue.queueUrl,
@@ -72,4 +70,6 @@ export const createEventsConsumer = ({
   // ie: If a rule exists like "Move applicants to the next stage if idle for 30 days"
   // but then that rule is deleted, we no longer want to do take action on it so we should delete all scheduled events
   eventBus.grantPutEventsTo(plutomiEventConsumerFunction);
+
+  return plutomiEventConsumerFunction;
 };

@@ -1,29 +1,19 @@
 import {
   Cluster,
   FargateService,
-  ListenerConfig,
   type FargateTaskDefinition,
-  Protocol,
 } from "aws-cdk-lib/aws-ecs";
 import {
   Certificate,
   CertificateValidation,
-  type ICertificate,
 } from "aws-cdk-lib/aws-certificatemanager";
 import type { FckNatInstanceProvider } from "cdk-fck-nat";
 import { Peer, Port, SecurityGroup, type Vpc } from "aws-cdk-lib/aws-ec2";
 import { Duration, type Stack } from "aws-cdk-lib";
+
 import {
-  ApplicationLoadBalancedFargateService,
-  ApplicationMultipleTargetGroupsFargateService,
-} from "aws-cdk-lib/aws-ecs-patterns";
-import { AdjustmentType } from "aws-cdk-lib/aws-applicationautoscaling";
-import { Metric } from "aws-cdk-lib/aws-cloudwatch";
-import {
-  ApplicationListener,
   ApplicationLoadBalancer,
   ApplicationProtocol,
-  ApplicationProtocolVersion,
   ApplicationTargetGroup,
   HealthCheck,
   ListenerAction,

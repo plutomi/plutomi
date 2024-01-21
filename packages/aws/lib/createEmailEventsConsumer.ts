@@ -1,5 +1,5 @@
 import { Stack, Duration } from "aws-cdk-lib";
-import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
@@ -11,9 +11,14 @@ import * as path from "path";
 import { env } from "../utils/env";
 import { EventBus } from "aws-cdk-lib/aws-events";
 
-type configureEmailsProps = {
+type ConfigureEmailsProps = {
   stack: Stack;
   eventBus: EventBus;
+};
+
+type ConfigureEmailsConsumerResponse = {
+  configurationSet: ConfigurationSet;
+  emailEventsConsumer: Function;
 };
 
 const sesEventsTopicName = "ses-events-topic";
@@ -39,7 +44,7 @@ const sesEventsQueueName = `ses-events-queue`;
 export const createEmailEventsConsumer = ({
   stack,
   eventBus,
-}: configureEmailsProps): ConfigurationSet => {
+}: ConfigureEmailsProps): ConfigureEmailsConsumerResponse => {
   // SNS Topic for all events, they have to go through here :(
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
     displayName: sesEventsTopicName,
@@ -70,7 +75,7 @@ export const createEmailEventsConsumer = ({
 
   // Lambda function to consume the events
   // This will also transform them into a standard format for EventBridge
-  const sesEventConsumerFunction = new NodejsFunction(
+  const sesEventsConsumerFunction = new NodejsFunction(
     // ! TODO: Switch to rust
     stack,
     sesEventsConsumerName,
@@ -78,7 +83,6 @@ export const createEmailEventsConsumer = ({
       functionName: sesEventsConsumerName,
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
-      logRetention: RetentionDays.ONE_WEEK,
       // This needs to be higher than maxConcurrency in the event source
       reservedConcurrentExecutions: 3,
       memorySize: 128,
@@ -94,7 +98,7 @@ export const createEmailEventsConsumer = ({
   );
 
   // Add the queue as an event source to the lambda function
-  sesEventConsumerFunction.addEventSource(
+  sesEventsConsumerFunction.addEventSource(
     new SqsEventSource(sesEventsQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
       // Implement batch processing AND partial failures
@@ -107,7 +111,10 @@ export const createEmailEventsConsumer = ({
   );
 
   // Give the lambda function permission to publish to the event bus
-  eventBus.grantPutEventsTo(sesEventConsumerFunction);
+  eventBus.grantPutEventsTo(sesEventsConsumerFunction);
 
-  return configurationSet;
+  return {
+    configurationSet,
+    emailEventsConsumer: sesEventsConsumerFunction,
+  };
 };
