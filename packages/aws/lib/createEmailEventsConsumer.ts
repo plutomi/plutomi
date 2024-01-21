@@ -83,7 +83,6 @@ export const createEmailEventsConsumer = ({
       functionName: sesEventsConsumerName,
       runtime: Runtime.NODEJS_LATEST,
       entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
-      logRetention: RetentionDays.ONE_WEEK,
       // This needs to be higher than maxConcurrency in the event source
       reservedConcurrentExecutions: 3,
       memorySize: 128,
