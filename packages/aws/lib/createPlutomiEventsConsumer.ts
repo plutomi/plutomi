@@ -3,8 +3,6 @@ import { EventBus } from "aws-cdk-lib/aws-events";
 import { Architecture, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Function } from "aws-cdk-lib/aws-lambda";
-import { RetentionDays } from "aws-cdk-lib/aws-logs";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import path = require("path");
 import { env } from "../utils/env";
@@ -38,7 +36,6 @@ export const createEventsConsumer = ({
     handler: "main",
     functionName: eventConsumerName,
     memorySize: 128,
-    logRetention: RetentionDays.ONE_WEEK,
     timeout: Duration.seconds(30),
     architecture: Architecture.ARM_64,
     // This needs to be higher than maxConcurrency in the event source

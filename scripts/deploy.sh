@@ -82,7 +82,7 @@ deploy_aws() {
 
     # Countdown to deployment with option to cancel
     local countdown_time=10
-    echo -e "${ON_ICYAN}\n\nPress any key to cancel the deployment.\n${NC}"
+    echo -e "${ON_ICYAN}\n\nPress any key to cancel the deployment.\n\n\n${NC}"
     while [ $countdown_time -gt 0 ]; do
         # Check for any key press
         read -t 1 -n 1 -s
@@ -101,7 +101,7 @@ deploy_aws() {
     export NEXT_PUBLIC_ENVIRONMENT=$environment
 
     # Build the SES events consumer
-    cd packages/consumers/ses-events
+    cd packages/consumers/email-events
     cargo lambda build --release --output-format zip --arm64
 
     # Build the Plutomi events consumer

@@ -1,7 +1,6 @@
 import { Stack, Duration } from "aws-cdk-lib";
 import { Architecture, Function, Runtime, Code } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { ConfigurationSet, EventDestination } from "aws-cdk-lib/aws-ses";
 import { Topic } from "aws-cdk-lib/aws-sns";
 import { SqsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
@@ -84,7 +83,6 @@ export const createEmailEventsConsumer = ({
       handler: "main",
       functionName: sesEventsConsumerName,
       memorySize: 128,
-      logRetention: RetentionDays.ONE_WEEK,
       // This needs to be higher than maxConcurrency in the event source
       // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
       //  reservedConcurrentExecutions: 3,
