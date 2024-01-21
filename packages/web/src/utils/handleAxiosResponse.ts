@@ -1,4 +1,4 @@
-import axios, { type AxiosError } from "axios";
+import { type AxiosError, isAxiosError } from "axios";
 
 type ErrorResponse = {
   message: string;
@@ -7,7 +7,7 @@ type ErrorResponse = {
 export const handleAxiosError = <T extends ErrorResponse>(
   err: unknown
 ): string => {
-  if (axios.isAxiosError(err)) {
+  if (isAxiosError(err)) {
     const axiosError = err as AxiosError<T>;
     const { message } = axiosError.response?.data ?? {};
     if (typeof message === "string") {

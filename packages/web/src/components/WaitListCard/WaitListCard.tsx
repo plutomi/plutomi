@@ -3,7 +3,6 @@
 import { BsGithub, BsTwitter } from "react-icons/bs";
 import { FiExternalLink, FiMail } from "react-icons/fi";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 // import { Schema } from "@plutomi/validation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -118,7 +117,7 @@ export const WaitListCard: React.FC = () => {
                     />
 
                     <Button size="medium" isLoading={false}>
-                      {false ? "Joining..." : "Join"}
+                      Joining
                     </Button>
                   </form>
                   {errors.email?.message !== undefined ? (

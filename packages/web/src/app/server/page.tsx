@@ -1,33 +1,20 @@
 import { baseAPIUrl } from "@/utils";
 
 const getData = async () => {
-  // try {
-  //   const response = await fetch(`${baseAPIUrl}/api/health`, {
-  //     // method: "GET",
-  //     cache: "no-store"
-  //     // headers: {
-  //     //   "Content-Type": "application/json"
-  //     // }
-  //   });
-  //   const data = await response.json();
-  //   return data;
-  // } catch (error) {
-  //   return "FUCK YOU NEXT";
-  // }
-
-  return fetch(`${baseAPIUrl}/api/health`, { cache: "no-store" })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((res) => res)
-    .catch((error) => {
-      // Handle any errors that occurred during fetch or JSON parsing
-      console.error("Fetch error:", error);
-      return null;
+  try {
+    const response = await fetch(`${baseAPIUrl}/api/health`, {
+      // method: "GET",
+      cache: "no-store"
+      // headers: {
+      //   "Content-Type": "application/json"
+      // }
     });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    //https://github.com/vercel/next.js/issues/46737#issuecomment-1826964346
+    return "FUCK YOU NEXT";
+  }
 };
 
 export default async function Server() {

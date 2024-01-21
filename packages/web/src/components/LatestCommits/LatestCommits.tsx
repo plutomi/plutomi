@@ -1,14 +1,14 @@
+import { Commit, CommitType } from "./Commit";
 import { orderBy } from "lodash";
-import { Commit, type CommitType } from "./Commit";
-import { delay } from "@/utils";
 
 const numOfCommits = 3;
 const revalidateHours = 24;
 
-async function getCommits() {
+export async function getCommits() {
+  "use server";
   const allCommits: CommitType[] = [];
 
-  let response = await fetch(
+  const response = await fetch(
     `https://api.github.com/repos/plutomi/plutomi/commits`,
     {
       next: { revalidate: 60 * 60 * revalidateHours }

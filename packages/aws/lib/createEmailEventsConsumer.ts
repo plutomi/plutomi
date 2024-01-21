@@ -1,8 +1,6 @@
 import { Stack, Duration } from "aws-cdk-lib";
-import { Architecture, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Function, Runtime, Code } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { ConfigurationSet, EventDestination } from "aws-cdk-lib/aws-ses";
 import { Topic } from "aws-cdk-lib/aws-sns";
 import { SqsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
@@ -75,17 +73,17 @@ export const createEmailEventsConsumer = ({
 
   // Lambda function to consume the events
   // This will also transform them into a standard format for EventBridge
-  const sesEventsConsumerFunction = new NodejsFunction(
+  const sesEventsConsumerFunction = new Function(
     // ! TODO: Switch to rust
     stack,
     sesEventsConsumerName,
     {
+      runtime: Runtime.PROVIDED_AL2,
+      handler: "main",
       functionName: sesEventsConsumerName,
-      runtime: Runtime.NODEJS_LATEST,
-      entry: path.join(__dirname, "../functions/sesEventConsumer.ts"),
+      memorySize: 128,
       // This needs to be higher than maxConcurrency in the event source
       reservedConcurrentExecutions: 3,
-      memorySize: 128,
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
       description: "Processes SES events.",
@@ -94,6 +92,12 @@ export const createEmailEventsConsumer = ({
         QUEUE_URL: sesEventsQueue.queueUrl,
         ...env,
       },
+      code: Code.fromAsset(
+        path.join(
+          __dirname,
+          "../../../packages/consumers/email-events/target/lambda/email-events/Bootstrap.zip"
+        )
+      ),
     }
   );
 

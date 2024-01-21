@@ -2,6 +2,8 @@
   "rust-analyzer.linkedProjects": [
     "packages/api/Cargo.toml",
     "./packages/api/Cargo.toml",
-    "./packages/api/Cargo.toml"
+    "./packages/api/Cargo.toml",
+    "./packages/consumers/plutomi-events/Cargo.toml",
+    "./packages/consumers/email-events/Cargo.toml"
   ]
 }

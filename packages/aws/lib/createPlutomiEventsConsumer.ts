@@ -1,8 +1,8 @@
 import { Duration, Stack } from "aws-cdk-lib";
 import { EventBus } from "aws-cdk-lib/aws-events";
-import { Runtime } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { Function } from "aws-cdk-lib/aws-lambda";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import path = require("path");
 import { env } from "../utils/env";
@@ -31,32 +31,33 @@ export const createEventsConsumer = ({
     receiveMessageWaitTime: Duration.seconds(20),
   });
 
-  const plutomiEventConsumerFunction = new NodejsFunction(
-    stack,
-    eventConsumerName,
-    {
-      // TODO should be in rust
-      functionName: eventConsumerName,
-      entry: path.join(__dirname, "../functions/plutomiEventConsumer.ts"),
-      handler: "handler",
-      runtime: Runtime.NODEJS_LATEST,
-      // Needs to be higher than maxConcurrency in addEventSource
-      reservedConcurrentExecutions: 3,
-      memorySize: 128,
-      timeout: Duration.seconds(30),
-      environment: {
-        EVENT_BUS_NAME: eventBus.eventBusName,
-        QUEUE_URL: eventConsumerQueue.queueUrl,
-        ...env,
-      },
-    }
-  );
+  const plutomiEventConsumerFunction = new Function(stack, eventConsumerName, {
+    runtime: Runtime.PROVIDED_AL2,
+    handler: "main",
+    functionName: eventConsumerName,
+    memorySize: 128,
+    timeout: Duration.seconds(30),
+    architecture: Architecture.ARM_64,
+    // This needs to be higher than maxConcurrency in the event source
+    reservedConcurrentExecutions: 3,
+    description: "Processes SES events.",
+    environment: {
+      EVENT_BUS_NAME: eventBus.eventBusName,
+      QUEUE_URL: eventConsumerQueue.queueUrl,
+      ...env,
+    },
+    code: Code.fromAsset(
+      path.join(
+        __dirname,
+        "../../../packages/consumers/plutomi-events/target/lambda/plutomi-events/Bootstrap.zip"
+      )
+    ),
+  });
 
   // Add the queue as an event source to the lambda function
   plutomiEventConsumerFunction.addEventSource(
     new SqsEventSource(eventConsumerQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
-
       // Disabling for now, process events one by one as they come in
       // batchSize: 100,
       // maxBatchingWindow: Duration.minutes(1),
