@@ -84,8 +84,7 @@ export const createEmailEventsConsumer = ({
       functionName: sesEventsConsumerName,
       memorySize: 128,
       // This needs to be higher than maxConcurrency in the event source
-      // Temporarily disabled because  it causes an issue when trying to deploy to staging and dev environments because our account concurrency is so low :/=
-      //  reservedConcurrentExecutions: 3,
+      reservedConcurrentExecutions: 3,
       timeout: Duration.seconds(30),
       architecture: Architecture.ARM_64,
       description: "Processes SES events.",
