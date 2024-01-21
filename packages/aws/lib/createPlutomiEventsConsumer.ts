@@ -67,6 +67,9 @@ export const createEventsConsumer = ({
     })
   );
 
-  // Incase events need to be chained
+  // Incase events need to be chained, allow the lambda function to put events back into the event bus if needed
+  // For example, we might consume a scheduledRule.deleted event so we should delete any pending scheduled events for that rule
+  // ie: If a rule exists like "Move applicants to the next stage if idle for 30 days"
+  // but then that rule is deleted, we no longer want to do take action on it so we should delete all scheduled events
   eventBus.grantPutEventsTo(plutomiEventConsumerFunction);
 };
