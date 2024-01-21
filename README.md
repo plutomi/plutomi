@@ -37,7 +37,7 @@ Stages:
 
 ## Infra
 
-Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, etc. We use Cloudflare for DNS, CDN, WAF and other goodies - make sure to add a [Cache Rule](https://developers.cloudflare.com/cache/how-to/cache-rules/) to ignore `/api` routes.
+Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, and custom app events like `totp.requested` or `invite.sent`. We use Cloudflare for DNS, CDN, WAF and other goodies - make sure to add a [Cache Rule](https://developers.cloudflare.com/cache/how-to/cache-rules/) to ignore `/api` routes.
 
 Then...
 Cache eligibility
@@ -61,6 +61,8 @@ Ignore cache-control header and use this TTL
 
 For the database, we are using [MongoDB on Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
+Logging is handled by [Axiom](https://axiom.co/) but this isn't required. Do note that we disabled CloudWatch logging in production [due to cost reasons](https://github.com/plutomi/plutomi/issues/944).
+
 ### Running Locally
 
 The following will start the API and the web app in development mode:
@@ -75,30 +77,23 @@ You can also run either individually:
 $ scripts/run.sh --stack <web|api>
 ```
 
-The script also has hot reloading for both so you can make changes and see them reflected immediately once you save the file.
+The script also has hot reloading for both so you can make changes and see them reflected immediately once you change and save a file. Update the `.env` in `packages/<api|web>`for any environment variables needed.
 
 ### Deploying
 
-```bash
-$ scripts/deploy.sh --stack <aws> --env <development|staging|production>
-```
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configureEmails.ts](./packages/aws/lib/configureEmails.ts).
 
-If you omit a stack, all of them (just 1 for now!) will be deployed. If you omit an environment, `development` will be used.
-
-## AWS
-
-### TDO add this to consumers
-
-https://github.com/awslabs/aws-lambda-rust-runtime
-
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [setupSES.ts](./packages/aws/lib/setupSES.ts). Change directories into `packages/aws` and install dependencies and copy the `.env.sample` file...
+Change directories into `packages/aws`, install dependencies, and set up the environment-specific `.env` files and modify the values as needed.
 
 ```bash
+$ cd packages/aws
 $ npm install
-$ cp .env.sample .env
+$ cp .env.sample .env.development
+$ cp .env.sample .env.staging
+$ cp .env.sample .env.production
 ```
 
-...modify the values as needed, then you can go back to the root and deploy.
+Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`.
 
 After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
 

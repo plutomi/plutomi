@@ -1,78 +1,117 @@
 #!/bin/bash
 
+# Define color codes
+# Bold High Intensity
+BIRED='\033[1;91m'
+BIGREEN='\033[1;92m'
+BIYELLOW='\033[1;93m'
+BIWHITE='\033[1;97m'
+
+# High Intensity backgrounds
+ON_IRED='\033[0;101m'
+ON_ICYAN='\033[0;106m'
+
+# No Color
+NC='\033[0m' # No Color
+
+
 # Function to print error message and usage
 print_error_and_exit() {
-    echo -e "\nERROR: $1 \n"
-    echo -e "Usage: $0 [--stack <stack>] [--env <environment>]\n"
-    echo -e "Stack (optional): aws"
-    echo -e "Environment (optional): development, staging, production"
-    echo -e "If no stack is provided, all stacks will be deployed to staging.\n"
-    echo -e "Example: $0 --stack aws --env production\n"
+    echo -e "${BIWHITE}${ON_IRED}\n\nERROR: $1 \n${BIWHITE}${NC}"
+    echo -e "Environment must be one of: ${BIGREEN}development${NC} | ${BIYELLOW}staging${NC} | ${BIRED}production${NC}\n"
+    echo -e "Example: ${BIWHITE}$0 production${NC}\n"
+    echo -e "Make sure to set the environment variables in '${BIWHITE}packages/aws/.env.${BIGREEN}development${NC}|${BIYELLOW}staging${NC}|${BIRED}production${NC}' so CDK can deploy correctly.\n"
     exit 1
 }
 
-# Default values
-stack=""
-environment="" # Default to 'development' if no environment is provided
 
-# Parse named arguments
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --stack) stack="$2"; shift ;;
-        --env) environment="$2"; shift ;;
-        *) print_error_and_exit "Invalid argument: $1" ;;
-    esac
-    shift
-done
+# Function to log in to AWS SSO
+aws_login() {
+    local profile=$1
+    if aws sso login --profile "$profile"; then
+        export AWS_PROFILE="$profile"
+        echo -e "${BIWHITE}Logged in and set AWS_PROFILE to ${COLOR}$profile${NC}"
+    else
+        echo -e "${ON_IRED}${BIWHITE}Login failed${NC}"
+        exit 1
+    fi
+}
+
+# Check if an environment argument is provided
+if [ "$#" -ne 1 ]; then
+    print_error_and_exit "Environment argument is required but none was provided."
+fi
+
+# Assign the first argument to environment
+environment=$1
 
 # Validate environment
-[[ "$environment" =~ ^(staging|production|development)$ ]] || print_error_and_exit "Invalid environment: '$environment'. Must be 'staging', 'production', or 'development'."
+[[ "$environment" =~ ^(staging|production|development)$ ]] || print_error_and_exit "Invalid environment: '$environment'."
 
 
 
 deploy_aws() {
-   ( 
     # Set AWS_PROFILE based on the environment
     if [[ "$environment" == "production" ]]; then
         AWS_PROFILE="plutomi-prod"
+        COLOR=$BIRED
     elif [[ "$environment" == "staging" ]]; then
         AWS_PROFILE="plutomi-stage"
+        COLOR=$BIYELLOW
     elif [[ "$environment" == "development" ]]; then
         AWS_PROFILE="plutomi-dev"
+        COLOR=$BIGREEN
     else
         print_error_and_exit "Invalid environment for AWS deployment."
     fi
 
-    echo "Deploying AWS with environment: $environment and profile: $AWS_PROFILE"
-    
 
-    # Build the SES events processor
+    echo -e "${BIWHITE}Deploying to AWS with environment: ${COLOR}$environment${BIWHITE} and profile: ${COLOR}$AWS_PROFILE${NC}"
+    sleep 2
+    echo -e "${BIWHITE}Deploying to AWS with environment: ${COLOR}$environment${BIWHITE} and profile: ${COLOR}$AWS_PROFILE${NC}"
+    sleep 2
+    echo -e "${BIWHITE}Deploying to AWS with environment: ${COLOR}$environment${BIWHITE} and profile: ${COLOR}$AWS_PROFILE${NC}"
+    sleep 2
+
+
+    # Log in to AWS SSO with the determined profile
+    aws_login "$AWS_PROFILE"
+
+    echo -e "${BIWHITE}Deploying soon...\n\nEnvironment: ${COLOR}$environment${BIWHITE}\nProfile: ${COLOR}$AWS_PROFILE${NC}\n\n"
+
+
+    # Countdown to deployment with option to cancel
+    local countdown_time=10
+    echo -e "${ON_ICYAN}\n\nPress any key to cancel the deployment.\n${NC}"
+    while [ $countdown_time -gt 0 ]; do
+        # Check for any key press
+        read -t 1 -n 1 -s
+        if [ $? -eq 0 ]; then
+            echo -e "\n\n${BIRED}Deployment canceled.${NC}"
+            exit 0
+        fi
+
+        echo -ne "${BIWHITE}Starting deployment in ${COLOR}$countdown_time${BIWHITE} seconds...\r"
+        ((countdown_time--))
+    done
+    echo -e "\n"
+
+
+    # Export the environment variable so it can be picked up by CDK
+    export NEXT_PUBLIC_ENVIRONMENT=$environment
+
+    # Build the SES events consumer
     cd packages/consumers/ses-events
     cargo lambda build --release --output-format zip --arm64
 
-    # Build the Plutomi events processor
+    # Build the Plutomi events consumer
     cd ../plutomi-events
     cargo lambda build --release --output-format zip --arm64
 
 
     cd ../../aws
-    npm run deploy -- --profile $AWS_PROFILE
-    )
+    npm run deploy -- --profile $AWS_PROFILE # Set the right profile for permissions
 }
 
-
-# Main deployment logic
-if [ -z "$stack" ]; then
-    # Deploy all stacks if no specific stack is provided
-    deploy_all
-else
-    # Validate stack
-    [[ "$stack" =~ ^(aws)$ ]] || print_error_and_exit "Invalid stack: $stack. Must be 'aws'."
-    [ "$environment" == "development" -a "$stack" != "aws" ] && print_error_and_exit "There is no 'dev' environment for '$stack', run things locally :D"
-
-    # Deploy specific stack
-    case "$stack" in
-        "aws") deploy_aws ;;
-        *) print_error_and_exit "Invalid stack specified. Use 'aws'." ;;
-    esac
-fi
+# Deploy AWS
+deploy_aws

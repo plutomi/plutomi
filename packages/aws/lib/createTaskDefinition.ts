@@ -84,11 +84,6 @@ export const createTaskDefinition = ({
         image: ContainerImage.fromAsset(imageDirectory, {
           // Get the NextJS docker image, build it, and push it to ECR
         }),
-
-        logging: new AwsLogDriver({
-          streamPrefix: logStreamPrefix,
-          logRetention: RetentionDays.ONE_WEEK,
-        }),
         // TODO Parameter store?
         environment,
       });

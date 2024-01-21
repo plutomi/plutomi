@@ -1,34 +1,55 @@
 import { Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { setupSES } from "./setupSES";
+import { configureEmails } from "./configureEmails";
 import { createVpc } from "./createVpc";
 import { createTaskRole } from "./createTaskRole";
 import { createTaskDefinition } from "./createTaskDefinition";
 import { createFargateService } from "./createFargateService";
 import { env } from "../utils/env";
 import { createEventBus } from "./createEventBus";
-import { createEventConsumer } from "./createEventConsumer";
+import { createEventsConsumer } from "./createPlutomiEventsConsumer";
+import { createEmailEventsConsumer } from "./createEmailEventsConsumer";
+import { disableCloudWatchLogging } from "./disableLogging";
 
 export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const eventBus = createEventBus({ stack: this });
-    setupSES({
+
+    const { emailEventsConsumer, configurationSet } = createEmailEventsConsumer(
+      {
+        stack: this,
+        eventBus,
+      }
+    );
+
+    configureEmails({
       stack: this,
+      configurationSet,
     });
+
     const { vpc, natGatewayProvider } = createVpc({ stack: this });
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
 
-    createEventConsumer({ stack: this, eventBus });
+    const plutomiEventsConsumer = createEventsConsumer({
+      stack: this,
+      eventBus,
+    });
 
-    createFargateService({
+    const fargateService = createFargateService({
       stack: this,
       taskDefinition,
       vpc,
       natGatewayProvider,
       eventBus,
+    });
+
+    disableCloudWatchLogging({
+      fargateService,
+      emailEventsConsumer,
+      plutomiEventsConsumer,
     });
   }
 }
