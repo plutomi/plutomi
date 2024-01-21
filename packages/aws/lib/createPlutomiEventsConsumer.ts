@@ -12,23 +12,22 @@ import {
 import path = require("path");
 import { env } from "../utils/env";
 
-type createEventsArchitectureProps = {
+type CreateEventsConsumerProps = {
   stack: Stack;
+  eventBus: EventBus;
 };
 
-const queueName = "plutomi-events-queue.fifo";
+const queueName = "plutomi-events-queue";
 const eventConsumerName = "plutomi-events-consumer";
 /**
- * Creates a FIFO queue and a lambda function that consumes events sent into it.
- * This does not include SES events, which are handled in setupSES.ts due to it not supporting FIFO
- * and us not caring about that being FIFO.
- * In the future, we would like to support multiple event consumers / queues
- * but this is more than fine for now especially due to high throughput mode.
- *
+ * Creates a queue and a lambda function that consumes events from the event bus.
+ * In the future we would like to support multiple event consumers / queues but for now this is fine.
+ * The EventBridge setup that we have allows that easily.
  */
-export const createEventsArchitecture = ({
+export const createEventsConsumer = ({
   stack,
-}: createEventsArchitectureProps) => {
+  eventBus,
+}: CreateEventsConsumerProps) => {
   const eventConsumerQueue = new Queue(stack, queueName, {
     queueName,
     retentionPeriod: Duration.days(14),
@@ -52,11 +51,13 @@ export const createEventsArchitecture = ({
       entry: path.join(__dirname, "../functions/plutomiEventConsumer.ts"),
       handler: "handler",
       runtime: Runtime.NODEJS_LATEST,
+      // Needs to be higher than maxConcurrency in addEventSource
       reservedConcurrentExecutions: 3,
       memorySize: 128,
       timeout: Duration.seconds(30),
       logRetention: RetentionDays.ONE_WEEK,
       environment: {
+        EVENT_BUS_NAME: eventBus.eventBusName,
         QUEUE_URL: eventConsumerQueue.queueUrl,
         ...env,
       },
@@ -67,10 +68,15 @@ export const createEventsArchitecture = ({
   plutomiEventConsumerFunction.addEventSource(
     new SqsEventSource(eventConsumerQueue, {
       // TODO: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting
-      // batchSize: 100, // FIFO max is 10, and since we're doing fifo just process them as they come in
-      // maxBatchingWindow // Not supported for FIFO
-      maxConcurrency: 2,
+
+      // Disabling for now, process events one by one as they come in
+      // batchSize: 100,
+      // maxBatchingWindow: Duration.minutes(1),
+      maxConcurrency: 2, // TODO remove if backlog is too big
       reportBatchItemFailures: true,
     })
   );
+
+  // Incase events need to be chained
+  eventBus.grantPutEventsTo(plutomiEventConsumerFunction);
 };
