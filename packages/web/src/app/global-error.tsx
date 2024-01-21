@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // import Link from "next/link";
 "use client"; // TODO: sighhghodahjfoihadopfhaposhdfo
 export default function GlobalError({
@@ -9,7 +8,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html lang="en">
+    <html>
       <body>
         <main className="grid min-h-full place-items-center  px-6 py-24 sm:py-32 lg:px-8">
           <div className="text-center">

@@ -1,7 +1,7 @@
 import { Commit, CommitType } from "./Commit";
 import { orderBy } from "lodash";
 
-const numOfCommits = 5;
+const numOfCommits = 3;
 const revalidateHours = 24;
 
 export async function getCommits() {
