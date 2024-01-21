@@ -11,7 +11,7 @@ export const Spinner: React.FC<SpinnerProps> = ({
   size = "medium",
   bgColor = "text-slate-300",
   fillColor = "fill-blue-600"
-}) => {
+}: Record<string, string>) => {
   const getSize = () => {
     if (size === "small") {
       return "w-4 h-4";

@@ -1,9 +1,8 @@
 "use client";
 
 import { Button } from "../Button";
-import { toast } from "react-hot-toast";
 import { useClipboard } from "@mantine/hooks";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 
 const email = "jose@plutomi.com";
 

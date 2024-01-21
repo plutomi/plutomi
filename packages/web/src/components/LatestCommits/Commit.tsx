@@ -16,8 +16,10 @@ export const Commit: React.FC<CommitType> = ({
   message,
   image,
   date
-}) => {
+}: Record<string, string>) => {
   return (
+    // TODO i just wanna deployyyyy testing rust lambda functions
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       className="p-2 bg-white  w-full max-w-3xl rounded-[0.75rem] shadow hover:shadow-md transition ease-in-out duration-100  cursor-pointer"
       onClick={() => window.open(url, "_blank", "noopener noreferrer")}
@@ -32,7 +34,7 @@ export const Commit: React.FC<CommitType> = ({
         </div>
         <div className="px-3 max-w-2xl">
           <p className="text-slate-500 text-sm">
-            {String(new Date(date).toLocaleDateString())}
+            {String(new Date(date ?? "").toLocaleDateString())}
           </p>
           <p className="text-lg font-semibold text-slate-700 ">
             {name} -{" "}
