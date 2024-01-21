@@ -6,7 +6,7 @@ use tokio::{
     sync::mpsc::{self, Sender},
     time::{sleep, Duration, Instant},
 };
-use tracing::{debug, error, info, warn, Level};
+use tracing::{debug, error, info, level_filters::LevelFilter, warn};
 use tracing_subscriber::FmtSubscriber;
 
 // Max number of logs to buffer in a channel before overflowing
@@ -112,8 +112,16 @@ impl Logger {
             None
         };
 
+        let max_log_level = match env.NEXT_PUBLIC_ENVIRONMENT.as_str() {
+            // Only log if testing locally because CloudWatch is expensive
+            // We are using Axiom for production logging
+            // https://github.com/plutomi/plutomi/issues/944
+            // We can log errors I guess but everything else is too much
+            "local" => LevelFilter::DEBUG,
+            _ => LevelFilter::ERROR,
+        };
         let subscriber = FmtSubscriber::builder()
-            .with_max_level(Level::DEBUG)
+            .with_max_level(max_log_level)
             .finish();
 
         tracing::subscriber::set_global_default(subscriber)
@@ -133,12 +141,13 @@ impl Logger {
                     Some(log) = receiver.recv() => {
 
                         // Local logging based on the level
-                        match log.level {
-                            LogLevel::Info => info!("{}", &log),
-                            LogLevel::Error => error!("{}", &log),
-                            LogLevel::Debug => debug!("{}", &log),
-                            LogLevel::Warn => warn!("{}", &log),
-                        }
+                            match log.level {
+                                LogLevel::Info => info!("{}", &log),
+                                LogLevel::Error => error!("{}", &log),
+                                LogLevel::Debug => debug!("{}", &log),
+                                LogLevel::Warn => warn!("{}", &log),
+                            }
+
 
                         // Push the log to the batch
                         log_batch.push(log);

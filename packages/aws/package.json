@@ -1,9 +1,6 @@
 {
-  "name": "email",
+  "name": "aws",
   "version": "0.1.0",
-  "bin": {
-    "email": "bin/email.js"
-  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
