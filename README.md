@@ -45,6 +45,8 @@ Logging is handled by [Axiom](https://axiom.co/) but this isn't required. Do not
 
 The following will start the API and the web app in development mode:
 
+// document no rollback https://www.reddit.com/r/aws/comments/1993rph/problems_with_complex_deployments_and_how_cdkcf/
+
 ```bash
 $ scripts/run.sh
 ```
