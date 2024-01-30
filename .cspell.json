@@ -39,6 +39,7 @@
     "devs",
     "DMARC",
     "dotenv",
+    "elasticloadbalancingv",
     "embla",
     "falso",
     "fargate",

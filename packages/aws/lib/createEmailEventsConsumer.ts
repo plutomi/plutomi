@@ -8,10 +8,12 @@ import { Queue } from "aws-cdk-lib/aws-sqs";
 import * as path from "path";
 import { env } from "../utils/env";
 import { EventBus } from "aws-cdk-lib/aws-events";
+import { Vpc } from "aws-cdk-lib/aws-ec2";
 
 type ConfigureEmailsProps = {
   stack: Stack;
   eventBus: EventBus;
+  vpc: Vpc;
 };
 
 type ConfigureEmailsConsumerResponse = {
@@ -42,6 +44,7 @@ const sesEventsQueueName = `ses-events-queue`;
 export const createEmailEventsConsumer = ({
   stack,
   eventBus,
+  vpc,
 }: ConfigureEmailsProps): ConfigureEmailsConsumerResponse => {
   // SNS Topic for all events, they have to go through here :(
   const sesEventsTopic = new Topic(stack, sesEventsTopicName, {
@@ -80,6 +83,7 @@ export const createEmailEventsConsumer = ({
     {
       runtime: Runtime.PROVIDED_AL2,
       handler: "main",
+      vpc,
       functionName: sesEventsConsumerName,
       memorySize: 128,
       // This needs to be higher than maxConcurrency in the event source

@@ -1,15 +1,17 @@
-import { Duration, Stack } from "aws-cdk-lib";
-import { EventBus } from "aws-cdk-lib/aws-events";
+import { Duration, type Stack } from "aws-cdk-lib";
+import type { EventBus } from "aws-cdk-lib/aws-events";
 import { Architecture, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Function } from "aws-cdk-lib/aws-lambda";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import path = require("path");
 import { env } from "../utils/env";
+import type { Vpc } from "aws-cdk-lib/aws-ec2";
 
 type CreateEventsConsumerProps = {
   stack: Stack;
   eventBus: EventBus;
+  vpc: Vpc;
 };
 
 const queueName = "plutomi-events-queue";
@@ -22,6 +24,7 @@ const eventConsumerName = "plutomi-events-consumer";
 export const createEventsConsumer = ({
   stack,
   eventBus,
+  vpc,
 }: CreateEventsConsumerProps) => {
   const eventConsumerQueue = new Queue(stack, queueName, {
     queueName,
@@ -36,6 +39,7 @@ export const createEventsConsumer = ({
     handler: "main",
     functionName: eventConsumerName,
     memorySize: 128,
+    vpc,
     timeout: Duration.seconds(30),
     architecture: Architecture.ARM_64,
     // This needs to be higher than maxConcurrency in the event source

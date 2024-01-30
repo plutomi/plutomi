@@ -16,11 +16,13 @@ export class PlutomiStack extends Stack {
     super(scope, id, props);
 
     const eventBus = createEventBus({ stack: this });
+    const { vpc, natGatewayProvider } = createVpc({ stack: this });
 
     const { emailEventsConsumer, configurationSet } = createEmailEventsConsumer(
       {
         stack: this,
         eventBus,
+        vpc,
       }
     );
 
@@ -29,13 +31,13 @@ export class PlutomiStack extends Stack {
       configurationSet,
     });
 
-    const { vpc, natGatewayProvider } = createVpc({ stack: this });
     const taskRole = createTaskRole({ stack: this });
     const taskDefinition = createTaskDefinition({ stack: this, taskRole });
 
     const plutomiEventsConsumer = createEventsConsumer({
       stack: this,
       eventBus,
+      vpc,
     });
 
     const fargateService = createFargateService({
