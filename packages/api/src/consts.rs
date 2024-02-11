@@ -47,6 +47,8 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "404",
     "500",
     // Main APP pages
+    "internal",
+    
     "playground",
     "api",
     "apis",
