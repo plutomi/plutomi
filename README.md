@@ -26,6 +26,8 @@ Stages:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
+TODO - cloudflare cname for `assets.plutomi.com` to point to `assets.plutomi.com.s3.us-east-1.amazonaws.com`
+
 ## Prerequisites
 
 - [Node 20](https://nodejs.org/en/download)
