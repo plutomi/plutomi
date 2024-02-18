@@ -17,7 +17,7 @@ import { env } from "../utils/env";
 const assetsBucketName = `${
   env.NEXT_PUBLIC_ENVIRONMENT === "production"
     ? ""
-    : `${env.NEXT_PUBLIC_ENVIRONMENT}.`
+    : `${env.NEXT_PUBLIC_ENVIRONMENT}-`
 }assets.plutomi.com`;
 
 type CreateS3BucketProps = {
