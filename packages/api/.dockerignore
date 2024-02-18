@@ -8,7 +8,7 @@ npm-debug.log
 .DS_Store
 Thumbs.db
 .env*
-!*.env.sample
+!*.env.example
 jest.config.*
 tests/
 __tests__/

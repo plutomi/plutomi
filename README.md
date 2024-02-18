@@ -68,9 +68,9 @@ Change directories into `packages/aws`, install dependencies, and set up the env
 ```bash
 $ cd packages/aws
 $ npm install
-$ cp .env.sample .env.development
-$ cp .env.sample .env.staging
-$ cp .env.sample .env.production
+$ cp .env.example .env.development
+$ cp .env.example .env.staging
+$ cp .env.example .env.production
 ```
 
 Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`.
