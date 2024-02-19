@@ -1,9 +1,0 @@
-build
-node_modules
-coverage
-dist
-.next
-OLD*
-.github
-.yarn
-cdk.out*

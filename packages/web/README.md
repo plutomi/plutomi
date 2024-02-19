@@ -1,5 +1,38 @@
-### Plutomi WEB
+# Welcome to Remix!
 
-This is your typical NextJS app running on port 3000.
+- [Remix Docs](https://remix.run/docs)
 
-You can start it with `npm run dev` but ideally, from the root with `scripts/run.sh --stack web`
+## Development
+
+From your terminal:
+
+```sh
+npm run dev
+```
+
+This starts your app in development mode, rebuilding assets on file changes.
+
+## Deployment
+
+First, build your app for production:
+
+```sh
+npm run build
+```
+
+Then run the app in production mode:
+
+```sh
+npm start
+```
+
+Now you'll need to pick a host to deploy it to.
+
+### DIY
+
+If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
+
+Make sure to deploy the output of `remix build`
+
+- `build/`
+- `public/build/`

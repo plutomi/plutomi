@@ -10,6 +10,9 @@ Having worked at a company that needed to recruit thousands of contractors every
 PS you do not need cloudfalre, you can use S3 just fine. I chose to use it because it's much cheaper on egress.
 and create a cache rule to cache buckets like
 
+
+// TODO add CF worker code
+// TODO make an issue to replace it with rust
 ```bash
 (http.host contains "assets.plutomi.com/public")
 ```
