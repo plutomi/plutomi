@@ -7,8 +7,18 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 ## Motivation
 
 Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://www.linkedin.com/in/joswayski/) attempt to do just that.
+PS you do not need cloudfalre, you can use S3 just fine. I chose to use it because it's much cheaper on egress.
+and create a cache rule to cache buckets like
+
+```bash
+(http.host contains "assets.plutomi.com/public")
+```
+
+ignore TTL and cache for a long time
 
 ## Summary
+
+TODO - Wrangler CLI
 
 You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
@@ -37,9 +47,9 @@ TODO - cloudflare cname for `assets.plutomi.com` to point to `assets.plutomi.com
 
 ## Infra
 
-Plutomi is deployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, and custom app events like `totp.requested` or `invite.sent`. We use [Lambda](https://aws.amazon.com/lambda/) to process events and they are written in Rust with [Cargo Lambda](https://www.cargo-lambda.info/). We use Cloudflare for DNS, CDN, WAF and other goodies - make sure to add a [Cache Rule](https://developers.cloudflare.com/cache/how-to/cache-rules/) to ignore `/api` routes.
+Plutomi is adeployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, and custom app events like `totp.requested` or `invite.sent`. We use [Lambda](https://aws.amazon.com/lambda/) to process events and they are written in Rust with [Cargo Lambda](https://www.cargo-lambda.info/). We use Cloudflare for DNS, CDN, WAF and other goodies - make sure to add a [Cache Rule](https://developers.cloudflare.com/cache/how-to/cache-rules/) to ignore `/api` routes.
 
-For the database, we are using [MongoDB on Atlas](https://www.mongodb.com/atlas/database) where we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
+For the database, we are using MongoDB and we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
 
 Logging is handled by [Axiom](https://axiom.co/) but this isn't required. Do note that we disabled CloudWatch logging in production [due to cost reasons](https://github.com/plutomi/plutomi/issues/944).
 
@@ -116,6 +126,21 @@ This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLD
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
 Thanks goes to these wonderful people who contributed!
+
+# TODO - Replace S3 with R2 now that workers are working
+
+Create a bucket in R2
+Add a subdomain to it like `assets.plutomi.com`
+Create a worker and `bind` the R2 bucket to it
+Add some logic to the worker to auto-reject requests that do not include `assets.plutomi.com/public`
+
+Note: Keep the bucket private, don't add a custom domain to it. Use a worker to fetch the file, or a presigned URL directly from the server.
+Have the worker triger on `assets.plutomi.com` or whatever
+
+Make sure to disable routes but keep the custom domain
+
+For cache rule, recommend suffixing the subdomain with -assets.plutomi.com for dev and staging environments so you can have 1 cache rule for all.
+In
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
