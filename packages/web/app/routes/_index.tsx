@@ -1,35 +1,25 @@
-import { Container, Button, Group, Title } from "@mantine/core";
-import { IconBrandGithub } from "@tabler/icons-react";
+import { LandingHero, HomepageFooter } from "~/components";
+import  LatestCommits from "~/components/LatestCommits/LatestCommits";
+import { UseCaseCards } from "~/components/UseCases/UseCaseCards";
+import { UseCaseSegment } from "~/components/UseCases/UseCaseSegment";
 
-export default function HeroTitle() {
+export default function LandingPage() {
   return (
-    <Container size={700}>
-      <Title order={1}>Making Applicant Management Great Again</Title>
+    <div className="w-full h-full flex justify-center">
+      <div className="py-32">
+        <LandingHero />
+        <div className="p-6 lg:p-0 lg:pt-4 w-full  flex flex-col items-center space-y-4">
+          <UseCaseSegment />
 
-      <h1 className="text-3xl font-bold underline text-red-400">
-        Hello world!
-      </h1>
-      <Group>
-        <Button
-          size="xl"
-          variant="gradient"
-          gradient={{ from: "blue", to: "cyan" }}
-        >
-          Get started
-        </Button>
-
-        <Button
-          component="a"
-          href="https://github.com/plutomi/plutomi"
-          size="xl"
-          variant="default"
-          target="_blank"
-          rel="noopener noreferrer"
-          leftSection={<IconBrandGithub size={20} />}
-        >
-          GitHub
-        </Button>
-      </Group>
-    </Container>
+          <div className="w-full ">
+            <UseCaseCards />
+          </div>
+          <div className="pt-8 flex flex-col items-center space-y-4">
+            <LatestCommits />
+            <HomepageFooter />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
