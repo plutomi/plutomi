@@ -1,41 +1,35 @@
-import type { MetaFunction } from "@remix-run/node";
+import { Container, Button, Group, Title } from "@mantine/core";
+import { IconBrandGithub } from "@tabler/icons-react";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
-
-export default function Index() {
+export default function HeroTitle() {
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <Container size={700}>
+      <Title order={1}>Making Applicant Management Great Again</Title>
+
+      <h1 className="text-3xl font-bold underline text-red-400">
+        Hello world!
+      </h1>
+      <Group>
+        <Button
+          size="xl"
+          variant="gradient"
+          gradient={{ from: "blue", to: "cyan" }}
+        >
+          Get started
+        </Button>
+
+        <Button
+          component="a"
+          href="https://github.com/plutomi/plutomi"
+          size="xl"
+          variant="default"
+          target="_blank"
+          rel="noopener noreferrer"
+          leftSection={<IconBrandGithub size={20} />}
+        >
+          GitHub
+        </Button>
+      </Group>
+    </Container>
   );
 }
