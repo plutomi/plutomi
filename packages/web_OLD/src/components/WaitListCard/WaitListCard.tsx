@@ -9,7 +9,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 import { Button } from "../Button";
-import { handleAxiosError } from "../../utils/handleAxiosResponse";
+import { handleAxiosError } from "../../../../web/utils/handleAxiosResponse";
 
 const cards = [
   {
