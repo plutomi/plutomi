@@ -1,7 +1,7 @@
 import { HiUserGroup } from "react-icons/hi";
 import { UseCaseSegment } from "./UseCaseSegment";
-import { useUseCaseStore, UseCase } from "@/hooks/useUseCaseStore";
 import { useCases } from "./UseCaseCards";
+import { useUseCaseStore } from "~/hooks/useUseCaseStore";
 
 export const UseCaseCards: React.FC = () => {
   const { useCase } = useUseCaseStore();
