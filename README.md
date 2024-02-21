@@ -21,6 +21,11 @@ ignore TTL and cache for a long time
 
 ## Summary
 
+
+## TODO to build api for Mac -> Ubuntu linux docker build -. -t plutomi/api --platform linux/amd64
+
+### Also building might take a long time, you might want to use --watch instead in dev mode 
+
 TODO - Wrangler CLI
 
 You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.

@@ -1,27 +1,54 @@
+# # Builder stage
+# FROM arm64v8/rust:1.74 AS builder
+
+# # Add the aarch64-unknown-linux-musl target
+# RUN rustup target add aarch64-unknown-linux-musl
+
+# # Install musl-tools, musl-dev, wget, xz-utils, and ca-certificates
+# RUN apt update && apt install -y musl-tools musl-dev wget xz-utils ca-certificates
+
+# # Download and install UPX
+# RUN wget https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-arm64_linux.tar.xz \
+#     && tar -xf upx-4.2.1-arm64_linux.tar.xz \
+#     && mv upx-4.2.1-arm64_linux/upx /usr/bin/ \
+#     && rm -rf upx-4.2.1-arm64_linux upx-4.2.1-arm64_linux.tar.xz
+
+# WORKDIR /app
+
+# COPY ./ .
+# RUN cargo build --target aarch64-unknown-linux-musl --release
+
+# # Compress the executable using UPX
+# RUN upx --best --lzma /app/target/aarch64-unknown-linux-musl/release/api
+
+# # Final stage
+# FROM scratch
+
+# # Copy CA certificates from the builder stage
+# COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+# EXPOSE 8080
+# WORKDIR /app
+# COPY --from=builder /app/target/aarch64-unknown-linux-musl/release/api ./api
+# CMD ["/app/api"]
+
+
 # Builder stage
-FROM arm64v8/rust:1.74 AS builder
+FROM rust:1.74 AS builder
 
-# Add the aarch64-unknown-linux-musl target
-RUN rustup target add aarch64-unknown-linux-musl
+# Install musl-tools for x86_64 musl libc
+RUN apt update && apt install -y musl-tools
 
-# Install musl-tools, musl-dev, wget, xz-utils, and ca-certificates
-RUN apt update && apt install -y musl-tools musl-dev wget xz-utils ca-certificates
+# Specify the target for x86_64 musl for static linking
+RUN rustup target add x86_64-unknown-linux-musl
 
-# Download and install UPX
-RUN wget https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-arm64_linux.tar.xz \
-    && tar -xf upx-4.2.1-arm64_linux.tar.xz \
-    && mv upx-4.2.1-arm64_linux/upx /usr/bin/ \
-    && rm -rf upx-4.2.1-arm64_linux upx-4.2.1-arm64_linux.tar.xz
-
+# Copy your source code and build it
 WORKDIR /app
-
 COPY ./ .
-RUN cargo build --target aarch64-unknown-linux-musl --release
+RUN cargo build --target x86_64-unknown-linux-musl --release
 
-# Compress the executable using UPX
-RUN upx --best --lzma /app/target/aarch64-unknown-linux-musl/release/api
+# (Rest of your Dockerfile for creating the final image)
 
-# Final stage
 FROM scratch
 
 # Copy CA certificates from the builder stage
@@ -31,3 +58,8 @@ EXPOSE 8080
 WORKDIR /app
 COPY --from=builder /app/target/aarch64-unknown-linux-musl/release/api ./api
 CMD ["/app/api"]
+
+
+
+
+## TODO fix this, taking so long now :/
