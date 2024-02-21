@@ -1,5 +1,4 @@
-import "./tailwind.css";
-
+import stylesheet from "~/tailwind.css";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
 import {
@@ -12,7 +11,7 @@ import {
 } from "@remix-run/react";
 
 export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : [])
+  ...(cssBundleHref ? [{ rel: "stylesheet", href: stylesheet }] : [])
 ];
 
 const rootBg = "bg-slate-100";
