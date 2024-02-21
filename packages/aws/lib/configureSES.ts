@@ -23,7 +23,7 @@ const sesEmailIdentityName = `ses-identity`;
 
 export const configureSES = ({ stack, eventsQueue }: ConfigureEmailsProps) => {
   // Strips out https:// and any trailing slashes
-  const rawUrl = new URL(env.NEXT_PUBLIC_BASE_URL).hostname;
+  const rawUrl = new URL(env.BASE_WEB_URL).hostname;
   const identity = Identity.domain(rawUrl);
 
   // This is required by SES

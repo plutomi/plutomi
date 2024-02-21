@@ -60,4 +60,4 @@ jobs:
           MONGO_URL: ${{ secrets.MONGO_URL }}
           NODE_ENV: production
           ENVIRONMENT: ${{ env.ENVIRONMENT }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          BASE_WEB_URL: ${{ secrets.BASE_WEB_URL }}
