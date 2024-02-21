@@ -4,11 +4,12 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix build",
+    "build:remix": "remix build",
+    "build:ts": "tsc -p tsconfig.server.json",
+    "build": "npm run build:remix && npm run build:ts",
     "dev": "remix dev -c \"npx tsx server.ts\"",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "tsx ./server.ts",
-    "typecheck": "tsc"
+    "start": "node ./dist/server.js"
   },
   "dependencies": {
     "@mantine/hooks": "^7.5.3",
