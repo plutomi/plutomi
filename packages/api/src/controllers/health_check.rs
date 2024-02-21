@@ -41,7 +41,7 @@ pub async fn health_check(
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
         database,
-        environment: state.env.NEXT_PUBLIC_ENVIRONMENT,
+        environment: state.env.ENVIRONMENT,
     };
 
     state.logger.log(LogObject {

@@ -98,7 +98,7 @@ deploy_aws() {
 
 
     # Export the environment variable so it can be picked up by CDK
-    export NEXT_PUBLIC_ENVIRONMENT=$environment
+    export ENVIRONMENT=$environment
 
     # Build the SES events consumer
     cd packages/consumers/email-events
