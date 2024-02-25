@@ -30,14 +30,24 @@ pub async fn health_check(
         options.max_time = Some(std::time::Duration::from_millis(1000));
         options
     };
+    // Attempt to perform a find_one operation to check database connectivity
+    let database_result = state.mongodb.collection.find_one(None, options).await;
 
-    let database = state
-        .mongodb
-        .collection
-        .find_one(None, options)
-        .await
-        .is_ok();
+    // Check if the database operation was successful
+    let database = database_result.is_ok();
 
+    // If the database operation was not successful, log the error
+    if let Err(e) = database_result {
+        state.logger.log(LogObject {
+            level: LogLevel::Error,
+            _time: iso_format(OffsetDateTime::now_utc()),
+            message: "Failed to connect to database for health check".to_string(),
+            data: None,
+            error: Some(json!(e.to_string())),
+            request: Some(json!(request_as_hashmap.clone())),
+            response: None,
+        });
+    }
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
         database,

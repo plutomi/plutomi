@@ -10,21 +10,22 @@ Having worked at a company that needed to recruit thousands of contractors every
 PS you do not need cloudfalre, you can use S3 just fine. I chose to use it because it's much cheaper on egress.
 and create a cache rule to cache buckets like
 
-
 // TODO add CF worker code
 // TODO make an issue to replace it with rust
+
 ```bash
 (http.host contains "assets.plutomi.com/public")
 ```
+
+## docker buildx build --platform linux/amd64 -t plutomi/plutomi:api-latest --push .
 
 ignore TTL and cache for a long time
 
 ## Summary
 
-
 ## TODO to build api for Mac -> Ubuntu linux docker build -. -t plutomi/api --platform linux/amd64
 
-### Also building might take a long time, you might want to use --watch instead in dev mode 
+### Also building might take a long time, you might want to use --watch instead in dev mode
 
 TODO - Wrangler CLI
 
@@ -35,6 +36,8 @@ In these applications, you can create `stages` which are individual steps that n
 An application for a delivery company might look like this:
 
 **New York City**
+
+### docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/api:latest --push
 
 Stages:
 
@@ -78,6 +81,8 @@ $ scripts/run.sh --stack <web|api>
 ```
 
 The script also has hot reloading for both so you can make changes and see them reflected immediately once you change and save a file. Update the `.env` in `packages/<api|web>`for any environment variables needed.
+
+When running locally, due to Docker, watch, and rust compile times, we recommend running API and Web app on their own outside of docker. Keep Nginx, Keep database and redis since these won't need to change often if at all. m2 max taking a few minutes to build API from scratch, granted this is cross platform from arm -> amd64
 
 ### Deploying
 
