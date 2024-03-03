@@ -48,10 +48,24 @@ Transfer main files to your VPS
 rsync -avz --progress .env  docker-compose.yml nginx.conf username@your-server-ip:plutomi
 ```
 
-Then ssh into your VPS and you'll want to install docker, docker-compose, and pull the images
+Then ssh into your VPS and you'll want to install docker, docker-compose, and pull the images from DockerHub, here they are for reference:
+
+- [plutomi/web](https://hub.docker.com/r/plutomi/web)
+- [plutomi/api](https://hub.docker.com/r/plutomi/api)
+- [plutomi/events-consumer](https://hub.docker.com/r/plutomi/events-consumer)
+
+And the third party services:
+
+- [nginx](https://hub.docker.com/_/nginx)
+- [mongo](https://hub.docker.com/_/mongo)
+- [redis](https://hub.docker.com/_/redis)
+- [elasticsearch](https://hub.docker.com/_/elasticsearch) (? TBD)
 
 ```bash
 sudo apt-get update -y && sudo apt-get install docker.io -y && sudo systemctl start docker && sudo systemctl enable docker && sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose && cd plutomi && sudo docker-compose pull
 ```
 
 Then run `docker-compose up -d` to start the services. That's it!
+
+Make sure to setup certbot as well
+https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal&tab=wildcard
