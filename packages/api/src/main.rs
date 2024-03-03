@@ -50,7 +50,7 @@ async fn main() {
     let app = Router::new()
         .fallback(|| async {
             // Load balancer targets will prevent this from being hit in prod
-            "It looks like you're testing locally! Make sure to add `/api/` to the API route - checkout the `main.rs` file for more info."
+            "It looks like you're testing locally! Make sure to add `/api/`        to the API route - checkout the `main.rs` file for more info."
         })
         .nest(
             "/api",
