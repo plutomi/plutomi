@@ -1,6 +1,6 @@
 # Plutomi
 
-Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
+Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows.
 
 ![infra](./images/infra.png)
 
@@ -12,13 +12,6 @@ Having worked at a company that needed to recruit thousands of contractors every
 PS you do not need cloudfalre, you can use S3 just fine. I chose to use it because it's much cheaper on egress.
 and create a cache rule to cache buckets like
 
-// TODO add CF worker code
-// TODO make an issue to replace it with rust
-
-```bash
-(http.host contains "assets.plutomi.com/public")
-```
-
 docker buildx build --platform linux/amd64,linux/arm64 -t your_image_name:tag --load .
 --push if you want to push to docker hub
 
@@ -29,8 +22,6 @@ ignore TTL and cache for a long time
 ## TODO to build api for Mac -> Ubuntu linux docker build -. -t plutomi/api --platform linux/amd64
 
 ### Also building might take a long time, you might want to use --watch instead in dev mode
-
-TODO - Wrangler CLI
 
 You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
@@ -59,9 +50,19 @@ TODO - cloudflare cname for `assets.plutomi.com` to point to `assets.plutomi.com
 
 ## Infra
 
-Plutomi is adeployed to AWS using [CDK](https://aws.amazon.com/cdk/). A couple of resources are created like a [Fargate](https://aws.amazon.com/fargate/) service which runs the [web app](/packages/web) (NextJS) and [api](/packages/api/) (Rust with Axum) in a private subnet as well as a NAT instance using [fck-nat](https://fck-nat.dev/) for outbound traffic. We use [SES](https://aws.amazon.com/ses/) for sending emails and have an event processing pipeline to handle things like opens, clicks, bounces, and custom app events like `totp.requested` or `invite.sent`. We use [Lambda](https://aws.amazon.com/lambda/) to process events and they are written in Rust with [Cargo Lambda](https://www.cargo-lambda.info/). We use Cloudflare for DNS, CDN, WAF and other goodies - make sure to add a [Cache Rule](https://developers.cloudflare.com/cache/how-to/cache-rules/) to ignore `/api` routes.
+Plutomi is deployed using [docker-compose](https://docs.docker.com/compose/) to any VPS you can get your hands on (we recommend [Hetzner](https://www.hetzner.com/cloud/)). The frontend is a [Remix](https://remix.run/) app and the API written in [Rust](https://www.rust-lang.org/) using the [Axum](https://github.com/tokio-rs/axum) framework. We use [Nginx](https://www.nginx.com/) as a reverse proxy to forward traffic to those containers appropriately. We use [MongoDB](https://www.mongodb.com/) for our database and try to follow patterns like [this](https://youtu.be/IYlWOk9Hu5g?t=1094) where we store everything in a single collection.
 
-For the database, we are using MongoDB and we store everything in one collection. We write small documents and index a `relatedTo` attribute that is shared across all items. For most queries, we can get an item and all of the items it is related to without using `$lookup`. You can check [this video](https://youtu.be/eEENrNKxCdw?t=1190) for a demonstration of this technique.
+We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to receive those events, along with custom app events like `totp.requested` or `invite.sent` into.
+
+We also use Cloudflare for DNS, CDN, WAF and other goodies.
+
+<!-- To be implemented later
+ and eventually, storage using [R2](https://developers.cloudflare.com/r2/) and [Workers](https://developers.cloudflare.com/workers/). -->
+
+<!-- To be implemented later
+We also use [Redis](https://redis.io/) for caching / rate limiting. -->
+
+<!-- We use Meli/Elastic/Typesense for search. -->
 
 Logging is handled by [Axiom](https://axiom.co/) but this isn't required. Do note that we disabled CloudWatch logging in production [due to cost reasons](https://github.com/plutomi/plutomi/issues/944).
 
@@ -98,10 +99,6 @@ $ cp .env.example .env.development
 $ cp .env.example .env.staging
 $ cp .env.example .env.production
 ```
-
-TODO add a record to point to S3 buckets
-
-> CNAME assets.plutomi.com -> assets.plutomi.com.s3.us-east-1.amazonaws.com
 
 Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`.
 
