@@ -4,24 +4,11 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 
 ![infra](./images/infra.png)
 
-## TODO make anote about not running the API locally in docker because it takes too long?
-
 ## Motivation
 
 Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://www.linkedin.com/in/joswayski/) attempt to do just that.
-PS you do not need cloudfalre, you can use S3 just fine. I chose to use it because it's much cheaper on egress.
-and create a cache rule to cache buckets like
-
-docker buildx build --platform linux/amd64,linux/arm64 -t your_image_name:tag --load .
---push if you want to push to docker hub
-
-ignore TTL and cache for a long time
 
 ## Summary
-
-## TODO to build api for Mac -> Ubuntu linux docker build -. -t plutomi/api --platform linux/amd64
-
-### Also building might take a long time, you might want to use --watch instead in dev mode
 
 You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
@@ -39,8 +26,6 @@ Stages:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
-TODO - cloudflare cname for `assets.plutomi.com` to point to `assets.plutomi.com.s3.us-east-1.amazonaws.com`
-
 ## Prerequisites
 
 - [Node 20](https://nodejs.org/en/download)
@@ -48,13 +33,15 @@ TODO - cloudflare cname for `assets.plutomi.com` to point to `assets.plutomi.com
 - [Docker](https://docs.docker.com/get-docker/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
+<!--TODO See if we can get hetzner referral link :') -->
+
 ## Infra
 
-Plutomi is deployed using [docker-compose](https://docs.docker.com/compose/) to any VPS you can get your hands on (we recommend [Hetzner](https://www.hetzner.com/cloud/)). The frontend is a [Remix](https://remix.run/) app and the API written in [Rust](https://www.rust-lang.org/) using the [Axum](https://github.com/tokio-rs/axum) framework. We use [Nginx](https://www.nginx.com/) as a reverse proxy to forward traffic to those containers appropriately. We use [MongoDB](https://www.mongodb.com/) for our database and try to follow patterns like [this](https://youtu.be/IYlWOk9Hu5g?t=1094) where we store everything in a single collection.
+Plutomi is deployed using [docker-compose](https://docs.docker.com/compose/) to any VPS you can get your hands on (we recommend [Hetzner](https://www.hetzner.com/cloud/)). The frontend is a [Remix](https://remix.run/) app and the API is written in [Rust](https://www.rust-lang.org/) using the [Axum](https://github.com/tokio-rs/axum) framework. We use [Nginx](https://www.nginx.com/) as a reverse proxy to forward traffic to those containers appropriately. We use [MongoDB](https://www.mongodb.com/) for our database and try to follow patterns like [this](https://youtu.be/IYlWOk9Hu5g?t=1094) where we store everything in a single collection.
 
-We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to receive those events, along with custom app events like `totp.requested` or `invite.sent` into.
+We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in, along with custom app events like `totp.requested`, `invite.sent`, or `application.submitted`.
 
-We also use Cloudflare for DNS, CDN, WAF and other goodies.
+We also use Cloudflare for DNS, CDN, WAF and other goodies, and we send our logs to [Axiom](https://axiom.co/), but this isn't required.
 
 <!-- To be implemented later
  and eventually, storage using [R2](https://developers.cloudflare.com/r2/) and [Workers](https://developers.cloudflare.com/workers/). -->
@@ -64,9 +51,22 @@ We also use [Redis](https://redis.io/) for caching / rate limiting. -->
 
 <!-- We use Meli/Elastic/Typesense for search. -->
 
-Logging is handled by [Axiom](https://axiom.co/) but this isn't required. Do note that we disabled CloudWatch logging in production [due to cost reasons](https://github.com/plutomi/plutomi/issues/944).
+## TODO to build api for Mac -> Ubuntu linux docker build -. -t plutomi/api --platform linux/amd64
+
+```bash
+
+docker buildx create --name multiarch --use --bootstrap
+
+
+docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/<api|web|consumer>
+--push
+```
+
+### Also building might take a long time, you might want to use --watch instead in dev mode
 
 ### Running Locally
+
+## TODO make anote about not running the API locally in docker because it takes too long?
 
 The following will start the API and the web app in development mode:
 
@@ -88,7 +88,7 @@ When running locally, due to Docker, watch, and rust compile times, we recommend
 
 ### Deploying
 
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configureEmails.ts](./packages/aws/lib/configureEmails.ts).
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configureSES.ts](./packages/aws/lib/configureSES.ts).
 
 Change directories into `packages/aws`, install dependencies, and set up the environment-specific `.env` files and modify the values as needed.
 
@@ -127,6 +127,10 @@ See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authenticat
 Then after all of that is done, make sure to beg aws to get you out of sandbox since you now have a way to handle complaints.
 
 In MongoDB, make sure to whitelist the IP address of the NAT instance which you can find in the EC2 console. We will eventually migrate over to use [PrivateLink](packages/aws/privateLink.md).
+
+## Decisions
+
+If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If not, open a discussion or an issue and we can talk about it, or reach out to me on [Twitter](https://twitter.com/notjoswayski).
 
 ## License
 
