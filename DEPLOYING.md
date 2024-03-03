@@ -41,3 +41,17 @@ Then after all of that is done, make sure to beg aws to get you out of sandbox s
 ## AWS
 
 ## VPS
+
+Transfer main files to your VPS
+
+```bash
+rsync -avz --progress .env  docker-compose.yml nginx.conf username@your-server-ip:plutomi
+```
+
+Then ssh into your VPS and you'll want to install docker, docker-compose, and pull the images
+
+```bash
+sudo apt-get update -y && sudo apt-get install docker.io -y && sudo systemctl start docker && sudo systemctl enable docker && sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose && cd plutomi && sudo docker-compose pull
+```
+
+Then run `docker-compose up -d` to start the services. That's it!

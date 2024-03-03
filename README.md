@@ -90,10 +90,6 @@ When running locally, due to Docker, watch, and rust compile times, we recommend
 
 To deploy Plutomi, you'll want to deploy to AWS first and then use `docker-compose` on your server. The plutomi imges can be found on DockerHub as well. Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
-## Decisions
-
-If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If not, open a discussion or an issue and we can talk about it, or reach out to me on [Twitter @notjoswayski](https://twitter.com/notjoswayski).
-
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
@@ -127,6 +123,6 @@ Thanks goes to these wonderful people who contributed!
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-## Questions
+## Questions?
 
-Open an issue! Or [DM me on Twitter](https://twitter.com/notjoswayski) or email jose@plutomi.com
+If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If it's not in there or you have any other questions, open a discussion or an issue and we can talk about it, or reach out to me on [Twitter @notjoswayski](https://twitter.com/notjoswayski) or email jose@plutomi.com!
