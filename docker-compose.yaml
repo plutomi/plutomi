@@ -14,7 +14,7 @@ services:
   api:
     container_name: api
     restart: always
-    image: plutomi/plutomi:api-latest
+    image: plutomi/api:latest
     environment:
       BASE_WEB_URL: ${BASE_WEB_URL}
       BASE_API_URL: ${BASE_API_URL}
@@ -55,3 +55,7 @@ services:
       - "27017:27017"
 volumes:
   mongodb_data:
+
+# ! - * 
+# * 
+

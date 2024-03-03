@@ -10,7 +10,7 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 ## Summary
 
-You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
+You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.git
 
 In these applications, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `responses` or after a certain time period.
 
@@ -88,49 +88,11 @@ When running locally, due to Docker, watch, and rust compile times, we recommend
 
 ### Deploying
 
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configureSES.ts](./packages/aws/lib/configureSES.ts).
-
-Change directories into `packages/aws`, install dependencies, and set up the environment-specific `.env` files and modify the values as needed.
-
-```bash
-$ cd packages/aws
-$ npm install
-$ cp .env.example .env.development
-$ cp .env.example .env.staging
-$ cp .env.example .env.production
-```
-
-Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`.
-
-After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
-
-![SES DNS Records](./images/ses-setup.png)
-
-At the end of it you should have (for each environment)
-
-3 DNS records for DKIM
-
-> Key: XXXXXXXXXXXXX Value: XXXXXXXXXXXXX
-
-1 MX Record for custom mail from
-
-> Key: notifications.plutomi.com Value: feedback-smtp.us-east-1.amazonses.com Priority: 10
-
-1 TXT Record for SPF
-
-> Key notifications.plutomi.com "v=spf1 include:amazonses.com ~all"
-
-1 TXT Record for DMARC:
-Also, make sure to setup DMARC. This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
-See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
-
-Then after all of that is done, make sure to beg aws to get you out of sandbox since you now have a way to handle complaints.
-
-In MongoDB, make sure to whitelist the IP address of the NAT instance which you can find in the EC2 console. We will eventually migrate over to use [PrivateLink](packages/aws/privateLink.md).
+To deploy Plutomi, you'll want to deploy to AWS first and then use `docker-compose` on your server. The plutomi imges can be found on DockerHub as well. Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
 ## Decisions
 
-If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If not, open a discussion or an issue and we can talk about it, or reach out to me on [Twitter](https://twitter.com/notjoswayski).
+If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If not, open a discussion or an issue and we can talk about it, or reach out to me on [Twitter @notjoswayski](https://twitter.com/notjoswayski).
 
 ## License
 
@@ -141,21 +103,6 @@ This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLD
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
 Thanks goes to these wonderful people who contributed!
-
-# TODO - Replace S3 with R2 now that workers are working
-
-Create a bucket in R2
-Add a subdomain to it like `assets.plutomi.com`
-Create a worker and `bind` the R2 bucket to it
-Add some logic to the worker to auto-reject requests that do not include `assets.plutomi.com/public`
-
-Note: Keep the bucket private, don't add a custom domain to it. Use a worker to fetch the file, or a presigned URL directly from the server.
-Have the worker triger on `assets.plutomi.com` or whatever
-
-Make sure to disable routes but keep the custom domain
-
-For cache rule, recommend suffixing the subdomain with -assets.plutomi.com for dev and staging environments so you can have 1 cache rule for all.
-In
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
