@@ -5,3 +5,7 @@ This folder is to document why certain architectural decisions were made so when
 ##[Why not S3?](why-not-s3.md "Why not S3")
 
 ##[Why SES? Why not other providers?](why-ses.md "Why SES? Why not other providers?")
+
+##[Why not AWS?](why-not-aws.md "Why not AWS?")
+
+##[Why not ARM containers?](why-not-arm64.md "Why not ARM containers?")
