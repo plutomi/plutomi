@@ -102,6 +102,8 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "position",
     "positions",
     "open", // Open Startup
+    "incidents",
+    "incident",
     "investors",
     "ir",
     "faq",
