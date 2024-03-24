@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plutomi-web
+  labels:
+    app: plutomi-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plutomi-web
+  template:
+    metadata:
+      labels:
+        app: plutomi-web
+    spec:
+      containers:
+        - name: web-app
+          image: plutomi/web:latest
+          ports:
+            - containerPort: 3000

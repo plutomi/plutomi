@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plutomi-ingress
+spec:
+  rules:
+    - host: "plutomi.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: plutomi-web
+                port:
+                  number: 80
