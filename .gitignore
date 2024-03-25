@@ -29,7 +29,7 @@ yarn-error.log*
 
 # Ignore files that start with .env except sample
 .env*
-!.env.sample
+!.env.example
 
 # vercel
 .vercel

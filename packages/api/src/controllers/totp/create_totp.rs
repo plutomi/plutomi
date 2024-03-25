@@ -16,7 +16,7 @@ pub async fn create_totp(
     let response: CreateTotpResponse = CreateTotpResponse {
         message: "TOTP2",
         database: mongodb.collection.find_one(None, None).await.is_ok(),
-        environment: get_env().NEXT_PUBLIC_ENVIRONMENT,
+        environment: get_env().ENVIRONMENT,
     };
     (StatusCode::OK, Json(response))
 }

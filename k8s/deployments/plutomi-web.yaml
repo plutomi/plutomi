@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plutomi-web
+  labels:
+    app: plutomi-web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: plutomi-web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0 # Don't take any down
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: plutomi-web
+    spec:
+      containers:
+        - name: web-app
+          image: plutomi/web:latest
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

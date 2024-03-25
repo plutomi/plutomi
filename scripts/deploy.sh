@@ -81,7 +81,7 @@ deploy_aws() {
 
 
     # Countdown to deployment with option to cancel
-    local countdown_time=10
+    local countdown_time=5
     echo -e "${ON_ICYAN}\n\nPress any key to cancel the deployment.\n\n\n${NC}"
     while [ $countdown_time -gt 0 ]; do
         # Check for any key press
@@ -98,7 +98,7 @@ deploy_aws() {
 
 
     # Export the environment variable so it can be picked up by CDK
-    export NEXT_PUBLIC_ENVIRONMENT=$environment
+    export ENVIRONMENT=$environment
 
     # Build the SES events consumer
     cd packages/consumers/email-events

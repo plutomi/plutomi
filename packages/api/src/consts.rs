@@ -43,10 +43,12 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "terms-of-service",
     "tos",
     "privacy-policy",
+    "performance",
     // NextJS
     "404",
     "500",
     // Main APP pages
+    "internal",
     "playground",
     "api",
     "apis",
@@ -100,6 +102,8 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "position",
     "positions",
     "open", // Open Startup
+    "incidents",
+    "incident",
     "investors",
     "ir",
     "faq",

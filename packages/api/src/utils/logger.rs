@@ -112,7 +112,7 @@ impl Logger {
             None
         };
 
-        let max_log_level = match env.NEXT_PUBLIC_ENVIRONMENT.as_str() {
+        let max_log_level = match env.ENVIRONMENT.as_str() {
             // Only log if testing locally because CloudWatch is expensive
             // We are using Axiom for production logging
             // https://github.com/plutomi/plutomi/issues/944

@@ -6,7 +6,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": "cdk deploy --all --progress events --verbose"
+    "deploy": "cdk deploy --all --progress events --verbose --no-rollback"
   },
   "devDependencies": {
     "@types/jest": "^29.5.5",

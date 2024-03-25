@@ -1,5 +1,5 @@
 ### Plutomi WEB
 
-This is your typical NextJS app running on port 3000.
+This is a Remix app running on port 3000.
 
-You can start it with `npm run dev` but ideally, from the root with `scripts/run.sh --stack web`
+You can start it with `npm run dev` but ideally with `docker compose up -d web` from the root directory.
