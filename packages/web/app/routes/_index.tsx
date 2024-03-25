@@ -1,5 +1,5 @@
 import { LandingHero, HomepageFooter } from "~/components";
-import  LatestCommits from "~/components/LatestCommits/LatestCommits";
+import LatestCommits from "~/components/LatestCommits/LatestCommits";
 import { UseCaseCards } from "~/components/UseCases/UseCaseCards";
 import { UseCaseSegment } from "~/components/UseCases/UseCaseSegment";
 
@@ -15,7 +15,29 @@ export default function LandingPage() {
             <UseCaseCards />
           </div>
           <div className="pt-8 flex flex-col items-center space-y-4">
-            <LatestCommits />
+            {/* <LatestCommits /> */}
+            <div className="lg:flex justify-center items-center flex-collg:w-full lg:visible hidden">
+              <img
+                className=" max-w-4xl  rounded-2xl lg:visible hidden lg:flex"
+                src="/infra.png"
+                alt="Infrastructure for plutomi"
+              />
+            </div>
+
+            <div className="flex flex-col justify-center text-start lg:text-center">
+              <p className="text-md lg:text-xl text-slate-700 ">
+                Currently a work in progress! Make sure to checkout the latest
+                changes on GitHub!
+              </p>
+              <a
+                className="lg:text-lg text-md underline text-blue-500 hover:text-blue-700 text-start lg:text-center"
+                href="https://github.com/plutomi/plutomi/pull/952"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://github.com/plutomi/plutomi/pull/952
+              </a>
+            </div>
             <HomepageFooter />
           </div>
         </div>

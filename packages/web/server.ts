@@ -10,11 +10,11 @@ app.all(
   "*",
   createRequestHandler({
     // @ts-expect-error - testing remix
-    build,
+    build
   })
 );
 
-app.listen(3000, () => {
+app.listen(3000, "0.0.0.0", () => {
   if (process.env.NODE_ENV === "development") {
     // @ts-expect-error - testing remix
     broadcastDevReady(build);
