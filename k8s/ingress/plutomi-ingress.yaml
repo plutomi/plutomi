@@ -14,3 +14,13 @@ spec:
                 name: plutomi-web
                 port:
                   number: 80
+    - host: "*.plutomi.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: plutomi-web
+                port:
+                  number: 80
