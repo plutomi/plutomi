@@ -9,6 +9,11 @@ spec:
   selector:
     matchLabels:
       app: plutomi-web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0 # Don't take any down
+      maxSurge: 1
   template:
     metadata:
       labels:
@@ -19,3 +24,14 @@ spec:
           image: plutomi/web:latest
           ports:
             - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

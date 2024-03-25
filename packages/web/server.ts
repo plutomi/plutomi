@@ -6,6 +6,11 @@ import * as build from "./build/index.js";
 const app = express();
 app.use(express.static("public"));
 
+app.get("/healthz", (req, res) => {
+  // K8s health check
+  res.sendStatus(200);
+});
+
 app.all(
   "*",
   createRequestHandler({
