@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: plutomi-web
+  name: web
   labels:
-    app: plutomi-web
+    app: web
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: plutomi-web
+      app: web
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -17,19 +17,13 @@ spec:
   template:
     metadata:
       labels:
-        app: plutomi-web
+        app: web
     spec:
       containers:
         - name: web-app
           image: plutomi/web:latest
           ports:
             - containerPort: 3000
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
           env:
             - name: POD_NAME
               valueFrom:

@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: plutomi-web
+  name: web
 spec:
   selector:
-    app: plutomi-web
+    app: web
   ports:
     - protocol: TCP
       port: 80

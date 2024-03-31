@@ -17,7 +17,7 @@ export default function LandingPage() {
     <div className="w-full h-full flex justify-center">
       <p className="text-sm text-slate-400  absolute left-0">{podName}</p>
       <div className="py-32">
-        <LandingHero />
+        <LandingHero /> - API SITE
         <div className="p-6 lg:p-0 lg:pt-4 w-full  flex flex-col items-center space-y-4">
           <UseCaseSegment />
 

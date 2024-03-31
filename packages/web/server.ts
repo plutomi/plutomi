@@ -5,6 +5,7 @@ import * as build from "./build/index.js";
 
 const app = express();
 app.use(express.static("public"));
+app.set("trust proxy", true);
 
 app.get("/healthz", (req, res) => {
   // K8s health check
