@@ -20,7 +20,7 @@ spec:
         app: api
     spec:
       containers:
-        - name: api-app
+        - name: api
           image: plutomi/api:latest
           ports:
             - containerPort: 3000

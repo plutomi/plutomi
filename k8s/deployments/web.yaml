@@ -20,7 +20,7 @@ spec:
         app: web
     spec:
       containers:
-        - name: web-app
+        - name: web
           image: plutomi/web:latest
           ports:
             - containerPort: 3000
