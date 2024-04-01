@@ -60,7 +60,7 @@ We also use [Redis](https://redis.io/) for caching / rate limiting. -->
 docker buildx create --name multiarch --use --bootstrap
 
 
-docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/<api|web|consumer> . --push
+docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/<api|web> . --push
 --push
 ```
 
