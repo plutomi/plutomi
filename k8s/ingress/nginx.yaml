@@ -17,10 +17,10 @@ spec:
                 name: web
                 port:
                   number: 80
-    - host: "*.plutomi.com"
+    - host: "plutomi.com"
       http:
         paths:
-          - path: /
+          - path: /api/
             pathType: Prefix
             backend:
               service:

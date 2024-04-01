@@ -7,9 +7,12 @@ const app = express();
 app.use(express.static("public"));
 app.set("trust proxy", true);
 
-app.get("/healthz", (req, res) => {
-  // K8s health check
-  res.sendStatus(200);
+app.use((req, res, next) => {
+  if (req.url === "/api" || req.url === "/api/" || req.url === "/api/docs") {
+    // todo improve this just testing nginx conf
+    return res.redirect(302, "/docs/api");
+  }
+  next();
 });
 
 app.all(

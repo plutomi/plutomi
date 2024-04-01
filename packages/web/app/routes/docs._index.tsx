@@ -1,3 +1,7 @@
 export default function Docs() {
-  <h1>Docs Page - Learn about Plutomi</h1>;
+  return (
+    <div>
+      <h1>Docs Page - Learn about Plutomi</h1>;
+    </div>
+  );
 }
