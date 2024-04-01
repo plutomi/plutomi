@@ -1,8 +1,8 @@
 {
   "rust-analyzer.linkedProjects": [
     "packages/api/Cargo.toml",
-    "./packages/api/Cargo.toml",
-    "./packages/api/Cargo.toml",
-    "./packages/consumers/events-consumer/Cargo.toml",
+    "./services/api/Cargo.toml",
+    "./services/api/Cargo.toml",
+    "./services/consumers/events-consumer/Cargo.toml"
   ]
 }

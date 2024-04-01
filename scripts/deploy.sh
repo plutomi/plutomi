@@ -20,7 +20,7 @@ print_error_and_exit() {
     echo -e "${BIWHITE}${ON_IRED}\n\nERROR: $1 \n${BIWHITE}${NC}"
     echo -e "Environment must be one of: ${BIGREEN}development${NC} | ${BIYELLOW}staging${NC} | ${BIRED}production${NC}\n"
     echo -e "Example: ${BIWHITE}$0 production${NC}\n"
-    echo -e "Make sure to set the environment variables in '${BIWHITE}packages/aws/.env.${BIGREEN}development${NC}|${BIYELLOW}staging${NC}|${BIRED}production${NC}' so CDK can deploy correctly.\n"
+    echo -e "Make sure to set the environment variables in '${BIWHITE}services/aws/.env.${BIGREEN}development${NC}|${BIYELLOW}staging${NC}|${BIRED}production${NC}' so CDK can deploy correctly.\n"
     exit 1
 }
 
@@ -101,7 +101,7 @@ deploy_aws() {
     export ENVIRONMENT=$environment
 
     # Build the SES events consumer
-    cd packages/consumers/email-events
+    cd services/consumers/email-events
     cargo lambda build --release --output-format zip --arm64
 
     # Build the Plutomi events consumer
