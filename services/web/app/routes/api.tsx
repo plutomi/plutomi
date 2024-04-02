@@ -1,9 +1,18 @@
-import { Outlet } from "@remix-run/react";
+import { Outlet, json, useLoaderData } from "@remix-run/react";
+
+export const loader = async () => {
+  return json({
+    podName: process.env.POD_NAME
+  });
+};
 
 export default function APIRoot() {
+  const { podName }: { podName: string } = useLoaderData();
+
   return (
     <div className="w-full h-full">
-      <h1>Api Root</h1>
+      <p className="text-sm text-slate-400  left-0">{podName}</p>
+      <h1>Api Root 2</h1>
       <Outlet />
     </div>
   );

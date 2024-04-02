@@ -20,7 +20,6 @@ export default function LandingPage() {
         <LandingHero />
         <div className="p-6 lg:p-0 lg:pt-4 w-full  flex flex-col items-center space-y-4">
           <UseCaseSegment />
-
           <div className="w-full ">
             <UseCaseCards />
           </div>
