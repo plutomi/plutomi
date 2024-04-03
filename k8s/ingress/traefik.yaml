@@ -2,6 +2,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
+# Routing got too difficult to do here, I even replaced Traefik with Nginx Ingress Controller and it was still a mess
+# Honestly, I'd eventually like another attempt at this but for now this works
+# TLDR is:
+# /api /api/ /api/docs should redirect to web /docs/api
+# Do the routing logic in Express/Axum directly
 spec:
   rules:
     - host: "plutomi.com"

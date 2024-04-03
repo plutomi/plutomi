@@ -5,18 +5,18 @@
       "name": "root"
     },
     {
-      "path": "packages/api",
+      "path": "services/api",
       "name": "api"
     },
     {
-      "path": "packages/web",
+      "path": "services/web",
       "name": "web"
-    },
+    }
   ],
   "settings": {
     "eslint.workingDirectories": [
-      { "directory": "packages/api", "changeProcessCWD": true },
-      { "directory": "packages/web", "changeProcessCWD": true },
+      { "directory": "services/api", "changeProcessCWD": true },
+      { "directory": "services/web", "changeProcessCWD": true }
     ],
     "search.exclude": {
       "**/node_modules": true,
