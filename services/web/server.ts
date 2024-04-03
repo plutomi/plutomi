@@ -7,13 +7,21 @@ const app = express();
 app.use(express.static("public"));
 app.set("trust proxy", true);
 
-// app.use((req, res, next) => {
-//   if (req.url === "/api" || req.url === "/api/" || req.url === "/api/docs") {
-//     // todo improve this just testing nginx conf
-//     return res.redirect(302, "/docs/api");
-//   }
-//   next();
-// });
+const redirectToDocs = [
+  "/api",
+  "/api/",
+  "/api/docs",
+  "/api/docs/",
+  "/api/documentation"
+];
+app.use(async (req, res, next) => {
+  if (redirectToDocs.includes(req.path)) {
+    // TODO do the same thing in API - only thing used in the web app is the first one since /api/ trailing slash gets stopped at Traefik
+    // TODO use .env
+    return res.redirect(301, "https://plutomi.com/docs/api");
+  }
+  next();
+});
 
 app.get("/health", async (req, res) => {
   res.json({ status: "ok" });
