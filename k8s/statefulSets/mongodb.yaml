@@ -16,14 +16,20 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
         - name: mongodb
-          image: mongo:latest
+          image: mongo:latest # TODO pin
           ports:
             - containerPort: 27017
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
-              value: "mongo"
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_USERNAME
             - name: MONGO_INITDB_ROOT_PASSWORD
-              value: "mongo"
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
           volumeMounts:
             - name: mongodb-data
               mountPath: /data/db
