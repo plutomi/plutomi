@@ -7,6 +7,21 @@ const app = express();
 app.use(express.static("public"));
 app.set("trust proxy", true);
 
+app.get("/ips", (req, res) => {
+  // TODO remove
+  const clientIP = req.connection.remoteAddress;
+  const forwardedFor = req.headers["x-forwarded-for"];
+  const socket = req.socket.remoteAddress;
+
+  res.json({
+    clientIP,
+    forwardedFor,
+    socket,
+    headers: req.headers
+  });
+  return;
+});
+
 const redirectToDocs = [
   "/api",
   "/api/",

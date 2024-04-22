@@ -6,7 +6,7 @@ use time::OffsetDateTime;
 const TIMESTAMP_BYTES: usize = 6; // 48 bits for timestamp
 const TOTAL_BYTES: usize = 14; // 112 bits total
 
-const CUSTOM_EPOCH: i64 = 1_700_000_000;
+const CUSTOM_EPOCH: i64 = 1_713_000_000;
 const BASE62_CHARS: &[u8] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 #[derive(Debug, PartialOrd, Ord, Clone, Copy, PartialEq, Eq)]
@@ -40,8 +40,8 @@ impl Entities {
             // Entities::Note => "nte_",
             // Entities::Application => "app_",
             // Entities::Stage => "stg_",
-            Entities::Request => "request_",
-            // Entities::Response => "res_",
+            Entities::Request => "rq_",
+            // Entities::Response => "rs_",
             // Entities::Webhook => "whk_",
             // Entities::ApiKey => "plutomi_api_key_",
         };
@@ -53,9 +53,8 @@ impl Entities {
 impl PlutomiId {
     // Creates a new PlutomiId with the specified OffsetDateTime. Use OffsetDateTime::now_utc():
     pub fn new(datetime: &OffsetDateTime, entity: Entities) -> String {
-        // Calculate the number of milliseconds since a custom epoch
-        // This extends the useful life by ~2024 years
         // The 48 bit timestamp allows for 281,474,976,710,656 milliseconds which is ~8,921 years of useful life
+        // We calculate the number of milliseconds since the custom epoch, this extends the useful life by another ~2024 years
         let seconds_since_epoch: u64 = (datetime.unix_timestamp() - CUSTOM_EPOCH) as u64;
         let milliseconds_since_epoch = seconds_since_epoch * 1000 + datetime.millisecond() as u64;
 

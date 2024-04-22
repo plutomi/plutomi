@@ -1,7 +1,8 @@
 use crate::{
     utils::{
+        generate_id::{Entities, PlutomiId},
         get_current_time::iso_format,
-        logger::{LogLevel, LogObject},
+        logger::{self, LogLevel, LogObject},
     },
     AppState,
 };
@@ -23,6 +24,29 @@ pub async fn health_check(
     State(state): State<AppState>,
     Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
+    // loop for 100 iterations
+    for i in 0..100 {
+        let timestamp = OffsetDateTime::now_utc();
+        // Generate a plutomi ID
+        let id = PlutomiId::new(&timestamp, Entities::Request);
+
+        let txt = format!("ID: {} - timestamp: {}", id, timestamp);
+
+        println!("{}", txt);
+
+        state.logger.log(LogObject {
+            level: LogLevel::Info,
+            _time: iso_format(timestamp),
+            message: txt,
+            data: None,
+            error: None,
+            request: None,
+            response: None,
+        });
+        // sleep for 100ms
+        // tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+    }
+
     let options: FindOneOptions = {
         let mut options = FindOneOptions::default();
         // This should be less than health check or you can get into a weird state where the health check fails
