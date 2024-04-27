@@ -3,8 +3,11 @@ kind: Service
 metadata:
   name: mongodb
 spec:
-  ports:
-    - port: 27017
-      targetPort: 27017
   selector:
     app: mongodb
+  ports:
+    - protocol: TCP
+      # Port the pod listens on
+      port: 27017
+      # Port that the service is exposed on
+      targetPort: 27017

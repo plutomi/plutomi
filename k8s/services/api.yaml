@@ -7,5 +7,7 @@ spec:
     app: api
   ports:
     - protocol: TCP
+      # Port the pod listens on
       port: 80
-      targetPort: 3000 # TODO switch to 8080
+      # Port that the service is exposed on
+      targetPort: 8080

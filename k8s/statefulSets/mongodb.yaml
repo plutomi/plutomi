@@ -23,16 +23,16 @@ spec:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: mongodb-secret
+                  name: mongodb-init-secret
                   key: MONGO_INITDB_ROOT_USERNAME
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mongodb-secret
+                  name: mongodb-init-secret
                   key: MONGO_INITDB_ROOT_PASSWORD
           volumeMounts:
             - name: mongodb-data
-              mountPath: /data/db
+              mountPath: /data/mongodb
   volumeClaimTemplates:
     - metadata:
         name: mongodb-data

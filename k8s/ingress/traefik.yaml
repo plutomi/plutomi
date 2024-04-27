@@ -6,7 +6,7 @@ metadata:
 # Honestly, I'd eventually like another attempt at this but for now this works
 # TLDR is:
 # /api /api/ /api/docs should redirect to web /docs/api
-# Do the routing logic in Express/Axum directly
+# We're doing the routing logic in Express/Axum directly
 spec:
   rules:
     - host: "plutomi.com"
