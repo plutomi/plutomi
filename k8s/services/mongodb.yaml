@@ -5,6 +5,7 @@ metadata:
 spec:
   selector:
     app: mongodb
+  type: ClusterIP
   ports:
     - protocol: TCP
       # Port the pod listens on

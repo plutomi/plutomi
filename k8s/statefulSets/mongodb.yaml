@@ -13,6 +13,22 @@ spec:
       labels:
         app: mongodb
     spec:
+      initContainers:
+        - name: create-pem-file
+          image: busybox
+          # The command below concatenates the certificate and private key into a single PEM file.
+          command:
+            - "/bin/sh"
+            - "-c"
+            # Use a tmp file to store the concatenated PEM file.
+            # Server certificate first, followed by the CA certificate, and then the private key
+            - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/ca.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+          volumeMounts:
+            - name: cert
+              mountPath: "/etc/ssl/certs"
+              readOnly: false # Explicitly allowing write access
+            - name: pem-dir
+              mountPath: "/pem"
       terminationGracePeriodSeconds: 10
       containers:
         - name: mongodb
@@ -31,8 +47,30 @@ spec:
                   name: mongodb-init-secret
                   key: MONGO_INITDB_ROOT_PASSWORD
           volumeMounts:
+            - name: cert
+              mountPath: /etc/ssl/certs
+              readOnly: true
+            - name: pem-dir
+              mountPath: "/pem"
+              readOnly: true
             - name: mongodb-data
               mountPath: /data/mongodb
+          args:
+            # TODO restart on cert update
+            # https://www.mongodb.com/docs/manual/tutorial/configure-ssl/#online-certificate-rotation
+            - "--tlsMode=requireTLS"
+            - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+            # Required now https://jira.mongodb.org/browse/SERVER-72839
+            - "--tlsCAFile=/etc/ssl/certs/ca.crt"
+
+      volumes:
+        - name: cert
+          secret:
+            # This secret is managed by cert-manager and updated automatically on certificate renewal.
+            secretName: mongodb-tls-secret
+        # This volume is used to store the concatenated PEM file across both the init container and the main container.
+        - name: pem-dir
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: mongodb-data
