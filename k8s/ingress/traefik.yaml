@@ -45,6 +45,5 @@ spec:
 
   tls:
     - hosts:
-        - plutomi.com
         - db.plutomi.com
       secretName: mongodb-tls-secret
