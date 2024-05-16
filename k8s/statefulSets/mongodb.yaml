@@ -22,7 +22,7 @@ spec:
             - "-c"
             # Use a tmp file to store the concatenated PEM file.
             # Server certificate first, followed by the CA certificate, and then the private key
-            - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/ca.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+            - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
           volumeMounts:
             - name: cert
               mountPath: "/etc/ssl/certs"
@@ -56,12 +56,17 @@ spec:
             - name: mongodb-data
               mountPath: /data/mongodb
           args:
-            # TODO restart on cert update
+            # TODO restart on cert update cron
             # https://www.mongodb.com/docs/manual/tutorial/configure-ssl/#online-certificate-rotation
             - "--tlsMode=requireTLS"
             - "--tlsCertificateKeyFile=/pem/mongodb.pem"
             # Required now https://jira.mongodb.org/browse/SERVER-72839
-            - "--tlsCAFile=/etc/ssl/certs/ca.crt"
+=            - "--setParameter"
+            - "tlsUseSystemCA=true"
+            # https://www.mongodb.com/docs/manual/reference/program/mongos/#std-option-mongos.--tlsAllowConnectionsWithoutCertificates
+            # Allow clients without certificates to connect - ie disable mTLS, still enables TLS
+            # https://stackoverflow.com/a/42870591
+            - "--tlsAllowConnectionsWithoutCertificates"
 
       volumes:
         - name: cert

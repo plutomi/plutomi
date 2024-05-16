@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
 # Routing got too difficult to do here, I even replaced Traefik with Nginx Ingress Controller and it was still a mess
 # Honestly, I'd eventually like another attempt at this but for now this works
 # TLDR is:
@@ -29,3 +31,20 @@ spec:
                 name: api
                 port:
                   number: 80
+    - host: "db.plutomi.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # Use existing HTTP service for certificate validation
+                name: web
+                port:
+                  number: 80
+
+  tls:
+    - hosts:
+        - plutomi.com
+        - db.plutomi.com
+      secretName: mongodb-tls-secret

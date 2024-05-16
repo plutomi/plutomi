@@ -35,7 +35,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
 
-          ## THIS IS REQUIRED OTHERWISE YOU WILL GET 502 ERRORS
+          ## THIS IS REQUIRED OTHERWISE YOU WILL GET 502 ERRORS ON DEPLOYS
           # You can use a preStop hook in your Kubernetes deployment to delay the termination of your pods,
           # giving your application more time to close existing connections gracefully.
           # The preStop hook can execute a command (like a sleep command) that delays the shutdown process,
