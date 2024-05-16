@@ -22,6 +22,7 @@ spec:
         app: web
     spec:
       # Time to wait for a pod to gracefully shut down on receiving SIGTERM before sending SIGKILL.
+      ## THIS IS REQUIRED OTHERWISE YOU WILL GET 502 ERRORS
       terminationGracePeriodSeconds: 60
       containers:
         - name: web

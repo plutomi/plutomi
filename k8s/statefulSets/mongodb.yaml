@@ -21,7 +21,7 @@ spec:
             - "/bin/sh"
             - "-c"
             # Use a tmp file to store the concatenated PEM file.
-            # Server certificate first, followed by the CA certificate, and then the private key
+            # Server certificate first and then the private key
             - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
           volumeMounts:
             - name: cert
@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
         - name: mongodb
-          image: mongo:latest # TODO pin
+          image: mongo:7.0.8
           ports:
             - containerPort: 27017
           env:

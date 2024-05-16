@@ -34,7 +34,8 @@ spec:
     - host: "db.plutomi.com"
       http:
         paths:
-          - path: /
+          # This path is required for Let's Encrypt HTTP-01 challenge
+          - path: /.well-known/acme-challenge/
             pathType: Prefix
             backend:
               service:
