@@ -252,4 +252,5 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "assessments",
     "verification",
     "locations",
+    "live",
 ];

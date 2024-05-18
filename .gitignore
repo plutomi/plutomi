@@ -49,3 +49,5 @@ cdk.context.json
 dist/
 
 
+# Ignore any files accidentally copied to local dir
+root@*/*

@@ -61,7 +61,7 @@ spec:
             - "--tlsMode=requireTLS"
             - "--tlsCertificateKeyFile=/pem/mongodb.pem"
             # Required now https://jira.mongodb.org/browse/SERVER-72839
-=            - "--setParameter"
+            - "--setParameter"
             - "tlsUseSystemCA=true"
             # https://www.mongodb.com/docs/manual/reference/program/mongos/#std-option-mongos.--tlsAllowConnectionsWithoutCertificates
             # Allow clients without certificates to connect - ie disable mTLS, still enables TLS
