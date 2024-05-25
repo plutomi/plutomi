@@ -18,7 +18,7 @@ import {
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
 import { ImProfile } from "react-icons/im";
-import { UseCase, useUseCaseStore } from "~/hooks/useUseCaseStore";
+import { UseCase, useUseCaseStore } from "~/hooks/use-usecase-store";
 
 type UseCaseCard = {
   title: string;
