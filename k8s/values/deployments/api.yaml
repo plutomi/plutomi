@@ -1,6 +1,8 @@
 deployment:
   replicas: 3
-  name: { { $.Values.common.api.name } }
+  name: api
+  # Make sure this matches the one in the services/api.yaml
+  port: 3000 # TODO i think this is wrong value
 
   ## Image details
   image: plutomi/api:latest
