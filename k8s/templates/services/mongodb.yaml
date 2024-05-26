@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  {{- with .Values.mongodb }}
+  name: {{ .name}}
+spec:
+  selector:
+    app: {{ .name }}
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      # Port the pod listens on
+      port: {{ .port }}
+      # Port that the service is exposed on
+      targetPort: {{ .port }}
+  {{- end }}
