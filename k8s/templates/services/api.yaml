@@ -1,11 +1,13 @@
+{{- with .Values.api }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { .Values.api.name } }
+  name: { { .name } }
 spec:
   selector:
-    app: { { .Values.api.name } }
+    app: { { .name } }
   ports:
     - protocol: TCP
       port: { { $.Values.common.defaultContainerPort } }
-      targetPort: { { .Values.api.port } }
+      targetPort: { { .port } }
+{{- end}}

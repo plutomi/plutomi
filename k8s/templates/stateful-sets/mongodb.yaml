@@ -1,7 +1,7 @@
+{{- with .Values.mongodb }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  {{- with .Values.mongodb }}
   name: {{ .name}}
 spec:
   serviceName: {{ .name }}
@@ -78,4 +78,4 @@ spec:
         resources:
           requests:
             storage: {{ .pvc.storage}}
-  {{- end }}
+{{- end }}

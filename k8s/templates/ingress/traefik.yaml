@@ -1,15 +1,13 @@
+{{- with .Values.ingress }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  {{- with .Values.ingress }}
   name: {{ .name }}
   annotations:
     {{- range $key, $value := .annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
-  {{- end }}
 spec:
-  {{- with .Values.ingress }}
   rules:
     {{- range .rules }}
     - host: {{ .host }}
@@ -32,5 +30,4 @@ spec:
         - {{ . | quote }}
         {{- end }}
       secretName: {{ .secretName }}
-    {{- end }}
-  {{- end }}
+{{- end }}

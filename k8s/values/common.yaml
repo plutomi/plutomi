@@ -1,5 +1,3 @@
-## Common values for all services, can override in service specific values.yaml
-
 common:
   ## Readiness probe
   healthCheckPath: /health

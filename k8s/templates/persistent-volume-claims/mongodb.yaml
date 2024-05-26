@@ -1,16 +1,14 @@
+{{- with .Values.mongodb.pvc }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  {{- with .Values.mongodb.pvc }}
   name: {{ .name }}
   labels:
     app: {{ .app }}
-  {{- end }}
 spec:
-  {{- with .Values.mongodb.pvc }}
   accessModes:
     - {{ .accessModes }}
   resources:
     requests:
       storage: {{ .storage }}
-  {{- end }}
+{{- end }}

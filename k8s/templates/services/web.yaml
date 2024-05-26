@@ -1,13 +1,15 @@
+{{- with .Values.web }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { .Values.web.name } }
+  name: { { .name } }
 spec:
   selector:
-    app: { { .Values.web.name } }
+    app: { { .name } }
   ports:
     - protocol: TCP
       # Port the pod listens on
       port: { { $.Values.common.defaultContainerPort } }
       # Port that the service is exposed on
-      targetPort: { { .Values.web.port } }
+      targetPort: { { .port } }
+{{- end}}

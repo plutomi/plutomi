@@ -1,7 +1,7 @@
+{{- with .Values.mongodb }}
 apiVersion: v1
 kind: Service
 metadata:
-  {{- with .Values.mongodb }}
   name: {{ .name}}
 spec:
   selector:
@@ -13,4 +13,4 @@ spec:
       port: {{ .port }}
       # Port that the service is exposed on
       targetPort: {{ .port }}
-  {{- end }}
+{{- end }}

@@ -1,13 +1,11 @@
+{{- with .Values.api }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{- with .Values.api }}
   name: {{ .name }}
   labels:
     app: {{ .name }}
-  {{- end }}
 spec:
-  {{- with .Values.api }}
   replicas: {{ .replicas }}
   selector:
     matchLabels:
@@ -48,4 +46,4 @@ spec:
               port: {{ .port }}
             initialDelaySeconds: {{ $.Values.common.initialDelaySeconds }}
             periodSeconds: {{ $.Values.common.periodSeconds }}
-  {{- end}}
+{{- end}}
