@@ -1,18 +1,22 @@
 mongodb:
   name: mongodb
-  labels:
-    app: mongodb
-  service:
-    port: 27017
+  port: 27017
+
   initContainer:
     image: busybox
   container:
     image: mongo:7.0.8
     args:
+      # TODO restart on cert update cron
+      # https://www.mongodb.com/docs/manual/tutorial/configure-ssl/#online-certificate-rotation
       - "--tlsMode=requireTLS"
       - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+      # Required now https://jira.mongodb.org/browse/SERVER-72839
       - "--setParameter"
       - "tlsUseSystemCA=true"
+      # https://www.mongodb.com/docs/manual/reference/program/mongos/#std-option-mongos.--tlsAllowConnectionsWithoutCertificates
+      # Allow clients without certificates to connect - ie disable mTLS, still enables TLS
+      # https://stackoverflow.com/a/42870591
       - "--tlsAllowConnectionsWithoutCertificates"
   volumes:
     certSecret: mongodb-tls-secret
