@@ -1,65 +1,16 @@
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: ingress
-#   annotations:
-#     cert-manager.io/cluster-issuer: letsencrypt
-
-# # We're doing the routing logic in Express/Axum directly
-# spec:
-#   rules:
-#     - host: "plutomi.com"
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: web
-#                 port:
-#                   number: 80
-#     - host: "plutomi.com"
-#       http:
-#         paths:
-#           - path: /api/
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: api
-#                 port:
-#                   number: 80
-#     - host: "db.plutomi.com"
-#       http:
-#         paths:
-          # This path is required for Let's Encrypt HTTP-01 challenge
-#           - path: /.well-known/acme-challenge/
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 # Use existing HTTP service for certificate validation
-#                 name: web
-#                 port:
-#                   number: 80
-
-#   tls:
-#     - hosts:
-#         - db.plutomi.com
-#       secretName: mongodb-tls-secret
-
-
-
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.ingress.name }}
+  {{- with .Values.ingress }}
+  name: {{ .name }}
   annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
+    {{- range $key, $value := .annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   rules:
-    {{- range .Values.ingress.rules }}
+    {{- range .rules }}
     - host: {{ .host }}
       http:
         paths:
@@ -74,10 +25,11 @@ spec:
           {{- end }}
     {{- end }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
         {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
+  {{- end}}
