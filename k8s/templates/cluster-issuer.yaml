@@ -1,3 +1,4 @@
+{{- if .Values.clusterIssuer }}
 {{- with .Values.clusterIssuer }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -13,4 +14,5 @@ spec:
       - http01:
           ingress:
             class: {{ .ingress }}
+{{- end }}
 {{- end }}

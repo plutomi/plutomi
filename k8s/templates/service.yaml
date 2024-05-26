@@ -1,3 +1,4 @@
+{{- if .Values.service }}
 {{- with .Values.service }}
 apiVersion: v1
 kind: Service
@@ -8,8 +9,9 @@ spec:
     app: {{ .name }}
   ports:
     - protocol: TCP
-      # Port the pod listens on
+      # Port the pod listens on - global value from common.yaml
       port: {{ $.Values.common.defaultContainerPort }}
       # Port that the service is exposed on
       targetPort: {{ .port }}
-{{- end}}
+{{- end }}
+{{- end }}

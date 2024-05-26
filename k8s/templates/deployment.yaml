@@ -1,3 +1,4 @@
+{{- if .Values.deployment }}
 {{- with .Values.deployment }}
 apiVersion: apps/v1
 kind: Deployment
@@ -46,4 +47,5 @@ spec:
               port: {{ .port }}
             initialDelaySeconds: {{ $.Values.common.initialDelaySeconds }}
             periodSeconds: {{ $.Values.common.periodSeconds }}
-{{- end}}
+{{- end }}
+{{- end }}

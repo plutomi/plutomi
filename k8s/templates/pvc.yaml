@@ -1,12 +1,17 @@
+{{- if .Values.pvc }}
+{{- with .Values.pvc }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: { { .Values.pvc.name } }
+  name: {{ .name }}
   labels:
-    app: { { .Values.pvc.app } }
+    app: {{ .app }}
 spec:
   accessModes:
-    - { { $.Values.pvc.accessModes } }
+    # Global value from common.yaml
+    - {{ $.Values.pvc.accessModes }}
   resources:
     requests:
-      storage: { { .Values.pvc.storage } }
+      storage: {{ .storage }}
+{{- end }}
+{{- end }}

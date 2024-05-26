@@ -1,3 +1,5 @@
+## This file will probably change when we add the operator
+{{- if .Values.database }}
 {{- with .Values.database }}
 apiVersion: apps/v1
 kind: StatefulSet
@@ -88,4 +90,5 @@ spec:
         resources:
           requests:
             storage: {{ .pvc.storage }}
+{{- end }}
 {{- end }}
