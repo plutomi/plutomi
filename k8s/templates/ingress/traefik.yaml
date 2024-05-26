@@ -1,0 +1,83 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress
+#   annotations:
+#     cert-manager.io/cluster-issuer: letsencrypt
+
+# # We're doing the routing logic in Express/Axum directly
+# spec:
+#   rules:
+#     - host: "plutomi.com"
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: web
+#                 port:
+#                   number: 80
+#     - host: "plutomi.com"
+#       http:
+#         paths:
+#           - path: /api/
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: api
+#                 port:
+#                   number: 80
+#     - host: "db.plutomi.com"
+#       http:
+#         paths:
+          # This path is required for Let's Encrypt HTTP-01 challenge
+#           - path: /.well-known/acme-challenge/
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 # Use existing HTTP service for certificate validation
+#                 name: web
+#                 port:
+#                   number: 80
+
+#   tls:
+#     - hosts:
+#         - db.plutomi.com
+#       secretName: mongodb-tls-secret
+
+
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.ingress.name }}
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  rules:
+    {{- range .Values.ingress.rules }}
+    - host: {{ .host }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .backend.service.name }}
+                port:
+                  number: {{ .backend.service.port.number }}
+          {{- end }}
+    {{- end }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
