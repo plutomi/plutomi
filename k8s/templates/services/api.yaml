@@ -7,7 +7,5 @@ spec:
     app: { { .Values.api.name } }
   ports:
     - protocol: TCP
-      # Port the pod listens on
       port: 80
-      # Port that the service is exposed on
       targetPort: { { .Values.api.port } }
