@@ -3,7 +3,9 @@ kind: ClusterIssuer
 metadata:
   {{- with .Values.letsencrypt }}
   name: { { .name } }
+  {{- end }}
 spec:
+  {{- with .Values.letsencrypt }}
   acme:
     server: { { .server } }
     email: { { .email } }
