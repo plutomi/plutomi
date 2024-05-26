@@ -19,6 +19,12 @@ An application for a delivery company might look like this:
 **New York City**
 
 Stages:
+TOD0: Install helm
+
+````
+brew install helm OR curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
 
 1. **Questionnaire** - Collect basic information of an applicant. If an applicant does not complete this stage in 30 days, move them to the _Waiting List_.
 2. **Waiting List** - An idle pool of applicants
@@ -26,6 +32,15 @@ Stages:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
+
+also section on useful links:
+
+https://artifacthub.io/
+
+k3s.io
+
+
+and update setup script links to use helm
 ## Prerequisites
 
 - [Node 20](https://nodejs.org/en/download)
@@ -62,7 +77,7 @@ docker buildx create --name multiarch --use --bootstrap
 
 docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/<api|web> . --push
 --push
-```
+````
 
 ### Also building might take a long time, you might want to use --watch instead in dev mode
 

@@ -1,0 +1,6 @@
+letsencrypt:
+  name: letsencrypt
+  server: https://acme-v02.api.letsencrypt.org/directory
+  email: jose@plutomi.com
+  secretRef: letsencrypt
+  ingress: traefik
