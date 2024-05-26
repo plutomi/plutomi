@@ -11,5 +11,5 @@ spec:
       # Port the pod listens on
       port: { { $.Values.common.defaultContainerPort } }
       # Port that the service is exposed on
-      targetPort: { { .port } }
-{{- end}}
+      targetPort: {{ .port }}
+{{- end }}

@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { .name } }
+  name: {{ .name }}
 spec:
   selector:
-    app: { { .name } }
+    app: {{ .name }}
   ports:
     - protocol: TCP
-      port: { { $.Values.common.defaultContainerPort } }
-      targetPort: { { .port } }
+      port: {{ $.Values.common.defaultContainerPort }}
+      targetPort: {{ .port }}
 {{- end}}
