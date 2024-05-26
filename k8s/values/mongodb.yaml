@@ -30,8 +30,3 @@ mongodb:
       secretKeyRef:
         name: mongodb-init-secret
         key: MONGO_INITDB_ROOT_PASSWORD
-  pvc:
-    name: mongodb-data
-    app: mongodb
-    accessModes: ReadWriteOnce
-    storage: 10Gi
