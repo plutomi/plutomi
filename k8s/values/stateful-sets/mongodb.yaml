@@ -1,12 +1,12 @@
-mongodb:
-  name: mongodb
+database:
+  name: { { $.Values.common.mongodb.name } }
   port: 27017
   initContainer:
     image: busybox
   container:
     image: mongo:7.0.8
     args:
-      # TODO restart on cert update cron
+      # TODO restart on cert update cron https://github.com/plutomi/plutomi/issues/963
       # https://www.mongodb.com/docs/manual/tutorial/configure-ssl/#online-certificate-rotation
       - "--tlsMode=requireTLS"
       - "--tlsCertificateKeyFile=/pem/mongodb.pem"
@@ -20,7 +20,8 @@ mongodb:
   volumes:
     certSecret: mongodb-tls-secret
     emptyDir: {}
-  terminationGracePeriodSeconds: 10
+  terminationGracePeriodSeconds:
+    { { $.Values.common.terminationGracePeriodSeconds } }
   env:
     MONGO_INITDB_ROOT_USERNAME:
       secretKeyRef:

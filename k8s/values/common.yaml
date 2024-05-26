@@ -16,3 +16,6 @@ common:
 
   web:
     name: web
+
+  mongodb:
+    name: mongodb
