@@ -1,0 +1,34 @@
+mongodb:
+  name: mongodb
+  labels:
+    app: mongodb
+  service:
+    port: 27017
+  initContainer:
+    image: busybox
+  container:
+    image: mongo:7.0.8
+    args:
+      - "--tlsMode=requireTLS"
+      - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+      - "--setParameter"
+      - "tlsUseSystemCA=true"
+      - "--tlsAllowConnectionsWithoutCertificates"
+  volumes:
+    certSecret: mongodb-tls-secret
+    emptyDir: {}
+  terminationGracePeriodSeconds: 10
+  env:
+    MONGO_INITDB_ROOT_USERNAME:
+      secretKeyRef:
+        name: mongodb-init-secret
+        key: MONGO_INITDB_ROOT_USERNAME
+    MONGO_INITDB_ROOT_PASSWORD:
+      secretKeyRef:
+        name: mongodb-init-secret
+        key: MONGO_INITDB_ROOT_PASSWORD
+  pvc:
+    name: mongodb-data
+    app: mongodb
+    accessModes: ReadWriteOnce
+    storage: 10Gi
