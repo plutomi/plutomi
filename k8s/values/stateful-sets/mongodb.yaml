@@ -1,8 +1,22 @@
 database:
   name: mongodb
   port: 27017
-  initContainer:
+  initContainers:
+  - name: create-pem-file
     image: busybox
+    # The command below concatenates the certificate and private key into a single PEM file.
+    command:
+      - "/bin/sh"
+      - "-c"
+      # Use a tmp file to store the concatenated PEM file.
+      # Server certificate first and then the private key
+      - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+    volumeMounts:
+      - name: cert
+        mountPath: "/etc/ssl/certs"
+        readOnly: false # Explicitly allowing write access
+      - name: pem-dir
+        mountPath: "/pem"
   containers:
     - name: mongodb
       image: mongo:7.0.8
