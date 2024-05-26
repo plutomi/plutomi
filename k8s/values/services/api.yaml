@@ -1,3 +1,3 @@
 service:
-  name: { { $.Values.common.api.name } }
-  port: 3000
+  name: api
+  port: 3000 # TODO i think this is wrong

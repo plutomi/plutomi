@@ -11,14 +11,6 @@ common:
   terminationGracePeriodSeconds: 10
   preStopSleepSeconds: 10
 
-  api:
-    name: api
-
-  web:
-    name: web
-
-  mongodb:
-    name: mongodb
 
   pvc:
     accessModes: ["ReadWriteOnce"]

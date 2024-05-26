@@ -1,5 +1,5 @@
 database:
-  name: { { $.Values.common.mongodb.name } }
+  name: mongodb
   port: 27017
   initContainer:
     image: busybox
