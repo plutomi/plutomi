@@ -17,9 +17,6 @@ ingress:
                 name: web
                 port:
                   number: 80
-    - host: "plutomi.com"
-      http:
-        paths:
           - path: /api/
             pathType: Prefix
             backend:

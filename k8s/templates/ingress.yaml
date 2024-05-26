@@ -14,7 +14,7 @@ spec:
     - host: {{ .host }}
       http:
         paths:
-          {{- range .paths }}
+          {{- range .http.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
             backend:
