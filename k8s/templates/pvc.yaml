@@ -9,7 +9,9 @@ metadata:
 spec:
   accessModes:
     # Global value from common.yaml
-    - {{ $.Values.pvc.accessModes }}
+    {{- range $.Values.common.pvc.accessModes }}
+    - {{ . }}
+    {{- end }}
   resources:
     requests:
       storage: {{ .storage }}
