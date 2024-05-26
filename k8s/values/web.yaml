@@ -1,15 +1,15 @@
-api:
-  name: api
+web:
+  name: web
   replicas: 3
 
   ## Rolling update strategy
   maxUnavailable: 0
   maxSurge: 1
-  terminationGracePeriodSeconds: 10
+  terminationGracePeriodSeconds: 60
   preStopSleepSeconds: 10 # In seconds
 
   ## Image details
-  image: plutomi/api:latest
+  image: plutomi/web:latest
   port: 3000
 
   ## Readiness probe

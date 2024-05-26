@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{- with .Values.api }}
+  {{- with .Values.web }}
   name: { { .name } }
   labels:
-    app: { { .name } }
+    app: { { . } }
 
 spec:
   replicas: { { .replicas } }
@@ -14,6 +14,7 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
+      # Don't take any down
       maxUnavailable: { { .maxUnavailable } }
       maxSurge: { { .maxSurge } }
   template:
@@ -26,7 +27,7 @@ spec:
       terminationGracePeriodSeconds:
         { { .terminationGracePeriodSeconds } }
       containers:
-        - name: api
+        - name: web
           image: { { .image } }
           ports:
             - containerPort: { { .port } }
@@ -35,6 +36,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+
+          ## THIS IS REQUIRED OTHERWISE YOU WILL GET 502 ERRORS
+          # You can use a preStop hook in your Kubernetes deployment to delay the termination of your pods,
+          # giving your application more time to close existing connections gracefully.
+          # The preStop hook can execute a command (like a sleep command) that delays the shutdown process,
+          # providing a buffer for your application to complete any ongoing requests.
+          # TODO - Verify if terminationGracePeriodSeconds still needed
           lifecycle:
             preStop:
               exec:
@@ -42,15 +50,16 @@ spec:
                   [
                     "sh",
                     "-c",
-                    "sleep {{ .preStopSleepSeconds }}",
+                    "sleep {{ .lifecycle.preStopSleepSeconds }}",
                   ]
           readinessProbe:
             httpGet:
               path: { { .healthCheckPath } }
               port: { { .port } }
+            # After the container has started, wait 10 seconds before starting the readiness checks
             initialDelaySeconds:
-              # After the container has started, wait 10 seconds before starting the readiness checks
               { { .initialDelaySeconds } }
-              # How often to perform the readiness probe
+
+            # How often to perform the readiness probe
             periodSeconds: { { .periodSeconds } }
-  {{- end}}
+{{- end}}
