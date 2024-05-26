@@ -2,47 +2,37 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   {{- with .Values.web }}
-  name: { { .name } }
+  name: {{ .name }}
   labels:
-    app: { { . } }
-
+    app: {{ .name }}
+  {{- end }}
 spec:
-  replicas: { { .replicas } }
+  {{- with .Values.web }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels:
-      app: { { .name } }
+      app: {{ .name }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      # Don't take any down
-      maxUnavailable: { { .maxUnavailable } }
-      maxSurge: { { .maxSurge } }
+      maxUnavailable: {{ .maxUnavailable }}
+      maxSurge: {{ .maxSurge }}
   template:
     metadata:
       labels:
-        app: { { .name } }
+        app: {{ .name }}
     spec:
-      # Time to wait for a pod to gracefully shut down on receiving SIGTERM before sending SIGKILL.
-      ## THIS IS REQUIRED OTHERWISE YOU WILL GET 502 ERRORS
-      terminationGracePeriodSeconds:
-        { { .terminationGracePeriodSeconds } }
+      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
       containers:
         - name: web
-          image: { { .image } }
+          image: {{ .image }}
           ports:
-            - containerPort: { { .port } }
+            - containerPort: {{ .port }}
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-
-          ## THIS IS REQUIRED OTHERWISE YOU WILL GET 502 ERRORS
-          # You can use a preStop hook in your Kubernetes deployment to delay the termination of your pods,
-          # giving your application more time to close existing connections gracefully.
-          # The preStop hook can execute a command (like a sleep command) that delays the shutdown process,
-          # providing a buffer for your application to complete any ongoing requests.
-          # TODO - Verify if terminationGracePeriodSeconds still needed
           lifecycle:
             preStop:
               exec:
@@ -50,16 +40,12 @@ spec:
                   [
                     "sh",
                     "-c",
-                    "sleep {{ .lifecycle.preStopSleepSeconds }}",
+                    "sleep {{ .preStopSleepSeconds }}",
                   ]
           readinessProbe:
             httpGet:
-              path: { { .healthCheckPath } }
-              port: { { .port } }
-            # After the container has started, wait 10 seconds before starting the readiness checks
-            initialDelaySeconds:
-              { { .initialDelaySeconds } }
-
-            # How often to perform the readiness probe
-            periodSeconds: { { .periodSeconds } }
-{{- end}}
+              path: {{ .healthCheckPath }}
+              port: {{ .port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+  {{- end}}
