@@ -2,34 +2,32 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   {{- with .Values.api }}
-  name: { { .name } }
+  name: {{ .name }}
   labels:
-    app: { { .name } }
-
+    app: {{ .name }}
+  {{- end }}
 spec:
-  replicas: { { .replicas } }
+  {{- with .Values.api }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels:
-      app: { { .name } }
+      app: {{ .name }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: { { .maxUnavailable } }
-      maxSurge: { { .maxSurge } }
+      maxUnavailable: {{ .maxUnavailable }}
+      maxSurge: {{ .maxSurge }}
   template:
     metadata:
       labels:
-        app: { { .name } }
+        app: {{ .name }}
     spec:
-      # Time to wait for a pod to gracefully shut down on receiving SIGTERM before sending SIGKILL.
-      ## THIS IS REQUIRED OTHERWISE YOU WILL GET 502 ERRORS
-      terminationGracePeriodSeconds:
-        { { .terminationGracePeriodSeconds } }
+      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
       containers:
         - name: api
-          image: { { .image } }
+          image: {{ .image }}
           ports:
-            - containerPort: { { .port } }
+            - containerPort: {{ .port }}
           env:
             - name: POD_NAME
               valueFrom:
@@ -46,11 +44,8 @@ spec:
                   ]
           readinessProbe:
             httpGet:
-              path: { { .healthCheckPath } }
-              port: { { .port } }
-            initialDelaySeconds:
-              # After the container has started, wait 10 seconds before starting the readiness checks
-              { { .initialDelaySeconds } }
-              # How often to perform the readiness probe
-            periodSeconds: { { .periodSeconds } }
+              path: {{ .healthCheckPath }}
+              port: {{ .port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
   {{- end}}

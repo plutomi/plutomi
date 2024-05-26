@@ -6,7 +6,7 @@ api:
   maxUnavailable: 0
   maxSurge: 1
   terminationGracePeriodSeconds: 10
-  preStopSleepSeconds: 10 # In seconds
+  preStopSleepSeconds: 10
 
   ## Image details
   image: plutomi/api:latest
