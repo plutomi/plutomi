@@ -1,5 +1,4 @@
 pvc:
   name: mongodb-data
   app: mongodb
-  accessModes: ReadWriteOnce
   storage: 10Gi

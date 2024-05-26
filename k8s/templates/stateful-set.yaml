@@ -84,7 +84,7 @@ spec:
     - metadata:
         name: {{ .pvc.name }}
       spec:
-        accessModes: ["{{ .pvc.accessModes }}"]
+        accessModes: ["{{ $.Values.pvc.accessModes }}"]
         resources:
           requests:
             storage: {{ .pvc.storage }}

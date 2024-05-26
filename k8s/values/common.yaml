@@ -19,3 +19,6 @@ common:
 
   mongodb:
     name: mongodb
+
+  pvc:
+    accessModes: ["ReadWriteOnce"]
