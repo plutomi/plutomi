@@ -15,14 +15,14 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: {{ .maxUnavailable }}
-      maxSurge: {{ .maxSurge }}
+      maxUnavailable: {{ $.Values.common.maxUnavailable }}
+      maxSurge: {{ $.Values.common.maxSurge }}
   template:
     metadata:
       labels:
         app: {{ .name }}
     spec:
-      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
       containers:
         - name: api
           image: {{ .image }}
@@ -40,12 +40,12 @@ spec:
                   [
                     "sh",
                     "-c",
-                    "sleep {{ .preStopSleepSeconds }}",
+                    "sleep {{ $.Values.common.preStopSleepSeconds }}",
                   ]
           readinessProbe:
             httpGet:
-              path: {{ .healthCheckPath }}
+              path: {{ $.Values.common.healthCheckPath }}
               port: {{ .port }}
-            initialDelaySeconds: {{ .initialDelaySeconds }}
-            periodSeconds: {{ .periodSeconds }}
+            initialDelaySeconds: {{ $.Values.common.initialDelaySeconds }}
+            periodSeconds: {{ $.Values.common.periodSeconds }}
   {{- end}}

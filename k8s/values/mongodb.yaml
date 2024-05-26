@@ -1,7 +1,6 @@
 mongodb:
   name: mongodb
   port: 27017
-
   initContainer:
     image: busybox
   container:

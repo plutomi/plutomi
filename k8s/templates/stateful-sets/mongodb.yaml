@@ -30,7 +30,7 @@ spec:
               readOnly: false # Explicitly allowing write access
             - name: pem-dir
               mountPath: "/pem"
-      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
       containers:
         - name: {{ .name }}
           image: {{ .container.image }}

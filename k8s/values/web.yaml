@@ -2,17 +2,6 @@ web:
   name: web
   replicas: 3
 
-  ## Rolling update strategy
-  maxUnavailable: 0
-  maxSurge: 1
-  terminationGracePeriodSeconds: 60
-  preStopSleepSeconds: 10 # In seconds
-
   ## Image details
   image: plutomi/web:latest
   port: 3000
-
-  ## Readiness probe
-  healthCheckPath: /health
-  initialDelaySeconds: 10
-  periodSeconds: 5
