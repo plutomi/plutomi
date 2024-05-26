@@ -1,4 +1,0 @@
-pvc:
-  name: mongodb-data
-  app: mongodb
-  storage: 10Gi

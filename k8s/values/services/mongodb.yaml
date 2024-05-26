@@ -1,0 +1,3 @@
+service:
+  name: mongodb
+  port: 27017 

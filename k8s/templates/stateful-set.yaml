@@ -83,12 +83,19 @@ spec:
           {{- end }}
         {{- end }}
   volumeClaimTemplates:
+    {{- range .volumeClaimTemplates }}
     - metadata:
-        name: {{ .pvc.name }}
+        {{- range $key, $value := .metadata }}
+        {{ $key }}: {{ $value }}
+        {{- end }}
       spec:
-        accessModes: ["{{ $.Values.pvc.accessModes }}"]
+        accessModes:
+          {{- range $.Values.common.pvc.accessModes }}
+          - {{ . }}
+          {{- end }}
         resources:
           requests:
-            storage: {{ .pvc.storage }}
+            storage: {{ .spec.resources.requests.storage }}
+    {{- end }}
 {{- end }}
 {{- end }}

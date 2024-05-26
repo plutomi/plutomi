@@ -3,25 +3,38 @@ database:
   port: 27017
   initContainer:
     image: busybox
-  container:
-    image: mongo:7.0.8
-    args:
-      # TODO restart on cert update cron https://github.com/plutomi/plutomi/issues/963
-      # https://www.mongodb.com/docs/manual/tutorial/configure-ssl/#online-certificate-rotation
-      - "--tlsMode=requireTLS"
-      - "--tlsCertificateKeyFile=/pem/mongodb.pem"
-      # Required now https://jira.mongodb.org/browse/SERVER-72839
-      - "--setParameter"
-      - "tlsUseSystemCA=true"
-      # https://www.mongodb.com/docs/manual/reference/program/mongos/#std-option-mongos.--tlsAllowConnectionsWithoutCertificates
-      # Allow clients without certificates to connect - ie disable mTLS, still enables TLS
-      # https://stackoverflow.com/a/42870591
-      - "--tlsAllowConnectionsWithoutCertificates"
+  containers:
+    - name: mongodb
+      image: mongo:7.0.8
+      args:
+        # TODO restart on cert update cron https://github.com/plutomi/plutomi/issues/963
+        # https://www.mongodb.com/docs/manual/tutorial/configure-ssl/#online-certificate-rotation
+        - "--tlsMode=requireTLS"
+        - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+        # Required now https://jira.mongodb.org/browse/SERVER-72839
+        - "--setParameter"
+        - "tlsUseSystemCA=true"
+        # https://www.mongodb.com/docs/manual/reference/program/mongos/#std-option-mongos.--tlsAllowConnectionsWithoutCertificates
+        # Allow clients without certificates to connect - ie disable mTLS, still enables TLS
+        # https://stackoverflow.com/a/42870591
+        - "--tlsAllowConnectionsWithoutCertificates"
+      volumeMounts:
+        - name: cert
+          mountPath: /etc/ssl/certs
+          readOnly: true
+        - name: pem-dir
+          mountPath: "/pem"
+          readOnly: true
+        - name: mongodb-data
+          mountPath: /data/mongodb
   volumes:
-    certSecret: mongodb-tls-secret
-    emptyDir: {}
-  terminationGracePeriodSeconds:
-    { { $.Values.common.terminationGracePeriodSeconds } }
+    - name: cert
+      secret:
+        # This secret is managed by cert-manager and updated automatically on certificate renewal.
+        secretName: mongodb-tls-secret
+    # This volume is used to store the concatenated PEM file across both the init container and the main container.
+    - name: pem-dir
+      emptyDir: {}
   env:
     MONGO_INITDB_ROOT_USERNAME:
       secretKeyRef:
@@ -31,3 +44,13 @@ database:
       secretKeyRef:
         name: mongodb-init-secret
         key: MONGO_INITDB_ROOT_PASSWORD
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-data
+      spec:
+        accessModes: ["{{ $.Values.pvc.accessModes }}"]
+        resources:
+          requests:
+            storage: 10Gi
+
+
