@@ -1,0 +1,3 @@
+service:
+  name: { { $.Values.common.web.name } }
+  port: 3000

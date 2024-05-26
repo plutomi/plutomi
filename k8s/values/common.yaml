@@ -10,3 +10,9 @@ common:
   maxSurge: 1
   terminationGracePeriodSeconds: 10
   preStopSleepSeconds: 10
+
+  api:
+    name: api
+
+  web:
+    name: web
