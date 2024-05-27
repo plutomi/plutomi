@@ -89,7 +89,7 @@ spec:
         {{- end }}
       spec:
         accessModes:
-          {{- range $.Values.common.pvc.accessModes }}
+          {{- range $config.pvc.accessModes }}
           - {{ . }}
           {{- end }}
         resources:

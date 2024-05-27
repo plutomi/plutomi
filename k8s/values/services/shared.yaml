@@ -1,1 +1,2 @@
-# TODO - intentionally left blank
+services:
+  defaultContainerPort: 80

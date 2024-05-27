@@ -1,0 +1,59 @@
+# Must start with 'databases' key
+# This file is subject to change once the operator is brought in
+databases:
+  name: mongodb
+  image: mongo:7.0.8
+  replicas: 1
+  port: 27017
+  initContainers:
+    - name: create-pem-file
+      image: busybox
+      command:
+        - "/bin/sh"
+        - "-c"
+        - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+      volumeMounts:
+        - name: cert
+          mountPath: "/etc/ssl/certs"
+          readOnly: false
+        - name: pem-dir
+          mountPath: "/pem"
+  containers:
+    - name: mongodb
+      args:
+        - "--tlsMode=requireTLS"
+        - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+        - "--setParameter"
+        - "tlsUseSystemCA=true"
+        - "--tlsAllowConnectionsWithoutCertificates"
+      volumeMounts:
+        - name: cert
+          mountPath: /etc/ssl/certs
+          readOnly: true
+        - name: pem-dir
+          mountPath: "/pem"
+          readOnly: true
+        - name: mongodb-data
+          mountPath: /data/mongodb
+      env:
+        MONGO_INITDB_ROOT_USERNAME:
+          secretKeyRef:
+            name: mongodb-init-secret
+            key: MONGO_INITDB_ROOT_USERNAME
+        MONGO_INITDB_ROOT_PASSWORD:
+          secretKeyRef:
+            name: mongodb-init-secret
+            key: MONGO_INITDB_ROOT_PASSWORD
+  volumes:
+    - name: cert
+      secret:
+        secretName: mongodb-tls-secret
+    - name: pem-dir
+      emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-data
+      spec:
+        resources:
+          requests:
+            storage: 10Gi
