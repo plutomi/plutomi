@@ -2,8 +2,8 @@
 common:
   terminationGracePeriodSeconds: 10
 
-databases:
-  terminationGracePeriodSeconds: {{ .Values.common.terminationGracePeriodSeconds }}
+databases: {}
 
-deployments:
-  terminationGracePeriodSeconds: {{ .Values.common.terminationGracePeriodSeconds }}
+deployments: {}
+
+services: {}

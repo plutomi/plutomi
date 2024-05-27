@@ -30,7 +30,7 @@ spec:
               readOnly: {{ .readOnly | default false }}
             {{- end }}
         {{- end }}
-      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
       containers:
         {{- range .containers }}
         - name: {{ .name }}
