@@ -41,6 +41,15 @@ database:
           readOnly: true
         - name: mongodb-data
           mountPath: /data/mongodb
+      env:
+        MONGO_INITDB_ROOT_USERNAME:
+          secretKeyRef:
+            name: mongodb-init-secret
+            key: MONGO_INITDB_ROOT_USERNAME
+        MONGO_INITDB_ROOT_PASSWORD:
+          secretKeyRef:
+            name: mongodb-init-secret
+            key: MONGO_INITDB_ROOT_PASSWORD
   volumes:
     - name: cert
       secret:
@@ -49,15 +58,6 @@ database:
     # This volume is used to store the concatenated PEM file across both the init container and the main container.
     - name: pem-dir
       emptyDir: {}
-  env:
-    MONGO_INITDB_ROOT_USERNAME:
-      secretKeyRef:
-        name: mongodb-init-secret
-        key: MONGO_INITDB_ROOT_USERNAME
-    MONGO_INITDB_ROOT_PASSWORD:
-      secretKeyRef:
-        name: mongodb-init-secret
-        key: MONGO_INITDB_ROOT_PASSWORD
   volumeClaimTemplates:
     - metadata:
         name: mongodb-data
