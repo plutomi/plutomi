@@ -8,5 +8,6 @@ deployments:
   ## Rolling update strategy
   maxUnavailable: 0
   maxSurge: 1
+  # TODO This can be moved up to global?
   terminationGracePeriodSeconds: 10
   preStopSleepSeconds: 10

@@ -89,7 +89,7 @@ spec:
         {{- end }}
       spec:
         accessModes:
-          {{- range .accessModes }}
+          {{- range $.Values.databases.accessModes }}
           - {{ . }}
           {{- end }}
         resources:

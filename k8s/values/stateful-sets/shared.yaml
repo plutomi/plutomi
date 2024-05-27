@@ -1,7 +1,6 @@
 # Must start with 'databases' key
 databases:
-
-  accessModes: [ "ReadWriteOnce" ]
-
-
+  # TODO This can be moved up to global?
   terminationGracePeriodSeconds: 10
+  accessModes:
+    - "ReadWriteOnce"
