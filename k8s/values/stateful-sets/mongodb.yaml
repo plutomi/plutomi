@@ -2,7 +2,6 @@
 # This file is subject to change once the operator is brought in
 databases:
   name: mongodb
-  image: mongo:7.0.8
   replicas: 1
   port: 27017
   initContainers:
@@ -20,6 +19,7 @@ databases:
           mountPath: "/pem"
   containers:
     - name: mongodb
+      image: mongo:7.0.8
       args:
         - "--tlsMode=requireTLS"
         - "--tlsCertificateKeyFile=/pem/mongodb.pem"
