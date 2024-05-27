@@ -22,6 +22,14 @@ spec:
         app: {{ .name }}
     spec:
       terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
+      initContainers:
+        {{- range .databases }}
+        - name: init-hosts-{{ .name }}
+          image: busybox
+          command: ['sh', '-c', 'echo "{{ .internalAddress }} {{ .externalAddress }}" >> /etc/hosts']
+          securityContext:
+            runAsUser: 0
+        {{- end }}
       containers:
         - name: {{ .name }}
           image: {{ .image }}
