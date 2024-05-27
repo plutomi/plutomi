@@ -11,7 +11,7 @@ common:
   terminationGracePeriodSeconds: 10
   preStopSleepSeconds: 10
 
-
+  ## Persistent volume claim permissions 
   pvc:
     accessModes: ["ReadWriteOnce"]
 
@@ -19,10 +19,10 @@ common:
 services:
   api:
     name: api
-    port: 3000
+    port: 8080
   web:
     name: web
-    port: 3000 # TODO i think this is wrong value
+    port: 3000 
   mongodb:
     name: mongodb
     port: 27017
@@ -32,10 +32,70 @@ deployments:
   api:
     replicas: 3
     name: api
-    port: 3000
+    port: 8080
     image: plutomi/api:latest
   web:
     replicas: 2
     name: web
     port: 3000
     image: plutomi/web:latest
+
+
+databases:
+  mongodb:
+    name: mongodb
+    image: mongo:7.0.8
+    replicas: 1
+    port: 27017
+    initContainers:
+      - name: create-pem-file
+        image: busybox
+        command:
+          - "/bin/sh"
+          - "-c"
+          - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+        volumeMounts:
+          - name: cert
+            mountPath: "/etc/ssl/certs"
+            readOnly: false
+          - name: pem-dir
+            mountPath: "/pem"
+    containers:
+      - name: mongodb
+        args:
+          - "--tlsMode=requireTLS"
+          - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+          - "--setParameter"
+          - "tlsUseSystemCA=true"
+          - "--tlsAllowConnectionsWithoutCertificates"
+        volumeMounts:
+          - name: cert
+            mountPath: /etc/ssl/certs
+            readOnly: true
+          - name: pem-dir
+            mountPath: "/pem"
+            readOnly: true
+          - name: mongodb-data
+            mountPath: /data/mongodb
+        env:
+          MONGO_INITDB_ROOT_USERNAME:
+            secretKeyRef:
+              name: mongodb-init-secret
+              key: MONGO_INITDB_ROOT_USERNAME
+          MONGO_INITDB_ROOT_PASSWORD:
+            secretKeyRef:
+              name: mongodb-init-secret
+              key: MONGO_INITDB_ROOT_PASSWORD
+    volumes:
+      - name: cert
+        secret:
+          secretName: mongodb-tls-secret
+      - name: pem-dir
+        emptyDir: {}
+    volumeClaimTemplates:
+      - metadata:
+          name: mongodb-data
+        spec:
+          resources:
+            requests:
+              storage: 10Gi
