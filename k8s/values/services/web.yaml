@@ -1,0 +1,5 @@
+# Must start with 'services' key
+services:
+  web:
+    name: web
+    port: 3000 

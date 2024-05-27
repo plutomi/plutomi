@@ -1,0 +1,7 @@
+# Must start with 'deployments' key
+deployments:
+  web:
+    replicas: 2
+    name: web
+    port: 3000
+    image: plutomi/web:latest

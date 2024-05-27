@@ -1,0 +1,39 @@
+
+ingress:
+  name: ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  rules:
+    - host: "plutomi.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80
+          - path: /api/
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 80
+    - host: "db.plutomi.com"
+      http:
+        paths:
+          - path: /.well-known/acme-challenge/
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - db.plutomi.com
+      secretName: mongodb-tls-secret
+
+

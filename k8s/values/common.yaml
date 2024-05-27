@@ -1,0 +1,16 @@
+common:
+  ## Readiness probe
+  healthCheckPath: /health
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  defaultContainerPort: 80
+
+  ## Rolling update strategy
+  maxUnavailable: 0
+  maxSurge: 1
+  terminationGracePeriodSeconds: 10
+  preStopSleepSeconds: 10
+
+  ## Persistent volume claim permissions 
+  pvc:
+    accessModes: ["ReadWriteOnce"]
