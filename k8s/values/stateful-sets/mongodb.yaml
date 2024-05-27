@@ -62,7 +62,8 @@ database:
     - metadata:
         name: mongodb-data
       spec:
-        accessModes: ["{{ $.Values.pvc.accessModes }}"]
+        # Used in template already
+        # accessModes: ["{{ $.Values.pvc.accessModes }}"]
         resources:
           requests:
             storage: 10Gi
