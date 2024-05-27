@@ -1,16 +1,16 @@
-{{- if .Values.deployment }}
-{{- with .Values.deployment }}
+{{- if .Values.deployments }}
+{{- range $name, $config := .Values.deployments }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .name }}
+  name: {{ $config.name }}
   labels:
-    app: {{ .name }}
+    app: {{ $config.name }}
 spec:
-  replicas: {{ .replicas }}
+  replicas: {{ $config.replicas }}
   selector:
     matchLabels:
-      app: {{ .name }}
+      app: {{ $config.name }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -19,14 +19,14 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .name }}
+        app: {{ $config.name }}
     spec:
       terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
       containers:
-        - name: api
-          image: {{ .image }}
+        - name: {{ $config.name }}
+          image: {{ $config.image }}
           ports:
-            - containerPort: {{ .port }}
+            - containerPort: {{ $config.port }}
           env:
             - name: POD_NAME
               valueFrom:
@@ -44,7 +44,7 @@ spec:
           readinessProbe:
             httpGet:
               path: {{ $.Values.common.healthCheckPath }}
-              port: {{ .port }}
+              port: {{ $config.port }}
             initialDelaySeconds: {{ $.Values.common.initialDelaySeconds }}
             periodSeconds: {{ $.Values.common.periodSeconds }}
 {{- end }}

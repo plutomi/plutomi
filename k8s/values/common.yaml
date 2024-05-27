@@ -26,3 +26,16 @@ services:
   mongodb:
     name: mongodb
     port: 27017
+
+
+deployments:
+  api:
+    replicas: 3
+    name: api
+    port: 3000
+    image: plutomi/api:latest
+  web:
+    replicas: 2
+    name: web
+    port: 3000
+    image: plutomi/web:latest

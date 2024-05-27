@@ -1,8 +1,2 @@
-deployment:
-  replicas: 3
-  name: web
-  # Make sure this matches the one in the services/web.yaml
-  port: 3000
-
-  ## Image details
-  image: plutomi/web:latest
+## Intentionally left blank
+deployment: {}
