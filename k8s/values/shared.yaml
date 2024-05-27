@@ -1,0 +1,9 @@
+# Global values that are shared across all 1 or more components
+common:
+  terminationGracePeriodSeconds: 10
+
+databases:
+  terminationGracePeriodSeconds: {{ .Values.common.terminationGracePeriodSeconds }}
+
+deployments:
+  terminationGracePeriodSeconds: {{ .Values.common.terminationGracePeriodSeconds }}
