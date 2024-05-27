@@ -1,5 +1,4 @@
 # Must start with 'services' key
 services:
-  mongodb:
-    name: mongodb
-    port: 27017
+  name: mongodb
+  port: 27017

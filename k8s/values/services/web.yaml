@@ -1,5 +1,4 @@
 # Must start with 'services' key
 services:
-  web:
-    name: web
-    port: 3000 
+  name: web
+  port: 3000 

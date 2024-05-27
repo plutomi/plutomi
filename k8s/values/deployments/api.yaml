@@ -1,7 +1,6 @@
 # Must start with 'deployments' key
 deployments:
-  api:
-    replicas: 3
-    name: api
-    port: 8080
-    image: plutomi/api:latest
+  replicas: 3
+  name: api
+  port: 8080
+  image: plutomi/api:latest

@@ -1,4 +1,4 @@
-
+# Must start with 'ingress' key
 ingress:
   name: ingress
   annotations:
