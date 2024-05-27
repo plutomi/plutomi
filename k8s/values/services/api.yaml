@@ -1,3 +1,2 @@
-service:
-  name: api
-  port: 3000 # TODO i think this is wrong value
+# Intentionally left blank
+service: {}

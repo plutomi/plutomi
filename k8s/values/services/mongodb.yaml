@@ -1,3 +1,2 @@
-service:
-  name: mongodb
-  port: 27017 
+# Intentionally left blank
+service: {}

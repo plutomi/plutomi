@@ -1,3 +1,2 @@
-service:
-  name: web
-  port: 3000 
+# Intentionally left blank
+service: {}

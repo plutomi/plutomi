@@ -14,3 +14,15 @@ common:
 
   pvc:
     accessModes: ["ReadWriteOnce"]
+
+
+services:
+  api:
+    name: api
+    port: 3000
+  web:
+    name: web
+    port: 3000 # TODO i think this is wrong value
+  mongodb:
+    name: mongodb
+    port: 27017

@@ -1,17 +1,17 @@
-{{- if .Values.service }}
-{{- with .Values.service }}
+{{- if .Values.services }}
+{{- range $name, $config := .Values.services }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .name }}
+  name: {{ $config.name }}
 spec:
   selector:
-    app: {{ .name }}
+    app: {{ $config.name }}
   ports:
     - protocol: TCP
       # Port the pod listens on - global value from common.yaml
       port: {{ $.Values.common.defaultContainerPort }}
       # Port that the service is exposed on
-      targetPort: {{ .port }}
+      targetPort: {{ $config.port }}
 {{- end }}
 {{- end }}
