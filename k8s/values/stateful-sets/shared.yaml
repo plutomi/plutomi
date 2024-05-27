@@ -1,7 +1,7 @@
 # Must start with 'databases' key
 databases:
 
-  accessModes:
-    - "ReadWriteOnce"
+  accessModes: [ "ReadWriteOnce" ]
+
 
   terminationGracePeriodSeconds: 10
