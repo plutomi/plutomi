@@ -1,4 +1,7 @@
 # Must start with 'databases' key
 databases:
-  pvc:
-    accessModes: ["ReadWriteOnce"]
+
+  accessModes:
+    - "ReadWriteOnce"
+
+  terminationGracePeriodSeconds: 10

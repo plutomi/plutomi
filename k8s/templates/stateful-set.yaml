@@ -1,22 +1,22 @@
 {{- if .Values.databases }}
-{{- range $name, $config := .Values.databases }}
+{{- with .Values.databases }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ $config.name }}
+  name: {{ .name }}
 spec:
-  serviceName: {{ $config.name }}
-  replicas: {{ $config.replicas }}
+  serviceName: {{ .name }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels:
-      app: {{ $config.name }}
+      app: {{ .name }}
   template:
     metadata:
       labels:
-        app: {{ $config.name }}
+        app: {{ .name }}
     spec:
       initContainers:
-        {{- range $config.initContainers }}
+        {{- range .initContainers }}
         - name: {{ .name }}
           image: {{ .image }}
           command:
@@ -30,11 +30,11 @@ spec:
               readOnly: {{ .readOnly | default false }}
             {{- end }}
         {{- end }}
-      terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
       containers:
-        {{- range $config.containers }}
+        {{- range .containers }}
         - name: {{ .name }}
-          image: {{ $config.image }}
+          image: {{ .image }}
           ports:
             {{- range .ports }}
             - containerPort: {{ .containerPort }}
@@ -59,7 +59,7 @@ spec:
             {{- end }}
         {{- end }}
       volumes:
-        {{- range $config.volumes }}
+        {{- range .volumes }}
         - name: {{ .name }}
           {{- if .secret }}
           secret:
@@ -82,14 +82,14 @@ spec:
           {{- end }}
         {{- end }}
   volumeClaimTemplates:
-    {{- range $config.volumeClaimTemplates }}
+    {{- range .volumeClaimTemplates }}
     - metadata:
         {{- range $key, $value := .metadata }}
         {{ $key }}: {{ $value }}
         {{- end }}
       spec:
         accessModes:
-          {{- range $config.pvc.accessModes }}
+          {{- range .accessModes }}
           - {{ . }}
           {{- end }}
         resources:

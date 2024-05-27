@@ -1,32 +1,32 @@
 {{- if .Values.deployments }}
-{{- range $name, $config := .Values.deployments }}
+{{- with .Values.deployments }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $config.name }}
+  name: {{ .name }}
   labels:
-    app: {{ $config.name }}
+    app: {{ .name }}
 spec:
-  replicas: {{ $config.replicas }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels:
-      app: {{ $config.name }}
+      app: {{ .name }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: {{ $config.maxUnavailable }}
-      maxSurge: {{ $config.maxSurge }}
+      maxUnavailable: {{ .maxUnavailable }}
+      maxSurge: {{ .maxSurge }}
   template:
     metadata:
       labels:
-        app: {{ $config.name }}
+        app: {{ .name }}
     spec:
-      terminationGracePeriodSeconds: {{ $config.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
       containers:
-        - name: {{ $config.name }}
-          image: {{ $config.image }}
+        - name: {{ .name }}
+          image: {{ .image }}
           ports:
-            - containerPort: {{ $config.port }}
+            - containerPort: {{ .port }}
           env:
             - name: POD_NAME
               valueFrom:
@@ -39,13 +39,13 @@ spec:
                   [
                     "sh",
                     "-c",
-                    "sleep {{ $config.preStopSleepSeconds }}",
+                    "sleep {{ .preStopSleepSeconds }}",
                   ]
           readinessProbe:
             httpGet:
-              path: {{ $config.healthCheckPath }}
-              port: {{ $config.port }}
-            initialDelaySeconds: {{ $config.initialDelaySeconds }}
-            periodSeconds: {{ $config.periodSeconds }}
+              path: {{ .healthCheckPath }}
+              port: {{ .port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
 {{- end }}
 {{- end }}
