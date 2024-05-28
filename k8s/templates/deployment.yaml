@@ -40,6 +40,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            {{- range $key, $value := .env }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
           lifecycle:
             preStop:
               exec:
