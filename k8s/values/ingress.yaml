@@ -21,19 +21,20 @@ ingress:
                 name: api
                 port:
                   number: 80
-    - host: "db.plutomi.com" # TODO rename to mongodb / use global
+    - host: "*.plutomi.com" 
       http:
         paths:
-          - path: /.well-known/acme-challenge/
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: web
                 port:
                   number: 80
-  tls:
+  tls: 
     - hosts:
-        - db.plutomi.com # TODO rename to mongodb / use global
+        - "plutomi.com"
+        - "*.plutomi.com" 
       secretName: mongodb-tls-secret
 
 

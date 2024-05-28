@@ -3,4 +3,12 @@ deployments:
   replicas: 3
   name: api
   port: 8080
-  image: plutomi/api:latest
+  image: plutomi/api:latestx86
+  env:
+    BASE_WEB_URL: web.default.svc.cluster.local
+    # Sample
+    DATABASE_URL: "mongodb://username:pasword@mongodb.default.svc.cluster.local:27017/items?authSource=admin" 
+    ENVIRONMENT: "development"
+    AXIOM_DATASET: "test"
+    AXIOM_TOKEN: "test"
+    AXIOM_ORG_ID: "test"

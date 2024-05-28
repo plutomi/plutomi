@@ -2,3 +2,4 @@
 services:
   name: mongodb
   port: 27017
+  defaultContainerPort: 27017
