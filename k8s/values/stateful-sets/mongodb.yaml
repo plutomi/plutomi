@@ -11,6 +11,7 @@ databases:
         - name: mongodb-data
           mountPath: /data/mongodb
       env:
+      ## TODO - do this in the API and Web templates
         MONGO_INITDB_ROOT_USERNAME:
           secretKeyRef:
             name: mongodb-init-secret

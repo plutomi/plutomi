@@ -32,16 +32,16 @@ ingress:
                 port:
                   number: 80
   # Temporarily disabled while i get unbanned from lets-encrypt
-  tls: 
-    - hosts:
-        - "plutomi.com"
-        # HAVE TO USE DNS FOR WILDCARD CERT
-        # CURRENTLY BANNED :D
-        # https://stackoverflow.com/questions/68219076/cert-manager-no-configured-challenge-solvers-can-be-used-for-this-challenge
-        # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
-        - "blog.plutomi.com"  # needed to remove rate limit from letsencrypt, resets in june
-        - "www.plutomi.com"
-        - "jose.plutomi.com"
-      secretName: plutomi-tls-secret
+  # tls: 
+  #   - hosts:
+  #       - "plutomi.com"
+  #       # HAVE TO USE DNS FOR WILDCARD CERT
+  #       # CURRENTLY BANNED :D
+  #       # https://stackoverflow.com/questions/68219076/cert-manager-no-configured-challenge-solvers-can-be-used-for-this-challenge
+  #       # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
+  #       - "blog.plutomi.com"  # needed to remove rate limit from letsencrypt, resets in june
+  #       - "www.plutomi.com"
+  #       - "jose.plutomi.com"
+  #     secretName: plutomi-tls-secret
 
 

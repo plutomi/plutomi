@@ -43,6 +43,8 @@ spec:
             {{- range $key, $value := .env }}
             - name: {{ $key }}
               valueFrom:
+                    ## TODO - do this in the API and Web templates
+
                 secretKeyRef:
                   name: {{ $value.secretKeyRef.name }}
                   key: {{ $value.secretKeyRef.key }}
