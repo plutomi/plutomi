@@ -10,9 +10,16 @@ spec:
     email: {{ .email }}
     privateKeySecretRef:
       name: {{ .secretRef }}
+
     solvers:
-      - http01:
-          ingress:
-            class: {{ .ingress }}
+    - selector:
+        dnsZones:
+        - 'plutomi.com'
+      dns01:
+        cloudflare:
+          email: {{ .email }}
+          apiTokenSecretRef:
+            name: cloudflare-token
+            key: CLOUDFLARE_TOKEN
 {{- end }}
 {{- end }}
