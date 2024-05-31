@@ -4,12 +4,38 @@ databases:
   name: mongodb
   replicas: 3
   port: 27017
+  initContainers:
+    - name: create-pem-file
+      image: busybox
+      command:
+        - "/bin/sh"
+        - "-c"
+        - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+      volumeMounts:
+        - name: cert
+          mountPath: "/etc/ssl/certs"
+          readOnly: false
+        - name: pem-dir
+          mountPath: "/pem"
   containers:
     - name: mongodb
       image: mongo:7.0.8
+      # TLS Certificate stuff
+      args:
+        - "--tlsMode=requireTLS"
+        - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+        - "--setParameter"
+        - "tlsUseSystemCA=true" # Allow clients to connect without a certificate
+        - "--tlsAllowConnectionsWithoutCertificates"
       volumeMounts:
         - name: mongodb-data
           mountPath: /data/mongodb
+        - name: cert
+          mountPath: /etc/ssl/certs
+          readOnly: true
+        - name: pem-dir
+          mountPath: "/pem"
+          readOnly: true
       command:
         - "mongod"
         - "--replSet"    
@@ -26,6 +52,12 @@ databases:
           secretKeyRef:
             name: mongodb-init-secret
             key: MONGO_INITDB_ROOT_PASSWORD
+  volumes:
+    - name: cert
+      secret:
+        secretName: mongodb-tls-secret
+    - name: pem-dir
+      emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: mongodb-data
