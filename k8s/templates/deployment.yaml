@@ -34,7 +34,10 @@ spec:
                   fieldPath: metadata.name
             {{- range $key, $value := .env }}
             - name: {{ $key }}
-              value: {{ $value }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $value.secretKeyRef.name }}
+                  key: {{ $value.secretKeyRef.key }}
             {{- end }}
           lifecycle:
             preStop:
