@@ -42,7 +42,8 @@ databases:
         - "rs0"   
         - "--bind_ip_all"    
       # If using a single replica, you can leave the env here
-      # And it will be initialized on that one pod and created. If not, you have to manually create the admin user
+      # And it will be initialized on that one pod and created.
+      # If not, you have to manually create the admin user
       env:
         MONGO_INITDB_ROOT_USERNAME:
           secretKeyRef:
@@ -55,7 +56,7 @@ databases:
   volumes:
     - name: cert
       secret:
-        secretName: mongodb-tls-secret
+        secretName: plutomi-tls-secret
     - name: pem-dir
       emptyDir: {}
   volumeClaimTemplates:
