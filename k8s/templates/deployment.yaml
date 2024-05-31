@@ -23,6 +23,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
       containers:
+        {{- range .containers }}
         - name: {{ .name }}
           image: {{ .image }}
           ports:
@@ -54,5 +55,6 @@ spec:
               port: {{ .port }}
             initialDelaySeconds: {{ .initialDelaySeconds }}
             periodSeconds: {{ .periodSeconds }}
+        {{- end }}
 {{- end }}
 {{- end }}

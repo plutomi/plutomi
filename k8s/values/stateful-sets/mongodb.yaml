@@ -2,7 +2,7 @@
 # This file is subject to change once the operator is brought in
 databases:
   name: mongodb
-  replicas: 1
+  replicas: 3
   port: 27017
   containers:
     - name: mongodb
@@ -10,6 +10,13 @@ databases:
       volumeMounts:
         - name: mongodb-data
           mountPath: /data/mongodb
+      command:
+        - "mongod"
+        - "--replSet"    
+        - "rs0"   
+        - "--bind_ip_all"    
+      # If using a single replica, you can leave the env here
+      # And it will be initialized on that one pod and created. If not, you have to manually create the admin user
       env:
         MONGO_INITDB_ROOT_USERNAME:
           secretKeyRef:

@@ -5,6 +5,7 @@ kind: Service
 metadata:
   name: {{ .name }}
 spec:
+  clusterIP: {{ .clusterIP }}
   selector:
     app: {{ .name }}
   ports:
