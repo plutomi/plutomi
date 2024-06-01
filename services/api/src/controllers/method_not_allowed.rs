@@ -49,7 +49,7 @@ pub async fn method_not_allowed(
 
             state.logger.log(LogObject {
                 level: LogLevel::Error,
-                error: Some(json!(api_error.clone())),
+                error: Some(json!(api_error)),
                 message,
                 data: None,
                 _time: iso_format(OffsetDateTime::now_utc()),

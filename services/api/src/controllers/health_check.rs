@@ -68,7 +68,7 @@ pub async fn health_check(
             message: "Failed to connect to database for health check".to_string(),
             data: None,
             error: Some(json!(e.to_string())),
-            request: Some(json!(request_as_hashmap.clone())),
+            request: Some(json!(request_as_hashmap)),
             response: None,
         });
     }
