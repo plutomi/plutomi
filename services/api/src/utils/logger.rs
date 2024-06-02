@@ -185,6 +185,9 @@ impl Logger {
         return Arc::new(Logger { sender });
     }
 
+    /**
+     * Log a message asynchronously.
+     */
     pub fn log(&self, log: LogObject) {
         // Send the log message to the channel
         if let Err(e) = self.sender.try_send(log) {
