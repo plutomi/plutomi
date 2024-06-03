@@ -2,8 +2,7 @@
 deployments:
   replicas: 3
   name: web
-  port: 3000
   containers:
     - name: web
-      port: 8080
+      port: 3000
       image: plutomi/web:latest

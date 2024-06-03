@@ -3,7 +3,6 @@
 databases:
   name: mongodb
   replicas: 3
-  port: 27017
   initContainers:
     - name: create-pem-file
       image: busybox
@@ -20,6 +19,7 @@ databases:
   containers:
     - name: mongodb
       image: mongo:7.0.8
+      port: 27017
       # TLS Certificate stuff
       args:
         - "--tlsMode=requireTLS"
