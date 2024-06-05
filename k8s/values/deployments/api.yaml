@@ -6,13 +6,17 @@ deployments:
   containers:
     - name: api
       port: 8080
-      image: plutomi/api:latestx86
+      image: plutomi/api:latestx86 # TODO update
       env:
-        MONGO_INITDB_ROOT_USERNAME:
+        DATABASE_URL:
           secretKeyRef:
-            name: mongodb-init-secret
-            key: MONGO_INITDB_ROOT_USERNAME
-        MONGO_INITDB_ROOT_PASSWORD:
+            name: api-config-secret
+            key: DATABASE_URL
+        BASE_WEB_URL:
           secretKeyRef:
-            name: mongodb-init-secret
-            key: MONGO_INITDB_ROOT_PASSWORD
+            name: api-config-secret
+            key: BASE_WEB_URL
+        ENVIRONMENT:
+          secretKeyRef:
+            name: api-config-secret
+            key: ENVIRONMENT

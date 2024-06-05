@@ -85,12 +85,12 @@ pub struct Logger {
     sender: Sender<LogObject>,
 }
 
-// Send logs to axiom
-async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client) {
-    if let Err(e) = client.ingest(&get_env().AXIOM_DATASET, log_batch).await {
-        error!("Failed to send log to Axiom: {}", e);
-    }
-}
+// // Send logs to axiom
+// async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client) {
+//     if let Err(e) = client.ingest(&get_env().AXIOM_DATASET, log_batch).await {
+//         error!("Failed to send log to Axiom: {}", e);
+//     }
+// }
 
 impl Logger {
     /**
@@ -99,18 +99,19 @@ impl Logger {
      */
     pub fn new(use_axiom: bool) -> Arc<Logger> {
         let env = &get_env();
-        let axiom_client = if use_axiom {
-            Some(
-                Client::builder()
-                    .with_token(&env.AXIOM_TOKEN)
-                    .with_org_id(&env.AXIOM_ORG_ID)
-                    .build()
-                    .expect("Failed to initialize Axiom client in a production environment"),
-            )
-        } else {
-            warn!("Axiom logging is not enabled");
-            None
-        };
+        // TODO Remove
+        // let axiom_client = if use_axiom {
+        //     Some(
+        //         Client::builder()
+        //             .with_token(&env.AXIOM_TOKEN)
+        //             .with_org_id(&env.AXIOM_ORG_ID)
+        //             .build()
+        //             .expect("Failed to initialize Axiom client in a production environment"),
+        //     )
+        // } else {
+        //     warn!("Axiom logging is not enabled");
+        //     None
+        // };
 
         let max_log_level = match env.ENVIRONMENT.as_str() {
             // Only log if testing locally because CloudWatch is expensive
@@ -153,9 +154,9 @@ impl Logger {
 
                         // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
-                            if let Some(ref client) = axiom_client {
-                                send_to_axiom(&log_batch, &client).await;
-                            }
+                            // if let Some(ref client) = axiom_client { // TODO Remove
+                            //   //   send_to_axiom(&log_batch, &client).await; TODO Remove
+                            // }
                             // Clear the batch for the next batch
                             log_batch.clear();
 
@@ -168,9 +169,9 @@ impl Logger {
                     _ = sleep_until(timer) => {
                         if !log_batch.is_empty() {
                             // Send whatever is in the batch
-                            if let Some(ref client) = axiom_client {
-                                send_to_axiom(&log_batch, &client).await;
-                            }
+                            // if let Some(ref client) = axiom_client { // TODO Remove
+                            //     send_to_axiom(&log_batch, &client).await;
+                            // }
 
                             // Clear the batch for the next batch
                             log_batch.clear();

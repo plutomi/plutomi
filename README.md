@@ -58,7 +58,7 @@ Plutomi is deployed using [docker-compose](https://docs.docker.com/compose/) to 
 
 We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in, along with custom app events like `totp.requested`, `invite.sent`, or `application.submitted`.
 
-We also use Cloudflare for DNS, CDN, WAF and other goodies, and we send our logs to [Axiom](https://axiom.co/), but this isn't required.
+We also use Cloudflare for DNS, CDN, WAF and other goodies, and log with Prometheus and Grafana.
 
 <!-- To be implemented later
  and eventually, storage using [R2](https://developers.cloudflare.com/r2/) and [Workers](https://developers.cloudflare.com/workers/). -->

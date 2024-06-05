@@ -1,3 +1,4 @@
+# Used for https certificates on ingress
 {{- if .Values.issuer }}
 {{- with .Values.issuer }}
 apiVersion: cert-manager.io/v1
@@ -23,3 +24,5 @@ spec:
             key: CLOUDFLARE_TOKEN
 {{- end }}
 {{- end }}
+
+
