@@ -1,7 +1,7 @@
 import { Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { configureSES } from "./configureSES";
-import { createEventsQueue } from "./createEventsQueue";
+import { configureSES } from "./configure-ses";
+import { createEventsQueue } from "./create-events-queue";
 
 export class PlutomiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
