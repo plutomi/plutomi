@@ -24,14 +24,14 @@ databases:
       # so you have to use self signed ones, which requires adding the CA to EACH app that interacts with it, which has it's own problems. 
       # Another alternative is to reroute something like mongodb.plutomi.com to the internal service, but that's a PIA too and might break other things.
       # args:
-      #   - "--tlsMode=requireTLS"
+      # - "--tlsMode=requireTLS"
       #   - "--tlsCertificateKeyFile=/pem/mongodb.pem"
-      #   - "--setParameter"
-      #   - "tlsUseSystemCA=true" 
+      # - "--setParameter"
+      # - "tlsUseSystemCA=true" 
       #   - "--tlsAllowConnectionsWithoutCertificates"
       #   - "--tlsCAFile=/pem/mongodb.pem" # Same as above
       #   - "--clusterAuthMode=x509"
-      #   - "--tlsAllowInvalidHostnames"
+      # - "--tlsAllowInvalidHostnames"
       #   - "--tlsCAFile=/etc/ssl/certs/tls.crt"
       #   - "--tlsClusterFile=/pem/mongodb.pem"
       volumeMounts:

@@ -36,10 +36,9 @@ ingress:
     - hosts:
         - "plutomi.com"
         # HAVE TO USE DNS FOR WILDCARD CERT
-        # CURRENTLY BANNED :D
         # https://stackoverflow.com/questions/68219076/cert-manager-no-configured-challenge-solvers-can-be-used-for-this-challenge
         # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
-        - "services.plutomi.com" # not being used just needed a new cert
+        - "*.plutomi.com" # not being used just needed a new cert
       secretName: plutomi-tls-secret
 
 
