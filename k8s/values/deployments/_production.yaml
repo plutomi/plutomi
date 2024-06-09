@@ -1,4 +1,4 @@
-# If you want to override any values, you can do so here. 
+# If you want to override any values in the PRODUCTION environment, you can do so here. 
 # Make sure you reference a top level entity like $.Values.deployments.YOUR_VALUE in the template
 deployments:
   ENVIRONMENT: production
