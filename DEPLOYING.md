@@ -1,8 +1,13 @@
 # Deploying
 
+- [AWS / SES](#ses-id)
+- [Kubernetes](#Kubernetes)
+
+[SES]{#ses-id}
+
 To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configureSES.ts](./services/aws/lib/configureSES.ts).
 
-Change directories into `packages/aws`, install dependencies, and set up the environment-specific `.env` files and modify the values as needed.
+Change directories into `/aws`, install dependencies, and set up the environment-specific `.env` files and modify the values as needed.
 
 ```bash
 $ cd packages/aws
@@ -14,7 +19,7 @@ $ cp .env.example .env.production
 
 Once that's done, you can go back to the root and deploy using `scripts/deploy.sh <development|staging|production>`.
 
-After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. For a custom domain on the load balancer, make sure to [validate your ACM certificate](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). For SES, your dashboard should look something like this with the records you need to add:
+After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:
 
 ![SES DNS Records](./images/ses-setup.png)
 
@@ -38,34 +43,8 @@ See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authenticat
 
 Then after all of that is done, make sure to beg aws to get you out of sandbox since you now have a way to handle complaints.
 
-## AWS
-
-## VPS
+## Kubernetes
 
 Transfer main files to your VPS
 
-```bash
-rsync -avz --progress .env  docker-compose.yml nginx.conf username@your-server-ip:plutomi
-```
-
-Then ssh into your VPS and you'll want to install docker, docker-compose, and pull the images from DockerHub, here they are for reference:
-
-- [plutomi/web](https://hub.docker.com/r/plutomi/web)
-- [plutomi/api](https://hub.docker.com/r/plutomi/api)
-- [plutomi/events-consumer](https://hub.docker.com/r/plutomi/events-consumer)
-
-And the third party services:
-
-- [nginx](https://hub.docker.com/_/nginx)
-- [mongo](https://hub.docker.com/_/mongo)
-- [redis](https://hub.docker.com/_/redis)
-- [elasticsearch](https://hub.docker.com/_/elasticsearch) (? TBD)
-
-```bash
-sudo apt-get update -y && sudo apt-get install docker.io -y && sudo systemctl start docker && sudo systemctl enable docker && sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose && cd plutomi && sudo docker-compose pull
-```
-
-Then run `docker-compose up -d` to start the services. That's it!
-
-Make sure to setup certbot as well
-https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal&tab=wildcard
+TODO: :)
