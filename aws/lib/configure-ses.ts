@@ -33,9 +33,9 @@ export const configureSES = ({ stack, eventsQueue }: ConfigureEmailsProps) => {
 
   /**
    * notifications.plutomi.com for production OR
-   * notifications.deploymentEnvironment.plutomi.com
+   * notifications-staging.plutomi.com etc.
    */
-  const mailFromDomain = `notifications.${rawUrl}`;
+  const mailFromDomain = `${env.MAIL_FROM_SUBDOMAIN}.${rawUrl}`;
 
   // Create the SES identity
   void new EmailIdentity(stack, sesEmailIdentityName, {
