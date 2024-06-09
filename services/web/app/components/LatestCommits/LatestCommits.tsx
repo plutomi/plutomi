@@ -4,13 +4,11 @@ import { Commit, CommitType } from "./Commit";
 const numOfCommits = 3;
 const revalidateHours = 24;
 
-export async function loader () {
-  "use server";
+export async function loader() {
   const allCommits: CommitType[] = [];
 
   const response = await fetch(
-    `https://api.github.com/repos/plutomi/plutomi/commits`,
-
+    `https://api.github.com/repos/plutomi/plutomi/commits`
   );
 
   if (!response.ok) {
@@ -62,8 +60,6 @@ export async function loader () {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
-
-
   // Remove duplicates
   const commits = orderedCommits.filter(
     (value, index, self) =>
@@ -104,7 +100,7 @@ const noCommits = (
   </div>
 );
 export default function LatestCommits() {
-  const commits = useLoaderData() as any[]
+  const commits = useLoaderData() as any[];
 
   return (
     <div className="space-y-2">
