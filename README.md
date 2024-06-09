@@ -109,6 +109,8 @@ To deploy Plutomi, you'll want to deploy to AWS first and then use `docker-compo
 
 ## License
 
+@ TODO add https://rancherdesktop.io/
+
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
 
 ## Contributing & Contributors
