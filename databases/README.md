@@ -1,3 +1,3 @@
-TODO
+### Databases
 
-Seed scripts, migrations, and config files should go in here.
+This directory contains the databases used in the project. They all serve a purpose and are managed by statefulsets in the Kubernetes cluster.

@@ -1,3 +1,0 @@
-#### Redis
-
-TODO - for streams

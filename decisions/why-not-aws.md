@@ -1,2 +1,5 @@
+### Why aren't you on AWS?
+
 Plutomi WAS on aws at one point!
-I thought this might be a good experience to learn more devops stuff, along with balancing costs and performance for what i wanted to do. At my current scale (0 users) this is fine for a whiiiiile. I can always switch back if i need to but this is ok.
+
+I thought self hosting might be a good opportunity to learn more devops stuff, along with balancing costs and performance for what i wanted to do. At my current scale (0 users) this is fine for a whiiiiile. Since we are on Kubernetes now, it should be relatively easy to move to a cloud provider if needed.

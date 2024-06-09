@@ -1,3 +1,3 @@
-Code for all the consumers in one place.
+### Event Consumers
 
-THese should be lightweight and have a single purpose
+This directory contains all of the async consumers for the app. Consumers should be small and do one thing well. This is as far as we would like to go with async processing.
