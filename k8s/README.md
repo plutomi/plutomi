@@ -1,7 +1,3 @@
-### TODO
+### Kubernetes Files
 
-Directories:
-
-- [k8s](k8s): Kubernetes related files
-- [k8s/templates](k8s/templates): Kubernetes templates
-- [k8s/values](k8s/values): Kubernetes values
+This directory contains the Kubernetes files used to deploy the project. We are using K3S as our Kubernetes distribution, and we are using SealedSecrets to store our secrets in the Git repository. Everything else is pretty standard with templates for deployments, services, and statefulsets, and our values which is the only file that should be modified directly. Some files are prefixed like `_production` to override certain values in certain environments.
