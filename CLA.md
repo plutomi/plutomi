@@ -8,7 +8,6 @@ You accept and agree to the following terms and conditions for Your present and 
 
 "Contribution" shall mean any original work of authorship, including any modifications or additions to an existing work, that is intentionally submitted by You to Plutomi for inclusion in, or documentation of, any of the products owned or managed by Plutomi (the "Work"). For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to Plutomi or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, Plutomi for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by You as "Not a Contribution."
 
-TODO - tls at ingress + certs
 2\. Grant of Copyright License. Subject to the terms and conditions of this Agreement, You hereby grant to Plutomi and to recipients of software distributed by Plutomi a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute Your Contributions and such derivative works.
 
 3\. Grant of Patent License.

@@ -106,6 +106,7 @@ When running locally, due to Docker, watch, and rust compile times, we recommend
 ### Deploying
 
 To deploy Plutomi, you'll want to deploy to AWS first and then use `docker-compose` on your server. The plutomi imges can be found on DockerHub as well. Check out [DEPLOYING.md](DEPLOYING.md) for more information.
+TODO - tls at ingress + certs notes
 
 ## License
 
