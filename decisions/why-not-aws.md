@@ -2,4 +2,4 @@
 
 Plutomi WAS on aws at one point!
 
-I thought self hosting might be a good opportunity to learn more devops stuff, along with balancing costs and performance for what i wanted to do. At my current scale (0 users) this is fine for a whiiiiile. Since we are on Kubernetes now, it should be relatively easy to move to a cloud provider if needed.
+I thought self hosting might be a good opportunity to learn more devops stuff, along with balancing costs and performance for what I wanted to do. At my current scale (0 users) this is fine for a whiiiiile. Since we are on Kubernetes now, it should be relatively easy to move to a cloud provider if needed.
