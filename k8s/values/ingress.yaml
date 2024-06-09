@@ -31,14 +31,15 @@ ingress:
                 name: web
                 port:
                   number: 80
-  # Temporarily disabled while i get unbanned from lets-encrypt
   tls: 
     - hosts:
         - "plutomi.com"
-        # HAVE TO USE DNS FOR WILDCARD CERT
+        # YOU HAVE TO USE DNS FOR WILDCARD CERT
         # https://stackoverflow.com/questions/68219076/cert-manager-no-configured-challenge-solvers-can-be-used-for-this-challenge
         # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
-        - "*.plutomi.com" # not being used just needed a new cert
+        # If you get banned for too many cert attempts, just add a new domain
+        # and you can create a new cert. Wildcard, ideally, is best.
+        - "*.plutomi.com" 
       secretName: plutomi-tls-secret
 
 
