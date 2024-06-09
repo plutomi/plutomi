@@ -5,7 +5,7 @@ deployments:
   containers:
     - name: api
       port: 8080
-      # TODO update to ARM when available. Currently using x86
+      # TODO: xBuild for both x86 and ARM. Using x86 for now due to no ARM in US on Hetzner
       image: plutomi/api:latest 
       env:
         DATABASE_URL:
