@@ -10,7 +10,7 @@ spec:
     app: {{ .name }}
   ports:
     - protocol: TCP
-      # Port the pod listens on - global value from common.yaml
+      # Port the pod listens on - global value from shared.yaml
       port: {{ .defaultContainerPort }}
       # Port that the service is exposed on
       targetPort: {{ .port }}
