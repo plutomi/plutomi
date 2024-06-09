@@ -9,7 +9,6 @@ type CreateEventsQueueProps = {
 
 /**
  * Creates an SQS queue for SES and Plutomi app events.
- * For now, only one queue is fine. In the future we can split them up if needed.
  */
 export const createEventsQueue = ({ stack }: CreateEventsQueueProps) => {
   const eventsQueue = new Queue(stack, eventsQueueName, {
