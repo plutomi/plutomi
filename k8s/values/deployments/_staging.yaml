@@ -2,5 +2,3 @@
 # Make sure you reference a top level entity like $.Values.deployments.YOUR_VALUE in the template
 deployments:
   environment: staging
-
-# TODO tone down replicas
