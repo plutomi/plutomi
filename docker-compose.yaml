@@ -1,0 +1,21 @@
+# This is for running things locally.
+# While yes, we could use K3S and simulate a real cluster,
+# this isn't needed for most development as you'll typically be working on one section at a time.
+# Also, because we're using Rust, compile times are.. uhh. So yeah this is just for datasources.
+
+services:
+  mongodb:
+    # Make sure this matches the value in k8s/values/stateful-sets/mongodb.yaml
+    image: mongo:7.0.8
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
+    driver: local

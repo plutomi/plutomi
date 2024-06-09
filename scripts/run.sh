@@ -12,6 +12,13 @@ cleanup() {
     echo "Done."
 }
 
+datasources() {
+    echo "Creating datasources..."
+    docker-compose -f "$PROJECT_ROOT/docker-compose.yaml" up -d
+    trap "docker-compose -f '$PROJECT_ROOT/docker-compose.yaml' down; echo 'Docker services stopped.'" EXIT
+}
+
+
 print_error_and_usage() {
     echo -e "\n-- ERROR: $1 --\n"
     echo -e "Usage: $0 [--stack <component>]\n"
@@ -53,8 +60,12 @@ done
 # Run based on stack argument
 case "$stack" in
     "all")
+        datasources
         run_api
         run_web
+        ;;
+    "datasources")
+        datasources
         ;;
     "api")
         run_api

@@ -46,7 +46,6 @@ async fn main() {
     // Routes
     let totp_routes = Router::new().route("/totp", post(create_totp));
 
-    // ! TODO: ADD TIMEOUT MIDDLEWARE
     let app = Router::new()
         .fallback(|| async {
             // Load balancer targets will prevent this from being hit in prod
@@ -115,7 +114,7 @@ async fn main() {
             logger.log(LogObject {
                 level: LogLevel::Info,
                 _time: iso_format(OffsetDateTime::now_utc()),
-                message: "Server started".to_string(),
+                message: "API started on http://localhost:8080".to_string(),
                 data: None,
                 error: None,
                 request: None,
