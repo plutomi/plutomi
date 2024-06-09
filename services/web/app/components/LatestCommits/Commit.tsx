@@ -1,5 +1,3 @@
-"use client";
-
 export type CommitType = {
   url: string;
   username: string;

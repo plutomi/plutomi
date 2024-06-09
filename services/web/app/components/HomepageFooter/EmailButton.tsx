@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "../Button";
 import { useClipboard } from "@mantine/hooks";
 import { Toaster, toast } from "react-hot-toast";

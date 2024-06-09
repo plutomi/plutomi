@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { UseCase, useUseCaseStore } from "~/hooks/use-usecase-store";
 
@@ -18,7 +16,6 @@ export const UseCaseSegment: React.FC = () => {
         <button
           key={title}
           onClick={() => {
-            console.log("newvers");
             setUseCase(title);
           }}
           className={`rounded-md py-3 px-4 text-lg text-slate-500 font-medium  ${

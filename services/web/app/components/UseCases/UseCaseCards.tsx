@@ -1,5 +1,3 @@
-"use client";
-
 import { IconFileUpload } from "@tabler/icons-react";
 import { SiCodereview } from "react-icons/si";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
