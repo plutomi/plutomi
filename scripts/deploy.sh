@@ -45,6 +45,8 @@ fi
 # Assign the first argument to environment
 environment=$1
 
+# TODO clean this file up
+
 # Validate environment
 [[ "$environment" =~ ^(staging|production|development)$ ]] || print_error_and_exit "Invalid environment: '$environment'."
 
@@ -99,15 +101,6 @@ deploy_aws() {
 
     # Export the environment variable so it can be picked up by CDK
     export ENVIRONMENT=$environment
-
-    # Build the SES events consumer
-    cd services/consumers/email-events
-    cargo lambda build --release --output-format zip --arm64
-
-    # Build the Plutomi events consumer
-    cd ../plutomi-events
-    cargo lambda build --release --output-format zip --arm64
-
 
     cd ../../aws
     npm run deploy -- --profile $AWS_PROFILE # Set the right profile for permissions

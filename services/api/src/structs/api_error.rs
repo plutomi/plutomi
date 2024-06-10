@@ -6,6 +6,8 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
+use crate::utils::get_env;
+
 #[derive(Serialize, Clone, Deserialize)]
 pub enum PlutomiCode {
     TooManyUsers, //Sample
@@ -19,6 +21,8 @@ pub struct ApiError {
     pub docs: Option<String>,
     pub plutomi_code: Option<PlutomiCode>,
 }
+
+let env = get_env();
 
 impl IntoResponse for ApiError {
     /**
