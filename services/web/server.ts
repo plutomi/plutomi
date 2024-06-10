@@ -1,7 +1,11 @@
+
+
 import { createRequestHandler } from "@remix-run/express";
 import { broadcastDevReady } from "@remix-run/node";
 import express from "express";
 import * as build from "./build/index.js";
+import { env } from "utils/env.js";
+const environment = process.env.ENVIRONMENT || "development";
 
 const app = express();
 app.use(express.static("public"));
@@ -32,8 +36,7 @@ const redirectToDocs = [
 app.use(async (req, res, next) => {
   if (redirectToDocs.includes(req.path)) {
     // TODO do the same thing in API - only thing used in the web app is the first one since /api/ trailing slash gets stopped at Traefik
-    // TODO use .env
-    return res.redirect(301, "https://plutomi.com/docs/api");
+    return res.redirect(301, `${env.BASE_WEB_URL}/docs/api`);
   }
   next();
 });

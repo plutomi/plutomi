@@ -1,5 +1,6 @@
 use axum::{
-    middleware::{self},
+    middleware,
+    response::Redirect,
     routing::{get, post},
     Router,
 };
@@ -30,6 +31,9 @@ async fn main() {
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
+    // TODO: Redirect with a toast message
+    let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
+
     // Setup logging
     let logger = Logger::new();
 
@@ -47,10 +51,13 @@ async fn main() {
     let totp_routes = Router::new().route("/totp", post(create_totp));
 
     let app = Router::new()
-        .fallback(|| async {
-            // Load balancer targets will prevent this from being hit in prod
-            "It looks like you're testing locally! Make sure to add `/api/`        to the API route - checkout the `main.rs` file for more info."
-        })
+        .route("/", get(Redirect::permanent(&docs_redirect_url)))
+        .route("/api/", get(Redirect::permanent(&docs_redirect_url)))
+        .route("/api/docs", get(Redirect::permanent(&docs_redirect_url)))
+        .route("/docs", get(Redirect::permanent(&docs_redirect_url)))
+        .route("/docs/", get(Redirect::permanent(&docs_redirect_url)))
+        .route("/docs/api", get(Redirect::permanent(&docs_redirect_url)))
+        .route("/api", get(Redirect::permanent(&docs_redirect_url)))
         .nest(
             "/api",
             Router::new()

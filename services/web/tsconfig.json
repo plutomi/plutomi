@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
+    "module": "ESNext",
     "resolveJsonModule": true,
     "target": "ES2022",
     "strict": true,
