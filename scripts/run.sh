@@ -31,7 +31,7 @@ trap cleanup SIGINT SIGTERM
 run_api() {
     # Navigate to the API directory
     cd "$PROJECT_ROOT/services/api"
-    echo "Starting API..."
+    echo -e "\nStarting API...\n"
     cargo install cargo-watch
     cargo watch -x run &
     API_PID=$!
@@ -40,7 +40,7 @@ run_api() {
 run_web() {
     # Navigate to the web directory
     cd "$PROJECT_ROOT/services/web"
-    echo "Starting Web server..."
+    echo -e "\nStarting Web server...\n"
     npm run dev &
     WEB_PID=$!
 }

@@ -1,13 +1,17 @@
+use crate::utils::get_current_time::iso_format;
 use super::get_env::get_env;
-use axiom_rs::Client;
 use serde::Serialize;
-use std::{fmt, sync::Arc};
+use std::{fmt, io, sync::Arc};
+use time::OffsetDateTime;
 use tokio::{
     sync::mpsc::{self, Sender},
     time::{sleep, Duration, Instant},
 };
-use tracing::{debug, error, info, level_filters::LevelFilter, warn};
-use tracing_subscriber::FmtSubscriber;
+use tracing::{debug, error, info, warn};
+use tracing_subscriber::{
+    fmt::{format::Writer, time::FormatTime},
+    FmtSubscriber,
+};
 
 // Max number of logs to buffer in a channel before overflowing
 const MAX_LOG_BUFFER_LENGTH: usize = 10000;
@@ -22,6 +26,7 @@ pub enum LogLevel {
     Error,
     Debug,
     Warn,
+    Trace,
 }
 
 impl fmt::Display for LogLevel {
@@ -32,13 +37,13 @@ impl fmt::Display for LogLevel {
             LogLevel::Error => "ERROR",
             LogLevel::Debug => "DEBUG",
             LogLevel::Warn => "WARN",
+            LogLevel::Trace => "TRACE",
         };
         write!(f, "{}", level_str)
     }
 }
 
 #[derive(Serialize, Debug)]
-
 pub struct LogObject {
     pub level: LogLevel,
     /**
@@ -85,6 +90,19 @@ pub struct Logger {
     sender: Sender<LogObject>,
 }
 
+struct CustomTimeFormat;
+
+/**
+* Overwrites the 5 decimal places on milliseconds to one with 3 decimal places
+
+*/
+impl FormatTime for CustomTimeFormat {
+    fn format_time(&self, writer: &mut Writer<'_>) -> fmt::Result {
+        let now = OffsetDateTime::now_utc();
+        let formatted_time = iso_format(now);
+        write!(writer, "{}", formatted_time)
+    }
+}
 // // Send logs to axiom
 // async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client) {
 //     if let Err(e) = client.ingest(&get_env().AXIOM_DATASET, log_batch).await {
@@ -97,7 +115,7 @@ impl Logger {
      * Create a new logger instance.
      * This also spawns a long lived thread that will handle logging.
      */
-    pub fn new(use_axiom: bool) -> Arc<Logger> {
+    pub fn new() -> Arc<Logger> {
         let env = &get_env();
         // TODO Remove
         // let axiom_client = if use_axiom {
@@ -113,15 +131,10 @@ impl Logger {
         //     None
         // };
 
-        let max_log_level = match env.ENVIRONMENT.as_str() {
-            // Only log if testing locally because CloudWatch is expensive
-            // We are using Axiom for production logging
-            // https://github.com/plutomi/plutomi/issues/944
-            "local" => LevelFilter::DEBUG,
-            _ => LevelFilter::OFF,
-        };
         let subscriber = FmtSubscriber::builder()
-            .with_max_level(max_log_level)
+            .compact()
+            .with_timer(CustomTimeFormat)
+            .with_target(false)
             .finish();
 
         tracing::subscriber::set_global_default(subscriber)
@@ -139,13 +152,13 @@ impl Logger {
                 tokio::select! {
                     // Receive log messages
                     Some(log) = receiver.recv() => {
-
                         // Local logging based on the level
                             match log.level {
                                 LogLevel::Info => info!("{}", &log),
                                 LogLevel::Error => error!("{}", &log),
                                 LogLevel::Debug => debug!("{}", &log),
                                 LogLevel::Warn => warn!("{}", &log),
+                                LogLevel::Trace => debug!("{}", &log),
                             }
 
 

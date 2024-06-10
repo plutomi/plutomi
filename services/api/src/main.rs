@@ -31,7 +31,7 @@ async fn main() {
     let env = get_env();
 
     // Setup logging
-    let logger = Logger::new(true);
+    let logger = Logger::new();
 
     // Connect to database
     let mongodb = connect_to_mongodb(&logger).await;
@@ -72,6 +72,7 @@ async fn main() {
                 .with_state(state),
         );
 
+    // TODO centralize port?
     let port = "[::]:8080";
     // Bind address
     let addr = port.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {
@@ -107,33 +108,30 @@ async fn main() {
             std::process::exit(1);
         });
 
+    logger.log(LogObject {
+        level: LogLevel::Info,
+        _time: iso_format(OffsetDateTime::now_utc()),
+        message: "API starting on http://localhost:8080".to_string(),
+        data: None,
+        error: None,
+        request: None,
+        response: None,
+    });
+
     // Start the server
-    axum::serve(listener, app)
-        .await
-        .map(|_| {
-            logger.log(LogObject {
-                level: LogLevel::Info,
-                _time: iso_format(OffsetDateTime::now_utc()),
-                message: "API started on http://localhost:8080".to_string(),
-                data: None,
-                error: None,
-                request: None,
-                response: None,
-            })
-        })
-        .unwrap_or_else(|e| {
-            let logger = logger.clone();
-            let message = format!("Server failed to start: {}", e);
-            let error_json = json!({ "message": &message });
-            logger.log(LogObject {
-                level: LogLevel::Error,
-                _time: iso_format(OffsetDateTime::now_utc()),
-                message,
-                data: None,
-                error: Some(error_json),
-                request: None,
-                response: None,
-            });
-            std::process::exit(1);
-        })
+    axum::serve(listener, app).await.unwrap_or_else(|e| {
+        let logger = logger.clone();
+        let message = format!("Server failed to start: {}", e);
+        let error_json = json!({ "message": &message });
+        logger.log(LogObject {
+            level: LogLevel::Error,
+            _time: iso_format(OffsetDateTime::now_utc()),
+            message,
+            data: None,
+            error: Some(error_json),
+            request: None,
+            response: None,
+        });
+        std::process::exit(1);
+    })
 }
