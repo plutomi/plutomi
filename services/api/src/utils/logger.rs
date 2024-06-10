@@ -1,5 +1,5 @@
-use crate::utils::get_current_time::iso_format;
 use super::get_env::get_env;
+use crate::utils::get_current_time::iso_format;
 use serde::Serialize;
 use std::{fmt, io, sync::Arc};
 use time::OffsetDateTime;
@@ -132,8 +132,8 @@ impl Logger {
         // };
 
         let subscriber = FmtSubscriber::builder()
-            .compact()
             .with_timer(CustomTimeFormat)
+            .pretty()
             .with_target(false)
             .finish();
 

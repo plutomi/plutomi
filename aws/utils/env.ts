@@ -6,6 +6,6 @@ const envSchema = zod.object({
 });
 
 export const env = envSchema.parse({
-  BASE_WEB_URL: process.env.NEXT_PUBLIC_BASE_URL,
+  BASE_WEB_URL: process.env.BASE_WEB_URL,
   MAIL_FROM_SUBDOMAIN: zod.string().min(1),
 });

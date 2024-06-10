@@ -1,6 +1,8 @@
 use std::env;
 
-#[derive(Clone)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
 pub struct Env {
     pub DATABASE_URL: String,

@@ -101,6 +101,7 @@ $ scripts/run.sh --stack <web|api>
 
 The script also has hot reloading for both so you can make changes and see them reflected immediately once you change and save a file. Update the `.env` in `packages/<api|web>`for any environment variables needed.
 
+The api cargo wathc will take a little longer on first init, any further changes after will be faster. 
 When running locally, due to Docker, watch, and rust compile times, we recommend running API and Web app on their own outside of docker. Keep Nginx, Keep database and redis since these won't need to change often if at all. m2 max taking a few minutes to build API from scratch, granted this is cross platform from arm -> amd64
 
 ### Deploying

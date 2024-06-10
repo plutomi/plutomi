@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Script to run the API and Web components of the application
-
 # Get the absolute path to the project root directory
 PROJECT_ROOT="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.."
 
@@ -13,7 +11,7 @@ cleanup() {
 }
 
 datasources() {
-    echo "Creating datasources..."
+    echo -e "Creating datasources... $PROJECT_ROOT/docker-compose.yaml"
     docker-compose -f "$PROJECT_ROOT/docker-compose.yaml" up -d
     trap "docker-compose -f '$PROJECT_ROOT/docker-compose.yaml' down; echo 'Docker services stopped.'" EXIT
 }
@@ -68,9 +66,11 @@ case "$stack" in
         datasources
         ;;
     "api")
+        datasources
         run_api
         ;;
     "web")
+        datasources
         run_web
         ;;
     *)

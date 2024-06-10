@@ -28,6 +28,7 @@ pub async fn health_check(
         let mut options = FindOneOptions::default();
         // This should be less than health check or you can get into a weird state where the health check fails
         // Because the DB is down but the health check is still running and expecting a response
+        // TODO: This isn't working?
         options.max_time = Some(std::time::Duration::from_millis(1000));
         options
     };
