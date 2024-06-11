@@ -53,11 +53,11 @@ async fn main() {
     let app = Router::new()
         .route("/", get(Redirect::permanent(&docs_redirect_url)))
         .route("/api/", get(Redirect::permanent(&docs_redirect_url)))
+        .route("/api", get(Redirect::permanent(&docs_redirect_url)))
         .route("/api/docs", get(Redirect::permanent(&docs_redirect_url)))
         .route("/docs", get(Redirect::permanent(&docs_redirect_url)))
         .route("/docs/", get(Redirect::permanent(&docs_redirect_url)))
         .route("/docs/api", get(Redirect::permanent(&docs_redirect_url)))
-        .route("/api", get(Redirect::permanent(&docs_redirect_url)))
         .nest(
             "/api",
             Router::new()
@@ -79,7 +79,6 @@ async fn main() {
                 .with_state(state),
         );
 
-    // TODO centralize port?
     let port = "[::]:8080";
     // Bind address
     let addr = port.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {

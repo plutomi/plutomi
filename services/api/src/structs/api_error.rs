@@ -6,7 +6,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-use crate::utils::get_env;
+use crate::utils::get_env::get_env;
 
 #[derive(Serialize, Clone, Deserialize)]
 pub enum PlutomiCode {
@@ -22,8 +22,6 @@ pub struct ApiError {
     pub plutomi_code: Option<PlutomiCode>,
 }
 
-let env = get_env();
-
 impl IntoResponse for ApiError {
     /**
      * This is called when you return ApiError from a route
@@ -36,7 +34,7 @@ impl IntoResponse for ApiError {
             "code": StatusCode::from_u16(self.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).canonical_reason().unwrap_or("unknown"),
             "status_code": self.status_code,
             "plutomi_code": self.plutomi_code, // null if not set
-            "docs": self.docs.unwrap_or("https://plutomi.com/docs/api".to_string()), // TODO: Use env BASE_WEB_URL
+            "docs": self.docs.unwrap_or(format!("{}/docs/api", &get_env().BASE_WEB_URL).to_string()),
             "request_id": self.request_id
         })
         .to_string();

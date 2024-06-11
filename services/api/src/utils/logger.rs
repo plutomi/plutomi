@@ -116,7 +116,6 @@ impl Logger {
      * This also spawns a long lived thread that will handle logging.
      */
     pub fn new() -> Arc<Logger> {
-        let env = &get_env();
         // TODO Remove
         // let axiom_client = if use_axiom {
         //     Some(
