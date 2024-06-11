@@ -10,11 +10,11 @@ pub struct CreateTotpResponse {
     environment: String,
 }
 
-pub async fn create_totp(
+pub async fn request_totp(
     mongodb: Extension<Arc<MongoDB>>,
 ) -> (StatusCode, Json<CreateTotpResponse>) {
     let response: CreateTotpResponse = CreateTotpResponse {
-        message: "TOTP2",
+        message: "TOTP",
         database: mongodb.collection.find_one(None, None).await.is_ok(),
         environment: get_env().ENVIRONMENT,
     };

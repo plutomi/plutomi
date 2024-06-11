@@ -4,7 +4,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use controllers::{create_totp, health_check, method_not_allowed, not_found};
+use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
 use serde_json::json;
 use structs::app_state::AppState;
@@ -25,6 +25,21 @@ mod entities;
 mod structs;
 mod utils;
 
+const PORT: &str = "[::]:8080";
+
+// Declare an array of routes tha tshould redirect to the docs page
+const DOCS_ROUTES: [&str; 9] = [
+    "/",
+    "/api",
+    "/api/",
+    "/api/docs",
+    "/api/docs/",
+    "/api/docs/*any",
+    "/docs",
+    "/docs/",
+    "/docs/*any",
+];
+
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     // Get environment variables
@@ -32,7 +47,8 @@ async fn main() {
     let env = get_env();
 
     // TODO: Redirect with a toast message
-    let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
+    // TODO: ? This query param isn't being added...
+    let docs_redirect_url = format!("{:?}/docs/api?from=api", &env.BASE_WEB_URL);
 
     // Setup logging
     let logger = Logger::new();
@@ -46,49 +62,44 @@ async fn main() {
         mongodb,
         env,
     };
+    // Grouping of middleware that should be applied
+    // Under a ServiceBuilder, it is applied from top to bottom
+    let required_middleware = ServiceBuilder::new()
+        .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
+        .layer(middleware::from_fn_with_state(state.clone(), timeout))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            method_not_allowed,
+        ));
 
-    // Routes
-    let totp_routes = Router::new().route("/totp", post(create_totp));
+    // Redirect to web app routes
+    let docs_routes = DOCS_ROUTES.iter().fold(Router::new(), |router, route| {
+        router.route(route, get(Redirect::permanent(&docs_redirect_url)))
+    });
+
+    // Combine all other routes
+    let main_routes = Router::new()
+        .fallback(not_found)
+        .route("/request-totp", post(request_totp))
+        .route("/health", get(health_check));
 
     let app = Router::new()
-        .route("/", get(Redirect::permanent(&docs_redirect_url)))
-        .route("/api/", get(Redirect::permanent(&docs_redirect_url)))
-        .route("/api", get(Redirect::permanent(&docs_redirect_url)))
-        .route("/api/docs", get(Redirect::permanent(&docs_redirect_url)))
-        .route("/docs", get(Redirect::permanent(&docs_redirect_url)))
-        .route("/docs/", get(Redirect::permanent(&docs_redirect_url)))
-        .route("/docs/api", get(Redirect::permanent(&docs_redirect_url)))
-        .nest(
-            "/api",
-            Router::new()
-                .merge(totp_routes)
-                .route("/health", get(health_check))
-                .fallback(not_found)
-                .layer(
-                    // Middleware is applied top to bottom as long as its attached to this ServiceBuilder
-                    ServiceBuilder::new()
-                        // log_req_res should be the first middleware *always* as it handles incoming
-                        // and outgoing requests logging
-                        .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
-                        .layer(middleware::from_fn_with_state(state.clone(), timeout))
-                        .layer(middleware::from_fn_with_state(
-                            state.clone(),
-                            method_not_allowed,
-                        )),
-                )
-                .with_state(state),
-        );
+        // These are applied backwards, so bottom to top gets precedence
+        .fallback(not_found) //        / ⬆️
+        .nest("/api", main_routes) //  / ⬆️
+        .merge(docs_routes) //         / ⬆️
+        .layer(required_middleware) // / ⬆️
+        .with_state(state); //         / ⬆️
 
-    let port = "[::]:8080";
     // Bind address
-    let addr = port.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {
-        let message = format!("Failed to parse address on startup '{}': {}", port, e);
+    let addr = PORT.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {
+        let message = format!("Failed to parse address on startup '{}': {}", PORT, e);
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
             _time: iso_format(OffsetDateTime::now_utc()),
             message,
-            data: Some(json!({ "port": port })),
+            data: Some(json!({ "port": PORT })),
             error: Some(error_json),
             request: None,
             response: None,

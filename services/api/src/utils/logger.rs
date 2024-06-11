@@ -132,7 +132,7 @@ impl Logger {
 
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
-            .pretty()
+            // .pretty()
             .with_target(false)
             .finish();
 

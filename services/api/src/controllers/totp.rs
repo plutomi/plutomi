@@ -1,3 +1,3 @@
-pub mod create_totp;
+pub mod request_totp;
 
-pub use create_totp::create_totp;
+pub use request_totp::request_totp;
