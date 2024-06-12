@@ -157,3 +157,108 @@ helm install \
   --create-namespace \
   --set installCRDs=true
 ```
+
+Copy the KUBECONFIG file to your local machine:
+
+```bash
+scp -i ~/.ssh/YOUR_SSH_KEY root@YOUR_SERVER_IP:/etc/rancher/k3s/k3s.yaml ~/.kube/YOUR_CONFIG_NAME
+```
+
+Edit the file, and change the IP the master node that has the **sealed-secrets-controller** on it. You can find this node with:
+
+```bash
+kubectl get pods -o wide --all-namespaces | grep sealed-secrets-controller
+```
+
+```bash
+vim ~/.kube/YOUR_CONFIG_NAME
+```
+
+Then, ensure you're using it:
+
+```bash
+export KUBECONFIG=~/.kube/YOUR_CONFIG_NAME
+```
+
+Then on your own PC, create the secrets:
+
+```bash
+kubectl create secret generic mongodb-init-secret --dry-run=client --from-literal=MONGO_INITDB_ROOT_USERNAME=LONG_USERNAME  --from-literal=MONGO_INITDB_ROOT_PASSWORD=LONG_PASSWORD -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/mongodb.yaml
+```
+
+If using Cloudflare for DNS, we need a token for cert-manager to use. We need to store it in a secret as well:
+
+```bash
+kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
+```
+
+Create other global secrets shared by most of the backend:
+
+```bash
+kubectl create secret generic global-config-secret --dry-run=client --from-literal=DATABASE_URL=mongodb://USERNAMEdifferentfromINITDB_ROOT:PASSWORDdifferentfromINITDB_ROOT@mongodb.default.svc.cluster.local:27017/plutomi -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/global.yaml
+```
+
+Transfer the files over to your server in the `/k8s` directory and apply the secrets:
+
+```bash
+cd k8s && kubectl apply -f secrets/
+```
+
+Install the Cluster Issuer for cert-manager:
+
+```bash
+helm upgrade --install cluster-issuer . -f values/issuer.yaml
+```
+
+Install [Linkerd](https://linkerd.io/):
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install-edge | sh
+```
+
+```bash
+export PATH=$PATH:$HOME/.linkerd2/bin
+```
+
+Check the progress:
+
+```bash
+linkerd check --pre
+```
+
+Then install the CRDs:
+
+```bash
+linkerd install --crds | kubectl apply -f -
+```
+
+```bash
+linkerd install | kubectl apply -f -
+```
+
+Do another check:
+
+```bash
+linkerd check
+```
+
+Install the Linkerd viz extension:
+
+```bash
+linkerd viz install | kubectl apply -f -
+```
+
+And check it:
+
+```bash
+linkerd viz check
+
+linkerd viz edges pod
+```
+
+Ensure Linkerd sidecar gets attached to our pods when we spin them up:
+
+```bash
+kubectl annotate namespace default linkerd.io/inject=enabled
+kubectl annotate namespace kube-system linkerd.io/inject=enabled
+```
