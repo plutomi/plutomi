@@ -262,3 +262,95 @@ Ensure Linkerd sidecar gets attached to our pods when we spin them up:
 kubectl annotate namespace default linkerd.io/inject=enabled
 kubectl annotate namespace kube-system linkerd.io/inject=enabled
 ```
+
+Create our services - note this won't deploy the pods just yet!
+
+```bash
+helm upgrade --install web-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/web.yaml
+helm upgrade --install api-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/api.yaml
+helm upgrade --install mongodb-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/mongodb.yaml
+```
+
+Deploy the web pod:
+
+```bash
+helm upgrade --install web-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/web.yaml -f values/deployments/_production.yaml
+```
+
+Allow traffic in, this will make a request for a TLS certificate if you are using those settings:
+
+```bash
+helm upgrade --install traefik-deploy . -f values/shared.yaml -f values/ingress.yaml -f values/deployments/_production.yaml
+```
+
+It is here where you want to update your DNS to point to your nodes.
+
+Deploy the MongoDB Pods:
+
+```bash
+helm upgrade --install mongodb-deploy . -f values/shared.yaml -f values/stateful-sets/shared.yaml -f values/stateful-sets/mongodb.yaml
+```
+
+Exec into one...
+
+```bash
+kubectl exec -it mongodb-0 -c mongodb -- mongosh "mongodb://mongodb.default.svc.cluster.local:27017/test"
+```
+
+...and let's link them up! Make sure this matches the values in the StatefulSet:
+
+```bash
+rs.initiate({ _id: "rs0", version: 1, members: [ { _id: 0, host : "mongodb-0.mongodb.default.svc.cluster.local:27017" }, { _id: 1, host : "mongodb-1.mongodb.default.svc.cluster.local:27017" },{ _id: 2, host : "mongodb-2.mongodb.default.svc.cluster.local:27017" }]})
+```
+
+> rs.status() will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds.
+
+Test that replication is working:
+
+```bash
+db.test.insertOne({ name: "Jose"});
+```
+
+Exec into another pod, and see the item there hopefully :D
+
+```bash
+kubectl exec -it mongodb-1 -c mongodb -- mongosh
+db.test.findOne()
+```
+
+Ok back to the other pod:
+
+```bash
+kubectl exec -it mongodb-0 -c mongodb -- sh
+```
+
+Create an admin user:
+
+```bash
+mongosh admin --eval "db.createUser({ user: '$MONGO_INITDB_ROOT_USERNAME', pwd: '$MONGO_INITDB_ROOT_PASSWORD', roles: [{ role: 'root', db: 'admin' }] })"
+```
+
+Then, login to the DB with the new user:
+
+```bash
+kubectl exec -it mongodb-0 -c mongodb -- mongosh --username ADMIN_USER_CREDENTIALS --password ADMIN_USER_PASSWORD
+```
+
+Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the DATABASE_URL secret.
+
+```bash
+use plutomi
+db.createUser({
+  user: "DATABASE_URL_USERNAME",
+  pwd: "DATABASE_URL_PASSWORD",
+  roles: [{ role: "readWrite", db: "plutomi" }]
+})
+```
+
+Now deploy the API/Consumers:
+
+```bash
+helm upgrade --install web-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/web.yaml -f values/deployments/_production.yaml
+```
+
+You should be all set!
