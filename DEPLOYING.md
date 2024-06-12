@@ -4,6 +4,10 @@
 - [Rest of the App](#rest-of-the-app)
   - [Prerequisites](#prerequisites)
   - [Initializing Nodes](#initialize-the-nodes)
+  - [Linkerd (Optional)](#install-linkerd)
+  - [Sealed Secrets](#sealed-secrets)
+  - [Create our Services](#create-our-services)
+  - [MongoDB Replication & Users](#mongodb-replication)
 
 #### AWS
 
@@ -158,6 +162,8 @@ helm install \
   --set installCRDs=true
 ```
 
+### Sealed Secrets
+
 Copy the KUBECONFIG file to your local machine:
 
 ```bash
@@ -210,7 +216,7 @@ Install the Cluster Issuer for cert-manager:
 helm upgrade --install cluster-issuer . -f values/issuer.yaml
 ```
 
-Install [Linkerd](https://linkerd.io/):
+### Install [Linkerd](https://linkerd.io/)
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install-edge | sh
@@ -261,7 +267,7 @@ kubectl annotate namespace default linkerd.io/inject=enabled
 kubectl annotate namespace kube-system linkerd.io/inject=enabled
 ```
 
-Create our services - note this won't deploy the pods just yet!
+### Create our Services
 
 ```bash
 helm upgrade --install web-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/web.yaml
@@ -288,6 +294,8 @@ Deploy the MongoDB Pods:
 ```bash
 helm upgrade --install mongodb-deploy . -f values/shared.yaml -f values/stateful-sets/shared.yaml -f values/stateful-sets/mongodb.yaml
 ```
+
+#### MongoDB Replication
 
 Exec into one...
 

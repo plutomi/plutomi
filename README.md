@@ -40,15 +40,15 @@ Plutomi is deployed to any VPS you can get your hands on ([we recommend Hetzner]
 
 We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in.
 
+We also use Cloudflare for DNS, CDN, WAF and R2 for storage.
+
 We _plan_ to add:
 
-- NATS for asynchronous communication
-- Multiple consumers to read from the queue and NATS Jetstream
+- NATS for asynchronous communication streams
+- Multiple consumers to read from NATS Jetstream and the email events queue
 - MeiliSearch/ElasticSearch for full text search
 - DuckDB/ClickHouse for analytics
 - Prometheus/Loki/Grafana for monitoring & logging
-
-We also use Cloudflare for DNS, CDN, WAF and other goodies, like in the future, R2 for storage.
 
 ### Running Locally
 
