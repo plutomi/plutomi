@@ -7,7 +7,7 @@
   - [Linkerd (Optional)](#install-linkerd)
   - [Sealed Secrets](#sealed-secrets)
   - [Create our Services](#create-our-services)
-  - [MongoDB Replication & Users](#mongodb-replication)
+  - [MongoDB](#mongodb-replication)
 
 #### AWS
 
@@ -289,13 +289,13 @@ helm upgrade --install traefik-deploy . -f values/shared.yaml -f values/ingress.
 
 It is here where you want to update your DNS to point to your nodes.
 
+#### MongoDB
+
 Deploy the MongoDB Pods:
 
 ```bash
 helm upgrade --install mongodb-deploy . -f values/shared.yaml -f values/stateful-sets/shared.yaml -f values/stateful-sets/mongodb.yaml
 ```
-
-#### MongoDB Replication
 
 Exec into one...
 
