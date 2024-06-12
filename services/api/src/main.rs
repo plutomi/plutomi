@@ -47,8 +47,7 @@ async fn main() {
     let env = get_env();
 
     // TODO: Redirect with a toast message
-    // TODO: ? This query param isn't being added...
-    let docs_redirect_url = format!("{:?}/docs/api?from=api", &env.BASE_WEB_URL);
+    let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
     // Setup logging
     let logger = Logger::new();
@@ -79,13 +78,12 @@ async fn main() {
 
     // Combine all other routes
     let main_routes = Router::new()
-        .fallback(not_found)
         .route("/request-totp", post(request_totp))
         .route("/health", get(health_check));
 
     let app = Router::new()
         // These are applied backwards, so bottom to top gets precedence
-        .fallback(not_found) //        / ⬆️
+        .fallback(not_found) //
         .nest("/api", main_routes) //  / ⬆️
         .merge(docs_routes) //         / ⬆️
         .layer(required_middleware) // / ⬆️

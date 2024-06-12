@@ -127,7 +127,26 @@ pub async fn log_req_res(
                 .headers_mut()
                 .insert(REQUEST_ID_HEADER, request_id_value);
 
-            // Since we are responding, we can be sure the response is serializable as it will always be JSON
+            let is_redirect = (300..=399).contains(&response.status().as_u16());
+
+            if is_redirect {
+                // Don't try to parse the response as it'll just be an error
+                // Log the response
+                // TODO: What happens if 502?
+                state.logger.log(LogObject {
+                    level: LogLevel::Debug,
+                    error: None,
+                    message: "Redirect sent".to_string(),
+                    data: Some(json!({ "duration": duration_ms })),
+                    _time: iso_format(OffsetDateTime::now_utc()),
+                    request: Some(json!(&request_data.request_as_hashmap)),
+                    response: Some(json!({ "status": response.status().as_u16() })),
+                });
+
+                return response;
+            }
+
+            // Everything here should be ok
             let parsed_response = parse_response(response).await.unwrap();
 
             // Log the response
