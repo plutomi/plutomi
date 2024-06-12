@@ -1,6 +1,6 @@
 # Plutomi
 
-Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows.
+Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![infra](./images/infra.png)
 
@@ -10,7 +10,7 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 ## Summary
 
-You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.git
+You can create `applications` which people can apply to. An application can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
 In these applications, you can create `stages` which are individual steps that need to be completed by your `applicants`. You can add `questions` and setup automatic move `rules` that determine where applicants go next depending on their `responses` or after a certain time period.
 
@@ -19,12 +19,6 @@ An application for a delivery company might look like this:
 **New York City**
 
 Stages:
-TOD0: Install helm
-
-````
-brew install helm OR curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-```
-
 
 1. **Questionnaire** - Collect basic information of an applicant. If an applicant does not complete this stage in 30 days, move them to the _Waiting List_.
 2. **Waiting List** - An idle pool of applicants
@@ -32,20 +26,20 @@ brew install helm OR curl https://raw.githubusercontent.com/helm/helm/main/scrip
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
-
 also section on useful links:
 
 https://artifacthub.io/
 
 k3s.io
 
-
 and update setup script links to use helm
+
 ## Prerequisites
 
 - [Node 20](https://nodejs.org/en/download)
 - [Rust](https://www.rust-lang.org/tools/install)
 - [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/) - For local development
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
 <!--TODO See if we can get hetzner referral link :') -->
@@ -60,49 +54,28 @@ We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources li
 
 We also use Cloudflare for DNS, CDN, WAF and other goodies, and log with Prometheus and Grafana.
 
-<!-- To be implemented later
- and eventually, storage using [R2](https://developers.cloudflare.com/r2/) and [Workers](https://developers.cloudflare.com/workers/). -->
-
-<!-- To be implemented later
-We also use [Redis](https://redis.io/) for caching / rate limiting. -->
-
 <!-- We use Meli/Elastic/Typesense for search. -->
-
-## TODO to build api for Mac -> Ubuntu linux docker build -. -t plutomi/api --platform linux/amd64
-
-```bash
-
-docker buildx create --name multiarch --use --bootstrap
-
-
-docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/<api|web> . --push
---push
-````
-
-### Also building might take a long time, you might want to use --watch instead in dev mode
 
 ### Running Locally
 
-## TODO make anote about not running the API locally in docker because it takes too long?
+Simply make a copy of [.env.example](.env.example) to a `.env` file and run `./scripts/run.sh`. This will:
 
-The following will start the API and the web app in development mode:
+1. Setup MongoDB for you
 
-// document no rollback https://www.reddit.com/r/aws/comments/1993rph/problems_with_complex_deployments_and_how_cdkcf/
+- Credentials are in the [docker-compose.yaml](./docker-compose.yaml)
+
+2. Start the Web app in development mode on port 3000
+
+3. Start the API on port 8080
+
+- Because the majority of our backend is in Rust, _and due to the infamous compile times of Rust_, we are running them outside of Docker
+- The API along with any future consumers will run with `cargo watch` which might take some time to initially start but will have hot reloading after that
+
+You can also run any stack individually:
 
 ```bash
-$ scripts/run.sh
+$ scripts/run.sh --stack <web|api|datasources>
 ```
-
-You can also run either individually:
-
-```bash
-$ scripts/run.sh --stack <web|api>
-```
-
-The script also has hot reloading for both so you can make changes and see them reflected immediately once you change and save a file. Update the `.env` in `packages/<api|web>`for any environment variables needed.
-
-The api cargo wathc will take a little longer on first init, any further changes after will be faster. 
-When running locally, due to Docker, watch, and rust compile times, we recommend running API and Web app on their own outside of docker. Keep Nginx, Keep database and redis since these won't need to change often if at all. m2 max taking a few minutes to build API from scratch, granted this is cross platform from arm -> amd64
 
 ### Deploying
 
@@ -110,8 +83,6 @@ To deploy Plutomi, you'll want to deploy to AWS first and then use `docker-compo
 TODO - tls at ingress + certs notes
 
 ## License
-
-@ TODO add https://rancherdesktop.io/
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
 
