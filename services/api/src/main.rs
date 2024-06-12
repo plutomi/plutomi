@@ -73,7 +73,7 @@ async fn main() {
 
     // Redirect to web app routes
     let docs_routes = DOCS_ROUTES.iter().fold(Router::new(), |router, route| {
-        router.route(route, get(Redirect::permanent(&docs_redirect_url)))
+        router.route(route, get(Redirect::temporary(&docs_redirect_url)))
     });
 
     // Combine all other routes

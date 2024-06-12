@@ -20,7 +20,7 @@ print_error_and_exit() {
     echo -e "${BIWHITE}${ON_IRED}\n\nERROR: $1 \n${BIWHITE}${NC}"
     echo -e "Environment must be one of: ${BIGREEN}development${NC} | ${BIYELLOW}staging${NC} | ${BIRED}production${NC}\n"
     echo -e "Example: ${BIWHITE}$0 production${NC}\n"
-    echo -e "Make sure to set the environment variables in '${BIWHITE}services/aws/.env.${BIGREEN}development${NC}|${BIYELLOW}staging${NC}|${BIRED}production${NC}' so CDK can deploy correctly.\n"
+    echo -e "Make sure to set the environment variables in '${BIWHITE}aws/.env' so CDK can deploy correctly.\n"
     exit 1
 }
 
@@ -45,7 +45,6 @@ fi
 # Assign the first argument to environment
 environment=$1
 
-# TODO clean this file up
 
 # Validate environment
 [[ "$environment" =~ ^(staging|production|development)$ ]] || print_error_and_exit "Invalid environment: '$environment'."
@@ -102,7 +101,7 @@ deploy_aws() {
     # Export the environment variable so it can be picked up by CDK
     export ENVIRONMENT=$environment
 
-    cd ../../aws
+    cd ./aws
     npm run deploy -- --profile $AWS_PROFILE # Set the right profile for permissions
 }
 
