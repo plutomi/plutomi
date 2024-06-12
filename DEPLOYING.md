@@ -1,9 +1,11 @@
 # Deploying
 
 - [AWS (SES + SNS + SQS)](#aws)
-- [Backend](#Kubernetes){#aws}
+- [Rest of the App](#rest-of-the-app)
+  - [Prerequisites](#prerequisites)
+  - [Initializing Nodes](#initialize-the-nodes)
 
-## AWS{#aws}
+#### AWS
 
 To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configure-ses.ts](./services/aws/lib/configure-ses.ts).
 
@@ -35,7 +37,7 @@ See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authenticat
 
 Then after all of that is done, make sure to beg aws to get you out of sandbox since you now have a way to handle complaints.
 
-## Rest of the App{#backend}
+## Rest of the App
 
 Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
@@ -47,13 +49,13 @@ Plutomi has _not_ been tested to run on a VPS with networked storage like EC2, a
 
 - 3 nodes with Ubuntu 20.04 installed and SSH access
 
-- Install SealedSecrets locally on your machine
+- Install [SealedSecrets](https://sealed-secrets.netlify.app/) locally on your machine
 
 ```bash
 brew install kubeseal
 ```
 
-This is how we encrypt secrets in the cluster AND allows us to commit them into this repository. You can find more information on how to use it [here](https://sealed-secrets.netlify.app/).
+This is how we encrypt secrets in the cluster AND allows us to commit them into this repository.
 
 - Open these ports on each of the nodes so they can talk back and forth to each other:
 
@@ -69,36 +71,37 @@ This is how we encrypt secrets in the cluster AND allows us to commit them into 
 
   - 80 - HTTP - Required if using cert-manager / LetsEncrypt for HTTPS
   - 443 - HTTPS
+  - 6443 - Your home IP to access the K3S API server
 
-> If installing on a single node, you can simple do:
+#### Initialize the nodes
 
-    *`curl -sfL https://get.k3s.io | sh -`*
+> If installing on a single node, you can simply do:
+>
+> **curl -sfL https://get.k3s.io | sh -**
+>
+> And skip most of the steps below as they deal with replication and high availability.
 
-and skip most of the steps below.
+---
 
-##### 1. Initialize the first node
-
-- Create a K3S_TOKEN secret
+Create a K3S_TOKEN secret
 
 ```bash
 openssl rand -base64 50 | tr -d '\n/=+'
 ```
 
-- Install K3S with that token
+Install K3S with that token
 
 ```bash
 curl -sfL https://get.k3s.io | K3S_TOKEN=TOKEN_YOU_GENERATED K3S_KUBECONFIG_MODE="644" K3S_NODE_NAME=YOUR_APP-production-0 sh -s - server  --cluster-init  --node-ip PRIVATE_NETWORKING_PORT --advertise-address PRIVATE_NETWORKING_PORT --node-external-ip PUBLIC_IP --tls-san PRIVATE_NETWORKING_PORT --tls-san PUBLIC_IP
 ```
 
->
-
-- Copy the new secret token that was created
+Copy the new secret token that was created
 
 ```bash
 cat /var/lib/rancher/k3s/server/node-token
 ```
 
-- Install the K3S agent on the second node
+Install the K3S agent on the second node
 
 ```bash
 curl -sfL https://get.k3s.io | K3S_TOKEN=TOKEN_EXTRACTED_FROM_NODE_1 K3S_KUBECONFIG_MODE="644" K3S_NODE_NAME=YOUR_APP-production-1 sh -s - server  --server https://PRIVATE_IP_OF_NODE_1:6443 K3S_KUBECONFIG_MODE="644"   --node-ip PRIVATE_IP_OF_THE_SECOND_NODE--advertise-address PRIVATE_IP_OF_THE_SECOND_NODE--node-external-ip PUBLIC_IP_OF_THE_SECOND_NODE --tls-san PRIVATE_IP_OF_THE_SECOND_NODE --tls-san PUBLIC_IP_OF_THE_SECOND_NODE
@@ -124,13 +127,13 @@ Now confirm we are using the correct KUBECCONFIG in one of the nodes:
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 ```
 
-- Install Helm
+Install Helm
 
 ```bash
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
-- Install Sealed Secrets
+Install Sealed Secrets
 
 ```bash
 helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
@@ -138,13 +141,10 @@ helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
 helm install sealed-secrets -n kube-system --set-string fullnameOverride=sealed-secrets-controller sealed-secrets/sealed-secrets
 ```
 
-- Install cert-manager for the TLS certificate
+Install cert-manager for the TLS certificate
 
 ```bash
 helm repo add jetstack https://charts.jetstack.io
-```
-
-```bash
 helm repo update
 ```
 
@@ -230,9 +230,7 @@ Then install the CRDs:
 
 ```bash
 linkerd install --crds | kubectl apply -f -
-```
 
-```bash
 linkerd install | kubectl apply -f -
 ```
 
@@ -277,7 +275,7 @@ Deploy the web pod:
 helm upgrade --install web-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/web.yaml -f values/deployments/_production.yaml
 ```
 
-Allow traffic in, this will make a request for a TLS certificate if you are using those settings:
+Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress:
 
 ```bash
 helm upgrade --install traefik-deploy . -f values/shared.yaml -f values/ingress.yaml -f values/deployments/_production.yaml
@@ -303,7 +301,7 @@ kubectl exec -it mongodb-0 -c mongodb -- mongosh "mongodb://mongodb.default.svc.
 rs.initiate({ _id: "rs0", version: 1, members: [ { _id: 0, host : "mongodb-0.mongodb.default.svc.cluster.local:27017" }, { _id: 1, host : "mongodb-1.mongodb.default.svc.cluster.local:27017" },{ _id: 2, host : "mongodb-2.mongodb.default.svc.cluster.local:27017" }]})
 ```
 
-> rs.status() will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds.
+> NOTE: `rs.status()` will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds.
 
 Test that replication is working:
 
@@ -333,7 +331,7 @@ mongosh admin --eval "db.createUser({ user: '$MONGO_INITDB_ROOT_USERNAME', pwd: 
 Then, login to the DB with the new user:
 
 ```bash
-kubectl exec -it mongodb-0 -c mongodb -- mongosh --username ADMIN_USER_CREDENTIALS --password ADMIN_USER_PASSWORD
+mongosh --username ADMIN_USER_CREDENTIALS --password ADMIN_USER_PASSWORD
 ```
 
 Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the DATABASE_URL secret.
@@ -350,7 +348,7 @@ db.createUser({
 Now deploy the API/Consumers:
 
 ```bash
-helm upgrade --install web-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/web.yaml -f values/deployments/_production.yaml
+helm upgrade --install api-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/api.yaml -f values/deployments/_production.yaml
 ```
 
 You should be all set!
