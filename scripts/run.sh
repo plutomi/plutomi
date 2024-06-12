@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Script to run the API and Web components of the application
-
 # Get the absolute path to the project root directory
 PROJECT_ROOT="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.."
 
@@ -11,6 +9,13 @@ cleanup() {
     [ ! -z "$WEB_PID" ] && kill $WEB_PID
     echo "Done."
 }
+
+datasources() {
+    echo -e "Creating datasources... $PROJECT_ROOT/docker-compose.yaml"
+    docker-compose -f "$PROJECT_ROOT/docker-compose.yaml" up -d
+    trap "docker-compose -f '$PROJECT_ROOT/docker-compose.yaml' down; echo 'Docker services stopped.'" EXIT
+}
+
 
 print_error_and_usage() {
     echo -e "\n-- ERROR: $1 --\n"
@@ -23,8 +28,8 @@ trap cleanup SIGINT SIGTERM
 
 run_api() {
     # Navigate to the API directory
-    cd "$PROJECT_ROOT/packages/api"
-    echo "Starting API..."
+    cd "$PROJECT_ROOT/services/api"
+    echo -e "\nStarting API...\n"
     cargo install cargo-watch
     cargo watch -x run &
     API_PID=$!
@@ -32,8 +37,8 @@ run_api() {
 
 run_web() {
     # Navigate to the web directory
-    cd "$PROJECT_ROOT/packages/web"
-    echo "Starting Web server..."
+    cd "$PROJECT_ROOT/services/web"
+    echo -e "\nStarting Web server...\n"
     npm run dev &
     WEB_PID=$!
 }
@@ -53,13 +58,19 @@ done
 # Run based on stack argument
 case "$stack" in
     "all")
+        datasources
         run_api
         run_web
         ;;
+    "datasources")
+        datasources
+        ;;
     "api")
+        datasources
         run_api
         ;;
     "web")
+        datasources
         run_web
         ;;
     *)

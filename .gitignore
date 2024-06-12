@@ -27,9 +27,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Ignore files that start with .env except sample
+# Ignore files that start with .env except samples
 .env*
+!.env.example
 !.env.sample
+
 
 # vercel
 .vercel
@@ -49,3 +51,9 @@ cdk.context.json
 dist/
 
 
+# Ignore any files accidentally copied to local dir
+root@*/*
+
+
+# Ignore the temporary secret file
+secret.yaml

@@ -1,0 +1,77 @@
+# Must start with 'databases' key
+databases:
+  name: mongodb
+  replicas: 3
+  initContainers:
+    - name: create-pem-file
+      image: busybox
+      # command:
+      #   - "/bin/sh"
+      #   - "-c"
+      #   - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+      # volumeMounts:
+      #   - name: cert
+      #     mountPath: "/etc/ssl/certs"
+      #     readOnly: false
+      #   - name: pem-dir
+      #     mountPath: "/pem"
+  containers:
+    - name: mongodb
+      image: mongo:7.0.8
+      port: 27017
+      # TLS Certificate stuff - Revisit in the future
+      # This is a huge PIA because Let's Encrypt doesn't support private/Internal certs (mongodb.default.svc.cluster.local),
+      # so you have to use self signed ones, which requires adding the CA to EACH app that interacts with it, which has it's own problems. 
+      # Another alternative is to reroute something like mongodb.plutomi.com to the internal service, but that's a PIA too and might break other things.
+      # args:
+      # - "--tlsMode=requireTLS"
+      #   - "--tlsCertificateKeyFile=/pem/mongodb.pem"
+      # - "--setParameter"
+      # - "tlsUseSystemCA=true" 
+      #   - "--tlsAllowConnectionsWithoutCertificates"
+      #   - "--tlsCAFile=/pem/mongodb.pem" # Same as above
+      #   - "--clusterAuthMode=x509"
+      # - "--tlsAllowInvalidHostnames"
+      #   - "--tlsCAFile=/etc/ssl/certs/tls.crt"
+      #   - "--tlsClusterFile=/pem/mongodb.pem"
+      volumeMounts:
+        - name: mongodb-data
+          mountPath: /data/mongodb
+        # - name: cert
+        #   mountPath: /etc/ssl/certs
+        #   readOnly: true
+        # - name: pem-dir
+        #   mountPath: "/pem"
+        #   readOnly: true
+      command:
+        - "mongod"
+        - "--replSet"    
+        - "rs0"   
+        - "--bind_ip_all"    
+      # If using a single replica, you can leave the env here
+      # And it will be initialized on that one pod and created.
+      # If not, you have to manually create the admin user after initialization!
+      env:
+        MONGO_INITDB_ROOT_USERNAME:
+          secretKeyRef:
+            name: mongodb-init-secret
+            key: MONGO_INITDB_ROOT_USERNAME
+        MONGO_INITDB_ROOT_PASSWORD:
+          secretKeyRef:
+            name: mongodb-init-secret
+            key: MONGO_INITDB_ROOT_PASSWORD
+  # volumes:
+  #   - name: cert
+  #     secret:
+  #       secretName: plutomi-tls-secret
+  #   - name: pem-dir
+  #     emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-data
+      spec:
+        resources:
+          requests:
+            # On a VPS this won't do much,
+            # you'll have access to the entire disk
+            storage: 10Gi
