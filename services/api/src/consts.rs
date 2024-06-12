@@ -255,7 +255,7 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "live",
 ];
 
-// Declare an array of routes tha tshould redirect to the docs page
+// Declare an array of routes that should redirect to the docs page
 pub const DOCS_ROUTES: [&str; 9] = [
     "/",
     "/api",
