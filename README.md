@@ -6,7 +6,7 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 
 ## Motivation
 
-Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://www.linkedin.com/in/joswayski/) attempt to do just that.
+Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is [my](https://twitter.com/notjoswayski) attempt to do just that.
 
 ## Summary
 
@@ -26,14 +26,6 @@ Stages:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
-also section on useful links:
-
-https://artifacthub.io/
-
-k3s.io
-
-and update setup script links to use helm
-
 ## Prerequisites
 
 - [Node 20](https://nodejs.org/en/download)
@@ -42,19 +34,21 @@ and update setup script links to use helm
 - [Docker Compose](https://docs.docker.com/compose/install/) - For local development
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
-<!--TODO See if we can get hetzner referral link :') -->
+## Tech Stack
 
-## Infra
+Plutomi is deployed to any VPS you can get your hands on ([we recommend Hetzner](https://hetzner.cloud/?ref=7BufEUOAUm8x)). The frontend is a [Remix](https://remix.run/) app and the API is written in [Rust](https://www.rust-lang.org/) using the [Axum](https://github.com/tokio-rs/axum) web framework. We use [Traefik](https://traefik.io/) as ingress with [cert-manager + Let's Encrypt](https://letsencrypt.org/) for TLS certificates. We use [MongoDB](https://www.mongodb.com/) for our main transactional database and try to follow patterns like [this](https://youtu.be/IYlWOk9Hu5g?t=1094) where we store everything in a single collection.
 
-# See the k8s directory for the k8s setup
+We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in.
 
-Plutomi is deployed using [docker-compose](https://docs.docker.com/compose/) to any VPS you can get your hands on (we recommend [Hetzner](https://www.hetzner.com/cloud/)). The frontend is a [Remix](https://remix.run/) app and the API is written in [Rust](https://www.rust-lang.org/) using the [Axum](https://github.com/tokio-rs/axum) framework. We use [Nginx](https://www.nginx.com/) as a reverse proxy to forward traffic to those containers appropriately. We use [MongoDB](https://www.mongodb.com/) for our database and try to follow patterns like [this](https://youtu.be/IYlWOk9Hu5g?t=1094) where we store everything in a single collection.
+We _plan_ to add:
 
-We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in, along with custom app events like `totp.requested`, `invite.sent`, or `application.submitted`.
+- NATS for asynchronous communication
+- Multiple consumers to read from the queue and NATS Jetstream
+- MeiliSearch/ElasticSearch for full text search
+- DuckDB/ClickHouse for analytics
+- Prometheus/Loki/Grafana for monitoring & logging
 
-We also use Cloudflare for DNS, CDN, WAF and other goodies, and log with Prometheus and Grafana.
-
-<!-- We use Meli/Elastic/Typesense for search. -->
+We also use Cloudflare for DNS, CDN, WAF and other goodies, like in the future, R2 for storage.
 
 ### Running Locally
 
@@ -74,21 +68,29 @@ Simply make a copy of [.env.example](.env.example) to a `.env` file and run `./s
 You can also run any stack individually:
 
 ```bash
-$ scripts/run.sh --stack <web|api|datasources>
+$ ./scripts/run.sh --stack <web|api|datasources>
 ```
 
-### Deploying
+## Deploying
 
-To deploy Plutomi, you'll want to deploy to AWS first and then use `docker-compose` on your server. The plutomi imges can be found on DockerHub as well. Check out [DEPLOYING.md](DEPLOYING.md) for more information.
-TODO - tls at ingress + certs notes
+To deploy Plutomi, you'll want to deploy to AWS for setting up SES first and then the rest of the backend with Kubernetes (K3S). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
 
-## Contributing & Contributors
+## Useul Links
 
-# TODO recommend multipass
+- [plutomi.com](https://plutomi.com)
+- [Plutomi Docs](https://plutomi.com/docs)
+- [K3S](https://k3s.io)
+- [Rust Docs](https://doc.rust-lang.org/)
+- [MongoDB Docs](https://docs.mongodb.com/)
+- [NATS Docs](https://docs.nats.io/)
+- [Remix Docs](https://remix.run/docs/en/main)
+- [Multipass](https://multipass.run/)
+
+## Contributing & Contributors
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
