@@ -254,3 +254,18 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "locations",
     "live",
 ];
+
+// Declare an array of routes tha tshould redirect to the docs page
+pub const DOCS_ROUTES: [&str; 9] = [
+    "/",
+    "/api",
+    "/api/",
+    "/api/docs",
+    "/api/docs/",
+    "/api/docs/*any",
+    "/docs",
+    "/docs/",
+    "/docs/*any",
+];
+
+pub const PORT: &str = "[::]:8080";

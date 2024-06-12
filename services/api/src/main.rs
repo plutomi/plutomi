@@ -4,6 +4,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use consts::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
 use serde_json::json;
@@ -24,21 +25,6 @@ mod controllers;
 mod entities;
 mod structs;
 mod utils;
-
-const PORT: &str = "[::]:8080";
-
-// Declare an array of routes tha tshould redirect to the docs page
-const DOCS_ROUTES: [&str; 9] = [
-    "/",
-    "/api",
-    "/api/",
-    "/api/docs",
-    "/api/docs/",
-    "/api/docs/*any",
-    "/docs",
-    "/docs/",
-    "/docs/*any",
-];
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
