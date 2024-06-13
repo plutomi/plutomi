@@ -23,9 +23,7 @@ export const ViewOnGitHubButton = () => {
         </svg>
         View on GitHub
       </a>
-      <p className="text-slate-400 text-sm -border border-red-500">
-        (coming soon!)
-      </p>
+      <p className="text-slate-400 text-sm">(coming soon!)</p>
     </>
   );
 };
