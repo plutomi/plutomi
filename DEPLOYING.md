@@ -8,6 +8,7 @@
   - [Sealed Secrets](#sealed-secrets)
   - [Create our Services](#create-our-services)
   - [MongoDB](#mongodb-replication)
+  - [Monitoring (PLG Stack)](#monitoring)
 
 #### AWS
 
@@ -357,6 +358,28 @@ Now deploy the API/Consumers:
 
 ```bash
 helm upgrade --install api-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/api.yaml -f values/deployments/_production.yaml
+```
+
+### Monitoring
+
+We use the PLG stack (Prometheus, Loki, and Grafana) for monitoring and logs.
+
+Add Grafana as a service:
+
+```bash
+helm upgrade --install grafana-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/grafana.yaml
+```
+
+Deploy Grafana:
+
+```bash
+helm upgrade --install grafana-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/grafana.yaml -f values/deployments/_production.yaml
+```
+
+You can then port forward to the Grafana service to access the dashboard. The username and password are both `admin` upon first login:
+
+```bash
+kubectl port-forward grafana-7f76db9859-mkw76 3000:3000
 ```
 
 You should be all set!
