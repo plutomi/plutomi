@@ -11,20 +11,31 @@ import {
 } from "@remix-run/react";
 
 export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : [])
+  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+  },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+JP:wght@100..900&display=swap"
+  }
 ];
 
-const rootBg = "bg-slate-100";
+const rootBg = "bg-white";
 export default function App() {
   return (
-    <html lang="en" className={`${rootBg} tabular-nums`}>
+    <html
+      lang="en"
+      className={`${rootBg} tabular-nums font-customFont min-h-screen`}
+    >
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body className={`${rootBg}`}>
+      <body className={`${rootBg} min-h-screen h-100 `}>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
