@@ -17,6 +17,9 @@ spec:
       maxSurge: {{ .Values.deployments.maxSurge }}
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
       labels:
         app: {{ .Values.deployments.name }}
     spec:
@@ -26,7 +29,10 @@ spec:
         - name: {{ .name }}
           image: {{ .image }}
           ports:
-            - containerPort: {{ .port }}
+            - name: metrics
+              containerPort: 9100
+            - name: http
+              containerPort: {{ .port }}
           env:
             - name: ENVIRONMENT
               value: {{ default "development" $.Values.deployments.ENVIRONMENT }}

@@ -370,7 +370,7 @@ Add Grafana as a service:
 helm upgrade --install grafana-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/grafana.yaml
 ```
 
-Deploy Grafana:
+##### Deploy Grafana:
 
 ```bash
 helm upgrade --install grafana-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/grafana.yaml -f values/deployments/_production.yaml
@@ -379,7 +379,21 @@ helm upgrade --install grafana-deploy . -f values/shared.yaml -f values/deployme
 You can then port forward to the Grafana service to access the dashboard. The username and password are both `admin` upon first login:
 
 ```bash
-kubectl port-forward grafana-7f76db9859-mkw76 3000:3000
+kubectl port-forward grafana-POD-ID 3000:3000
+```
+
+##### Deploy Prometheus:
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/prometheus
+```
+
+You can then port forward to the Prometheus service to access the dashboard:
+
+```bash
+kubectl port-forward prometheus-server-POD-ID  9090:9090
 ```
 
 You should be all set!
