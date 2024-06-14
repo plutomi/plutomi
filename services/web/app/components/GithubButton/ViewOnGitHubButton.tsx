@@ -6,7 +6,7 @@ export const ViewOnGitHubButton = () => {
         href="https://github.com/plutomi/plutomi"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white  bg-github-500 hover:bg-zinc-900  focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center border border-red-500 "
+        className="text-white  bg-github-500 hover:bg-zinc-900  focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center "
       >
         <svg
           className="w-6 h-6 me-3"
