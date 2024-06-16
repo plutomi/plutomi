@@ -9,6 +9,7 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "plutomi",
     "plutomiinc",
     "plutomi-inc",
+    "metrics",
     // Marketing pages
     "login",
     "logout",

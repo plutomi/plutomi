@@ -30,7 +30,7 @@ spec:
           image: {{ .image }}
           ports:
             - name: metrics
-              containerPort: 9100
+              containerPort: {{ .port }}
             - name: http
               containerPort: {{ .port }}
           env:

@@ -73,5 +73,6 @@ const gracefulShutdown = async () => {
   process.exit(0); // Exit cleanly
 };
 
+// TODO: Restrict metrics endpoint to internal network
 process.on("SIGTERM", gracefulShutdown);
 process.on("SIGINT", gracefulShutdown);
