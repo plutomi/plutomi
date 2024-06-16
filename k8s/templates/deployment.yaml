@@ -38,7 +38,7 @@ spec:
             - name: ENVIRONMENT
               value: {{ default "development" $.Values.deployments.ENVIRONMENT }}
             - name: BASE_WEB_URL
-              value: {{ default "http://web.svc.default.local" $.Values.deployments.BASE_WEB_URL }}
+              value: {{ default "https://plutomi.com" $.Values.deployments.BASE_WEB_URL }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:

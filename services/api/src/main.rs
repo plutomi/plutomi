@@ -62,20 +62,16 @@ async fn main() {
         router.route(route, get(Redirect::temporary(&docs_redirect_url)))
     });
 
-    // Routes not under /api/ that should not redirect to web docs
-    let top_level_routes = Router::new().route("/health", get(health_check));
-
     // Combine all other routes under /api/* */
-    let main_routes = Router::new()
-        .route("/request-totp", post(request_totp))
-        .route("/health", get(health_check));
+    let main_routes = Router::new().route("/request-totp", post(request_totp));
 
     let app = Router::new()
         // These are applied backwards, so bottom to top gets precedence
         .fallback(not_found) //
         .nest("/api", main_routes) //  / ⬆️
-        .merge(docs_routes) //         / ⬆️
-        .merge(top_level_routes) //    / ⬆️
+        .merge(docs_routes) // redirect / ⬆️
+        // This is the internal health check route, public health check goes to docs route
+        .route("/health", get(health_check)) // ⬆️
         .layer(required_middleware) // / ⬆️
         .with_state(state); //         / ⬆️
 
