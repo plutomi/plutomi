@@ -45,10 +45,9 @@ We also use Cloudflare for DNS, CDN, WAF and R2 for storage.
 We _plan_ to add:
 
 - NATS for asynchronous communication streams
-- Multiple consumers to read from NATS Jetstream and the email events queue
+- An events consumer read from NATS Jetstream and the email events SQS queue
 - MeiliSearch/ElasticSearch for full text search
 - DuckDB/ClickHouse for analytics
-- Prometheus/Loki/Grafana for monitoring & logging
 
 ### Running Locally
 

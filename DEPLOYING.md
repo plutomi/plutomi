@@ -8,7 +8,7 @@
   - [Sealed Secrets](#sealed-secrets)
   - [Create our Services](#create-our-services)
   - [MongoDB](#mongodb-replication)
-  - [Monitoring (OpenObserve)](#monitoring)
+  - [Monitoring (Axiom)](#monitoring)
 
 #### AWS
 
@@ -362,13 +362,6 @@ helm upgrade --install api-deploy . -f values/shared.yaml -f values/deployments/
 
 ### Monitoring
 
-We use the PLG stack (Prometheus, Loki, and Grafana) for monitoring and logs.
-
-Add Grafana as a service:
-
-```bash
-helm upgrade --install grafana-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/grafana.yaml
-```
-
+We use the Axiom for logging instead of keeping everything in the cluster.
 
 You should be all set!

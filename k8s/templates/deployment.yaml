@@ -17,9 +17,10 @@ spec:
       maxSurge: {{ .Values.deployments.maxSurge }}
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9100"
+      # Disabled for now. Was using too many resources for my little cluster :3
+      # annotations:
+      #   prometheus.io/scrape: "true"
+      #   prometheus.io/port: "9100"
       labels:
         app: {{ .Values.deployments.name }}
     spec:

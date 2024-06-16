@@ -3,7 +3,7 @@ import { broadcastDevReady } from "@remix-run/node";
 import express from "express";
 import * as build from "./build/index.js";
 import { env } from "./app/utils/env.js";
-import prometheusClient from "prom-client";
+// import prometheusClient from "prom-client";
 
 // Prometheus setup
 
@@ -25,23 +25,23 @@ app.get("/health", async (req, res) => {
   return res.json({ status: "ok" });
 });
 
-// Prometheus setup
-const register = new prometheusClient.Registry();
-register.setDefaultLabels({
-  app: "plutomi-web",
-  pod_name: env.POD_NAME
-});
+// // Prometheus setup
+// const register = new prometheusClient.Registry();
+// register.setDefaultLabels({
+//   app: "plutomi-web",
+//   pod_name: env.POD_NAME
+// });
 
-prometheusClient.collectDefaultMetrics({ register });
+// prometheusClient.collectDefaultMetrics({ register });
 
-app.get("/metrics", async (req, res) => {
-  try {
-    res.set("Content-Type", register.contentType);
-    res.end(await register.metrics());
-  } catch (err) {
-    res.status(500).end(err);
-  }
-}); // End Prometheus setup
+// app.get("/metrics", async (req, res) => {
+//   try {
+//     res.set("Content-Type", register.contentType);
+//     res.end(await register.metrics());
+//   } catch (err) {
+//     res.status(500).end(err);
+//   }
+// }); // End Prometheus setup
 
 app.all(
   "*",
