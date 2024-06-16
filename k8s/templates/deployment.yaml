@@ -30,8 +30,8 @@ spec:
         - name: {{ .name }}
           image: {{ .image }}
           ports:
-            - name: metrics
-              containerPort: {{ .port }}
+            # - name: metrics
+            #   containerPort: {{ .port }}
             - name: http
               containerPort: {{ .port }}
           env:
