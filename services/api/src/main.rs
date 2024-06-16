@@ -66,7 +66,9 @@ async fn main() {
     let top_level_routes = Router::new().route("/health", get(health_check));
 
     // Combine all other routes under /api/* */
-    let main_routes = Router::new().route("/request-totp", post(request_totp));
+    let main_routes = Router::new()
+        .route("/request-totp", post(request_totp))
+        .route("/health", get(health_check));
 
     let app = Router::new()
         // These are applied backwards, so bottom to top gets precedence

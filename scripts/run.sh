@@ -1,5 +1,24 @@
 #!/bin/bash
 
+
+
+
+# Define color codes
+# Bold High Intensity
+BIRED='\033[1;91m'
+BIGREEN='\033[1;92m'
+BIYELLOW='\033[1;93m'
+BIWHITE='\033[1;97m'
+
+# High Intensity backgrounds
+ON_IRED='\033[0;101m'
+ON_ICYAN='\033[0;106m'
+
+# No Color
+NC='\033[0m' # No Color
+
+
+
 # Get the absolute path to the project root directory
 PROJECT_ROOT="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.."
 
@@ -29,7 +48,7 @@ trap cleanup SIGINT SIGTERM
 run_api() {
     # Navigate to the API directory
     cd "$PROJECT_ROOT/services/api"
-    echo -e "\nStarting API...\n"
+    echo -e "\nStarting API... \n${BIYELLOW}The API might take a minute but once it's up you won't have to wait so long!\n${NC}"
     cargo install cargo-watch
     cargo watch -x run &
     API_PID=$!
