@@ -15,12 +15,12 @@ deployments:
         AXIOM_DATASET:
           secretKeyRef:
             name: global-config-secret
-            key: AXIOM_DATASET:
+            key: AXIOM_DATASET
         AXIOM_ORG_ID:
           secretKeyRef:
             name: global-config-secret
-            key: AXIOM_ORG_ID:
+            key: AXIOM_ORG_ID
         AXIOM_TOKEN:
           secretKeyRef:
             name: global-config-secret
-            key: AXIOM_TOKEN:
+            key: AXIOM_TOKEN
