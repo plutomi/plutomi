@@ -1,7 +1,0 @@
-deployments:
-  replicas: 1
-  name: grafana
-  containers:
-    - name: grafana
-      image: grafana/grafana:latest
-      port: 3000

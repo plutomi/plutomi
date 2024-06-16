@@ -15,6 +15,13 @@ spec:
       labels:
         app: {{ .name }}
     spec:
+      securityContext:
+        {{- with .securityContext }}
+        fsGroup: {{ .fsGroup }}
+        runAsUser: {{ .runAsUser }}
+        runAsGroup: {{ .runAsGroup }}
+        runAsNonRoot: {{ .runAsNonRoot }}
+        {{- end }}
       affinity:
         # Node affinity ensures that pods prefer or must be scheduled on particular nodes
         nodeAffinity:
@@ -65,10 +72,14 @@ spec:
           env:
             {{- range $key, $value := .env }}
             - name: {{ $key }}
+              {{- if $value.secretKeyRef }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $value.secretKeyRef.name }}
                   key: {{ $value.secretKeyRef.key }}
+              {{- else if $value.value }}
+              value: {{ $value.value | quote }}
+              {{- end }}
             {{- end }}
           volumeMounts:
             {{- range .volumeMounts }}
