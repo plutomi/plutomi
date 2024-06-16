@@ -47,7 +47,7 @@ We _plan_ to add:
 - NATS for asynchronous communication streams
 - An events consumer to read read from NATS Jetstream and the email events SQS queue
 - MeiliSearch/ElasticSearch for full text search
-- DuckDB/ClickHouse for analytics
+- ClickHouse for analytics
 
 ### Running Locally
 
