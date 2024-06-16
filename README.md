@@ -40,7 +40,7 @@ Plutomi is deployed to any VPS you can get your hands on ([we recommend Hetzner]
 
 We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in.
 
-We also use Cloudflare for DNS, CDN, WAF and R2 for storage.
+We also use [Cloudflare](https://www.cloudflare.com/) for DNS, CDN, WAF and R2 for storage, and [Axiom](https://axiom.co/) for logging although this is optional.
 
 We _plan_ to add:
 
