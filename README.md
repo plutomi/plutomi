@@ -44,9 +44,9 @@ We also use [Cloudflare](https://www.cloudflare.com/) for DNS, CDN, WAF and R2 f
 
 We _plan_ to add:
 
-- NATS for asynchronous communication streams
-- An events consumer to read read from NATS Jetstream and the email events SQS queue
-- MeiliSearch/ElasticSearch for full text search
+- NATS as a message broker
+- An events consumer process NATS and SQS messages
+- MeiliSearch for full text search
 - ClickHouse for analytics
 
 ### Running Locally
