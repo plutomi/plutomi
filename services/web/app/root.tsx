@@ -27,7 +27,7 @@ export default function App() {
   return (
     <html
       lang="en"
-      className={`${rootBg} tabular-nums font-customFont min-h-screen`}
+      className={`${rootBg} tabular-nums font-customFont h-full min-h-full`}
     >
       <head>
         <meta charSet="utf-8" />
@@ -35,7 +35,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className={`${rootBg} min-h-screen h-100 `}>
+      <body className={`${rootBg} h-full `}>
         <Outlet />
         <ScrollRestoration />
         <Scripts />

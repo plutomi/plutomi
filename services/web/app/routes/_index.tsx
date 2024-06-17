@@ -14,7 +14,7 @@ export const loader = async () => {
 export default function LandingPage() {
   const { podName }: { podName: string } = useLoaderData();
   return (
-    <div className="w-full  flex justify-center bg-gradient-to-b from-white to-cyan-50  min-h-full  h-screen">
+    <div className="w-full  flex justify-center bg-gradient-to-b from-white to-stone-100  min-h-full h-100 border-2 border-red-200">
       <p className="text-sm text-slate-400  absolute left-0 ">{podName}</p>
       <div className="py-32 w-full  flex flex-col items-center">
         <LandingHero />
