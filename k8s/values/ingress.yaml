@@ -7,6 +7,7 @@ ingress:
     - host: "plutomi.com"
       http:
         paths:
+        # Redirect to the API
           - path: /api/
             pathType: Prefix
             backend:
@@ -14,6 +15,7 @@ ingress:
                 name: api
                 port:
                   number: 80
+        # Everything else goes to web
           - path: /
             pathType: Prefix
             backend:

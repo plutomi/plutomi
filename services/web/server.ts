@@ -11,13 +11,16 @@ app.use(express.static("public"));
 app.set("trust proxy", true);
 
 app.use(async (req, res, next) => {
-  if (req.path.startsWith("/api/") || req.path === "/api") {
-    return res.redirect(308, `${env.BASE_WEB_URL}/docs/api?from=web`);
+  if (req.path === "/api/" || req.path === "/api") {
+    res.redirect(`${env.BASE_WEB_URL}/docs/api?from=web`);
+    return;
   }
   next();
 });
 
 // Pod health check
+// TODO: Only return health check for internally accessible requests
+// everything else redirect to app
 app.get("/health", async (req, res) => {
   return res.json({ status: "ok" });
 });

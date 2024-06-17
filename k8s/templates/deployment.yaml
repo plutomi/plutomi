@@ -29,6 +29,7 @@ spec:
         {{- range .Values.deployments.containers }}
         - name: {{ .name }}
           image: {{ .image }}
+          imagePullPolicy: Always
           ports:
             # - name: metrics
             #   containerPort: {{ .port }}
