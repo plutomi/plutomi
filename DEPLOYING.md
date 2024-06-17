@@ -247,26 +247,32 @@ Do another check:
 linkerd check
 ```
 
-Install the Linkerd viz extension:
-
-```bash
-linkerd viz install | kubectl apply -f -
-```
-
-And check it:
-
-```bash
-linkerd viz check
-
-linkerd viz edges pod
-```
-
 Ensure Linkerd sidecar gets attached to our pods when we spin them up:
 
 ```bash
 kubectl annotate namespace default linkerd.io/inject=enabled
 kubectl annotate namespace kube-system linkerd.io/inject=enabled
 ```
+
+> This next part is optional, but allows you to visualize the traffic between your services.
+> https://linkerd.io/2.15/getting-started/#step-5-explore-linkerd
+
+Install the Linkerd viz extension:
+
+```bash
+linkerd viz install | kubectl apply -f -
+```
+
+And check it things are working
+
+```bash
+linkerd viz check
+
+linkerd viz edges pod
+```
+or open the dashboard:
+```bash
+linkerd
 
 ### Create our Services
 

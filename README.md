@@ -74,6 +74,12 @@ $ ./scripts/run.sh --stack <web|api|datasources>
 
 To deploy Plutomi, you'll want to deploy to AWS for setting up SES first and then the rest of the backend with Kubernetes (K3S). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
+## Troubleshooting
+
+Some common issues you might run into are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md), be sure to look there first :)
+
+If not, open an issue or a discussion and I can help you out!
+
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
