@@ -45,7 +45,7 @@ We also use [Cloudflare](https://www.cloudflare.com/) for DNS, CDN, WAF and R2 f
 We _plan_ to add:
 
 - NATS as a message broker
-- An events consumer process NATS and SQS messages
+- An events consumer to process NATS and SQS messages
 - MeiliSearch for full text search
 - ClickHouse for analytics
 
