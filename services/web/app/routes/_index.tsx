@@ -4,6 +4,7 @@ import { LandingHero, HomepageFooter } from "~/components";
 import { UseCaseCards } from "~/components/UseCases/UseCaseCards";
 import { ViewOnGitHubButton } from "~/components/GithubButton";
 import { UseCaseSegment } from "~/components/UseCases/UseCaseSegment";
+import { Toaster } from "react-hot-toast";
 
 export const loader = async () => {
   return json({
@@ -14,7 +15,8 @@ export const loader = async () => {
 export default function LandingPage() {
   const { podName }: { podName: string } = useLoaderData();
   return (
-    <div className="w-full  flex justify-center bg-gradient-to-b from-white to-stone-100  min-h-full h-100 border-2 border-red-200">
+    <div className="w-full  flex justify-center bg-gradient-to-b from-white to-stone-50  min-h-full h-100 ">
+      <Toaster />
       <p className="text-sm text-slate-400  absolute left-0 ">{podName}</p>
       <div className="py-32 w-full  flex flex-col items-center">
         <LandingHero />

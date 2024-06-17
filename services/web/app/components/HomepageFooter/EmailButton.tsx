@@ -1,6 +1,6 @@
 import { Button } from "../Button";
 import { useClipboard } from "@mantine/hooks";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 const email = "jose@plutomi.com";
 
@@ -9,7 +9,6 @@ export default function EmailButton() {
 
   return (
     <>
-      <Toaster />
       <Button
         variant="secondary-text"
         onClick={() => {
