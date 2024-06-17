@@ -64,12 +64,18 @@ COPY ./ .
 RUN touch src/main.rs && \
     cargo build --release --target x86_64-unknown-linux-gnu --locked
 
+# Install musl-tools, musl-dev, wget, xz-utils, and ca-certificates
+RUN apt update && apt install -y musl-tools musl-dev wget ca-certificates
+
 # Compress the executable using UPX - NOT WORKING ON x86_64
 # RUN upx --best --lzma target/x86_64-unknown-linux-gnu/release/api
 
 # Final stage uses distroless for minimal size
 FROM --platform=linux/amd64 debian:bullseye-slim as final
 COPY --from=builder /app/target/x86_64-unknown-linux-gnu/release/api /app/api
+
+# Copy CA certificates from the builder stage
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 EXPOSE 8080
 

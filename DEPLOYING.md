@@ -8,6 +8,7 @@
   - [Sealed Secrets](#sealed-secrets)
   - [Create our Services](#create-our-services)
   - [MongoDB](#mongodb-replication)
+  - [Monitoring (Axiom)](#monitoring)
 
 #### AWS
 
@@ -359,4 +360,10 @@ Now deploy the API/Consumers:
 helm upgrade --install api-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/api.yaml -f values/deployments/_production.yaml
 ```
 
-You should be all set!
+### Monitoring
+
+We use the [Axiom](https://axiom.co/) for logging instead of keeping everything in the cluster. You can sign up and add your secrets like normal. This merges the secrets into the global.yaml file if you already created it previously:
+
+```bash
+kubectl create secret generic global-config-secret --dry-run=client --from-literal=AXIOM_DATASET=DATASET_NAME_HERE --from-literal=AXIOM_ORG_ID=ORG_ID_HERE --from-literal=AXIOM_TOKEN=TOKEN_HERE -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml --merge-into ./k8s/secrets/global.yaml
+```

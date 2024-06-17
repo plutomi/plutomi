@@ -40,15 +40,14 @@ Plutomi is deployed to any VPS you can get your hands on ([we recommend Hetzner]
 
 We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in.
 
-We also use Cloudflare for DNS, CDN, WAF and R2 for storage.
+We also use [Cloudflare](https://www.cloudflare.com/) for DNS, CDN, WAF and R2 for storage, and [Axiom](https://axiom.co/) for logging although this is optional.
 
 We _plan_ to add:
 
-- NATS for asynchronous communication streams
-- Multiple consumers to read from NATS Jetstream and the email events queue
-- MeiliSearch/ElasticSearch for full text search
-- DuckDB/ClickHouse for analytics
-- Prometheus/Loki/Grafana for monitoring & logging
+- NATS as a message broker
+- An events consumer to process NATS and SQS messages
+- MeiliSearch for full text search
+- ClickHouse for analytics
 
 ### Running Locally
 
@@ -63,7 +62,7 @@ Simply make a copy of [.env.example](.env.example) to a `.env` file and run `./s
 3. Start the API on port 8080
 
 - Because the majority of our backend is in Rust, _and due to the infamous compile times of Rust_, we are running them outside of Docker
-- The API along with any future consumers will run with `cargo watch` which might take some time to initially start but will have hot reloading after that
+- The API along with the events consumer will run with `cargo watch` which might take some time to initially start but will have hot reloading after that
 
 You can also run any stack individually:
 

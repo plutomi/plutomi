@@ -17,6 +17,10 @@ spec:
       maxSurge: {{ .Values.deployments.maxSurge }}
   template:
     metadata:
+      # # Disabled for now. Was using too many resources for my little cluster :3
+      # annotations:
+      #   prometheus.io/scrape: "true"
+      #   prometheus.io/port: "9100"
       labels:
         app: {{ .Values.deployments.name }}
     spec:
@@ -25,23 +29,31 @@ spec:
         {{- range .Values.deployments.containers }}
         - name: {{ .name }}
           image: {{ .image }}
+          imagePullPolicy: Always
           ports:
-            - containerPort: {{ .port }}
+            # - name: metrics
+            #   containerPort: {{ .port }}
+            - name: http
+              containerPort: {{ .port }}
           env:
             - name: ENVIRONMENT
               value: {{ default "development" $.Values.deployments.ENVIRONMENT }}
             - name: BASE_WEB_URL
-              value: {{ default "http://web.svc.default.local" $.Values.deployments.BASE_WEB_URL }}
+              value: {{ default "https://plutomi.com" $.Values.deployments.BASE_WEB_URL }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
             {{- range $key, $value := .env }}
             - name: {{ $key }}
+              {{- if $value.secretKeyRef }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $value.secretKeyRef.name }}
                   key: {{ $value.secretKeyRef.key }}
+              {{- else if $value.value }}
+              value: {{ $value.value | quote }}
+              {{- end }}
             {{- end }}
           volumeMounts:
             {{- range .volumeMounts }}

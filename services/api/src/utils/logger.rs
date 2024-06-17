@@ -1,7 +1,8 @@
 use super::get_env::get_env;
 use crate::utils::get_current_time::iso_format;
+use axiom_rs::Client;
 use serde::Serialize;
-use std::{fmt, io, sync::Arc};
+use std::{fmt, sync::Arc};
 use time::OffsetDateTime;
 use tokio::{
     sync::mpsc::{self, Sender},
@@ -94,7 +95,6 @@ struct CustomTimeFormat;
 
 /**
 * Overwrites the 5 decimal places on milliseconds to one with 3 decimal places
-
 */
 impl FormatTime for CustomTimeFormat {
     fn format_time(&self, writer: &mut Writer<'_>) -> fmt::Result {
@@ -103,12 +103,12 @@ impl FormatTime for CustomTimeFormat {
         write!(writer, "{}", formatted_time)
     }
 }
-// // Send logs to axiom
-// async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client) {
-//     if let Err(e) = client.ingest(&get_env().AXIOM_DATASET, log_batch).await {
-//         error!("Failed to send log to Axiom: {}", e);
-//     }
-// }
+// Send logs to axiom
+async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client, axiom_dataset: &String) {
+    if let Err(e) = client.ingest(axiom_dataset, log_batch).await {
+        error!("Failed to send log to Axiom: {}", e);
+    }
+}
 
 impl Logger {
     /**
@@ -116,19 +116,19 @@ impl Logger {
      * This also spawns a long lived thread that will handle logging.
      */
     pub fn new() -> Arc<Logger> {
-        // TODO Remove
-        // let axiom_client = if use_axiom {
-        //     Some(
-        //         Client::builder()
-        //             .with_token(&env.AXIOM_TOKEN)
-        //             .with_org_id(&env.AXIOM_ORG_ID)
-        //             .build()
-        //             .expect("Failed to initialize Axiom client in a production environment"),
-        //     )
-        // } else {
-        //     warn!("Axiom logging is not enabled");
-        //     None
-        // };
+        let env = get_env();
+        let axiom_client = if env.axiom_configured() {
+            Some(
+                Client::builder()
+                    .with_token(env.AXIOM_TOKEN.as_ref().expect("AXIOM_TOKEN not found"))
+                    .with_org_id(env.AXIOM_ORG_ID.as_ref().expect("AXIOM_ORG_ID not found"))
+                    .build()
+                    .expect("Failed to initialize Axiom client"),
+            )
+        } else {
+            warn!("Axiom isn't configured");
+            None
+        };
 
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
@@ -166,9 +166,9 @@ impl Logger {
 
                         // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
-                            // if let Some(ref client) = axiom_client { // TODO Remove
-                            //   //   send_to_axiom(&log_batch, &client).await; TODO Remove
-                            // }
+                            if let Some(ref client) = axiom_client {
+                                 send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
+                            }
                             // Clear the batch for the next batch
                             log_batch.clear();
 
@@ -180,10 +180,10 @@ impl Logger {
                     // If the timer triggers before  the batch is full, send the batch
                     _ = sleep_until(timer) => {
                         if !log_batch.is_empty() {
-                            // Send whatever is in the batch
-                            // if let Some(ref client) = axiom_client { // TODO Remove
-                            //     send_to_axiom(&log_batch, &client).await;
-                            // }
+                           // Send whatever is in the batch
+                            if let Some(ref client) = axiom_client {
+                                send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
+                            }
 
                             // Clear the batch for the next batch
                             log_batch.clear();

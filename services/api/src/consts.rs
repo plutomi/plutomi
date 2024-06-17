@@ -9,6 +9,7 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "plutomi",
     "plutomiinc",
     "plutomi-inc",
+    "metrics",
     // Marketing pages
     "login",
     "logout",
@@ -256,10 +257,12 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
 ];
 
 // Declare an array of routes that should redirect to the docs page
-pub const DOCS_ROUTES: [&str; 9] = [
+pub const DOCS_ROUTES: [&str; 11] = [
     "/",
     "/api",
     "/api/",
+    "/api/health",
+    "/api/health/",
     "/api/docs",
     "/api/docs/",
     "/api/docs/*any",
