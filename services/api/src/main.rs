@@ -72,6 +72,7 @@ async fn main() {
         .nest("/api", main_routes) //  / ⬆️
         .merge(docs_routes) // redirect / ⬆️
         // This is the internal health check route, public health check goes to docs route
+        // Or probably a status page in the future
         .route("/health", get(health_check)) // ⬆️
         .layer(required_middleware) // / ⬆️
         .with_state(state); //         / ⬆️
