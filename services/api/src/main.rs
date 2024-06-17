@@ -11,6 +11,7 @@ use serde_json::json;
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
+use tracing::warn;
 use utils::{
     get_current_time::iso_format,
     get_env::get_env,
@@ -32,11 +33,11 @@ async fn main() {
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
-    // TODO: Redirect with a toast message
-    let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
-
     // Setup logging
     let logger = Logger::new();
+
+    // TODO: Redirect with a toast message
+    let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
     // Connect to database
     let mongodb = connect_to_mongodb(&logger).await;
