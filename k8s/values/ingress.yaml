@@ -1,8 +1,8 @@
-# Must start with 'ingress' key
-ingress:
+metadata:
   name: ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
+spec:
   rules:
     - host: "plutomi.com"
       http:
@@ -23,7 +23,6 @@ ingress:
                 name: web
                 port:
                   number: 80
-
     - host: "*.plutomi.com" 
       http:
         paths:
@@ -34,7 +33,7 @@ ingress:
                 name: web
                 port:
                   number: 80
-  tls: 
+  tls:
     - hosts:
         - "plutomi.com"
         # YOU HAVE TO USE DNS FOR WILDCARD CERT
@@ -44,5 +43,3 @@ ingress:
         # and you can create a new cert. Wildcard, ideally, is best.
         - "*.plutomi.com" 
       secretName: plutomi-tls-secret
-
-
