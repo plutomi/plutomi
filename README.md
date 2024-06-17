@@ -62,7 +62,7 @@ Simply make a copy of [.env.example](.env.example) to a `.env` file and run `./s
 3. Start the API on port 8080
 
 - Because the majority of our backend is in Rust, _and due to the infamous compile times of Rust_, we are running them outside of Docker
-- The API along with any future consumers will run with `cargo watch` which might take some time to initially start but will have hot reloading after that
+- The API along with the events consumer will run with `cargo watch` which might take some time to initially start but will have hot reloading after that
 
 You can also run any stack individually:
 
