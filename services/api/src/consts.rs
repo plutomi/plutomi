@@ -3,13 +3,12 @@
  */
 pub const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 
-// WIP // TODO: List length? 
-pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
+// WIP // TODO: List length?
+pub const RESERVED_WORKSPACE_IDS: &[&str; 245] = &[
     // Plutomi reserved
     "plutomi",
     "plutomiinc",
     "plutomi-inc",
-    "metrics",
     // Marketing pages
     "login",
     "logout",
@@ -18,7 +17,9 @@ pub const RESERVED_WORKSPACE_IDS: &[&str] = &[
     "signup",
     "signups",
     "sign-in",
-    "customers", // https://resend.com/customers/turso
+    "metrics",
+    // https://resend.com/customers/turso
+    "customers",
     "careers",
     "privacy",
     "terms",
