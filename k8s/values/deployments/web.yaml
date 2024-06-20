@@ -1,8 +1,11 @@
-# Must start with 'deployments' key
-deployments:
-  replicas: 3
+metadata:
   name: web
-  containers:
-    - name: web
-      port: 3000
-      image: plutomi/web:latest
+
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: web
+          image: plutomi/web:latest
+          port: 3000
