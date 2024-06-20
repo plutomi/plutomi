@@ -1,5 +1,4 @@
 # Used for https certificates on ingress
-{{- if .Values.issuer }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -23,5 +22,3 @@ spec:
           apiTokenSecretRef:
             name: cloudflare-token
             key: CLOUDFLARE_TOKEN
-{{- end }}
-
