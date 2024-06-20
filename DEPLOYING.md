@@ -187,7 +187,7 @@ Then, ensure you're using it:
 export KUBECONFIG=~/.kube/YOUR_CONFIG_NAME
 ```
 
-Then on your own PC, create the secrets:
+Then on your own PC, create the secrets. First the MongoDB init credentials:
 
 ```bash
 kubectl create secret generic mongodb-init-secret --dry-run=client --from-literal=MONGO_INITDB_ROOT_USERNAME=LONG_USERNAME  --from-literal=MONGO_INITDB_ROOT_PASSWORD=LONG_PASSWORD -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/mongodb.yaml
