@@ -1,14 +1,16 @@
+{{- if .Values.service }}
+{{- with .Values.service }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.metadata.name }}
+  name: {{ .metadata.name }}
   labels:
-    app: {{ .Values.metadata.name }}
+    app: {{ .metadata.name }}
 spec:
-  replicas: {{ .Values.spec.replicas }}
+  replicas: {{ .spec.replicas }}
   selector:
     matchLabels:
-      app: {{ .Values.metadata.name }}
+      app: {{ .metadata.name }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -21,11 +23,11 @@ spec:
       #   prometheus.io/scrape: "true"
       #   prometheus.io/port: "9100"
       labels:
-        app: {{ .Values.metadata.name }}
+        app: {{ .metadata.name }}
     spec:
       terminationGracePeriodSeconds: {{ default 10 $.Values.overrides.terminationGracePeriodSeconds }}
       containers:
-        {{- range .Values.spec.template.spec.containers }}
+        {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
           image: {{ .image }}
           imagePullPolicy: Always
@@ -79,7 +81,7 @@ spec:
             failureThreshold: 3
         {{- end }}
       volumes:
-        {{- range .Values.spec.template.spec.volumes }}
+        {{- range .spec.template.spec.volumes }}
         - name: {{ .name }}
           {{- if .secret }}
           secret:
@@ -91,3 +93,5 @@ spec:
           emptyDir: {}
           {{- end }}
         {{- end }}
+{{- end }}
+{{- end }}

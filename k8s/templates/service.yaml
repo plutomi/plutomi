@@ -1,14 +1,18 @@
+{{- if .Values.service }}
+{{- with .Values.service }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.metadata.name }}
+  name: {{ .metadata.name }}
 spec:
-  clusterIP: {{ .Values.spec.clusterIP }}
+  clusterIP: {{ .spec.clusterIP }}
   selector:
-    app: {{ .Values.spec.selector.name }}
+    app: {{ .spec.selector.name }}
   ports:
-    {{- range .Values.spec.ports }}
+    {{- range .spec.ports }}
     - protocol: TCP
       port: {{ .port }}
       targetPort: {{ .targetPort }}
     {{- end }}
+{{- end }}
+{{- end }}

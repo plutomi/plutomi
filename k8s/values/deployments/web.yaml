@@ -1,11 +1,12 @@
-metadata:
-  name: web
+deployment:
+  metadata:
+    name: web
 
-spec:
-  replicas: 3
-  template:
-    spec:
-      containers:
-        - name: web
-          image: plutomi/web:latest
-          port: 3000
+  spec:
+    replicas: 3
+    template:
+      spec:
+        containers:
+          - name: web
+            image: plutomi/web:latest
+            port: 3000
