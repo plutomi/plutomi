@@ -1,7 +1,7 @@
 metadata:
   name: api
 spec:
-  clusterIP: None
+  # clusterIP: None
   selector:
     app: api
   ports:
