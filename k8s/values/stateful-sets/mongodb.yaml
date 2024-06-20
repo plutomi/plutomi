@@ -13,9 +13,9 @@ databases:
         labels:
           app: mongodb
       spec:
-        initContainers:
-          - name: create-pem-file
-            image: busybox
+        # initContainers:
+        #   - name: create-pem-file
+        #     image: busybox
           # command:
           #   - "/bin/sh"
           #   - "-c"
