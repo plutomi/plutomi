@@ -3,7 +3,7 @@ deployment:
     name: web
 
   spec:
-    replicas: 3
+    replicas: 2
     template:
       spec:
         containers:

@@ -1,5 +1,5 @@
-{{- if .Values.service }}
-{{- with .Values.service }}
+{{- if .Values.deployment }}
+{{- with .Values.deployment }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,7 +15,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: {{ default 0 $.Values.overrides.maxUnavailable  }}
-      maxSurge: {{ default 0 $.Values.overrides.maxSurge }}
+      maxSurge: {{ default 1 $.Values.overrides.maxSurge }}
   template:
     metadata:
       # # Disabled for now. Was using too many resources for my little cluster :3
