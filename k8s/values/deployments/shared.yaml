@@ -1,9 +1,0 @@
-shared:
-  ENVIRONMENT: development # or 'staging' or 'production'
-  maxUnavailable: 0
-  maxSurge: 1
-  terminationGracePeriodSeconds: 10
-  preStopSleepSeconds: 10
-  healthCheckPath: /health
-  initialDelaySeconds: 10
-  periodSeconds: 10

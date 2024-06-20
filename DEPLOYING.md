@@ -287,7 +287,7 @@ helm upgrade --install mongodb-service . -f values/services/mongodb.yaml
 Deploy the web pod:
 
 ```bash
-helm upgrade --install web-deploy . -f values/deployments/shared.yaml -f values/deployments/web.yaml -f values/deployments/_production.yaml
+helm upgrade --install web-deploy . -f values/deployments/web.yaml -f values/deployments/_production.yaml
 ```
 
 Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress:
@@ -303,7 +303,7 @@ It is here where you want to update your DNS to point to your nodes.
 Deploy the MongoDB Pods:
 
 ```bash
-helm upgrade --install mongodb-deploy . -f values/stateful-sets/shared.yaml -f values/stateful-sets/mongodb.yaml
+helm upgrade --install mongodb-deploy . -f values/stateful-sets/mongodb.yaml
 ```
 
 Exec into one...
@@ -365,7 +365,7 @@ db.createUser({
 Now deploy the API/Consumers:
 
 ```bash
-helm upgrade --install api-deploy . -f values/deployments/shared.yaml -f values/deployments/api.yaml -f values/deployments/_production.yaml
+helm upgrade --install api-deploy . -f values/deployments/api.yaml -f values/deployments/_production.yaml
 ```
 
 ### Monitoring

@@ -1,5 +1,4 @@
 # If you want to override any values in the PRODUCTION environment, you can do so here. 
-# Make sure you reference a top level entity like $.Values.shared.YOUR_VALUE in the template
-shared:
+# Make sure you reference a top level entity like $.Values.overrides.YOUR_VALUE in the template
+overrides:
   ENVIRONMENT: production
-  BASE_WEB_URL: https://plutomi.com

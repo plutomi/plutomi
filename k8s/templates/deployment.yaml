@@ -12,8 +12,8 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: {{ $.Values.shared.maxUnavailable  }}
-      maxSurge: {{ $.Values.shared.maxSurge }}
+      maxUnavailable: {{ default 0 $.Values.overrides.maxUnavailable  }}
+      maxSurge: {{ default 0 $.Values.overrides.maxSurge }}
   template:
     metadata:
       # # Disabled for now. Was using too many resources for my little cluster :3
@@ -23,7 +23,7 @@ spec:
       labels:
         app: {{ .Values.metadata.name }}
     spec:
-      terminationGracePeriodSeconds: {{ $.Values.shared.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ default 10 $.Values.overrides.terminationGracePeriodSeconds }}
       containers:
         {{- range .Values.spec.template.spec.containers }}
         - name: {{ .name }}
@@ -36,9 +36,9 @@ spec:
               containerPort: {{ .port }}
           env:
             - name: ENVIRONMENT
-              value: {{ default "development" $.Values.shared.ENVIRONMENT }}
+              value: {{ default "development" $.Values.overrides.ENVIRONMENT }}
             - name: BASE_WEB_URL
-              value: {{ default "https://plutomi.com" $.Values.shared.BASE_WEB_URL }}
+              value: {{ default "https://plutomi.com" $.Values.overrides.BASE_WEB_URL }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -67,14 +67,14 @@ spec:
                   [
                     "sh",
                     "-c",
-                    "sleep {{ $.Values.shared.preStopSleepSeconds }}",
+                    "sleep {{ default 10 $.Values.overrides.preStopSleepSeconds }}",
                   ]
           readinessProbe:
             httpGet:
-              path: {{ $.Values.shared.healthCheckPath }}
+              path: {{ default "/health" $.Values.overrides.healthCheckPath }}
               port: {{ .port }}
-            initialDelaySeconds: {{ $.Values.shared.initialDelaySeconds }}
-            periodSeconds: {{ $.Values.shared.periodSeconds }}
+            initialDelaySeconds: {{ default 10 $.Values.overrides.initialDelaySeconds }}
+            periodSeconds: {{ default 10 $.Values.overrides.periodSeconds }}
             timeoutSeconds: 5
             failureThreshold: 3
         {{- end }}

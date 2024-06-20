@@ -1,3 +1,3 @@
 ### Shared Utils
 
-Anything shared by more than one service or consumer etc should go in here. Things like the logger
+Anything reused (mostly in the backend) by the api and the consumer should go here. Things like generating IDs, or logging to Axiom.
