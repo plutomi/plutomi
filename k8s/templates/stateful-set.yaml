@@ -22,25 +22,26 @@ spec:
         runAsGroup: {{ .runAsGroup }}
         runAsNonRoot: {{ .runAsNonRoot }}
         {{- end }}
-      affinity:
-        # Node affinity ensures that pods prefer or must be scheduled on particular nodes
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: "plutomi-role"
-                    operator: In
-                    values: # TODO make into loop?
-                      - "plutomi-production-0"
-                      - "plutomi-production-1"
-                      - "plutomi-production-2"
-        # Pod anti-affinity prevents multiple DB pods from being scheduled on the same node
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app: {{ .name }}
-              topologyKey: "kubernetes.io/hostname"
+      # Single node for now
+      # affinity:
+      #   # Node affinity ensures that pods prefer or must be scheduled on particular nodes
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: "plutomi-role"
+      #               operator: In
+      #               values: # TODO make into loop?
+      #                 - "plutomi-production-0"
+      #                 - "plutomi-production-1"
+      #                 - "plutomi-production-2"
+      #   # Pod anti-affinity prevents multiple DB pods from being scheduled on the same node
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       - labelSelector:
+      #           matchLabels:
+      #             app: {{ .name }}
+      #         topologyKey: "kubernetes.io/hostname"
       initContainers:
         {{- range .initContainers }}
         - name: {{ .name }}

@@ -7,8 +7,8 @@ spec:
   selector:
     app: {{ .Values.spec.selector.name }}
   ports:
+    {{- range .Values.spec.ports }}
     - protocol: TCP
-      # Port the pod listens on - global value from shared.yaml
-      port: {{ .Values.spec.ports.port }}
-      # Port that the service is exposed on
-      targetPort: {{ .Values.spec.ports.port }}
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+    {{- end }}
