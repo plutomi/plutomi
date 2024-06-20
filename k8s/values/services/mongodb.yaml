@@ -1,7 +1,10 @@
-# Must start with 'services' key
-services:
+metadata:
   name: mongodb
-  port: 27017
-  defaultContainerPort: 27017
-  # Required for replica set 
+spec:
   clusterIP: None
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
