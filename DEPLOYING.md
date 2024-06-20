@@ -279,9 +279,9 @@ linkerd
 ### Create our Services
 
 ```bash
-helm upgrade --install web-service . -f values/services/shared.yaml -f values/services/web.yaml
-helm upgrade --install api-service . -f values/services/shared.yaml -f values/services/api.yaml
-helm upgrade --install mongodb-service . -f values/services/shared.yaml -f values/services/mongodb.yaml
+helm upgrade --install web-service . -f values/services/web.yaml
+helm upgrade --install api-service . -f values/services/api.yaml
+helm upgrade --install mongodb-service . -f values/services/mongodb.yaml
 ````
 
 Deploy the web pod:
