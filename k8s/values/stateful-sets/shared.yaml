@@ -1,4 +1,2 @@
-spec:
-  template:
-    spec:
-      terminationGracePeriodSeconds: 10
+shared:
+  terminationGracePeriodSeconds: 10
