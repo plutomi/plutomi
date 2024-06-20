@@ -33,4 +33,4 @@ spec:
       secretName: {{ .secretName }}
     {{- end }}
 {{- end }}
-{{- end }
+{{- end }}
