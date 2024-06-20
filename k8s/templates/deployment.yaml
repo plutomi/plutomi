@@ -24,7 +24,7 @@ spec:
       labels:
         app: {{ .Values.deployments.name }}
     spec:
-      terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.spec.template.spec.terminationGracePeriodSeconds }}
       containers:
         {{- range .Values.deployments.containers }}
         - name: {{ .name }}

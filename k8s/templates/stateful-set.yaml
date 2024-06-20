@@ -56,7 +56,7 @@ spec:
               readOnly: {{ .readOnly | default false }}
             {{- end }}
         {{- end }}
-      terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.spec.template.spec.terminationGracePeriodSeconds }}
       containers:
         {{- range .containers }}
         - name: {{ .name }}

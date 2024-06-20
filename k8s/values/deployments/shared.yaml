@@ -9,3 +9,10 @@ deployments:
   maxUnavailable: 0
   maxSurge: 1
   preStopSleepSeconds: 10
+
+
+## NEwest
+spec:
+  template:
+    spec:
+      terminationGracePeriodSeconds: 10
