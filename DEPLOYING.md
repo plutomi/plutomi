@@ -290,7 +290,7 @@ Deploy the web pod:
 helm upgrade --install web-deploy . -f values/deployments/web.yaml -f values/deployments/_production.yaml
 ```
 
-Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress:
+Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
 
 ```bash
 helm upgrade --install traefik-deploy . -f values/ingress.yaml -f values/deployments/_production.yaml
