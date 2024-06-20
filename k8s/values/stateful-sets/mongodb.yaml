@@ -1,20 +1,31 @@
 # Must start with 'databases' key
 databases:
+  metadata:
+    name: mongodb
   name: mongodb
-  replicas: 3
-  initContainers:
-    - name: create-pem-file
-      image: busybox
-      # command:
-      #   - "/bin/sh"
-      #   - "-c"
-      #   - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
-      # volumeMounts:
-      #   - name: cert
-      #     mountPath: "/etc/ssl/certs"
-      #     readOnly: false
-      #   - name: pem-dir
-      #     mountPath: "/pem"
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        app: mongodb
+    template:
+      metadata:
+        labels:
+          app: mongodb
+      spec:
+        initContainers:
+          - name: create-pem-file
+            image: busybox
+          # command:
+          #   - "/bin/sh"
+          #   - "-c"
+          #   - "cat /etc/ssl/certs/tls.crt /etc/ssl/certs/tls.key > /pem/mongodb.pem"
+          # volumeMounts:
+          #   - name: cert
+          #     mountPath: "/etc/ssl/certs"
+          #     readOnly: false
+          #   - name: pem-dir
+          #     mountPath: "/pem"
   containers:
     - name: mongodb
       image: mongo:7.0.8

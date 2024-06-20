@@ -3,25 +3,25 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .name }}
+  name: {{ .metadata.name }}
 spec:
   serviceName: {{ .name }}
-  replicas: {{ .replicas }}
+  replicas: {{ .spec.replicas }}
   selector:
     matchLabels:
-      app: {{ .name }}
+      app: {{ .spec.selector.matchLabels.app }}
   template:
     metadata:
       labels:
-        app: {{ .name }}
+        app: {{ .spec.template.metadata.labels.app }}
     spec:
-      securityContext:
-        {{- with .securityContext }}
-        fsGroup: {{ .fsGroup }}
-        runAsUser: {{ .runAsUser }}
-        runAsGroup: {{ .runAsGroup }}
-        runAsNonRoot: {{ .runAsNonRoot }}
-        {{- end }}
+      # securityContext:
+      #   {{- with .securityContext }}
+      #   fsGroup: {{ .fsGroup }}
+      #   runAsUser: {{ .runAsUser }}
+      #   runAsGroup: {{ .runAsGroup }}
+      #   runAsNonRoot: {{ .runAsNonRoot }}
+      #   {{- end }}
       # Single node for now
       # affinity:
       #   # Node affinity ensures that pods prefer or must be scheduled on particular nodes
@@ -43,7 +43,7 @@ spec:
       #             app: {{ .name }}
       #         topologyKey: "kubernetes.io/hostname"
       initContainers:
-        {{- range .initContainers }}
+        {{- range .spec.template.spec.initContainers }}
         - name: {{ .name }}
           image: {{ .image }}
           command:
