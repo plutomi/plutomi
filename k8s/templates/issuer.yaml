@@ -13,16 +13,18 @@ spec:
       name: {{ .spec.acme.privateKeySecretRef.name }}
 
     solvers:
-    - selector:
-        dnsZones:
-        {{- range .spec.acme.solvers.selector.dnsZones }} 
-        - {{ . }}
-        {{- end }}
-      dns01:
-        cloudflare:
-          email: {{ .spec.acme.email }}
-          apiTokenSecretRef:
-            name: cloudflare-token
-            key: CLOUDFLARE_TOKEN
+      {{- range .spec.acme.solvers }}
+      - selector:
+          dnsZones:
+            {{- range .selector.dnsZones }}
+            - {{ . }}
+            {{- end }}
+        dns01:
+          cloudflare:
+            email: {{ $.Values.issuer.spec.acme.email }}
+            apiTokenSecretRef:
+              name: cloudflare-token
+              key: CLOUDFLARE_TOKEN
+      {{- end }}
 {{- end }}
 {{- end }}
