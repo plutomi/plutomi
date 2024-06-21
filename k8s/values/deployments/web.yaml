@@ -12,5 +12,5 @@ deployment:
       spec:
         containers:
           - name: web
-            image: plutomi/web:latest
+            image: plutomi/api:2024-06-21-v1
             port: 3000

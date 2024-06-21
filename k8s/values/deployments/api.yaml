@@ -12,7 +12,8 @@ deployment:
       spec:
         containers:
           - name: api
-            image: plutomi/api:latest
+            # Don't use latest, there's a bug where it won't pull the latest image :/ 
+            image: plutomi/api:2024-06-21-v1
             port: 8080
             env:
               DATABASE_URL:

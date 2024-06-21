@@ -30,6 +30,7 @@ spec:
         {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
           image: {{ .image }}
+          # TODO: This is broken and does *not* pull the latest image
           imagePullPolicy: Always
           ports:
             # - name: metrics
