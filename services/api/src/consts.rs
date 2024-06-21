@@ -3,7 +3,7 @@
  */
 pub const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 
-// WIP // TODO: List length?
+// WIP
 pub const RESERVED_WORKSPACE_IDS: &[&str; 245] = &[
     // Plutomi reserved
     "plutomi",
