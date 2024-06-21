@@ -74,12 +74,6 @@ $ ./scripts/run.sh --stack <web|api|datasources>
 
 To deploy Plutomi, you'll want to deploy to AWS for setting up SES first and then the rest of the backend with Kubernetes (K3S). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
-## Troubleshooting
-
-Some common issues you might run into are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md), be sure to look there first :)
-
-If not, open an issue or a discussion and I can help you out!
-
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLDR](https://www.tldrlegal.com/license/apache-license-2-0-apache-2-0).
@@ -99,6 +93,10 @@ To make a contribution, submit a pull request into the `main` branch. You will b
 - [Remix Docs](https://remix.run/docs/en/main)
 - [Multipass](https://multipass.run/)
 
-## Questions?
+## Questions / Troubleshooting
 
-If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If it's not in there or you have any other questions, open a discussion or an issue and we can talk about it, or reach out to me on Twitter [@notjoswayski](https://twitter.com/notjoswayski) or email jose@plutomi.com!
+Some common issues you might run into are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md), be sure to look there first :)
+
+If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there.
+
+If it's not in there or you have any other questions, open a discussion or an issue and we can talk about it, or reach out to me on Twitter [@notjoswayski](https://twitter.com/notjoswayski) or email jose@plutomi.com!
