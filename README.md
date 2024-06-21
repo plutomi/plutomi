@@ -99,4 +99,4 @@ Some common issues you might run into are documented in [TROUBLESHOOTING.md](TRO
 
 If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there.
 
-If it's not in there or you have any other questions, open a discussion or an issue and we can talk about it, or reach out to me on Twitter [@notjoswayski](https://twitter.com/notjoswayski) or email jose@plutomi.com!
+If you have any other questions, open a discussion / issue and we can talk about it or reach out to me on Twitter [@notjoswayski](https://twitter.com/notjoswayski) or email jose@plutomi.com!
