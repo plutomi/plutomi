@@ -116,8 +116,19 @@ impl Logger {
      * This also spawns a long lived thread that will handle logging.
      */
     pub fn new() -> Arc<Logger> {
+        let subscriber = FmtSubscriber::builder()
+            .with_timer(CustomTimeFormat)
+            // .pretty()
+            .with_max_level(tracing::Level::DEBUG) // Adjust this level as needed
+            .with_target(false)
+            .finish();
+
+        tracing::subscriber::set_global_default(subscriber)
+            .expect("Setting default logging subscriber failed");
+
         let env = get_env();
         let axiom_client = if env.axiom_configured() {
+            debug!("Axiom is configured!");
             Some(
                 Client::builder()
                     .with_token(env.AXIOM_TOKEN.as_ref().expect("AXIOM_TOKEN not found"))
@@ -126,18 +137,9 @@ impl Logger {
                     .expect("Failed to initialize Axiom client"),
             )
         } else {
-            warn!("Axiom isn't configured");
+            warn!("Axiom isn't configured! Logging will only happen locally.");
             None
         };
-
-        let subscriber = FmtSubscriber::builder()
-            .with_timer(CustomTimeFormat)
-            // .pretty()
-            .with_target(false)
-            .finish();
-
-        tracing::subscriber::set_global_default(subscriber)
-            .expect("Setting default logging subscriber failed");
 
         let (sender, mut receiver) = mpsc::channel::<LogObject>(MAX_LOG_BUFFER_LENGTH);
 

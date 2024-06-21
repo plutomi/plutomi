@@ -1,8 +1,16 @@
-# Must start with 'deployments' key
-deployments:
-  replicas: 3
-  name: web
-  containers:
-    - name: web
-      port: 3000
-      image: plutomi/web:latest
+# Use this to override any values in the templates/deployment.yaml file
+# This only applies to values that have '(index $.Values' setup
+overrides: {}
+
+deployment:
+  metadata:
+    name: web
+
+  spec:
+    replicas: 2
+    template:
+      spec:
+        containers:
+          - name: web
+            image: plutomi/api:latest
+            port: 3000

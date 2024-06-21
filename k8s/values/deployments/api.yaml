@@ -1,26 +1,33 @@
-# Must start with 'deployments' key
-deployments:
-  replicas: 3
-  name: api
-  containers:
-    - name: api
-      port: 8080
-      # TODO: xBuild for both x86 and ARM. Using x86 for now due to no ARM in US on Hetzner
-      image: plutomi/api:latest 
-      env:
-        DATABASE_URL:
-          secretKeyRef:
-            name: global-config-secret
-            key: DATABASE_URL
-        AXIOM_DATASET:
-          secretKeyRef:
-            name: global-config-secret
-            key: AXIOM_DATASET
-        AXIOM_ORG_ID:
-          secretKeyRef:
-            name: global-config-secret
-            key: AXIOM_ORG_ID
-        AXIOM_TOKEN:
-          secretKeyRef:
-            name: global-config-secret
-            key: AXIOM_TOKEN
+# Use this to override any values in the templates/deployment.yaml file
+# This only applies to values that have '(index $.Values' setup
+overrides: {}
+
+deployment:
+  metadata:
+    name: api
+
+  spec:
+    replicas: 3
+    template:
+      spec:
+        containers:
+          - name: api
+            image: plutomi/api:latest
+            port: 8080
+            env:
+              DATABASE_URL:
+                secretKeyRef:
+                  name: global-config-secret
+                  key: DATABASE_URL
+              AXIOM_DATASET:
+                secretKeyRef:
+                  name: global-config-secret
+                  key: AXIOM_DATASET
+              AXIOM_ORG_ID:
+                secretKeyRef:
+                  name: global-config-secret
+                  key: AXIOM_ORG_ID
+              AXIOM_TOKEN:
+                secretKeyRef:
+                  name: global-config-secret
+                  key: AXIOM_TOKEN

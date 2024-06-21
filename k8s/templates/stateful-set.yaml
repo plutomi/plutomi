@@ -3,46 +3,47 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .name }}
+  name: {{ .metadata.name }}
 spec:
   serviceName: {{ .name }}
-  replicas: {{ .replicas }}
+  replicas: {{ .spec.replicas }}
   selector:
     matchLabels:
-      app: {{ .name }}
+      app: {{ .spec.selector.matchLabels.app }}
   template:
     metadata:
       labels:
-        app: {{ .name }}
+        app: {{ .spec.template.metadata.labels.app }}
     spec:
-      securityContext:
-        {{- with .securityContext }}
-        fsGroup: {{ .fsGroup }}
-        runAsUser: {{ .runAsUser }}
-        runAsGroup: {{ .runAsGroup }}
-        runAsNonRoot: {{ .runAsNonRoot }}
-        {{- end }}
-      affinity:
-        # Node affinity ensures that pods prefer or must be scheduled on particular nodes
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: "plutomi-role"
-                    operator: In
-                    values: # TODO make into loop?
-                      - "plutomi-production-0"
-                      - "plutomi-production-1"
-                      - "plutomi-production-2"
-        # Pod anti-affinity prevents multiple DB pods from being scheduled on the same node
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app: {{ .name }}
-              topologyKey: "kubernetes.io/hostname"
+      # securityContext:
+      #   {{- with .securityContext }}
+      #   fsGroup: {{ .fsGroup }}
+      #   runAsUser: {{ .runAsUser }}
+      #   runAsGroup: {{ .runAsGroup }}
+      #   runAsNonRoot: {{ .runAsNonRoot }}
+      #   {{- end }}
+      # Single node for now
+      # affinity:
+      #   # Node affinity ensures that pods prefer or must be scheduled on particular nodes
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: "plutomi-role"
+      #               operator: In
+      #               values: # TODO make into loop?
+      #                 - "plutomi-production-0"
+      #                 - "plutomi-production-1"
+      #                 - "plutomi-production-2"
+      #   # Pod anti-affinity prevents multiple DB pods from being scheduled on the same node
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       - labelSelector:
+      #           matchLabels:
+      #             app: {{ .name }}
+      #         topologyKey: "kubernetes.io/hostname"
       initContainers:
-        {{- range .initContainers }}
+        {{- range .spec.template.spec.initContainers }}
         - name: {{ .name }}
           image: {{ .image }}
           command:
@@ -56,9 +57,9 @@ spec:
               readOnly: {{ .readOnly | default false }}
             {{- end }}
         {{- end }}
-      terminationGracePeriodSeconds: {{ $.Values.common.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ default 10 (index $.Values "overrides" "terminationGracePeriodSeconds") }}
       containers:
-        {{- range .containers }}
+        {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
           image: {{ .image }}
           ports:
@@ -116,16 +117,17 @@ spec:
           {{- end }}
         {{- end }}
   volumeClaimTemplates:
-    {{- range .volumeClaimTemplates }}
+    {{- range .spec.volumeClaimTemplates }}
     - metadata:
         {{- range $key, $value := .metadata }}
         {{ $key }}: {{ $value }}
         {{- end }}
       spec:
         accessModes:
-          {{- range $.Values.databases.accessModes }}
-          - {{ . }}
-          {{- end }}
+          - ReadWriteOnce
+          # {{- range $.Values.databases.accessModes }}
+          # - {{ . }}
+          # {{- end }}
         resources:
           requests:
             storage: {{ .spec.resources.requests.storage }}

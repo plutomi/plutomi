@@ -63,7 +63,7 @@ pub async fn log_req_res(
                 message: message.clone(),
                 plutomi_code: None,
                 status_code: status.as_u16(),
-                docs: None,
+                docs_url: None,
                 request_id,
             };
 
@@ -134,7 +134,7 @@ pub async fn log_req_res(
                 // Log the response
                 // TODO: What happens if 502?
                 state.logger.log(LogObject {
-                    level: LogLevel::Debug,
+                    level: LogLevel::Warn,
                     error: None,
                     message: "Redirect sent".to_string(),
                     data: Some(json!({ "duration": duration_ms })),

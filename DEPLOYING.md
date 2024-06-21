@@ -187,7 +187,7 @@ Then, ensure you're using it:
 export KUBECONFIG=~/.kube/YOUR_CONFIG_NAME
 ```
 
-Then on your own PC, create the secrets:
+Then on your own PC, create the secrets. First the MongoDB init credentials:
 
 ```bash
 kubectl create secret generic mongodb-init-secret --dry-run=client --from-literal=MONGO_INITDB_ROOT_USERNAME=LONG_USERNAME  --from-literal=MONGO_INITDB_ROOT_PASSWORD=LONG_PASSWORD -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/mongodb.yaml
@@ -247,20 +247,6 @@ Do another check:
 linkerd check
 ```
 
-Install the Linkerd viz extension:
-
-```bash
-linkerd viz install | kubectl apply -f -
-```
-
-And check it:
-
-```bash
-linkerd viz check
-
-linkerd viz edges pod
-```
-
 Ensure Linkerd sidecar gets attached to our pods when we spin them up:
 
 ```bash
@@ -268,24 +254,46 @@ kubectl annotate namespace default linkerd.io/inject=enabled
 kubectl annotate namespace kube-system linkerd.io/inject=enabled
 ```
 
+> This next part is optional, but allows you to visualize the traffic between your services.
+> https://linkerd.io/2.15/getting-started/#step-5-explore-linkerd
+
+Install the Linkerd viz extension:
+
+```bash
+linkerd viz install | kubectl apply -f -
+```
+
+And check it things are working
+
+```bash
+linkerd viz check
+
+linkerd viz edges pod
+```
+
+or open the dashboard:
+
+````bash
+linkerd
+
 ### Create our Services
 
 ```bash
-helm upgrade --install web-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/web.yaml
-helm upgrade --install api-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/api.yaml
-helm upgrade --install mongodb-service . -f values/shared.yaml -f values/services/shared.yaml -f values/services/mongodb.yaml
-```
+helm upgrade --install web-service . -f values/services/web.yaml
+helm upgrade --install api-service . -f values/services/api.yaml
+helm upgrade --install mongodb-service . -f values/services/mongodb.yaml
+````
 
 Deploy the web pod:
 
 ```bash
-helm upgrade --install web-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/web.yaml -f values/deployments/_production.yaml
+helm upgrade --install web-deploy . -f values/deployments/web.yaml -f values/deployments/_production.yaml
 ```
 
-Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress:
+Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
 
 ```bash
-helm upgrade --install traefik-deploy . -f values/shared.yaml -f values/ingress.yaml -f values/deployments/_production.yaml
+helm upgrade --install traefik-deploy . -f values/ingress.yaml -f values/deployments/_production.yaml
 ```
 
 It is here where you want to update your DNS to point to your nodes.
@@ -295,7 +303,7 @@ It is here where you want to update your DNS to point to your nodes.
 Deploy the MongoDB Pods:
 
 ```bash
-helm upgrade --install mongodb-deploy . -f values/shared.yaml -f values/stateful-sets/shared.yaml -f values/stateful-sets/mongodb.yaml
+helm upgrade --install mongodb-deploy . -f values/stateful-sets/mongodb.yaml
 ```
 
 Exec into one...
@@ -310,7 +318,7 @@ kubectl exec -it mongodb-0 -c mongodb -- mongosh "mongodb://mongodb.default.svc.
 rs.initiate({ _id: "rs0", version: 1, members: [ { _id: 0, host : "mongodb-0.mongodb.default.svc.cluster.local:27017" }, { _id: 1, host : "mongodb-1.mongodb.default.svc.cluster.local:27017" },{ _id: 2, host : "mongodb-2.mongodb.default.svc.cluster.local:27017" }]})
 ```
 
-> NOTE: `rs.status()` will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds.
+> NOTE: `rs.status()` will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds. If deploying a single replica, you can remove the other nodes. It's still a good idea to initialize the replica set incase you add more pods in the future.
 
 Test that replication is working:
 
@@ -357,7 +365,7 @@ db.createUser({
 Now deploy the API/Consumers:
 
 ```bash
-helm upgrade --install api-deploy . -f values/shared.yaml -f values/deployments/shared.yaml -f values/deployments/api.yaml -f values/deployments/_production.yaml
+helm upgrade --install api-deploy . -f values/deployments/api.yaml -f values/deployments/_production.yaml
 ```
 
 ### Monitoring

@@ -1,4 +1,0 @@
-# Must start with 'databases' key 
-databases: 
-  accessModes:
-  - "ReadWriteOnce"

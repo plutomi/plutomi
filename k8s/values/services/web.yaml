@@ -1,4 +1,10 @@
-# Must start with 'services' key
-services:
-  name: web
-  port: 3000 
+service:
+  metadata:
+    name: web
+  spec:
+    # clusterIP: None
+    selector:
+      app: web
+    ports:
+      - port: 80
+        targetPort: 3000
