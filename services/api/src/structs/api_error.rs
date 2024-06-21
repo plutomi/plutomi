@@ -34,7 +34,7 @@ impl IntoResponse for ApiError {
             "code": StatusCode::from_u16(self.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).canonical_reason().unwrap_or("unknown"),
             "status_code": self.status_code,
             "plutomi_code": self.plutomi_code, // null if not set
-            "docs": self.docs_url.unwrap_or(format!("{}/docs/api", &get_env().BASE_WEB_URL).to_string()),
+            "docs_url": self.docs_url.unwrap_or(format!("{}/docs/api", &get_env().BASE_WEB_URL).to_string()),
             "request_id": self.request_id
         })
         .to_string();
