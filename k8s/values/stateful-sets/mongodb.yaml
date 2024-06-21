@@ -1,10 +1,13 @@
-# Must start with 'databases' key
+# Use this to override any values in the templates/stateful-set.yaml file
+# This only applies to values that have '(index $.Values' setup
+overrides: {}
+
 databases:
   metadata:
     name: mongodb
   name: mongodb
   spec:
-    replicas: 3
+    replicas: 1
     selector:
       matchLabels:
         app: mongodb

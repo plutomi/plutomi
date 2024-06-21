@@ -1,4 +1,4 @@
-# If you want to override any values in the STAGING environment, you can do so here. 
-# Make sure you reference a top level entity like $.Values.overrides.YOUR_VALUE in the template
+# Use this to override any values in the templates/deployment.yaml file
+# This only applies to values that have '(index $.Values' setup
 overrides:
   ENVIRONMENT: staging

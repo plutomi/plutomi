@@ -14,8 +14,8 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: {{ default 0 $.Values.overrides.maxUnavailable  }}
-      maxSurge: {{ default 1 $.Values.overrides.maxSurge }}
+      maxUnavailable: {{ default 0 (index $.Values "overrides" "maxUnavailable")  }}
+      maxSurge: {{ default 1 (index $.Values "overrides" "maxSurge") }}
   template:
     metadata:
       # # Disabled for now. Was using too many resources for my little cluster :3
@@ -25,7 +25,7 @@ spec:
       labels:
         app: {{ .metadata.name }}
     spec:
-      terminationGracePeriodSeconds: {{ default 10 $.Values.overrides.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ default 10 (index $.Values "overrides" "terminationGracePeriodSeconds") }}
       containers:
         {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
@@ -37,10 +37,11 @@ spec:
             - name: http
               containerPort: {{ .port }}
           env:
+
             - name: ENVIRONMENT
-              value: {{ default "development" $.Values.overrides.ENVIRONMENT }}
+              value: {{ default "development" (index $.Values "overrides" "ENVIRONMENT") }}
             - name: BASE_WEB_URL
-              value: {{ default "https://plutomi.com" $.Values.overrides.BASE_WEB_URL }}
+              value: {{ default "https://plutomi.com" (index $.Values "overrides" "BASE_WEB_URL") }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -65,18 +66,19 @@ spec:
           lifecycle:
             preStop:
               exec:
+
                 command:
-                  [
-                    "sh",
-                    "-c",
-                    "sleep {{ default 10 $.Values.overrides.preStopSleepSeconds }}",
-                  ]
-          readinessProbe:
+                  - /bin/sh
+                  - -c
+                  - >
+                    sleep {{ default 10 (index $.Values "overrides" "preStopSleepSeconds") }}
+           readinessProbe:
             httpGet:
-              path: {{ default "/health" $.Values.overrides.healthCheckPath }}
+
+              path: {{ default "/health" (index $.Values "overrides" "healthCheckPath") }}
               port: {{ .port }}
-            initialDelaySeconds: {{ default 10 $.Values.overrides.initialDelaySeconds }}
-            periodSeconds: {{ default 10 $.Values.overrides.periodSeconds }}
+            initialDelaySeconds: {{ default 10 (index $.Values "overrides" "initialDelaySeconds") }}
+            periodSeconds: {{ default 10 (index $.Values "overrides" "periodSeconds") }}
             timeoutSeconds: 5
             failureThreshold: 3
         {{- end }}

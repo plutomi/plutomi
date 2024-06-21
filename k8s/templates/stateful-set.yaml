@@ -57,7 +57,7 @@ spec:
               readOnly: {{ .readOnly | default false }}
             {{- end }}
         {{- end }}
-      terminationGracePeriodSeconds: {{ default 10 $.Values.overrides.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ default 10 (index $.Values "overrides" "terminationGracePeriodSeconds") }}
       containers:
         {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
@@ -124,9 +124,10 @@ spec:
         {{- end }}
       spec:
         accessModes:
-          {{- range $.Values.databases.accessModes }}
-          - {{ . }}
-          {{- end }}
+          - ReadWriteOnce
+          # {{- range $.Values.databases.accessModes }}
+          # - {{ . }}
+          # {{- end }}
         resources:
           requests:
             storage: {{ .spec.resources.requests.storage }}
