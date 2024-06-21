@@ -318,7 +318,7 @@ kubectl exec -it mongodb-0 -c mongodb -- mongosh "mongodb://mongodb.default.svc.
 rs.initiate({ _id: "rs0", version: 1, members: [ { _id: 0, host : "mongodb-0.mongodb.default.svc.cluster.local:27017" }, { _id: 1, host : "mongodb-1.mongodb.default.svc.cluster.local:27017" },{ _id: 2, host : "mongodb-2.mongodb.default.svc.cluster.local:27017" }]})
 ```
 
-> NOTE: `rs.status()` will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds.
+> NOTE: `rs.status()` will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds. If deploying a single replica, you can remove the other nodes. It's still a good idea to initialize the replica set incase you add more pods in the future.
 
 Test that replication is working:
 

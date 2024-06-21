@@ -72,9 +72,8 @@ spec:
                   - -c
                   - >
                     sleep {{ default 10 (index $.Values "overrides" "preStopSleepSeconds") }}
-           readinessProbe:
+          readinessProbe:
             httpGet:
-
               path: {{ default "/health" (index $.Values "overrides" "healthCheckPath") }}
               port: {{ .port }}
             initialDelaySeconds: {{ default 10 (index $.Values "overrides" "initialDelaySeconds") }}
