@@ -43,7 +43,7 @@ pub async fn timeout(
                 message,
                 request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
                 status_code: status.as_u16(),
-                docs: None,
+                docs_url: None,
                 plutomi_code: None,
             };
 

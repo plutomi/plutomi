@@ -63,7 +63,7 @@ pub async fn log_req_res(
                 message: message.clone(),
                 plutomi_code: None,
                 status_code: status.as_u16(),
-                docs: None,
+                docs_url: None,
                 request_id,
             };
 

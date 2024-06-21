@@ -18,7 +18,7 @@ pub struct ApiError {
     pub message: String,
     pub status_code: u16,
     pub request_id: String,
-    pub docs: Option<String>,
+    pub docs_url: Option<String>,
     pub plutomi_code: Option<PlutomiCode>,
 }
 

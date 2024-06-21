@@ -128,6 +128,7 @@ impl Logger {
 
         let env = get_env();
         let axiom_client = if env.axiom_configured() {
+            debug!("Axiom is configured!");
             Some(
                 Client::builder()
                     .with_token(env.AXIOM_TOKEN.as_ref().expect("AXIOM_TOKEN not found"))
@@ -136,7 +137,7 @@ impl Logger {
                     .expect("Failed to initialize Axiom client"),
             )
         } else {
-            warn!("Axiom isn't configured");
+            warn!("Axiom isn't configured! Logging will only happen locally.");
             None
         };
 

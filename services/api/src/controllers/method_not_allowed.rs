@@ -43,7 +43,7 @@ pub async fn method_not_allowed(
                 message: message.clone(),
                 plutomi_code: None,
                 status_code: status.as_u16(),
-                docs: None,
+                docs_url: None,
                 request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
             };
 
