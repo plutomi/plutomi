@@ -10,8 +10,7 @@ services:
     ports:
       - "4222:4222" # Client connections
       - "6222:6222" # Route connections
-      - "8222:8222" # HTTP management
-    # No auth needed locally
+      - "8222:8222" # HTTP management - web UI
     volumes:
       - nats_data:/data/nats # Jetstream storage
       - ./nats-config.conf:/etc/nats/nats.conf # NATS configuration file
@@ -30,4 +29,6 @@ services:
   # TODO add NATS Jetstream
 volumes:
   mongo_data:
+    driver: local
+  nats_data:
     driver: local

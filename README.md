@@ -57,7 +57,13 @@ Simply make a copy of [.env.example](.env.example) to a `.env` file and run `./s
 
 2. Setup NATS + Jetstream for you
 
-> Credentials for all datasources when testing locally are "admin" and "password"
+> Credentials for all datasources when testing locally are `admin` and `password`.
+> The NATS server will be created with a `sys` user to manage it, and an `admin` user for creating streams & publishing/subscribing to messages.
+> You can create a NATS context to switch between them easily:
+
+```bash
+$ nats context add admin --server nats://localhost:4222 --user admin --password "password"  --description "Admin user" --select
+```
 
 3. Start the Web app in development mode on port 3000
 
