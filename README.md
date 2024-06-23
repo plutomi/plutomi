@@ -55,11 +55,13 @@ Simply make a copy of [.env.example](.env.example) to a `.env` file and run `./s
 
 1. Setup MongoDB for you
 
-- Credentials are in the [docker-compose.yaml](./docker-compose.yaml)
+2. Setup NATS + Jetstream for you
 
-2. Start the Web app in development mode on port 3000
+> Credentials for all datasources when testing locally are "admin" and "password"
 
-3. Start the API on port 8080
+3. Start the Web app in development mode on port 3000
+
+4. Start the API on port 8080
 
 - Because the majority of our backend is in Rust, _and due to the infamous compile times of Rust_, we are running them outside of Docker
 - The API along with the events consumer will run with `cargo watch` which might take some time to initially start but will have hot reloading after that

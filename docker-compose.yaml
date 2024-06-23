@@ -4,18 +4,29 @@
 # Also, because we're using Rust, compile times are.. uhh. So yeah this is just for datasources.
 
 services:
+  nats:
+    image: nats:2.9.25
+    container_name: nats
+    ports:
+      - "4222:4222" # Client connections
+      - "6222:6222" # Route connections
+      - "8222:8222" # HTTP management
+    # No auth needed locally
+    volumes:
+      - nats_data:/data/nats # Jetstream storage
+      - ./nats-config.conf:/etc/nats/nats.conf # NATS configuration file
+    command: -c /etc/nats/nats.conf
   mongodb:
     # Make sure this matches the value in k8s/values/stateful-sets/mongodb.yaml
     image: mongo:7.0.8
     container_name: mongodb
     ports:
-      # Expose the port to the host machine
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - mongo_data:/data/db
+      - mongo_data:/data/mongodb
   # TODO add NATS Jetstream
 volumes:
   mongo_data:
