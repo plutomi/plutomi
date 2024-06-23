@@ -24,7 +24,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
     let env = get_env();
 
     // Parse the connection string into a client
-    let mut client_options = match ClientOptions::parse(env.DATABASE_URL).await {
+    let mut client_options = match ClientOptions::parse(env.MONGODB_URL).await {
         Ok(client_options) => client_options,
         Err(e) => {
             logger.log(LogObject {

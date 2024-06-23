@@ -15,10 +15,10 @@ deployment:
             image: plutomi/api:latest
             port: 8080
             env:
-              DATABASE_URL:
+              MONGODB_URL:
                 secretKeyRef:
                   name: global-config-secret
-                  key: DATABASE_URL
+                  key: MONGODB_URL
               AXIOM_DATASET:
                 secretKeyRef:
                   name: global-config-secret

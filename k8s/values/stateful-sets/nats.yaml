@@ -1,0 +1,29 @@
+# * This does not use the stateful-set.yaml TEMPLATE, it is installed via the official Helm chart!
+# We are overriding some values here to use the default secret.
+# https://artifacthub.io/packages/helm/nats/nats
+config:
+  merge:
+    accounts:
+      A:
+        users:
+        - {user: ${}, password: a}
+
+
+statefulSet:
+  merge:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: nats
+              env:
+                - name: NATS_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: nats-auth
+                      key: user
+                - name: NATS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: nats-auth
+                      key: password
