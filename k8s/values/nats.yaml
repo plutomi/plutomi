@@ -14,32 +14,16 @@ config:
   jetstream:
     enabled: true
     fileStore:
+      dir: "/data/nats"
       pvc:
         size: 20Gi
-      path: "/data/nats"
   
 
 container:
   merge:
     resources:
+    # Overriding defaults
       requests: {}
       limits: {}
     image:
       tag: 2.9.25
-    volumeMounts:
-      - name: nats-data
-        mountPath: /data/nats
-      - name: config
-        mountPath: /etc/nats-config
-
-statefulSet:
-  merge:
-    spec:
-      volumeClaimTemplates:
-        - metadata:
-            name: nats-data
-          spec:
-            accessModes: ["ReadWriteOnce"]
-            resources:
-              requests:
-                storage: 10Gi
