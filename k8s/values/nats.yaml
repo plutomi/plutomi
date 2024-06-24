@@ -20,10 +20,27 @@ config:
   
 
 container:
+  resources:
+  # Overriding defaults
+    requests: {}
+    limits: {}
+  image:
+    tag: 2.9.25
+
+statefulSet:
   merge:
-    resources:
-    # Overriding defaults
-      requests: {}
-      limits: {}
-    image:
-      tag: 2.9.25
+    metadata:
+      annotations:
+        # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
+        # https://linkerd.io/2.15/features/protocol-detection/
+        config.linkerd.io/opaque-ports: "4222,8222,6222" 
+
+
+natsBox:
+  deployment:
+    merge:
+      metadata:
+        annotations:
+          # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
+          # https://linkerd.io/2.15/features/protocol-detection/
+          config.linkerd.io/opaque-ports: "4222,8222,6222" 

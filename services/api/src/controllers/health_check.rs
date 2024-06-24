@@ -18,6 +18,7 @@ pub struct HealthCheckResponse {
     message: &'static str,
     database: bool,
     environment: String,
+    docs_url: String,
 }
 
 pub async fn health_check(
@@ -53,6 +54,7 @@ pub async fn health_check(
         message: "Saul Goodman",
         database,
         environment: state.env.ENVIRONMENT,
+        docs_url: format!("{}/docs/api", state.env.BASE_WEB_URL),
     };
 
     state.logger.log(LogObject {

@@ -371,7 +371,7 @@ helm upgrade --install api-deploy . -f values/deployments/api.yaml -f values/dep
 
 ### NATS Jetstream
 
-Because we are using the official NATS Helm chart, installation is pretty easy:
+Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) needs a small workaround to work with NATS. This is already handled in the `values/nats.yaml` file by setting the opaque-ports annotation.
 
 ```bash
 helm repo add nats https://nats-io.github.io/k8s/helm/charts/
