@@ -1,0 +1,45 @@
+# https://artifacthub.io/packages/helm/nats/nats
+service:
+  merge:
+    metadata:
+      name: nats
+    spec:
+      selector:
+        app: nats
+
+config:
+  cluster:
+    enabled: false
+    replicas: 1
+  jetstream:
+    enabled: true
+    fileStore:
+      pvc:
+        size: 20Gi
+      path: "/data/nats"
+  
+
+container:
+  merge:
+    resources:
+      requests: {}
+      limits: {}
+    image:
+      tag: 2.9.25
+    volumeMounts:
+      - name: nats-data
+        mountPath: /data/nats
+      - name: config
+        mountPath: /etc/nats-config
+
+statefulSet:
+  merge:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: nats-data
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 10Gi

@@ -8,6 +8,7 @@
   - [Sealed Secrets](#sealed-secrets)
   - [Create our Services](#create-our-services)
   - [MongoDB](#mongodb-replication)
+  - [NATS + Jetstream](#NATS-Jetstream)
   - [Monitoring (Axiom)](#monitoring)
 
 #### AWS
@@ -366,6 +367,16 @@ Now deploy the API/Consumers:
 
 ```bash
 helm upgrade --install api-deploy . -f values/deployments/api.yaml -f values/deployments/_production.yaml
+```
+
+### NATS Jetstream
+
+Because we are using the official NATS Helm chart, installation is pretty easy:
+
+```bash
+helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+helm repo update
+helm upgrade --install nats nats/nats -f values/nats.yaml
 ```
 
 ### Monitoring
