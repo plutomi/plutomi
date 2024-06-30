@@ -1,7 +1,0 @@
-deployment:
-  env:
-    - name: ENVIRONMENT
-      value: production
-
-
-## TODO still need to override

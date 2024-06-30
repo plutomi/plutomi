@@ -1,4 +1,0 @@
-deployment:
-  env:
-    - name: ENVIRONMENT
-      value: staging

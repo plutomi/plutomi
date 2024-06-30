@@ -24,10 +24,6 @@ deployment:
             image: plutomi/api:latest
             port: 8080
             env:
-              BASE_WEB_URL:
-                value: https://plutomi.com
-              ENVIRONMENT:
-                value: development
               MONGODB_URL:
                 secretKeyRef:
                   name: global-config-secret

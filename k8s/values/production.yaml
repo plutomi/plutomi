@@ -1,0 +1,6 @@
+shared:
+  env:
+    ENVIRONMENT:
+      value: production
+    BASE_WEB_URL:
+      value: https://plutomi.com

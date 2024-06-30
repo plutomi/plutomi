@@ -42,7 +42,19 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-             # Add any secrets
+              # Add any shared secrets
+            {{- range $key, $value := $.Values.shared.env }}
+            - name: {{ $key }}
+              {{- if $value.value }}
+              value: {{ $value.value | quote }}
+              {{- else if $value.secretKeyRef }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $value.secretKeyRef.name | quote }}
+                  key: {{ $value.secretKeyRef.key | quote }}
+              {{- end }}
+            {{- end }}
+              # Add application specific secrets
             {{- range $key, $value := .env }}
             - name: {{ $key }}
               {{- if $value.value }}

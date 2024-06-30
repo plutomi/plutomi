@@ -368,13 +368,13 @@ db.createUser({
 ### Deploy the web app
 
 ```bash
-helm upgrade --install web-deploy . -f values/web.yaml -f values/production/values.yaml
+helm upgrade --install web-deploy . -f values/web.yaml -f values/production.yaml
 ```
 
 Now deploy the API:
 
 ```bash
-helm upgrade --install api-deploy . -f values/api.yaml -f values/production/values.yaml
+helm upgrade --install api-deploy . -f values/api.yaml -f values/production.yaml
 ```
 
 ### Traefik
@@ -382,7 +382,7 @@ helm upgrade --install api-deploy . -f values/api.yaml -f values/production/valu
 Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
 
 ```bash
-helm upgrade --install traefik-deploy . -f values/ingress.yaml -f values/production/values.yaml
+helm upgrade --install traefik-deploy . -f values/ingress.yaml
 ```
 
 ### Monitoring
