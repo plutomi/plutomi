@@ -80,7 +80,7 @@ spec:
                 command: {{ .lifecycle.preStop.exec.command }}
           readinessProbe:
             httpGet:
-              path: {{ .readinessProbe.httpGet.healthCheckPath  }}
+              path: {{ .readinessProbe.httpGet.path  }}
               port: {{ .port }}
             initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .readinessProbe.periodSeconds }}
