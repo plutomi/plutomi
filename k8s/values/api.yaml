@@ -1,3 +1,16 @@
+service:
+  metadata:
+    name: api
+  spec:
+    # clusterIP: None
+    selector:
+      app: api
+    ports:
+      - port: 80
+        targetPort: 8080
+
+
+
 # Use this to override any values in the templates/deployment.yaml file
 # This only applies to values that have '(index $.Values' setup
 overrides: {}

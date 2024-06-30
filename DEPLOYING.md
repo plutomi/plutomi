@@ -281,7 +281,6 @@ linkerd
 
 ```bash
 helm upgrade --install web-service . -f values/services/web.yaml
-helm upgrade --install api-service . -f values/services/api.yaml
 helm upgrade --install mongodb-service . -f values/services/mongodb.yaml
 ````
 
@@ -363,10 +362,10 @@ db.createUser({
 })
 ```
 
-Now deploy the API/Consumers:
+Now deploy the API:
 
 ```bash
-helm upgrade --install api-deploy . -f values/deployments/api.yaml -f values/deployments/_production.yaml
+helm upgrade --install api-service . -f values/api.yaml
 ```
 
 ### NATS Jetstream

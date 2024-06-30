@@ -2,6 +2,7 @@
 # This only applies to values that have '(index $.Values' setup
 overrides: {}
 
+# TODO change this to statefulsets
 databases:
   metadata:
     name: mongodb
