@@ -1,56 +1,22 @@
 # Deploying
 
-- [AWS (SES + SNS + SQS)](#aws)
-- [Rest of the App](#rest-of-the-app)
-  - [Prerequisites](#prerequisites)
-  - [Initializing Nodes](#initialize-the-nodes)
-  # TODO: ensure these all match
-  - [Linkerd (Optional)](#install-linkerd)
-  - [Sealed Secrets](#sealed-secrets)
-  - [Create our Services](#create-our-services)
+- [Prerequisites](#prerequisites)
+- [AWS / SES](#aws)
+- [Initializing Nodes](#initialize-the-nodes)
+- [Linkerd (Optional)](#install-linkerd)
+- [Sealed Secrets](#sealed-secrets)
+- [Datasources](#create-our-data-sources)
   - [MongoDB](#mongodb-replication)
   - [NATS + Jetstream](#NATS-Jetstream)
-  - [Monitoring (Axiom)](#monitoring)
+- [Monitoring (Axiom)](#monitoring)
 
-#### AWS
-
-To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configure-ses.ts](./services/aws/lib/configure-ses.ts).
-
-Change directories into `/aws`, install dependencies with `npm i` and set up the environment variables in the `.env`. There is an `.env.example` file that you can copy to get started.
-
-Once that's done, you can go back to the root and deploy using `./scripts/deploy.sh <development|staging|production>`.
-
-After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:
-
-![SES DNS Records](./images/ses-setup.png)
-
-At the end of it you should have (for each environment)
-
-3 DNS records for DKIM
-
-> Key: XXXXXXXXXXXXX Value: XXXXXXXXXXXXX
-
-1 MX Record for custom mail from
-
-> Key: notifications.plutomi.com Value: feedback-smtp.us-east-1.amazonses.com Priority: 10
-
-1 TXT Record for SPF
-
-> Key notifications.plutomi.com "v=spf1 include:amazonses.com ~all"
-
-1 TXT Record for DMARC.
-This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
-See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
-
-Then after all of that is done, make sure to beg aws to get you out of sandbox since you now have a way to handle complaints.
-
-## Rest of the App
+## Prerequisites
 
 Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
-For the datastores, we use [MongoDB](https://mongodb.com/) and [NATS](https://nats.io/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet and are debating doing the same thing for NATS soon, although they recommend installing the [Helm chart directly](https://docs.nats.io/running-a-nats-service/nats-kubernetes). We have _not_ explored using alternative MongoDB Helm charts but are considering it, like those from Bitnami or Percona.
+For the datastores, we use [MongoDB](https://mongodb.com/) and [NATS](https://nats.io/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet as we don't have faith on the open source K8s operator from reading various reviews. For NATS, we are using the [official Helm chart directly](https://docs.nats.io/running-a-nats-service/nats-kubernetes).
 
-Plutomi has _not_ been tested to run on a VPS with networked storage like EC2, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x).
+Plutomi has _not_ been tested to run on a VPS with networked storage like EC2, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
 
 ### Prerequisites
 
@@ -80,7 +46,7 @@ This is how we encrypt secrets in the cluster AND allows us to commit them into 
   - 443 - HTTPS
   - 6443 - Your home IP to access the K3S API server
 
-#### Initialize the nodes
+### Initialize the nodes
 
 > If installing on a single node, you can simply do:
 >
@@ -140,24 +106,13 @@ Install Helm
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
-Install Sealed Secrets
-
-```bash
-helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
-
-helm install sealed-secrets -n kube-system --set-string fullnameOverride=sealed-secrets-controller sealed-secrets/sealed-secrets
-```
-
 Install cert-manager for the TLS certificate
 
 ```bash
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
-```
 
-This one will take a minute:
-
-```bash
+# This one will take a minute:
 helm install \
  cert-manager jetstack/cert-manager \
   --namespace cert-manager \
@@ -165,7 +120,17 @@ helm install \
   --set installCRDs=true
 ```
 
-### Sealed Secrets
+## [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)
+
+Sealed secrets allow us to safely store encrypted secrets in the public repo.
+
+Install it:
+
+```bash
+helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
+
+helm install sealed-secrets -n kube-system --set-string fullnameOverride=sealed-secrets-controller sealed-secrets/sealed-secrets
+```
 
 Copy the KUBECONFIG file to your local machine:
 
@@ -177,10 +142,6 @@ Edit the file, and change the IP the master node that has the **sealed-secrets-c
 
 ```bash
 kubectl get pods -o wide --all-namespaces | grep sealed-secrets-controller
-```
-
-```bash
-vim ~/.kube/YOUR_CONFIG_NAME
 ```
 
 Then, ensure you're using it:
@@ -219,7 +180,9 @@ Install the Cluster Issuer for cert-manager:
 helm upgrade --install cluster-issuer . -f values/issuer.yaml
 ```
 
-### Install [Linkerd](https://linkerd.io/)
+## [Linkerd](https://linkerd.io/)
+
+We're using linkerd for mTLS mostly. It allows us to encrypt traffic between services and also provides a nice dashboard for us to see what's going on.
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install-edge | sh
@@ -279,25 +242,45 @@ or open the dashboard:
 linkerd viz dashboard &
 ```
 
-### Create our data sources
+## AWS / SES
 
-> Since other services depend on these, we will deploy them first.
+To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configure-ses.ts](./services/aws/lib/configure-ses.ts).
 
-#### NATS Jetstream
+Change directories into `/aws`, install dependencies with `npm i` and set up the environment variables in the `.env`. There is an `.env.example` file that you can copy to get started.
 
-Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file by setting this annotation.
+Once that's done, you can go back to the root and deploy using `./scripts/deploy.sh <development|staging|production>`.
 
-```bash
-helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-helm repo update
-helm upgrade --install nats nats/nats -f values/nats.yaml
-```
+After running the deploy script, most of your environment will be setup but you'll need to add a few records to your DNS provider. Your SES dashboard should look something like this with the records you need to add:
 
-It is here where you want to update your DNS to point to your nodes.
+![SES DNS Records](./images/ses-setup.png)
 
-#### MongoDB
+At the end of it you should have (for each environment)
 
-Deploy MongoDB:
+3 DNS records for DKIM
+
+> Key: XXXXXXXXXXXXX Value: XXXXXXXXXXXXX
+
+1 MX Record for custom mail from
+
+> Key: notifications.plutomi.com Value: feedback-smtp.us-east-1.amazonses.com Priority: 10
+
+1 TXT Record for SPF
+
+> Key notifications.plutomi.com "v=spf1 include:amazonses.com ~all"
+
+1 TXT Record for DMARC.
+This is a TXT record with the name `_dmarc.yourMAILFROMdomain.com` and value `v=DMARC1; p=none; rua=mailto:you@adomainwhereyoucanreceiveemails.com`
+See [this link](https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html) for more information.
+
+Then after all of that is done, make sure to beg aws to get you out of sandbox since you now have a way to handle complaints.
+
+---
+
+## Create our data sources
+
+Since other services depend on these, we will deploy them first.
+
+### MongoDB
 
 ```bash
 helm upgrade --install mongodb-service . -f values/mongodb.yaml
@@ -334,25 +317,21 @@ Ok back to the other pod, create an admin user:
 
 ```bash
 kubectl exec -it mongodb-0 -c mongodb -- sh
-```
 
-Create an admin user:
-
-```bash
 mongosh admin --eval "db.createUser({ user: '$MONGO_INITDB_ROOT_USERNAME', pwd: '$MONGO_INITDB_ROOT_PASSWORD', roles: [{ role: 'root', db: 'admin' }] })"
 ```
 
 Then, login to the DB with the new user:
+
+```bash
+mongosh --username ACTUAL_ADMIN_USERNAME_VALUE --password ACTUAL_ADMIN_PASSWORD_VALUE
+```
 
 > If you need to get the credentials again you can back out and run:
 >
 > ```bash
 > kubectl get secret mongodb-init-secret -n default -o jsonpath="{.data.MONGO_INITDB_ROOT_PASSWORD}" | base64 --decode
 > ```
-
-```bash
-mongosh --username ACTUAL_ADMIN_USERNAME_VALUE --password ACTUAL_ADMIN_PASSWORD_VALUE
-```
 
 Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the MONGODB_URL secret.
 
@@ -365,21 +344,29 @@ db.createUser({
 })
 ```
 
-### Deploy the web app
+### NATS Jetstream
+
+Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file.
 
 ```bash
-helm upgrade --install web-deploy . -f values/values.yaml -f values/web.yaml -f values/production.yaml
+helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+helm repo update
+helm upgrade --install nats nats/nats -f values/nats.yaml
 ```
 
-Now deploy the API:
+## Deploy the Services
 
 ```bash
+# Web
+helm upgrade --install web-deploy . -f values/values.yaml -f values/web.yaml -f values/production.yaml
+
+# API
 helm upgrade --install api-deploy . -f values/values.yaml  -f values/api.yaml -f values/production.yaml
 ```
 
 ### Traefik
 
-Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
+Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It is here where you want to update your DNS to point to your nodes. After running the command, it might take a few minutes for the certificate to be generated and applied:
 
 ```bash
 helm upgrade --install traefik-deploy . -f values/ingress.yaml
