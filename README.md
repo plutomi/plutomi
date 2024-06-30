@@ -36,7 +36,7 @@ Stages:
 
 ## Tech Stack
 
-Plutomi is deployed to any VPS you can get your hands on ([we recommend Hetzner](https://hetzner.cloud/?ref=7BufEUOAUm8x)). The frontend is a [Remix](https://remix.run/) app and the API is written in [Rust](https://www.rust-lang.org/) using the [Axum](https://github.com/tokio-rs/axum) web framework. We use [Traefik](https://traefik.io/) as ingress with [cert-manager + Let's Encrypt](https://letsencrypt.org/) for TLS certificates. We use [MongoDB](https://www.mongodb.com/) for our main transactional database and try to follow patterns like [this](https://youtu.be/IYlWOk9Hu5g?t=1094) where we store everything in a single collection.
+Plutomi is deployed to any VPS you can get your hands on ([we recommend Hetzner](https://hetzner.cloud/?ref=7BufEUOAUm8x)). The frontend is a [Remix](https://remix.run/) app and the API is written in [Rust](https://www.rust-lang.org/) using the [Axum](https://github.com/tokio-rs/axum) web framework. We use [Traefik](https://traefik.io/) as ingress with [cert-manager + Let's Encrypt](https://letsencrypt.org/) for TLS certificates. We use [MongoDB](https://www.mongodb.com/) for our main transactional database and try to follow patterns like [this](https://youtu.be/IYlWOk9Hu5g?t=1094) where we store everything in a single collection. We use [NATS + Jetstream](https://nats.io/) as a message broker for async events.
 
 We use [AWS CDK](https://aws.amazon.com/cdk/) to deploy a couple of resources like setting up [SES](https://aws.amazon.com/ses/) for emails, [SNS](https://aws.amazon.com/sns/) to receive email events like opens, clicks, bounces, etc., and a [queue](https://aws.amazon.com/sqs/) to put those events in.
 
@@ -44,7 +44,6 @@ We also use [Cloudflare](https://www.cloudflare.com/) for DNS, CDN, WAF and R2 f
 
 We _plan_ to add:
 
-- NATS as a message broker
 - An events consumer to process NATS and SQS messages
 - MeiliSearch for full text search
 - ClickHouse for analytics
@@ -53,9 +52,9 @@ We _plan_ to add:
 
 Simply make a copy of [.env.example](.env.example) to a `.env` file and run `./scripts/run.sh`. This will:
 
-1. Setup MongoDB for you
+1. Setup MongoDB
 
-2. Setup NATS + Jetstream for you
+2. Setup NATS + Jetstream
 
 > Credentials for all datasources when testing locally are `admin` and `password`.
 > The NATS server will be created with a `sys` user to manage it, and an `admin` user for creating streams & publishing/subscribing to messages.
