@@ -16,7 +16,7 @@ services:
       - ./nats-config.conf:/etc/nats/nats.conf # NATS configuration file
     command: -c /etc/nats/nats.conf
   mongodb:
-    # Make sure this matches the value in k8s/values/stateful-sets/mongodb.yaml
+    # Make sure this matches the value in k8s/values/mongodb.yaml
     image: mongo:7.0.8
     container_name: mongodb
     ports:

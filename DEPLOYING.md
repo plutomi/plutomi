@@ -4,6 +4,7 @@
 - [Rest of the App](#rest-of-the-app)
   - [Prerequisites](#prerequisites)
   - [Initializing Nodes](#initialize-the-nodes)
+  # TODO: ensure these all match
   - [Linkerd (Optional)](#install-linkerd)
   - [Sealed Secrets](#sealed-secrets)
   - [Create our Services](#create-our-services)
@@ -278,35 +279,31 @@ or open the dashboard:
 linkerd viz dashboard &
 ```
 
-### Create our data sources - TODO: Move NATS down here
+### Create our data sources
+
+> Since other services depend on these, we will deploy them first.
+
+#### NATS Jetstream
+
+Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file by setting this annotation.
 
 ```bash
-helm upgrade --install mongodb-service . -f values/services/mongodb.yaml
-```
-
-Deploy the web service:
-
-```bash
-helm upgrade --install web-deploy . -f values/web.yaml -f values/deployments/_production.yaml
-```
-
-Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
-
-```bash
-helm upgrade --install traefik-deploy . -f values/ingress.yaml -f values/deployments/_production.yaml
+helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+helm repo update
+helm upgrade --install nats nats/nats -f values/nats.yaml
 ```
 
 It is here where you want to update your DNS to point to your nodes.
 
 #### MongoDB
 
-Deploy the MongoDB Pods:
+Deploy MongoDB:
 
 ```bash
-helm upgrade --install mongodb-deploy . -f values/stateful-sets/mongodb.yaml
+helm upgrade --install mongodb-service . -f values/mongodb.yaml
 ```
 
-Exec into one...
+Exec into one of the pods:
 
 ```bash
 kubectl exec -it mongodb-0 -c mongodb -- mongosh "mongodb://mongodb.default.svc.cluster.local:27017/test"
@@ -362,20 +359,24 @@ db.createUser({
 })
 ```
 
+### Deploy the web app
+
+```bash
+helm upgrade --install web-deploy . -f values/web.yaml -f values/deployments/_production.yaml
+```
+
 Now deploy the API:
 
 ```bash
 helm upgrade --install api-deploy . -f values/api.yaml -f values/deployments/_production.yaml
 ```
 
-### NATS Jetstream
+### Traefik
 
-Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file by setting this annotation.
+Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
 
 ```bash
-helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-helm repo update
-helm upgrade --install nats nats/nats -f values/nats.yaml
+helm upgrade --install traefik-deploy . -f values/ingress.yaml -f values/deployments/_production.yaml
 ```
 
 ### Monitoring

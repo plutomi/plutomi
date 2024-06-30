@@ -1,5 +1,5 @@
-{{- if .Values.databases }}
-{{- with .Values.databases }}
+{{- if .Values.statefulSet }}
+{{- with .Values.statefulSet }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -125,7 +125,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-          # {{- range $.Values.databases.accessModes }}
+          # {{- range $.Values.statefulSet.accessModes }}
           # - {{ . }}
           # {{- end }}
         resources:

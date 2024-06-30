@@ -1,9 +1,21 @@
+service:
+  metadata:
+    name: mongodb
+  spec:
+    clusterIP: None
+    selector:
+      app: mongodb
+    ports:
+      - port: 27017
+        targetPort: 27017
+
+
+
 # Use this to override any values in the templates/stateful-set.yaml file
 # This only applies to values that have '(index $.Values' setup
 overrides: {}
 
-# TODO change this to statefulsets
-databases:
+statefulSet:
   metadata:
     name: mongodb
   name: mongodb
