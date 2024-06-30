@@ -368,13 +368,13 @@ db.createUser({
 ### Deploy the web app
 
 ```bash
-helm upgrade --install web-deploy . -f values/web.yaml -f values/production.yaml
+helm upgrade --install web-deploy . -f values/values.yaml -f values/web.yaml -f values/production.yaml
 ```
 
 Now deploy the API:
 
 ```bash
-helm upgrade --install api-deploy . -f values/api.yaml -f values/production.yaml
+helm upgrade --install api-deploy . -f values/values.yaml  -f values/api.yaml -f values/production.yaml
 ```
 
 ### Traefik

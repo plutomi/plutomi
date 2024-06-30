@@ -2,5 +2,3 @@ shared:
   env:
     ENVIRONMENT:
       value: staging
-    BASE_WEB_URL:
-      value: https://plutomi.com
