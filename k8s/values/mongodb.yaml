@@ -1,8 +1,17 @@
-# Use this to override any values in the templates/stateful-set.yaml file
-# This only applies to values that have '(index $.Values' setup
-overrides: {}
+service:
+  metadata:
+    name: mongodb
+  spec:
+    clusterIP: None
+    selector:
+      app: mongodb
+    ports:
+      - port: 27017
+        targetPort: 27017
 
-databases:
+
+
+statefulSet:
   metadata:
     name: mongodb
   name: mongodb
@@ -16,6 +25,7 @@ databases:
         labels:
           app: mongodb
       spec:
+        terminationGracePeriodSeconds: 10
         # initContainers:
         #   - name: create-pem-file
         #     image: busybox

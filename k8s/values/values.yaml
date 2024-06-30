@@ -1,0 +1,6 @@
+# Default values
+env:
+  ENVIRONMENT:
+    value: development
+  BASE_WEB_URL:
+    value: https://plutomi.com

@@ -1,0 +1,4 @@
+
+env:
+  ENVIRONMENT:
+    value: staging

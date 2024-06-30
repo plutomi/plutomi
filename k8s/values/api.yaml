@@ -1,6 +1,14 @@
-# Use this to override any values in the templates/deployment.yaml file
-# This only applies to values that have '(index $.Values' setup
-overrides: {}
+service:
+  metadata:
+    name: api
+  spec:
+    # clusterIP: None
+    selector:
+      app: api
+    ports:
+      - port: 80
+        targetPort: 8080
+
 
 deployment:
   metadata:
@@ -10,6 +18,7 @@ deployment:
     replicas: 3
     template:
       spec:
+        terminationGracePeriodSeconds: 10
         containers:
           - name: api
             image: plutomi/api:latest
@@ -31,3 +40,17 @@ deployment:
                 secretKeyRef:
                   name: global-config-secret
                   key: AXIOM_TOKEN
+
+            readinessProbe:
+              periodSeconds: 10
+              initialDelaySeconds: 10
+              httpGet:
+                path: /health
+            lifecycle:
+              preStop:
+                exec:
+                  command: ["sh", "-c", "sleep 10"]
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
