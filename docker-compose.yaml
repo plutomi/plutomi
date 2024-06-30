@@ -26,7 +26,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo_data:/data/mongodb
-  # TODO add NATS Jetstream
 volumes:
   mongo_data:
     driver: local
