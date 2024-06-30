@@ -274,14 +274,15 @@ linkerd viz edges pod
 
 or open the dashboard:
 
-````bash
-linkerd
+```bash
+linkerd viz dashboard &
+```
 
-### Create our Services TODO
+### Create our data sources - TODO: Move NATS down here
 
 ```bash
 helm upgrade --install mongodb-service . -f values/services/mongodb.yaml
-````
+```
 
 Deploy the web service:
 
