@@ -15,6 +15,7 @@ spec:
       labels:
         app: {{ .spec.template.metadata.labels.app }}
     spec:
+      terminationGracePeriodSeconds: {{ .spec.template.spec.terminationGracePeriodSeconds }}
       # securityContext:
       #   {{- with .securityContext }}
       #   fsGroup: {{ .fsGroup }}
@@ -57,7 +58,6 @@ spec:
               readOnly: {{ .readOnly | default false }}
             {{- end }}
         {{- end }}
-      terminationGracePeriodSeconds: {{ default 10 (index $.Values "overrides" "terminationGracePeriodSeconds") }}
       containers:
         {{- range .spec.template.spec.containers }}
         - name: {{ .name }}

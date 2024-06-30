@@ -11,10 +11,6 @@ service:
 
 
 
-# Use this to override any values in the templates/stateful-set.yaml file
-# This only applies to values that have '(index $.Values' setup
-overrides: {}
-
 statefulSet:
   metadata:
     name: mongodb
@@ -29,6 +25,7 @@ statefulSet:
         labels:
           app: mongodb
       spec:
+        terminationGracePeriodSeconds: 10
         # initContainers:
         #   - name: create-pem-file
         #     image: busybox
