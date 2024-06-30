@@ -32,7 +32,6 @@ cleanup() {
 datasources() {
     echo -e "Creating datasources... $PROJECT_ROOT/docker-compose.yaml"
     docker-compose -f "$PROJECT_ROOT/docker-compose.yaml" up -d
-    trap "docker-compose -f '$PROJECT_ROOT/docker-compose.yaml' down; echo 'Docker services stopped.'" EXIT
 }
 
 

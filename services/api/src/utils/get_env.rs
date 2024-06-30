@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
 pub struct Env {
-    pub DATABASE_URL: String,
+    pub MONGODB_URL: String,
     pub BASE_WEB_URL: String,
     pub ENVIRONMENT: String,
     pub AXIOM_DATASET: Option<String>,
@@ -40,7 +40,7 @@ fn get_optional_key_from_env(key: &str) -> Option<String> {
 pub fn get_env() -> Env {
     Env {
         // Required
-        DATABASE_URL: get_key_from_env("DATABASE_URL", None),
+        MONGODB_URL: get_key_from_env("MONGODB_URL", None),
         ENVIRONMENT: get_key_from_env("ENVIRONMENT", Some("development")),
         BASE_WEB_URL: get_key_from_env("BASE_WEB_URL", Some("http://localhost:3000")),
         AXIOM_DATASET: get_optional_key_from_env("AXIOM_DATASET"),

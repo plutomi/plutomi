@@ -8,6 +8,7 @@
   - [Sealed Secrets](#sealed-secrets)
   - [Create our Services](#create-our-services)
   - [MongoDB](#mongodb-replication)
+  - [NATS + Jetstream](#NATS-Jetstream)
   - [Monitoring (Axiom)](#monitoring)
 
 #### AWS
@@ -202,7 +203,7 @@ kubectl create secret generic cloudflare-token --dry-run=client --from-literal=C
 Create other global secrets shared by most of the backend:
 
 ```bash
-kubectl create secret generic global-config-secret --dry-run=client --from-literal=DATABASE_URL=mongodb://USERNAMEdifferentfromINITDB_ROOT:PASSWORDdifferentfromINITDB_ROOT@mongodb.default.svc.cluster.local:27017/plutomi -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/global.yaml
+kubectl create secret generic global-config-secret --dry-run=client --from-literal=MONGODB_URL=mongodb://USERNAMEdifferentfromINITDB_ROOT:PASSWORDdifferentfromINITDB_ROOT@mongodb.default.svc.cluster.local:27017/plutomi -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/global.yaml
 ```
 
 Transfer the files over to your server in the `/k8s` directory and apply the secrets:
@@ -351,13 +352,13 @@ Then, login to the DB with the new user:
 mongosh --username ADMIN_USER_CREDENTIALS --password ADMIN_USER_PASSWORD
 ```
 
-Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the DATABASE_URL secret.
+Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the MONGODB_URL secret.
 
 ```bash
 use plutomi
 db.createUser({
-  user: "DATABASE_URL_USERNAME",
-  pwd: "DATABASE_URL_PASSWORD",
+  user: "MONGODB_URL_USERNAME",
+  pwd: "MONGODB_URL_PASSWORD",
   roles: [{ role: "readWrite", db: "plutomi" }]
 })
 ```
@@ -366,6 +367,16 @@ Now deploy the API/Consumers:
 
 ```bash
 helm upgrade --install api-deploy . -f values/deployments/api.yaml -f values/deployments/_production.yaml
+```
+
+### NATS Jetstream
+
+Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file by setting this annotation.
+
+```bash
+helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+helm repo update
+helm upgrade --install nats nats/nats -f values/nats.yaml
 ```
 
 ### Monitoring

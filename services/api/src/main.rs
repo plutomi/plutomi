@@ -64,9 +64,11 @@ async fn main() {
     });
 
     // Combine all other routes under /api/* */
-    let main_routes = Router::new().route("/request-totp", post(request_totp));
+    let main_routes = Router::new()
+        .route("/request-totp", post(request_totp))
+        // Public health check route
+        .route("/health", get(health_check));
 
-    // TODO lowercase all path middleware...
     let app = Router::new()
         // These are applied backwards, so bottom to top gets precedence
         .fallback(not_found) //

@@ -259,12 +259,12 @@ pub const RESERVED_WORKSPACE_IDS: &[&str; 245] = &[
 ];
 
 // Declare an array of routes that should redirect to the docs page
-pub const DOCS_ROUTES: [&str; 11] = [
+pub const DOCS_ROUTES: [&str; 9] = [
     "/",
     "/api",
     "/api/",
-    "/api/health",
-    "/api/health/",
+    // "/api/health",
+    // "/api/health/",
     "/api/docs",
     "/api/docs/",
     "/api/docs/*any",
