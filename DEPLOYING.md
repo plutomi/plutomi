@@ -277,17 +277,16 @@ or open the dashboard:
 ````bash
 linkerd
 
-### Create our Services
+### Create our Services TODO
 
 ```bash
-helm upgrade --install web-service . -f values/services/web.yaml
 helm upgrade --install mongodb-service . -f values/services/mongodb.yaml
 ````
 
-Deploy the web pod:
+Deploy the web service:
 
 ```bash
-helm upgrade --install web-deploy . -f values/deployments/web.yaml -f values/deployments/_production.yaml
+helm upgrade --install web-deploy . -f values/web.yaml -f values/deployments/_production.yaml
 ```
 
 Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
@@ -365,7 +364,7 @@ db.createUser({
 Now deploy the API:
 
 ```bash
-helm upgrade --install api-service . -f values/api.yaml
+helm upgrade --install api-deploy . -f values/api.yaml -f values/deployments/_production.yaml
 ```
 
 ### NATS Jetstream

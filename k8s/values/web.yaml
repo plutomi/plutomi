@@ -1,3 +1,15 @@
+service:
+  metadata:
+    name: web
+  spec:
+    # clusterIP: None
+    selector:
+      app: web
+    ports:
+      - port: 80
+        targetPort: 3000
+
+
 # Use this to override any values in the templates/deployment.yaml file
 # This only applies to values that have '(index $.Values' setup
 overrides: {}
@@ -12,5 +24,5 @@ deployment:
       spec:
         containers:
           - name: web
-            image: plutomi/api:latest
+            image: plutomi/web:latest
             port: 3000
