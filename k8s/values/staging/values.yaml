@@ -1,9 +1,4 @@
-# Use this to override any values in the templates/deployment.yaml file
-# This only applies to values that have '(index $.Values' setup
-overrides:
-  ENVIRONMENT: staging
-
-
-# TODO: Make "overrides" be values.yaml
-
-# Make a folder for env values here
+deployment:
+  env:
+    - name: ENVIRONMENT
+      value: staging

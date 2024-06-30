@@ -1,4 +1,7 @@
-# Use this to override any values in the templates/deployment.yaml file
-# This only applies to values that have '(index $.Values' setup
-overrides:
-  ENVIRONMENT: production
+deployment:
+  env:
+    - name: ENVIRONMENT
+      value: production
+
+
+## TODO still need to override

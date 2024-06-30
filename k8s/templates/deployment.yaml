@@ -14,8 +14,8 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: {{ default 0 (index $.Values "overrides" "maxUnavailable")  }}
-      maxSurge: {{ default 1 (index $.Values "overrides" "maxSurge") }}
+      maxUnavailable: {{ .spec.strategy.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .spec.strategy.rollingUpdate.maxSurge }}
   template:
     metadata:
       # # Disabled for now. Was using too many resources for my little cluster :3
@@ -25,12 +25,11 @@ spec:
       labels:
         app: {{ .metadata.name }}
     spec:
-      terminationGracePeriodSeconds: {{ default 10 (index $.Values "overrides" "terminationGracePeriodSeconds") }}
+      terminationGracePeriodSeconds: {{ .spec.template.spec.terminationGracePeriodSeconds }}
       containers:
         {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
           image: {{ .image }}
-          # TODO: This is broken and does *not* pull the latest image
           imagePullPolicy: Always
           ports:
             # - name: metrics
@@ -38,26 +37,25 @@ spec:
             - name: http
               containerPort: {{ .port }}
           env:
-
-            - name: ENVIRONMENT
-              value: {{ default "development" (index $.Values "overrides" "ENVIRONMENT") }}
-            - name: BASE_WEB_URL
-              value: {{ default "https://plutomi.com" (index $.Values "overrides" "BASE_WEB_URL") }}
+            # Add the pod name for logging - TODO
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+             # Add any secrets
             {{- range $key, $value := .env }}
             - name: {{ $key }}
-              {{- if $value.secretKeyRef }}
+              {{- if $value.value }}
+              value: {{ $value.value | quote }}
+              {{- else if $value.secretKeyRef }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $value.secretKeyRef.name }}
-                  key: {{ $value.secretKeyRef.key }}
-              {{- else if $value.value }}
-              value: {{ $value.value | quote }}
+                  name: {{ $value.secretKeyRef.name | quote }}
+                  key: {{ $value.secretKeyRef.key | quote }}
               {{- end }}
-            {{- end }}
+            {{- end }}  
+
+            
           volumeMounts:
             {{- range .volumeMounts }}
             - name: {{ .name }}
@@ -67,18 +65,13 @@ spec:
           lifecycle:
             preStop:
               exec:
-
-                command:
-                  - /bin/sh
-                  - -c
-                  - >
-                    sleep {{ default 10 (index $.Values "overrides" "preStopSleepSeconds") }}
+                command: {{ .lifecycle.preStop.exec.command }}
           readinessProbe:
             httpGet:
-              path: {{ default "/health" (index $.Values "overrides" "healthCheckPath") }}
+              path: {{ .readinessProbe.httpGet.healthCheckPath  }}
               port: {{ .port }}
-            initialDelaySeconds: {{ default 10 (index $.Values "overrides" "initialDelaySeconds") }}
-            periodSeconds: {{ default 10 (index $.Values "overrides" "periodSeconds") }}
+            initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .readinessProbe.periodSeconds }}
             timeoutSeconds: 5
             failureThreshold: 3
         {{- end }}
