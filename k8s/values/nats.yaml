@@ -21,7 +21,7 @@ config:
 
 container:
   resources:
-  # Overriding defaults
+    # Overriding defaults
     requests: {}
     limits: {}
   image:
@@ -30,19 +30,19 @@ container:
 service:
   merge:
     metadata:
+      name: nats
       annotations:
+        # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
+        # https://linkerd.io/2.15/features/protocol-detection/
         config.linkerd.io/opaque-ports: "4222"
-        linkerd.io/inject: "enabled"
+    spec:
+      selector:
+        app: nats
 
 statefulSet:
   merge:
     metadata:
       name: nats
-      # annotations:
-      #   # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
-      #   # https://linkerd.io/2.15/features/protocol-detection/
-      #   config.linkerd.io/opaque-ports: "4222" # TODO: This should be removed!
-      #   linkerd.io/inject: "enabled"  
     spec:
       selector:
         matchLabels:
@@ -50,47 +50,8 @@ statefulSet:
       template:
         metadata:
           annotations:
+            # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
+            # https://linkerd.io/2.15/features/protocol-detection/
             config.linkerd.io/opaque-ports: "4222" 
-            linkerd.io/inject: "enabled"  
           labels:
             app: nats
-# podTemplate:
-#   merge:
-#     metadata:
-#       annotations:
-#         # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
-#         # https://linkerd.io/2.15/features/protocol-detection/
-#         config.linkerd.io/opaque-ports: "4222"
-#         linkerd.io/inject: "enabled"
-
-# natsBox:
-#   deployment:
-#     merge:
-#       metadata:
-#         name: nats-box
-#         labels:
-#           app: nats-box
-#         annotations:
-#           # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
-#           # https://linkerd.io/2.15/features/protocol-detection/
-#           config.linkerd.io/opaque-ports: "4222"
-#           linkerd.io/inject: "enabled"
-#       spec:
-#         selector:
-#           matchLabels:
-#             app: nats-box
-#         template:
-#           annotations:
-#             # https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524
-#             # https://linkerd.io/2.15/features/protocol-detection/
-#             config.linkerd.io/opaque-ports: "4222"
-#             linkerd.io/inject: "enabled"
-#           metadata:
-#             labels:
-#               app: nats-box
-
-  # podTemplate:
-  #   merge:
-  #     metadata:
-  #       annotations:
-
