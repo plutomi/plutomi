@@ -371,7 +371,7 @@ helm upgrade --install api-deploy . -f values/deployments/api.yaml -f values/dep
 
 ### NATS Jetstream
 
-Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the `values/nats.yaml` file by setting this annotation.
+Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file by setting this annotation.
 
 ```bash
 helm repo add nats https://nats-io.github.io/k8s/helm/charts/
