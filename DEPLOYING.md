@@ -350,10 +350,9 @@ Then, login to the DB with the new user:
 > kubectl get secret mongodb-init-secret -n default -o jsonpath="{.data.MONGO_INITDB_ROOT_PASSWORD}" | base64 --decode
 > ```
 
-
 ```bash
 mongosh --username ACTUAL_ADMIN_USERNAME_VALUE --password ACTUAL_ADMIN_PASSWORD_VALUE
-````
+```
 
 Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the MONGODB_URL secret.
 
@@ -369,13 +368,13 @@ db.createUser({
 ### Deploy the web app
 
 ```bash
-helm upgrade --install web-deploy . -f values/web.yaml -f values/deployments/_production.yaml
+helm upgrade --install web-deploy . -f values/web.yaml -f values/production/values.yaml
 ```
 
 Now deploy the API:
 
 ```bash
-helm upgrade --install api-deploy . -f values/api.yaml -f values/deployments/_production.yaml
+helm upgrade --install api-deploy . -f values/api.yaml -f values/production/values.yaml
 ```
 
 ### Traefik
@@ -383,7 +382,7 @@ helm upgrade --install api-deploy . -f values/api.yaml -f values/deployments/_pr
 Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It might take a few minutes:
 
 ```bash
-helm upgrade --install traefik-deploy . -f values/ingress.yaml -f values/deployments/_production.yaml
+helm upgrade --install traefik-deploy . -f values/ingress.yaml -f values/production/values.yaml
 ```
 
 ### Monitoring
