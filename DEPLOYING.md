@@ -330,7 +330,7 @@ kubectl exec -it mongodb-1 -c mongodb -- mongosh
 db.test.findOne()
 ```
 
-Ok back to the other pod:
+Ok back to the other pod, create an admin user:
 
 ```bash
 kubectl exec -it mongodb-0 -c mongodb -- sh
@@ -344,17 +344,24 @@ mongosh admin --eval "db.createUser({ user: '$MONGO_INITDB_ROOT_USERNAME', pwd: 
 
 Then, login to the DB with the new user:
 
+> If you need to get the credentials again you can back out and run:
+>
+> ```bash
+> kubectl get secret mongodb-init-secret -n default -o jsonpath="{.data.MONGO_INITDB_ROOT_PASSWORD}" | base64 --decode
+> ```
+
+
 ```bash
-mongosh --username ADMIN_USER_CREDENTIALS --password ADMIN_USER_PASSWORD
-```
+mongosh --username ACTUAL_ADMIN_USERNAME_VALUE --password ACTUAL_ADMIN_PASSWORD_VALUE
+````
 
 Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the MONGODB_URL secret.
 
 ```bash
 use plutomi
 db.createUser({
-  user: "MONGODB_URL_USERNAME",
-  pwd: "MONGODB_URL_PASSWORD",
+  user: "USERNAME_USED_TO_CREATE_URL_SECRET",
+  pwd: "PASSWORD_USED_TO_CREATE_URL_SECRET",
   roles: [{ role: "readWrite", db: "plutomi" }]
 })
 ```
