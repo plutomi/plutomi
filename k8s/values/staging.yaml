@@ -1,4 +1,4 @@
-shared:
-  env:
-    ENVIRONMENT:
-      value: staging
+
+env:
+  ENVIRONMENT:
+    value: staging

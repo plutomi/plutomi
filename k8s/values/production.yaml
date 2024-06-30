@@ -1,4 +1,4 @@
-shared:
-  env:
-    ENVIRONMENT:
-      value: production
+
+env:
+  ENVIRONMENT:
+    value: production

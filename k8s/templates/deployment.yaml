@@ -43,7 +43,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
               # Add any shared secrets
-            {{- range $key, $value := $.Values.shared.env }}
+            {{- range $key, $value := $.Values.env }}
             - name: {{ $key }}
               {{- if $value.value }}
               value: {{ $value.value | quote }}
