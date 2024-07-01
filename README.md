@@ -87,7 +87,7 @@ This project is licensed under the [Apache 2.0 license](LICENSE). Here is a [TLD
 
 ## Contributing
 
-To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Useful Links
 
