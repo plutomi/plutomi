@@ -1,6 +1,5 @@
 use crate::{
     utils::{
-        generate_id::{Entities, PlutomiId},
         get_current_time::iso_format,
         logger::{LogLevel, LogObject},
     },
