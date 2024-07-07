@@ -37,7 +37,7 @@ spec:
             - name: http
               containerPort: {{ .port }}
           env:
-            # Add the pod name for logging - TODO
+            # Add the pod name for logging - TODO add to Axios & make axios json stringified to not run into unique applicant field limits?
             - name: POD_NAME
               valueFrom:
                 fieldRef:
