@@ -23,7 +23,6 @@ use utils::{
 
 mod consts;
 mod controllers;
-mod entities;
 mod structs;
 mod utils;
 

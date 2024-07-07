@@ -12,44 +12,6 @@ const BASE62_CHARS: &[u8] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn
 #[derive(Debug, PartialOrd, Ord, Clone, Copy, PartialEq, Eq)]
 pub struct PlutomiId([u8; TOTAL_BYTES]);
 
-pub enum Entities {
-    // User,
-    // Org,
-    // Membership,
-    // Workspace,
-    // Invite,
-    // Application,
-    // Stage,
-    // We don't need a `Response` entity because Responses will
-    // have the Request + ID so for any debugging purposes, we can retrieve
-    // everything for a request including the response, by using the Request ID
-    Request,
-    // Webhook,
-    // ApiKey,
-    // Response,
-    // Note,
-}
-impl Entities {
-    fn as_prefix(&self) -> String {
-        let prefix = match self {
-            // Entities::User => "usr_",
-            // Entities::Org => "org_",
-            // Entities::Membership => "mbr_",
-            // Entities::Workspace => "wsp_",
-            // Entities::Invite => "inv_",
-            // Entities::Note => "nte_",
-            // Entities::Application => "app_",
-            // Entities::Stage => "stg_",
-            Entities::Request => "rq_",
-            // Entities::Response => "rs_",
-            // Entities::Webhook => "whk_",
-            // Entities::ApiKey => "plutomi_api_key_",
-        };
-
-        prefix.to_string()
-    }
-}
-
 impl PlutomiId {
     // Creates a new PlutomiId with the specified OffsetDateTime. Use OffsetDateTime::now_utc():
     pub fn new(datetime: &OffsetDateTime, entity: Entities) -> String {

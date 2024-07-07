@@ -27,7 +27,8 @@ tracing-subscriber = { version = "0.3.18" }
 # Vendored is required to compile OpenSSL on systems without it installed.
 # https://stackoverflow.com/questions/70561544/rust-openssl-could-not-find-directory-of-openssl-installation
 openssl = { version = "0.10.64", features = ["vendored"] }
-
+# Shared utils
+shared = { path = "../shared" }
 
 [profile.release]
 # https://github.com/johnthagen/min-sized-rust

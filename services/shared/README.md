@@ -1,3 +1,3 @@
 ### Shared Utils
 
-Anything reused (mostly in the backend) by the api and the consumer should go here. Things like generating IDs, or logging to Axiom.
+Anything reused (mostly in the backend) with the `api` and `events-consumer` should go here. Things like generating IDs, logging, or any other utility functions.
