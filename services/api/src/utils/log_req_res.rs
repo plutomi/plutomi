@@ -1,5 +1,5 @@
 use super::{
-    generate_id::{Entities, PlutomiId},
+    generate_id::PlutomiId,
     get_current_time::iso_format,
     logger::{LogLevel, LogObject},
     parse_request::parse_request,
@@ -14,6 +14,7 @@ use axum::{
     response::IntoResponse,
 };
 use serde_json::json;
+use shared::Entities;
 use time::OffsetDateTime;
 
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
