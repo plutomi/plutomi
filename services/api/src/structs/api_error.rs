@@ -5,8 +5,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-
-use crate::utils::get_env::get_env;
+use shared::get_env::get_env;
 
 #[derive(Serialize, Clone, Deserialize)]
 pub enum PlutomiCode {

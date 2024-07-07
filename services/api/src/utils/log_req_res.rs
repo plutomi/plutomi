@@ -14,7 +14,7 @@ use axum::{
     response::IntoResponse,
 };
 use serde_json::json;
-use shared::Entities;
+use shared::entities::Entities;
 use time::OffsetDateTime;
 
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";

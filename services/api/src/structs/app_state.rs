@@ -1,4 +1,6 @@
-use crate::utils::{get_env::Env, logger::Logger, mongodb::MongoDB};
+use shared::get_env::Env;
+
+use crate::utils::{logger::Logger, mongodb::MongoDB};
 use std::sync::Arc;
 
 #[derive(Clone)]

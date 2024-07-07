@@ -8,13 +8,13 @@ use consts::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
 use serde_json::json;
+use shared::get_env::get_env;
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
 use tracing::warn;
 use utils::{
     get_current_time::iso_format,
-    get_env::get_env,
     log_req_res::log_req_res,
     logger::{LogLevel, LogObject, Logger},
     mongodb::connect_to_mongodb,

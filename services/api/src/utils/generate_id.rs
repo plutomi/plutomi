@@ -1,6 +1,6 @@
 use byteorder::{BigEndian, ByteOrder};
 use rand::{thread_rng, Rng};
-use shared::Entities;
+use shared::entities::Entities;
 use time::OffsetDateTime;
 
 // prefix_[48 bit timestamp][64 bit random payload]

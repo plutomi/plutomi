@@ -1,5 +1,9 @@
+use shared::entities::Entities;
+
 fn main() {
     println!("Hello, world!");
+
+    println!("{}", Entities::Request.as_prefix());
 
     // TODO: Acceptance criteria
     // - [ ] Can read .env parsed

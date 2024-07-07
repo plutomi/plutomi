@@ -3,7 +3,7 @@ use crate::utils::{
     logger::{LogLevel, LogObject},
 };
 
-use super::{get_env::get_env, logger::Logger};
+use super::logger::Logger;
 use core::panic;
 use mongodb::{
     bson::Document,
@@ -11,6 +11,7 @@ use mongodb::{
     Client, Collection, Database,
 };
 use serde_json::json;
+use shared::get_env::get_env;
 use std::sync::Arc;
 use time::OffsetDateTime;
 

@@ -1,6 +1,7 @@
-use crate::utils::{get_env::get_env, mongodb::MongoDB};
+use crate::utils::mongodb::MongoDB;
 use axum::{http::StatusCode, Extension, Json};
 use serde::Serialize;
+use shared::get_env::get_env;
 use std::sync::Arc;
 
 #[derive(Serialize)]
