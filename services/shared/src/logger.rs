@@ -1,7 +1,6 @@
-use crate::utils::get_current_time::iso_format;
+use crate::{get_current_time::get_current_time, get_env::get_env};
 use axiom_rs::Client;
 use serde::Serialize;
-use shared::get_env::get_env;
 use std::{fmt, sync::Arc};
 use time::OffsetDateTime;
 use tokio::{
@@ -99,7 +98,7 @@ struct CustomTimeFormat;
 impl FormatTime for CustomTimeFormat {
     fn format_time(&self, writer: &mut Writer<'_>) -> fmt::Result {
         let now = OffsetDateTime::now_utc();
-        let formatted_time = iso_format(now);
+        let formatted_time = get_current_time(now);
         write!(writer, "{}", formatted_time)
     }
 }

@@ -7,15 +7,12 @@ use axum::{
     Extension,
 };
 use serde_json::{json, Value};
+use shared::{get_current_time::get_current_time, logger::{LogLevel, LogObject}};
 
 use crate::{
     consts::REQUEST_ID_HEADER,
     structs::{api_error::ApiError, app_state::AppState},
-    utils::{
-        get_current_time::iso_format,
-        get_header_value::get_header_value,
-        logger::{LogLevel, LogObject},
-    },
+    utils::get_header_value::get_header_value,
 };
 
 pub async fn not_found(
@@ -37,7 +34,7 @@ pub async fn not_found(
 
     state.logger.log(LogObject {
         level: LogLevel::Error,
-        _time: iso_format(time::OffsetDateTime::now_utc()),
+        _time: get_current_time(time::OffsetDateTime::now_utc()),
         message: not_found_message,
         data: None,
         error: None,

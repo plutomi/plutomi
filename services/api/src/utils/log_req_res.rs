@@ -1,10 +1,5 @@
-use super::{
-    generate_id::PlutomiId,
-    get_current_time::iso_format,
-    logger::{LogLevel, LogObject},
-    parse_request::parse_request,
-    parse_response::parse_response,
-};
+use super::{parse_request::parse_request, parse_response::parse_response};
+
 use crate::{consts, structs::api_error::ApiError, AppState};
 use axum::{
     body::Body,
@@ -14,7 +9,12 @@ use axum::{
     response::IntoResponse,
 };
 use serde_json::json;
-use shared::entities::Entities;
+use shared::{
+    entities::Entities,
+    generate_id::PlutomiId,
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
+};
 use time::OffsetDateTime;
 
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
@@ -34,7 +34,7 @@ pub async fn log_req_res(
 ) -> Response<Body> {
     // Start a timer to see how long it takes us to process it
     let start_time = OffsetDateTime::now_utc();
-    let formatted_start_time = iso_format(start_time);
+    let formatted_start_time = get_current_time(start_time);
 
     // On the way in, add a timestamp header
     request.headers_mut().insert(
@@ -56,7 +56,7 @@ pub async fn log_req_res(
         Err(message) => {
             // If the incoming request failed to parse, log it and return a 400
             let end_time = OffsetDateTime::now_utc();
-            let formatted_end_time = iso_format(end_time);
+            let formatted_end_time = get_current_time(end_time);
             let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
 
             let status = StatusCode::BAD_REQUEST;
@@ -82,7 +82,7 @@ pub async fn log_req_res(
             state.logger.log(LogObject {
                 data: Some(json!({ "duration": duration_ms })),
                 message,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 level: LogLevel::Error,
                 error: Some(json!(api_error)),
                 request: None,
@@ -98,7 +98,7 @@ pub async fn log_req_res(
                 error: None,
                 message: "Request received".to_string(),
                 data: None,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 request: Some(json!(request_data.request_as_hashmap)),
                 response: None,
             });
@@ -114,7 +114,7 @@ pub async fn log_req_res(
 
             // Note how long the req -> res took
             let end_time = OffsetDateTime::now_utc();
-            let formatted_end_time = iso_format(end_time);
+            let formatted_end_time = get_current_time(end_time);
             let duration_ms = (end_time - start_time).whole_milliseconds();
 
             // Add a timestamp header on the way out
@@ -139,7 +139,7 @@ pub async fn log_req_res(
                     error: None,
                     message: "Redirect sent".to_string(),
                     data: Some(json!({ "duration": duration_ms })),
-                    _time: iso_format(OffsetDateTime::now_utc()),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
                     request: Some(json!(&request_data.request_as_hashmap)),
                     response: Some(json!({ "status": response.status().as_u16() })),
                 });
@@ -159,7 +159,7 @@ pub async fn log_req_res(
                 error: None,
                 message: "Response sent".to_string(),
                 data: Some(json!({ "duration": duration_ms })),
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 request: Some(json!(&request_data.request_as_hashmap)),
                 response: Some(json!(parsed_response.response_as_hashmap)),
             });

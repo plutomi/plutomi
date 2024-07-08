@@ -8,18 +8,16 @@ use consts::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
 use serde_json::json;
-use shared::get_env::get_env;
+use shared::{
+    get_current_time::get_current_time,
+    get_env::get_env,
+    logger::{LogLevel, LogObject, Logger},
+};
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
 use tracing::warn;
-use utils::{
-    get_current_time::iso_format,
-    log_req_res::log_req_res,
-    logger::{LogLevel, LogObject, Logger},
-    mongodb::connect_to_mongodb,
-    timeout::timeout,
-};
+use utils::{log_req_res::log_req_res, mongodb::connect_to_mongodb, timeout::timeout};
 
 mod consts;
 mod controllers;
@@ -85,7 +83,7 @@ async fn main() {
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
-            _time: iso_format(OffsetDateTime::now_utc()),
+            _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: Some(json!({ "port": PORT })),
             error: Some(error_json),
@@ -103,7 +101,7 @@ async fn main() {
             let error_json = json!({ "message": &message });
             logger.log(LogObject {
                 level: LogLevel::Error,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 message,
                 data: Some(json!({ "addr": addr })),
                 error: Some(error_json),
@@ -115,7 +113,7 @@ async fn main() {
 
     logger.log(LogObject {
         level: LogLevel::Info,
-        _time: iso_format(OffsetDateTime::now_utc()),
+        _time: get_current_time(OffsetDateTime::now_utc()),
         message: "API starting on http://localhost:8080".to_string(),
         data: None,
         error: None,
@@ -130,7 +128,7 @@ async fn main() {
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
-            _time: iso_format(OffsetDateTime::now_utc()),
+            _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: None,
             error: Some(error_json),

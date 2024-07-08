@@ -21,3 +21,15 @@ pub async fn request_totp(
     };
     (StatusCode::OK, Json(response))
 }
+
+fn print_name(name_input: &String) {
+    println!("{}", name_input);
+    // Delete the input string
+    drop(name_input);
+}
+
+fn main() {
+    let name = String::from("Alice");
+    print_name(&name);
+    print_name(&name);
+}

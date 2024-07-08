@@ -6,17 +6,17 @@ use axum::{
     Extension,
 };
 use serde_json::{json, Value};
+use shared::{
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
+};
 use std::collections::HashMap;
 use time::OffsetDateTime;
 
 use crate::{
     consts::REQUEST_ID_HEADER,
     structs::{api_error::ApiError, app_state::AppState},
-    utils::{
-        get_current_time::iso_format,
-        get_header_value::get_header_value,
-        logger::{LogLevel, LogObject},
-    },
+    utils::get_header_value::get_header_value,
 };
 
 /**
@@ -52,7 +52,7 @@ pub async fn method_not_allowed(
                 error: Some(json!(api_error)),
                 message,
                 data: None,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 request: Some(json!(request_as_hashmap)),
                 response: None,
             });

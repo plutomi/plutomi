@@ -1,9 +1,3 @@
-use crate::utils::{
-    get_current_time::iso_format,
-    logger::{LogLevel, LogObject},
-};
-
-use super::logger::Logger;
 use core::panic;
 use mongodb::{
     bson::Document,
@@ -11,7 +5,11 @@ use mongodb::{
     Client, Collection, Database,
 };
 use serde_json::json;
-use shared::get_env::get_env;
+use shared::{
+    get_current_time::get_current_time,
+    get_env::get_env,
+    logger::{LogLevel, LogObject, Logger},
+};
 use std::sync::Arc;
 use time::OffsetDateTime;
 
@@ -30,7 +28,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
         Err(e) => {
             logger.log(LogObject {
                 level: LogLevel::Error,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 message: "Error parsing client options for DB".to_string(),
                 data: None,
                 error: Some(json!(e.to_string())),
@@ -55,7 +53,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
         Err(e) => {
             logger.log(LogObject {
                 level: LogLevel::Error,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 message: "Error connecting to database".to_string(),
                 data: None,
                 error: Some(json!(e.to_string())),
@@ -73,7 +71,7 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
             let error_message = "Unable to find default database.\nMake sure you include it in the connection string like: mongodb://localhost:27017/this-part-is-missing";
             logger.log(LogObject {
                 level: LogLevel::Error,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 message: error_message.to_string(),
                 data: None,
                 error: None,
