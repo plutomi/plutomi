@@ -30,7 +30,12 @@ pub async fn health_check(
         options
     };
     // Attempt to perform a find_one operation to check database connectivity
-    let database_result = state.mongodb.collection.find_one(None, options).await;
+    let database_result = state
+        .mongodb
+        .collection
+        .find_one(doc! {})
+        .with_options(options)
+        .await;
 
     // Check if the database operation was successful
     let database = database_result.is_ok();

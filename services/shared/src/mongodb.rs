@@ -5,13 +5,15 @@ use mongodb::{
     Client, Collection, Database,
 };
 use serde_json::json;
-use shared::{
+
+use std::sync::Arc;
+use time::OffsetDateTime;
+
+use crate::{
     get_current_time::get_current_time,
     get_env::get_env,
     logger::{LogLevel, LogObject, Logger},
 };
-use std::sync::Arc;
-use time::OffsetDateTime;
 
 pub struct MongoDB {
     pub client: Client,
@@ -44,8 +46,8 @@ pub async fn connect_to_mongodb(logger: &Arc<Logger>) -> Arc<MongoDB> {
     client_options.min_pool_size = Some(5);
     client_options.max_pool_size = Some(15);
 
-    client_options.read_concern = Some(ReadConcern::MAJORITY);
-    client_options.write_concern = Some(WriteConcern::MAJORITY);
+    client_options.read_concern = Some(ReadConcern::majority());
+    client_options.write_concern = Some(WriteConcern::majority());
 
     // Get the DB client that's connected to the DB
     let client = match Client::with_options(client_options) {

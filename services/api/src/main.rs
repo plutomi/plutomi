@@ -11,13 +11,13 @@ use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     get_env::get_env,
-    logger::{LogLevel, LogObject, Logger},
+    logger::{LogLevel, LogObject, Logger}, mongodb::connect_to_mongodb,
 };
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
 use tracing::warn;
-use utils::{log_req_res::log_req_res, mongodb::connect_to_mongodb, timeout::timeout};
+use utils::{log_req_res::log_req_res, timeout::timeout};
 
 mod consts;
 mod controllers;

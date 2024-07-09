@@ -1,7 +1,7 @@
-use crate::utils::mongodb::MongoDB;
 use axum::{http::StatusCode, Extension, Json};
+use mongodb::bson::doc;
 use serde::Serialize;
-use shared::get_env::get_env;
+use shared::{get_env::get_env, mongodb::MongoDB};
 use std::sync::Arc;
 
 #[derive(Serialize)]
@@ -16,20 +16,8 @@ pub async fn request_totp(
 ) -> (StatusCode, Json<CreateTotpResponse>) {
     let response: CreateTotpResponse = CreateTotpResponse {
         message: "TOTP",
-        database: mongodb.collection.find_one(None, None).await.is_ok(),
+        database: mongodb.collection.find_one(doc! {}).await.is_ok(),
         environment: get_env().ENVIRONMENT,
     };
     (StatusCode::OK, Json(response))
-}
-
-fn print_name(name_input: &String) {
-    println!("{}", name_input);
-    // Delete the input string
-    drop(name_input);
-}
-
-fn main() {
-    let name = String::from("Alice");
-    print_name(&name);
-    print_name(&name);
 }
