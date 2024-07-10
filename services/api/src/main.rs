@@ -8,39 +8,41 @@ use consts::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
 use serde_json::json;
+use shared::{
+    get_current_time::get_current_time,
+    get_env::get_env,
+    logger::{LogLevel, LogObject, Logger},
+    mongodb::connect_to_mongodb,
+};
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
-use tracing::warn;
-use utils::{
-    get_current_time::iso_format,
-    get_env::get_env,
-    log_req_res::log_req_res,
-    logger::{LogLevel, LogObject, Logger},
-    mongodb::connect_to_mongodb,
-    timeout::timeout,
-};
+use tracing::{info, warn};
+use utils::{log_req_res::log_req_res, timeout::timeout};
 
 mod consts;
 mod controllers;
-mod entities;
 mod structs;
 mod utils;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
+    info!("API starting...");
     // Get environment variables
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
+    info!("Environment variables loaded");
     // Setup logging
     let logger = Logger::new();
+    info!("Logger initialized");
+
+    // Connect to database - TODO update res/option
+    let mongodb = connect_to_mongodb(&logger).await;
+    info!("Connected to MongoDB");
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
-
-    // Connect to database
-    let mongodb = connect_to_mongodb(&logger).await;
 
     // Create an instance of AppState to be shared with all routes
     let state = AppState {
@@ -86,7 +88,7 @@ async fn main() {
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
-            _time: iso_format(OffsetDateTime::now_utc()),
+            _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: Some(json!({ "port": PORT })),
             error: Some(error_json),
@@ -104,7 +106,7 @@ async fn main() {
             let error_json = json!({ "message": &message });
             logger.log(LogObject {
                 level: LogLevel::Error,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 message,
                 data: Some(json!({ "addr": addr })),
                 error: Some(error_json),
@@ -116,7 +118,7 @@ async fn main() {
 
     logger.log(LogObject {
         level: LogLevel::Info,
-        _time: iso_format(OffsetDateTime::now_utc()),
+        _time: get_current_time(OffsetDateTime::now_utc()),
         message: "API starting on http://localhost:8080".to_string(),
         data: None,
         error: None,
@@ -131,7 +133,7 @@ async fn main() {
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
-            _time: iso_format(OffsetDateTime::now_utc()),
+            _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: None,
             error: Some(error_json),

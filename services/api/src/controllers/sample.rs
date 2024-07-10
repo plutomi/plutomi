@@ -1,14 +1,14 @@
 use crate::structs::app_state::AppState;
 use axum::{extract::State, http::StatusCode, Json};
 use futures::TryStreamExt;
-use mongodb::bson::Document;
+use mongodb::bson::{doc, Document};
 use serde_json::{json, Value};
 
 pub async fn sample(
     State(state): State<AppState>,
 ) -> Result<(StatusCode, Json<Vec<Document>>), (StatusCode, Json<Value>)> {
     // Get a cursor with all items
-    let mut items_cursor = match state.mongodb.collection.find(None, None).await {
+    let mut items_cursor = match state.mongodb.collection.find(doc! {}).await {
         Ok(cursor) => cursor,
         Err(e) => {
             return Err((

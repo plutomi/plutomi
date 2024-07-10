@@ -16,7 +16,8 @@
   "settings": {
     "eslint.workingDirectories": [
       { "directory": "services/api", "changeProcessCWD": true },
-      { "directory": "services/web", "changeProcessCWD": true }
+      { "directory": "services/web", "changeProcessCWD": true },
+      { "directory": "services/events-consumer", "changeProcessCWD": true }
     ],
     "search.exclude": {
       "**/node_modules": true,

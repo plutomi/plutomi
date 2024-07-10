@@ -2,8 +2,8 @@ use std::env;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Env {
     pub MONGODB_URL: String,
     pub BASE_WEB_URL: String,

@@ -26,6 +26,7 @@ cleanup() {
     echo "Stopping services..."
     [ ! -z "$API_PID" ] && kill $API_PID
     [ ! -z "$WEB_PID" ] && kill $WEB_PID
+    [ ! -z "$WARNING_PID" ] && kill $WARNING_PID
     echo "Done."
 }
 
@@ -42,26 +43,32 @@ print_error_and_usage() {
     exit 1
 }
 
+api_warning() {
+    for i in {1..3}; do
+        echo -e "${BIYELLOW}The API might take a minute to start but once it's up you won't have to wait so long due to hot reloading!${NC}"
+        sleep 5 
+    done
+}
+
 trap cleanup SIGINT SIGTERM
 
 run_api() {
-    # Navigate to the API directory
     cd "$PROJECT_ROOT/services/api"
-    echo -e "\nStarting API... \n${BIYELLOW}The API might take a minute but once it's up you won't have to wait so long!\n${NC}"
+    echo -e "\nStarting API..."
+    api_warning &
+    WARNING_PID=$!
     cargo install cargo-watch
     cargo watch -x run &
     API_PID=$!
 }
 
 run_web() {
-    # Navigate to the web directory
     cd "$PROJECT_ROOT/services/web"
     echo -e "\nStarting Web server...\n"
     npm run dev &
     WEB_PID=$!
 }
 
-# Default stack to run both if not specified
 stack="all"
 
 # Parse named arguments

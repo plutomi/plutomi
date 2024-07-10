@@ -1,15 +1,12 @@
-use crate::{
-    utils::{
-        generate_id::{Entities, PlutomiId},
-        get_current_time::iso_format,
-        logger::{self, LogLevel, LogObject},
-    },
-    AppState,
-};
+use crate::AppState;
 use axum::{extract::State, http::StatusCode, Extension, Json};
 use mongodb::{bson::doc, options::FindOneOptions};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use shared::{
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
+};
 use std::collections::HashMap;
 use time::OffsetDateTime;
 
@@ -33,7 +30,12 @@ pub async fn health_check(
         options
     };
     // Attempt to perform a find_one operation to check database connectivity
-    let database_result = state.mongodb.collection.find_one(None, options).await;
+    let database_result = state
+        .mongodb
+        .collection
+        .find_one(doc! {})
+        .with_options(options)
+        .await;
 
     // Check if the database operation was successful
     let database = database_result.is_ok();
@@ -42,7 +44,7 @@ pub async fn health_check(
     if let Err(e) = database_result {
         state.logger.log(LogObject {
             level: LogLevel::Error,
-            _time: iso_format(OffsetDateTime::now_utc()),
+            _time: get_current_time(OffsetDateTime::now_utc()),
             message: "Failed to connect to database for health check".to_string(),
             data: None,
             error: Some(json!(e.to_string())),
@@ -62,7 +64,7 @@ pub async fn health_check(
             true => LogLevel::Info,
             false => LogLevel::Error,
         },
-        _time: iso_format(OffsetDateTime::now_utc()),
+        _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Health check response".to_string(),
         data: None,
         error: None,

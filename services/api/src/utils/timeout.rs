@@ -1,10 +1,6 @@
 use std::collections::HashMap;
 
-use super::{
-    get_current_time::iso_format,
-    get_header_value::get_header_value,
-    logger::{LogLevel, LogObject},
-};
+use super::get_header_value::get_header_value;
 use crate::{consts::REQUEST_ID_HEADER, structs::api_error::ApiError, AppState};
 use axum::{
     extract::{Request, State},
@@ -14,6 +10,7 @@ use axum::{
     Extension,
 };
 use serde_json::{json, Value};
+use shared::{get_current_time::get_current_time, logger::{LogLevel, LogObject}};
 use time::OffsetDateTime;
 pub async fn timeout(
     State(state): State<AppState>,
@@ -30,7 +27,7 @@ pub async fn timeout(
             let message = "Request took too long to process. Please try again.".to_string();
             let log_object = LogObject {
                 level: LogLevel::Error,
-                _time: iso_format(OffsetDateTime::now_utc()),
+                _time: get_current_time(OffsetDateTime::now_utc()),
                 message: message.clone(),
                 data: None,
                 error: None,
