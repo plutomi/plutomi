@@ -77,6 +77,16 @@ You can also run any stack individually:
 $ ./scripts/run.sh --stack <web|api|datasources>
 ```
 
+##### Local Docker
+
+If you decide to run any of the Rust services in Docker, make sure you run them from the `/services` directory and pass the service Dockerfile as context as we need the `/shared` library to be included:
+
+```bash
+# Running the API example in /services
+docker build -t plutomi/api:latest-local -f api/Dockerfile . && \
+docker run -p 8080:8080 plutomi/api:latest-local
+```
+
 ## Deploying
 
 To deploy Plutomi, you'll want to deploy to AWS for setting up SES first and then the rest of the backend with Kubernetes (K3S). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
