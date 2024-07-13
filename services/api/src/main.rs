@@ -35,7 +35,7 @@ async fn main() {
     info!("Environment variables loaded");
     // Setup logging
     let logger = Logger::new();
-    info!("Logger initialized");
+    info!("Logger initialized in API");
 
     // Connect to database - TODO update res/option
     let mongodb = connect_to_mongodb(&logger).await;

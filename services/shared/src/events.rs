@@ -1,33 +1,18 @@
-use std::fmt;
 use std::str::FromStr;
 
 #[derive(Debug)]
-enum Events {
+pub enum PlutomiEvents {
     TOTPRequested,
     TOTPVerified,
 }
 
-impl fmt::Display for Events {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Events::TOTPRequested => "totp.requested",
-                Events::TOTPVerified => "totp.verified",
-            }
-        )
-    }
-}
-
-impl FromStr for Events {
+impl FromStr for PlutomiEvents {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "totp.requested" => Ok(Events::TOTPRequested),
-            "totp.verified" => Ok(Events::TOTPVerified),
-
+            "totp.requested" => Ok(PlutomiEvents::TOTPRequested),
+            "totp.verified" => Ok(PlutomiEvents::TOTPVerified),
             _ => Err(()),
         }
     }

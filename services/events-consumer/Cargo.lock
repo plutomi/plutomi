@@ -561,6 +561,7 @@ dependencies = [
  "shared",
  "time",
  "tokio",
+ "tracing",
  "tracing-subscriber",
 ]
 

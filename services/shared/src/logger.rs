@@ -4,7 +4,7 @@ use serde::Serialize;
 use std::{fmt, sync::Arc};
 use time::OffsetDateTime;
 use tokio::{
-    sync::mpsc::{self, Sender},
+    sync::mpsc::{self, UnboundedSender},
     time::{sleep, Duration, Instant},
 };
 use tracing::{debug, error, info, warn};
@@ -13,8 +13,6 @@ use tracing_subscriber::{
     FmtSubscriber,
 };
 
-// Max number of logs to buffer in a channel before overflowing
-const MAX_LOG_BUFFER_LENGTH: usize = 10000;
 // Max number of logs to send in a batch
 const LOG_BATCH_SIZE: usize = 100;
 // Time to wait before sending the batch of logs
@@ -87,7 +85,7 @@ impl fmt::Display for LogObject {
 }
 
 pub struct Logger {
-    sender: Sender<LogObject>,
+    sender: UnboundedSender<LogObject>,
 }
 
 struct CustomTimeFormat;
@@ -140,7 +138,7 @@ impl Logger {
             None
         };
 
-        let (sender, mut receiver) = mpsc::channel::<LogObject>(MAX_LOG_BUFFER_LENGTH);
+        let (sender, mut receiver) = mpsc::unbounded_channel::<LogObject>();
 
         // Spawn the logging thread
         tokio::spawn(async move {
@@ -204,8 +202,9 @@ impl Logger {
      */
     pub fn log(&self, log: LogObject) {
         // Send the log message to the channel
-        if let Err(e) = self.sender.try_send(log) {
+        if let Err(e) = self.sender.send(log) {
             error!("Failed to enqueue log message: {}", e);
+            // TODO log to Axiom / alerting
         }
     }
 }
