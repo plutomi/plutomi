@@ -9,10 +9,12 @@
     "build": "npm run build:remix && npm run build:ts",
     "dev": "remix dev -c \"nodemon\"",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "node ./dist/server.js"
+    "start": "node ./dist/server.js",
+    "million": "npm run million"
   },
   "dependencies": {
     "@mantine/hooks": "^7.5.3",
+    "@million/lint": "^1.0.0-rc.81",
     "@remix-run/css-bundle": "^2.6.0",
     "@remix-run/express": "^2.6.0",
     "@remix-run/node": "^2.6.0",
