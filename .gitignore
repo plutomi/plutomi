@@ -57,3 +57,6 @@ root@*/*
 
 # Ignore the temporary secret file
 secret.yaml
+
+# Million Lint
+.million
