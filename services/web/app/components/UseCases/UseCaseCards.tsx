@@ -15,7 +15,7 @@ import {
 import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
 import { ImProfile } from "react-icons/im";
-import { UseCase, useUseCaseStore } from "../../hooks/use-usecase-store";
+import { UseCase, useUseCaseStore } from "~/hooks/use-usecase-store";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 type UseCaseCard = {

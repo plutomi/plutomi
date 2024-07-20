@@ -1,5 +1,5 @@
 {
-  "name": "plutomi-web",
+  "name": "packages-web",
   "private": true,
   "sideEffects": false,
   "type": "module",
