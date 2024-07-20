@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@million/lint": "^1.0.0-rc.81"
+  }
+}
