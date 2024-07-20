@@ -1,14 +1,50 @@
 import { createRequestHandler } from "@remix-run/express";
-import { broadcastDevReady } from "@remix-run/node";
+import compression from "compression";
 import express from "express";
-import * as build from "./build/index.js";
-import { env } from "./app/utils/env.js";
+import morgan from "morgan";
+import { env } from "app/utils/env.js";
 
-const PORT = 3000;
+const viteDevServer =
+  process.env.NODE_ENV === "production"
+    ? undefined
+    : await import("vite").then((vite) =>
+        vite.createServer({
+          server: { middlewareMode: true }
+        })
+      );
+
+const remixHandler = createRequestHandler({
+  // @ts-ignore
+  build: viteDevServer
+    ? () => viteDevServer.ssrLoadModule("virtual:remix/server-build")
+    : // @ts-ignore - bleep bloop
+      await import("./build/server/index.js")
+});
+
 const app = express();
 
-app.use(express.static("public"));
+app.use(compression());
+
+// http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
+app.disable("x-powered-by");
+
 app.set("trust proxy", true);
+
+// handle asset requests
+if (viteDevServer) {
+  app.use(viteDevServer.middlewares);
+} else {
+  // Vite fingerprints its assets so we can cache forever.
+  app.use(
+    "/assets",
+    express.static("build/client/assets", { immutable: true, maxAge: "1y" })
+  );
+}
+
+// Everything else (like favicon.ico) is cached for 12 hours
+app.use(express.static("build/client", { maxAge: "12h" }));
+
+app.use(morgan("tiny"));
 
 app.use(async (req, res, next) => {
   if (req.path === "/api/" || req.path === "/api") {
@@ -18,42 +54,10 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Pod health check
-// TODO: Only return health check for internally accessible requests
-// everything else redirect to app
-app.get("/health", async (req, res) => {
-  return res.json({ status: "ok" });
-});
+// handle SSR requests
+app.all("*", remixHandler);
 
-app.all(
-  "*",
-  createRequestHandler({
-    // @ts-expect-error - testing remix
-    build
-  })
+const port = process.env.PORT || 3000;
+app.listen(port, () =>
+  console.log(`Express server listening at http://localhost:${port}`)
 );
-
-const server = app.listen(PORT, "0.0.0.0", () => {
-  if (process.env.NODE_ENV === "development") {
-    // @ts-expect-error - testing remix
-    broadcastDevReady(build);
-  }
-  console.log(`Remix listening on http://localhost:${PORT}`);
-});
-
-const gracefulShutdown = async () => {
-  server.close(() => {
-    console.log("HTTP server closed.", new Date().toISOString());
-  });
-
-  // Wait for existing connections to close
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  console.log(
-    "Finished all requests, shutting down.",
-    new Date().toISOString()
-  );
-  process.exit(0); // Exit cleanly
-};
-
-process.on("SIGTERM", gracefulShutdown);
-process.on("SIGINT", gracefulShutdown);
