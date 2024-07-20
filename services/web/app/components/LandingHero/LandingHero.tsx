@@ -1,6 +1,6 @@
 export const LandingHero: React.FC = () => (
   <div className=" text-start md:text-center px-5">
-    <h1 className="text-4xl lg:text-5xl font-bold text-slate-900">
+    <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-900">
       Applicant Management at Any Scale
       {/* <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400">
         any scale
