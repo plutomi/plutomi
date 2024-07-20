@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UseCase, useUseCaseStore } from "~/hooks/use-usecase-store";
+import { UseCase, useUseCaseStore } from "../../hooks/use-usecase-store";
 
 export const UseCaseSegment: React.FC = () => {
   const { useCase, setUseCase } = useUseCaseStore();

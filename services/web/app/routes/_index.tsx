@@ -1,11 +1,11 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Toaster } from "react-hot-toast";
-import { LandingHero } from "~/components/LandingHero";
-import { ViewOnGitHubButton } from "~/components/GithubButton";
-import { UseCaseCards } from "~/components/UseCases/UseCaseCards";
-import { UseCaseSegment } from "~/components/UseCases/UseCaseSegment";
-import { HomepageFooter } from "~/components/HomepageFooter";
+import { LandingHero } from "../components/LandingHero";
+import { ViewOnGitHubButton } from "../components/GithubButton";
+import { UseCaseCards } from "../components/UseCases/UseCaseCards";
+import { UseCaseSegment } from "../components/UseCases/UseCaseSegment";
+import { HomepageFooter } from "../components/HomepageFooter";
 
 export const loader = async () => {
   return json({

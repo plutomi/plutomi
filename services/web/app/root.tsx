@@ -1,29 +1,15 @@
-import { cssBundleHref } from "@remix-run/css-bundle";
-import "./tailwind.css";
-import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration
 } from "@remix-run/react";
-
-export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+JP:wght@100..900&display=swap"
-  }
-];
+import "./tailwind.css";
 
 const rootBg = "bg-white";
-export default function App() {
+
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
@@ -42,4 +28,8 @@ export default function App() {
       </body>
     </html>
   );
+}
+
+export default function App() {
+  return <Outlet />;
 }
