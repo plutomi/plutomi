@@ -1,5 +1,4 @@
 import { IconFileUpload } from "@tabler/icons-react";
-import { SiCodereview } from "react-icons/si";
 import { FaPeopleArrows, FaCarSide, FaWpforms } from "react-icons/fa";
 import {
   AiFillCloseCircle,
@@ -17,6 +16,7 @@ import { MdOutlineWork } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
 import { ImProfile } from "react-icons/im";
 import { UseCase, useUseCaseStore } from "~/hooks/use-usecase-store";
+import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 type UseCaseCard = {
   title: string;
@@ -34,7 +34,7 @@ const hiringUseCase: UseCaseCard[] = [
   },
   {
     title: "Resume Review",
-    icon: SiCodereview,
+    icon: PiListMagnifyingGlassBold,
     color: "text-yellow-400",
     amount: 24
   },
