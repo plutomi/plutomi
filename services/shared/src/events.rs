@@ -17,3 +17,5 @@ impl FromStr for PlutomiEvents {
         }
     }
 }
+
+pub const EVENT_STREAM_NAME: &str = "EVENTS";

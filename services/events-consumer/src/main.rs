@@ -1,4 +1,5 @@
 use core::panic;
+use std::fmt::format;
 use std::os::unix::process;
 use std::str::FromStr;
 use std::sync::Arc;
@@ -9,13 +10,14 @@ use async_nats::{client, Client};
 use futures::stream::StreamExt;
 use serde_json::json;
 use shared::entities::Entities;
-use shared::events::PlutomiEvents;
+use shared::events::{PlutomiEvents, EVENT_STREAM_NAME};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger};
 use time::OffsetDateTime;
 use tokio::sync::mpsc;
 use tokio::task;
 use tracing::{info, warn};
+
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
@@ -32,15 +34,13 @@ async fn main() {
     // - [ ] Can generate ids with shared lib
     // Create a NATS client
     // Connect to the NATS server
-    // TODO: Add nats url
+    // TODO: Add nats url to secrets
     let nats_client = async_nats::connect("nats://localhost:4222").await.unwrap();
     let jetstream = async_nats::jetstream::new(nats_client);
 
-    let stream_name = String::from("EVENTS");
-
     let stream = jetstream
         .get_or_create_stream(jetstream::stream::Config {
-            name: stream_name,
+            name: (&EVENT_STREAM_NAME).to_string(),
             subjects: vec!["events.>".to_string()],
             storage: jetstream::stream::StorageType::File,
             ..Default::default()
@@ -54,7 +54,11 @@ async fn main() {
             logger.log(LogObject {
                 level: LogLevel::Error,
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                message: "Failed to create stream in events-consumer".to_string(),
+                // Update the message to include the stream name const
+                message: format!(
+                    "Failed to create stream '{:?}' in events-consumer startup",
+                    EVENT_STREAM_NAME
+                ),
                 data: None,
                 error: Some(error_json),
                 request: None,

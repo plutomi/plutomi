@@ -1,6 +1,6 @@
 use super::{parse_request::parse_request, parse_response::parse_response};
 
-use crate::{consts, structs::api_error::ApiError, AppState};
+use crate::{constants, structs::api_error::ApiError, AppState};
 use axum::{
     body::Body,
     extract::{Request, State},
@@ -21,7 +21,7 @@ const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
 const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
 // const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
-use consts::REQUEST_ID_HEADER;
+use constants::REQUEST_ID_HEADER;
 
 /**
  * Logs the incoming request and outgoing response. This should be the first AND last middleware every time.

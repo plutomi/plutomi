@@ -4,7 +4,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use consts::{DOCS_ROUTES, PORT};
+use constants::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
 use serde_json::json;
@@ -20,7 +20,7 @@ use tower::ServiceBuilder;
 use tracing::{info, warn};
 use utils::{log_req_res::log_req_res, timeout::timeout};
 
-mod consts;
+mod constants;
 mod controllers;
 mod structs;
 mod utils;
