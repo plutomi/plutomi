@@ -1,3 +1,4 @@
+pub mod constants;
 pub mod entities;
 pub mod events;
 pub mod generate_id;
