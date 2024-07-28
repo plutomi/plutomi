@@ -15,7 +15,7 @@ pub struct SetupConsumerOptions<'a> {
 /**
  * Given a stream, create a consumer with the given name and subjects
  */
-pub async fn setup_consumer<'a>(
+pub async fn create_consumer<'a>(
     SetupConsumerOptions {
         stream,
         name,
