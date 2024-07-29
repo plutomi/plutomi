@@ -19,7 +19,9 @@ use shared::entities::Entities;
 use shared::events::PlutomiEventTypes;
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger};
-use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
+use shared::nats::{
+    connect_to_nats, create_consumer, create_stream, CreateConsumerOptions, CreateStreamOptions,
+};
 use time::OffsetDateTime;
 use tokio::sync::{mpsc, Mutex};
 use tokio::task::{self, JoinHandle};
@@ -39,9 +41,6 @@ use tracing::{info, warn};
 // Errors are logged but don't cause the entire application to crash
 // If all consumers somehow exit (which shouldn't happen under normal circumstances), the application will log final statuses and exit
 
-mod create_consumer;
-use create_consumer::{create_consumer, SetupConsumerOptions};
-
 const EMAIL_CONSUMER_NAME: &str = "email-consumer";
 
 type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
@@ -51,8 +50,6 @@ async fn main() -> Result<(), String> {
     // Setup logging
     let logger = Logger::new();
 
-    // Create a NATS client
-    // Connect to the NATS server
     // TODO: Add nats url to secrets
 
     // Connect to the NATS server
@@ -61,16 +58,17 @@ async fn main() -> Result<(), String> {
     // Create the event stream if it doesn't exist
     let event_stream = create_stream(CreateStreamOptions {
         jetstream: &jetstream,
-        subjects: None
-    });
+        subjects: None,
+    })
+    .await?;
 
-    let email_consumer = create_consumer(SetupConsumerOptions {
-        stream: &stream,
+    // Create the consumer
+    let email_consumer = create_consumer(CreateConsumerOptions {
+        stream: &event_stream,
         name: EMAIL_CONSUMER_NAME,
         subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
     })
-    .await
-    .unwrap_or_else(|e| panic!("{}", e));
+    .await?;
 
     let consumer_statuses = Arc::new(Mutex::new(vec![]));
 

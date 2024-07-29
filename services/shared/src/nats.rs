@@ -1,10 +1,6 @@
 use async_nats::{
     connect,
-    jetstream::{
-        new,
-        stream::{Config, Stream},
-        Context,
-    },
+    jetstream::{self, consumer::Consumer, new, Context},
     Client,
 };
 use bytes::Bytes;
@@ -40,7 +36,7 @@ pub async fn create_stream<'a>(
         jetstream,
         subjects,
     }: CreateStreamOptions<'a>,
-) -> Result<Stream, String> {
+) -> Result<jetstream::stream::Stream, String> {
     // The default should be the event stream name
     // if you want to create another stream, for example "jobs.>", you can pass it in the subjects
     let subjects = match subjects {
@@ -49,7 +45,7 @@ pub async fn create_stream<'a>(
     };
 
     jetstream
-        .get_or_create_stream(Config {
+        .get_or_create_stream(jetstream::stream::Config {
             name: EVENT_STREAM_NAME.to_string(),
             subjects,
             ..Default::default()
@@ -86,4 +82,36 @@ pub async fn publish_event<'a>(
         })?;
 
     Ok(())
+}
+
+pub struct CreateConsumerOptions<'a> {
+    // The stream to create the consumer on
+    pub stream: &'a jetstream::stream::Stream,
+    // The name of the consumer
+    pub name: &'a str,
+    // The subjects to filter on
+    pub subjects: Vec<String>,
+}
+
+/**
+ * Given a stream, create a consumer with the given name and subjects
+ */
+pub async fn create_consumer<'a>(
+    CreateConsumerOptions {
+        stream,
+        name,
+        subjects,
+    }: CreateConsumerOptions<'a>,
+) -> Result<Consumer<jetstream::consumer::pull::Config>, String> {
+    stream
+        .get_or_create_consumer(
+            name,
+            jetstream::consumer::pull::Config {
+                durable_name: Some(name.to_string()),
+                filter_subjects: subjects,
+                ..Default::default()
+            },
+        )
+        .await
+        .map_err(|e| format!("An error occurred setting up the {} consumer: {}", name, e))
 }
