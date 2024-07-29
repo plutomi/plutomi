@@ -19,7 +19,7 @@ use shared::entities::Entities;
 use shared::events::PlutomiEventTypes;
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger};
-use shared::nats::connect_to_nats;
+use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
 use time::OffsetDateTime;
 use tokio::sync::{mpsc, Mutex};
 use tokio::task::{self, JoinHandle};
@@ -47,7 +47,7 @@ const EMAIL_CONSUMER_NAME: &str = "email-consumer";
 type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
 
 #[tokio::main(flavor = "multi_thread")]
-async fn main() {
+async fn main() -> Result<(), String> {
     // Setup logging
     let logger = Logger::new();
 
@@ -55,20 +55,15 @@ async fn main() {
     // Connect to the NATS server
     // TODO: Add nats url to secrets
 
-    let nats_client = connect_to_nats("nats://localhost:4222").await?;
+    // Connect to the NATS server
+    let jetstream_result = connect_to_nats("nats://localhost:4222").await?;
 
-    let jetstream = async_nats::jetstream::new(nats_client);
+    // Create the event stream if it doesn't exist
+    let event_stream = create_stream(CreateStreamOptions {
+        jetstream: &jetstream_result,
+        subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
+    })
 
-    let stream = jetstream
-        .get_or_create_stream(jetstream::stream::Config {
-            name: EVENT_STREAM_NAME.to_string(),
-            // Match all vents
-            subjects: vec!["events.>".to_string()],
-            ..Default::default()
-        })
-        .await
-        // TODO better logging
-        .unwrap_or_else(|e| panic!("Failed to create stream: {}", e));
 
     let email_consumer = create_consumer(SetupConsumerOptions {
         stream: &stream,
@@ -105,6 +100,8 @@ async fn main() {
 
     // TODO better logging
     println!("All consumers have stopped. Exiting.");
+
+    Ok(())
 }
 
 async fn run_consumer(

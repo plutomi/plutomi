@@ -12,37 +12,46 @@ use serde_json::json;
 
 use crate::{constants::EVENT_STREAM_NAME, events::PlutomiEventPayload};
 
-struct ConnectToNatsResult {
-    jetstream: Context,
-    event_stream: Stream,
-}
 /**
- * Connect to the NATS server
+ * Connect to the NATS server and returns a Jetstream context.
  */
-pub async fn connect_to_nats(nats_url: &str) -> Result<ConnectToNatsResult, String> {
+pub async fn connect_to_nats(nats_url: &str) -> Result<Context, String> {
     let client = connect(nats_url)
         .await
         .map_err(|e| format!("Failed to connect to NATS: {}", e))?;
 
     let jetstream = new(client);
 
-    let event_stream = jetstream
+    // let event_stream = create_stream(CreateStream {
+    //     jetstream: &jetstream,
+    //     subjects: vec!["events.>".to_string()],
+    // })
+    // .await?;
+
+    Ok(jetstream)
+}
+
+pub struct CreateStreamOptions<'a> {
+    pub jetstream: &'a Context,
+    pub subjects: Vec<String>,
+}
+pub async fn create_stream<'a>(
+    CreateStreamOptions {
+        jetstream,
+        subjects,
+    }: CreateStreamOptions<'a>,
+) -> Result<Stream, String> {
+    jetstream
         .get_or_create_stream(Config {
             name: EVENT_STREAM_NAME.to_string(),
-            // Match all vents
-            subjects: vec!["events.>".to_string()],
+            subjects,
             ..Default::default()
         })
         .await
-        .map_err(|e| format!("Failed to create stream: {}", e))?;
-
-    Ok(ConnectToNatsResult {
-        jetstream,
-        event_stream,
-    })
+        .map_err(|e| format!("Failed to create stream: {}", e))
 }
 
-struct PublishEventOptions<'a> {
+pub struct PublishEventOptions<'a> {
     jetstream: &'a Context,
     event: PlutomiEventPayload,
 }
