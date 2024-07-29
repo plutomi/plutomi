@@ -194,6 +194,7 @@ impl Logger {
             }
         });
 
+        info!("Logger initialized");
         return Arc::new(Logger { sender });
     }
 

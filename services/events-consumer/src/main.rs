@@ -16,9 +16,10 @@ use serde_json::json;
 
 use shared::constants::EVENT_STREAM_NAME;
 use shared::entities::Entities;
-use shared::events::PlutomiEvents;
+use shared::events::PlutomiEventTypes;
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger};
+use shared::nats::connect_to_nats;
 use time::OffsetDateTime;
 use tokio::sync::{mpsc, Mutex};
 use tokio::task::{self, JoinHandle};
@@ -43,28 +44,19 @@ use create_consumer::{create_consumer, SetupConsumerOptions};
 
 const EMAIL_CONSUMER_NAME: &str = "email-consumer";
 
-type MessageHandler = Arc<
-    dyn Fn(&Message) -> Pin<Box<dyn Future<Output = Result<(), String>> + Send + '_>> + Send + Sync,
->;
+type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
-    let email_consumer_subjects = vec![PlutomiEvents::TOTPRequested]
-        .into_iter()
-        .map(|event| event.as_string())
-        .collect();
-
     // Setup logging
     let logger = Logger::new();
-    info!("Logger initialized in events-consumer"); // TODO
 
     // Create a NATS client
     // Connect to the NATS server
     // TODO: Add nats url to secrets
-    let nats_client = async_nats::connect("nats://localhost:4222")
-        .await
-        // TODO: Better logging
-        .unwrap_or_else(|e| panic!("Failed to connect to NATS: {}", e));
+
+    let nats_client = connect_to_nats("nats://localhost:4222").await?;
+
     let jetstream = async_nats::jetstream::new(nats_client);
 
     let stream = jetstream
@@ -81,7 +73,7 @@ async fn main() {
     let email_consumer = create_consumer(SetupConsumerOptions {
         stream: &stream,
         name: EMAIL_CONSUMER_NAME,
-        subjects: email_consumer_subjects,
+        subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
     })
     .await
     .unwrap_or_else(|e| panic!("{}", e));
@@ -90,7 +82,7 @@ async fn main() {
 
     let email_handler = spawn_consumer(
         email_consumer,
-        Arc::new(send_email) as MessageHandler,
+        Arc::new(send_email),
         "Email".to_string(),
         Arc::clone(&consumer_statuses),
     );
@@ -175,7 +167,7 @@ fn spawn_consumer(
     })
 }
 
-fn send_email(message: &Message) -> Pin<Box<dyn Future<Output = Result<(), String>> + Send + '_>> {
+fn send_email(message: &Message) -> BoxFuture<'_, Result<(), ()>> {
     Box::pin(async move {
         // Send email
         println!("Sending email for event {}", message.subject);

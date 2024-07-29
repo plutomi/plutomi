@@ -1,32 +1,40 @@
 use std::str::FromStr;
 
-#[derive(Debug)]
-pub enum PlutomiEvents {
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum PlutomiEventTypes {
     TOTPRequested,
 }
 
-impl FromStr for PlutomiEvents {
+impl FromStr for PlutomiEventTypes {
     type Err = ();
     /**
-     * Given a string from a message, convert it to a PlutomiEvents enum
+     * Given a string from a message, convert it to a PlutomiEventTypes enum
      */
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "events.totp.requested" => Ok(PlutomiEvents::TOTPRequested),
+            "events.totp.requested" => Ok(PlutomiEventTypes::TOTPRequested),
             _ => Err(()),
         }
     }
 }
 
-impl PlutomiEvents {
+impl PlutomiEventTypes {
     /**
-     * Convert the PlutomiEvents enum to a string
+     * Convert the PlutomiEventTypes enum to a string
      */
     pub fn as_string(&self) -> String {
         let value = match self {
-            PlutomiEvents::TOTPRequested => "events.totp.requested",
+            PlutomiEventTypes::TOTPRequested => "events.totp.requested",
         };
 
         value.to_string()
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct PlutomiEventPayload {
+    pub event_type: PlutomiEventTypes,
+    pub payload: serde_json::Value,
 }
