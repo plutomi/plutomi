@@ -33,7 +33,7 @@ pub async fn connect_to_nats(nats_url: &str) -> Result<Context, String> {
 
 pub struct CreateStreamOptions<'a> {
     pub jetstream: &'a Context,
-    pub subjects: Vec<String>,
+    pub subjects: Option<Vec<String>>,
 }
 pub async fn create_stream<'a>(
     CreateStreamOptions {
@@ -41,6 +41,13 @@ pub async fn create_stream<'a>(
         subjects,
     }: CreateStreamOptions<'a>,
 ) -> Result<Stream, String> {
+    // The default should be the event stream name
+    // if you want to create another stream, for example "jobs.>", you can pass it in the subjects
+    let subjects = match subjects {
+        Some(subjects) => subjects,
+        None => vec![EVENT_STREAM_NAME.to_string()],
+    };
+
     jetstream
         .get_or_create_stream(Config {
             name: EVENT_STREAM_NAME.to_string(),

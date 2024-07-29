@@ -56,14 +56,13 @@ async fn main() -> Result<(), String> {
     // TODO: Add nats url to secrets
 
     // Connect to the NATS server
-    let jetstream_result = connect_to_nats("nats://localhost:4222").await?;
+    let jetstream = connect_to_nats("nats://localhost:4222").await?;
 
     // Create the event stream if it doesn't exist
     let event_stream = create_stream(CreateStreamOptions {
-        jetstream: &jetstream_result,
-        subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
-    })
-
+        jetstream: &jetstream,
+        subjects: None
+    });
 
     let email_consumer = create_consumer(SetupConsumerOptions {
         stream: &stream,
