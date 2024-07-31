@@ -48,6 +48,7 @@ pub async fn create_stream<'a>(
         .get_or_create_stream(jetstream::stream::Config {
             name: EVENT_STREAM_NAME.to_string(),
             subjects,
+            retention: jetstream::stream::RetentionPolicy::Interest,
             ..Default::default()
         })
         .await
