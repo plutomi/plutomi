@@ -1,31 +1,15 @@
-use core::panic;
-use std::fmt::format;
-use std::os::unix::process;
-use std::pin::Pin;
-use std::str::{from_utf8, FromStr};
-use std::sync::Arc;
-
-use async_nats::jetstream::consumer::{Config, Consumer, PullConsumer};
-use async_nats::jetstream::stream::Stream;
-use async_nats::jetstream::{self, Message};
-use async_nats::{client, Client};
-use futures::future::BoxFuture;
+use async_nats::jetstream::{self, consumer::Consumer, Message};
+use futures::future::{try_join_all, BoxFuture};
 use futures::stream::StreamExt;
-use futures::Future;
-use serde_json::json;
-
-use shared::constants::EVENT_STREAM_NAME;
-use shared::entities::Entities;
 use shared::events::PlutomiEventTypes;
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger};
-use shared::nats::{
-    connect_to_nats, create_consumer, create_stream, CreateConsumerOptions, CreateStreamOptions,
-};
+use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
+use std::str::from_utf8;
+use std::sync::Arc;
 use time::OffsetDateTime;
-use tokio::sync::{mpsc, Mutex};
-use tokio::task::{self, JoinHandle};
-use tracing::{info, warn};
+use tokio::sync::Mutex;
+use tokio::task::JoinHandle;
 
 // TODO: Acceptance criteria
 // - [ ] Can read .env parsed
@@ -42,6 +26,8 @@ use tracing::{info, warn};
 // If all consumers somehow exit (which shouldn't happen under normal circumstances), the application will log final statuses and exit
 
 const EMAIL_CONSUMER_NAME: &str = "email-consumer";
+
+// type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
 
 type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
 
@@ -62,41 +48,46 @@ async fn main() -> Result<(), String> {
     })
     .await?;
 
-    // Create the consumer
-    let email_consumer = create_consumer(CreateConsumerOptions {
-        stream: &event_stream,
-        name: EMAIL_CONSUMER_NAME,
-        subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
-    })
-    .await?;
+    // Define all consumers
+    let consumer_configs: Vec<ConsumerOptions> = vec![
+        // Email consumer
+        ConsumerOptions {
+            consumer_name: EMAIL_CONSUMER_NAME.to_string(),
+            consumer_subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
+            stream: &event_stream,
+            message_handler: Arc::new(send_email),
+        },
+    ];
 
-    let consumer_statuses = Arc::new(Mutex::new(vec![]));
+    // // Spawn consumers
+    // let consumer_handles = consumer_configs
+    //     .into_iter()
+    //     .map(spawn_consumer)
+    //     .collect::<Result<Vec<_>, _>>()?;
 
-    let email_handler = spawn_consumer(
-        email_consumer,
-        Arc::new(send_email),
-        "Email".to_string(),
-        Arc::clone(&consumer_statuses),
-    );
+    // // Wait for all consumers to complete (which they shouldn't under normal circumstances)
+    // Map to futures and collect results
+    let consumer_futures = consumer_configs
+        .into_iter()
+        .map(spawn_consumer)
+        .collect::<Vec<_>>();
+
+    // Use `future::try_join_all` to await all futures and collect their results
+    let consumer_handles = try_join_all(consumer_futures).await?;
 
     // Wait for all consumers to complete (which they shouldn't under normal circumstances)
-    let (email_result,) = tokio::join!(email_handler);
+    tokio::join!(consumer_handles).await?;
 
-    // Handle any errors
-    // Handle email handler errors
-    if let Err(e) = email_result {
-        eprintln!("An error occurred in the email handler: {:?}", e);
-    }
-
-    // Log final statuses
-    // TODO better logging
-    let statuses = consumer_statuses.lock().await;
-    for status in statuses.iter() {
-        println!("{}", status);
-    }
-
-    // TODO better logging
-    println!("All consumers have stopped. Exiting.");
+    // Should never run
+    logger.log(LogObject {
+        level: LogLevel::Info,
+        message: "All consumers have exited successfully".to_string(),
+        data: None,
+        error: None,
+        request: None,
+        response: None,
+        _time: get_current_time(OffsetDateTime::now_utc()),
+    });
 
     Ok(())
 }
@@ -132,36 +123,64 @@ async fn run_consumer(
     }
 }
 
-fn spawn_consumer(
-    consumer: Consumer<jetstream::consumer::pull::Config>,
+struct ConsumerOptions<'a> {
+    // A reference to the event stream to create the consumer on
+    stream: &'a jetstream::stream::Stream,
+    consumer_name: String,
+    // What events the consumer will listen to
+    consumer_subjects: Vec<String>,
     message_handler: MessageHandler,
-    name: String,
-    statuses: Arc<Mutex<Vec<String>>>,
-) -> JoinHandle<()> {
-    tokio::spawn(async move {
+}
+
+async fn spawn_consumer<'a>(
+    ConsumerOptions {
+        stream,
+        consumer_name,
+        consumer_subjects,
+        message_handler,
+    }: ConsumerOptions<'a>,
+) -> Result<JoinHandle<()>, String> {
+    let consumer = stream
+        .get_or_create_consumer(
+            &consumer_name,
+            jetstream::consumer::pull::Config {
+                durable_name: Some(consumer_name.clone()),
+                filter_subjects: consumer_subjects,
+                ..Default::default()
+            },
+        )
+        .await
+        .map_err(|e| {
+            format!(
+                "An error occurred setting up the {} consumer: {}",
+                &consumer_name, e
+            )
+        })?;
+
+    let consumer_handler = tokio::spawn(async move {
         loop {
             match run_consumer(consumer.clone(), message_handler.clone()).await {
                 Ok(()) => {
                     // TODO better logging
-                    // This shouldn't happen as run_consumer loops indefinitely
-                    let mut statuses = statuses.lock().await;
-                    statuses.push(format!("{} consumer exited successfully", name));
+                    // TODO Shouldn't happen
+                    info!("{} consumer exited successfully", &options.consumer_name);
                     break;
                 }
                 Err(e) => {
                     // TODO better logging
-                    let error_msg = format!("{} consumer error: {}. Restarting...", name, e);
+                    let error_msg =
+                        format!("{} consumer error: {}. Restarting...", &consumer_name, e);
                     eprintln!("{}", error_msg);
-                    let mut statuses = statuses.lock().await;
-                    statuses.push(error_msg);
                     tokio::time::sleep(std::time::Duration::from_secs(5)).await;
                 }
             }
         }
-    })
+    });
+
+    Ok(consumer_handler)
 }
 
-fn send_email(message: &Message) -> BoxFuture<'_, Result<(), ()>> {
+fn send_email(message: &Message) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         // Send email
         println!("Sending email for event {}", message.subject);

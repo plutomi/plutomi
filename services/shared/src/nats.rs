@@ -1,9 +1,7 @@
 use async_nats::{
     connect,
-    jetstream::{self, consumer::Consumer, new, Context},
-    Client,
+    jetstream::{self, new, Context},
 };
-use bytes::Bytes;
 use serde_json::json;
 
 use crate::{constants::EVENT_STREAM_NAME, events::PlutomiEventPayload};
@@ -17,12 +15,6 @@ pub async fn connect_to_nats(nats_url: &str) -> Result<Context, String> {
         .map_err(|e| format!("Failed to connect to NATS: {}", e))?;
 
     let jetstream = new(client);
-
-    // let event_stream = create_stream(CreateStream {
-    //     jetstream: &jetstream,
-    //     subjects: vec!["events.>".to_string()],
-    // })
-    // .await?;
 
     Ok(jetstream)
 }
@@ -83,36 +75,4 @@ pub async fn publish_event<'a>(
         })?;
 
     Ok(())
-}
-
-pub struct CreateConsumerOptions<'a> {
-    // The stream to create the consumer on
-    pub stream: &'a jetstream::stream::Stream,
-    // The name of the consumer
-    pub name: &'a str,
-    // The subjects to filter on
-    pub subjects: Vec<String>,
-}
-
-/**
- * Given a stream, create a consumer with the given name and subjects
- */
-pub async fn create_consumer<'a>(
-    CreateConsumerOptions {
-        stream,
-        name,
-        subjects,
-    }: CreateConsumerOptions<'a>,
-) -> Result<Consumer<jetstream::consumer::pull::Config>, String> {
-    stream
-        .get_or_create_consumer(
-            name,
-            jetstream::consumer::pull::Config {
-                durable_name: Some(name.to_string()),
-                filter_subjects: subjects,
-                ..Default::default()
-            },
-        )
-        .await
-        .map_err(|e| format!("An error occurred setting up the {} consumer: {}", name, e))
 }
