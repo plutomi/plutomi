@@ -3,12 +3,9 @@ use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use shared::events::PlutomiEventTypes;
-use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger};
 use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
-use std::str::from_utf8;
 use std::sync::Arc;
-use time::OffsetDateTime;
 use tokio::task::JoinHandle;
 
 // TODO: Acceptance criteria
@@ -62,21 +59,14 @@ async fn main() -> Result<(), String> {
     ];
 
     // Spawn all consumers concurrently
-    let consumer_handles = consumer_configs.into_iter().map(spawn_consumer);
+    let consumer_handles: Vec<_> = consumer_configs.into_iter().map(spawn_consumer).collect();
 
-    // Wait for all consumers to finish (which should never happen in normal operation)
-    futures::future::join_all(consumer_handles).await;
+    // Wait for the consumers to start and run indefinitely
+    let _ = futures::future::join_all(consumer_handles).await;
 
-    // Should never run
-    logger.log(LogObject {
-        level: LogLevel::Info,
-        message: "All consumers have exited successfully".to_string(),
-        data: None,
-        error: None,
-        request: None,
-        response: None,
-        _time: get_current_time(OffsetDateTime::now_utc()),
-    });
+    tokio::signal::ctrl_c()
+        .await
+        .expect("Failed to wait for ctrl_c signal");
 
     Ok(())
 }
@@ -85,33 +75,41 @@ async fn run_consumer(
     consumer: Consumer<jetstream::consumer::pull::Config>,
     message_handler: MessageHandler,
 ) -> Result<(), String> {
+    println!("Consumer started");
     loop {
-        let mut messages = consumer
-            .messages()
-            .await
-            .map_err(|e| format!("Failed to get messages: {}", e))?;
+        println!("Waiting for messages...");
+        let mut messages = match consumer.messages().await {
+            Ok(msgs) => msgs,
+            Err(e) => {
+                eprintln!("Failed to get messages: {}. Retrying in 1 second", e);
+                tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                continue;
+            }
+        };
 
-        while let Some(message) = messages.next().await {
-            let message = message.map_err(|e| format!("Failed to get message: {}", e))?;
-
-            println!(
-                "got message on subject {} with payload {:?}",
-                message.subject,
-                from_utf8(&message.payload).map_err(|e| format!("Invalid UTF-8: {}", e))?
-            );
-
-            message_handler(&message)
-                .await
-                .map_err(|e| format!("Message handler failed: {}", e))?;
-
-            message
-                .ack()
-                .await
-                .map_err(|e| format!("Failed to ack message: {}", e))?;
+        
+        println!("Entering message processing loop");
+        while let Some(message_result) = messages.next().await {
+            match message_result {
+                Ok(message) => {
+                    println!("Received a message on subject: {}", message.subject);
+                    if let Err(e) = message_handler(&message).await {
+                        eprintln!("Error processing message: {}", e);
+                        return Err(e);
+                    }
+                    if let Err(e) = message.ack().await {
+                        eprintln!("Failed to acknowledge message: {}", e);
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error receiving message: {}", e);
+                    return Err(e.to_string());
+                }
+            }
         }
+        println!("No more messages in batch. Looping back to fetch more.");
     }
 }
-
 struct ConsumerOptions {
     // A reference to the event stream to create the consumer on
     stream: Arc<jetstream::stream::Stream>,
@@ -133,13 +131,14 @@ async fn spawn_consumer(
 ) -> JoinHandle<()> {
     tokio::spawn(async move {
         loop {
-            // Attempt to create the consumer
+            println!("Setting up consumer: {}", &consumer_name);
             let consumer = match stream
                 .get_or_create_consumer(
                     &consumer_name,
                     jetstream::consumer::pull::Config {
                         durable_name: Some(consumer_name.clone()),
                         filter_subjects: consumer_subjects.clone(),
+                        name: Some(consumer_name.clone()),
                         ..Default::default()
                     },
                 )
@@ -147,14 +146,12 @@ async fn spawn_consumer(
             {
                 Ok(consumer) => consumer,
                 Err(e) => {
-                    eprintln!(
-                        "Error setting up the {} consumer: {}. Retrying in 5 seconds...",
-                        &consumer_name, e
-                    );
-                    tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
-                    continue;
+                    eprintln!("Failed to create consumer: {}. Retrying...", e);
+                    return;
                 }
             };
+
+            println!("Consumer {} created", &consumer_name);
 
             // Run the consumer
             if let Err(e) = run_consumer(consumer, message_handler.clone()).await {
@@ -164,13 +161,21 @@ async fn spawn_consumer(
                 );
                 tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
             }
+            // tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
         }
     })
 }
-
 fn send_email(message: &Message) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         // Send email
+
+        if (String::from_utf8(message.payload.to_vec()))
+            .unwrap()
+            .contains("crash")
+        {
+            return Err("Crash detected".to_string());
+        };
+        // println!("SEM evnet: {:?}", message);
         println!("Sending email for event {}", message.subject);
         Ok(())
     })

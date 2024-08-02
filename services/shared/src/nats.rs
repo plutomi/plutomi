@@ -1,6 +1,7 @@
 use async_nats::{
     connect,
     jetstream::{self, new, Context},
+    ConnectOptions,
 };
 use serde_json::json;
 
@@ -12,7 +13,11 @@ use crate::{constants::EVENT_STREAM_NAME, events::PlutomiEventPayload, get_env::
 pub async fn connect_to_nats() -> Result<Context, String> {
     let env = get_env();
 
-    let client = connect(&env.NATS_URL)
+    let nats_config: ConnectOptions =
+        ConnectOptions::new().user_and_password(env.NATS_USERNAME, env.NATS_PASSWORD);
+
+    let client = nats_config
+        .connect(&env.NATS_URL)
         .await
         .map_err(|e| format!("Failed to connect to NATS: {}", e))?;
 
