@@ -23,6 +23,8 @@ impl FromStr for PlutomiEventTypes {
 impl PlutomiEventTypes {
     /**
      * Convert the PlutomiEventTypes enum to a string
+     *
+     * PlutomiEventTypes::TOTPRequested => "events.totp.requested"
      */
     pub fn as_string(&self) -> String {
         let value = match self {

@@ -1,5 +1,6 @@
 use async_nats::jetstream::{self, consumer::Consumer, Message};
-use futures::future::{try_join_all, BoxFuture};
+use dotenv::dotenv;
+use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use shared::events::PlutomiEventTypes;
 use shared::get_current_time::get_current_time;
@@ -8,7 +9,6 @@ use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
 use std::str::from_utf8;
 use std::sync::Arc;
 use time::OffsetDateTime;
-use tokio::sync::Mutex;
 use tokio::task::JoinHandle;
 
 // TODO: Acceptance criteria
@@ -25,58 +25,47 @@ use tokio::task::JoinHandle;
 // Errors are logged but don't cause the entire application to crash
 // If all consumers somehow exit (which shouldn't happen under normal circumstances), the application will log final statuses and exit
 
-const EMAIL_CONSUMER_NAME: &str = "email-consumer";
-
-// type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
-
 type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
+    dotenv().ok();
     // Setup logging
     let logger = Logger::new();
 
     // TODO: Add nats url to secrets
 
     // Connect to the NATS server
-    let jetstream = connect_to_nats("nats://localhost:4222").await?;
+    let jetstream = connect_to_nats().await?;
 
     // Create the event stream if it doesn't exist
-    let event_stream = create_stream(CreateStreamOptions {
-        jetstream: &jetstream,
-        subjects: None,
-    })
-    .await?;
+    let event_stream = Arc::new(
+        create_stream(CreateStreamOptions {
+            jetstream: &jetstream,
+            subjects: None,
+        })
+        .await?,
+    );
 
     // Define all consumers
     let consumer_configs: Vec<ConsumerOptions> = vec![
         // Email consumer
         ConsumerOptions {
-            consumer_name: EMAIL_CONSUMER_NAME.to_string(),
-            consumer_subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
-            stream: &event_stream,
+            consumer_name: String::from("email-consumer"),
+            consumer_subjects: vec![PlutomiEventTypes::TOTPRequested]
+                .into_iter()
+                .map(|e| e.as_string())
+                .collect(),
+            stream: Arc::clone(&event_stream),
             message_handler: Arc::new(send_email),
         },
     ];
 
-    // // Spawn consumers
-    // let consumer_handles = consumer_configs
-    //     .into_iter()
-    //     .map(spawn_consumer)
-    //     .collect::<Result<Vec<_>, _>>()?;
+    // Spawn all consumers concurrently
+    let consumer_handles = consumer_configs.into_iter().map(spawn_consumer);
 
-    // // Wait for all consumers to complete (which they shouldn't under normal circumstances)
-    // Map to futures and collect results
-    let consumer_futures = consumer_configs
-        .into_iter()
-        .map(spawn_consumer)
-        .collect::<Vec<_>>();
-
-    // Use `future::try_join_all` to await all futures and collect their results
-    let consumer_handles = try_join_all(consumer_futures).await?;
-
-    // Wait for all consumers to complete (which they shouldn't under normal circumstances)
-    tokio::join!(consumer_handles).await?;
+    // Wait for all consumers to finish (which should never happen in normal operation)
+    futures::future::join_all(consumer_handles).await;
 
     // Should never run
     logger.log(LogObject {
@@ -123,61 +112,60 @@ async fn run_consumer(
     }
 }
 
-struct ConsumerOptions<'a> {
+struct ConsumerOptions {
     // A reference to the event stream to create the consumer on
-    stream: &'a jetstream::stream::Stream,
+    stream: Arc<jetstream::stream::Stream>,
     consumer_name: String,
     // What events the consumer will listen to
     consumer_subjects: Vec<String>,
     message_handler: MessageHandler,
 }
 
-async fn spawn_consumer<'a>(
+const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
+
+async fn spawn_consumer(
     ConsumerOptions {
         stream,
         consumer_name,
         consumer_subjects,
         message_handler,
-    }: ConsumerOptions<'a>,
-) -> Result<JoinHandle<()>, String> {
-    let consumer = stream
-        .get_or_create_consumer(
-            &consumer_name,
-            jetstream::consumer::pull::Config {
-                durable_name: Some(consumer_name.clone()),
-                filter_subjects: consumer_subjects,
-                ..Default::default()
-            },
-        )
-        .await
-        .map_err(|e| {
-            format!(
-                "An error occurred setting up the {} consumer: {}",
-                &consumer_name, e
-            )
-        })?;
-
-    let consumer_handler = tokio::spawn(async move {
+    }: ConsumerOptions,
+) -> JoinHandle<()> {
+    tokio::spawn(async move {
         loop {
-            match run_consumer(consumer.clone(), message_handler.clone()).await {
-                Ok(()) => {
-                    // TODO better logging
-                    // TODO Shouldn't happen
-                    info!("{} consumer exited successfully", &options.consumer_name);
-                    break;
-                }
+            // Attempt to create the consumer
+            let consumer = match stream
+                .get_or_create_consumer(
+                    &consumer_name,
+                    jetstream::consumer::pull::Config {
+                        durable_name: Some(consumer_name.clone()),
+                        filter_subjects: consumer_subjects.clone(),
+                        ..Default::default()
+                    },
+                )
+                .await
+            {
+                Ok(consumer) => consumer,
                 Err(e) => {
-                    // TODO better logging
-                    let error_msg =
-                        format!("{} consumer error: {}. Restarting...", &consumer_name, e);
-                    eprintln!("{}", error_msg);
-                    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+                    eprintln!(
+                        "Error setting up the {} consumer: {}. Retrying in 5 seconds...",
+                        &consumer_name, e
+                    );
+                    tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
+                    continue;
                 }
+            };
+
+            // Run the consumer
+            if let Err(e) = run_consumer(consumer, message_handler.clone()).await {
+                eprintln!(
+                    "{} consumer error: {}. Restarting in 5 seconds...",
+                    &consumer_name, e
+                );
+                tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
             }
         }
-    });
-
-    Ok(consumer_handler)
+    })
 }
 
 fn send_email(message: &Message) -> BoxFuture<'_, Result<(), String>> {

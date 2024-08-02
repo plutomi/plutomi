@@ -17,7 +17,7 @@ use shared::{
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
-use tracing::{info, warn};
+use tracing::info;
 use utils::{log_req_res::log_req_res, timeout::timeout};
 
 mod constants;

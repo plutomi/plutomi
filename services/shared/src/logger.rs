@@ -194,7 +194,6 @@ impl Logger {
             }
         });
 
-        info!("Logger initialized");
         return Arc::new(Logger { sender });
     }
 
@@ -217,3 +216,17 @@ async fn sleep_until(deadline: Instant) {
         sleep(deadline - now).await;
     }
 }
+
+// impl Default for LogObject {
+//     fn default() -> LogObject {
+//         LogObject {
+//             data: None,
+//             error: None,
+//             level: LogLevel::Info,
+//             message: "".to_string(),
+//             request: None,
+//             response: None,
+//             _time: "".to_string(),
+//         }
+//     }
+// }
