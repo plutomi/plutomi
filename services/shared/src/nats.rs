@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use async_nats::{
     connect,
     jetstream::{self, new, Context},
@@ -6,6 +8,8 @@ use async_nats::{
 use serde_json::json;
 
 use crate::{constants::EVENT_STREAM_NAME, events::PlutomiEventPayload, get_env::get_env};
+
+const MESSAGE_RETENTION_DAYS: u64 = 7;
 
 /**
  * Connect to the NATS server and returns a Jetstream context.
@@ -40,14 +44,20 @@ pub async fn create_stream<'a>(
     // if you want to create another stream, for example "jobs.>", you can pass it in the subjects
     let subjects = match subjects {
         Some(subjects) => subjects,
-        None => vec![EVENT_STREAM_NAME.to_string()],
+        // Catch all for events.anything.after.multiple.subjects
+        // https://docs.nats.io/nats-concepts/subjects#matching-multiple-tokens
+        None => vec![format!("{}.>", EVENT_STREAM_NAME).to_string()],
     };
 
     jetstream
         .get_or_create_stream(jetstream::stream::Config {
             name: EVENT_STREAM_NAME.to_string(),
             subjects,
-            retention: jetstream::stream::RetentionPolicy::Interest,
+            retention: jetstream::stream::RetentionPolicy::Limits,
+            max_messages: 1_000_000,
+            max_bytes: 5_000_000_000, // 5GB
+            max_age: Duration::from_secs(60 * 60 * 24 * MESSAGE_RETENTION_DAYS),
+            discard: jetstream::stream::DiscardPolicy::Old,
             ..Default::default()
         })
         .await

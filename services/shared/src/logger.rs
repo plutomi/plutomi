@@ -107,12 +107,16 @@ async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client, axiom_datase
     }
 }
 
+pub struct LoggerContext {
+    pub caller: &'static str,
+}
+
 impl Logger {
     /**
      * Create a new logger instance.
      * This also spawns a long lived thread that will handle logging.
      */
-    pub fn new() -> Arc<Logger> {
+    pub fn new(context: LoggerContext) -> Arc<Logger> {
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
             // .pretty()
@@ -194,7 +198,18 @@ impl Logger {
             }
         });
 
-        return Arc::new(Logger { sender });
+        let logger = Arc::new(Logger { sender });
+
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("Logger initialized in {}", context.caller),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            data: None,
+            error: None,
+            request: None,
+            response: None,
+        });
+        return logger;
     }
 
     /**

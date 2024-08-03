@@ -5,7 +5,7 @@
 
 services:
   nats:
-    image: nats:2.9.25
+    image: nats:2.10.18
     container_name: nats
     ports:
       - "4222:4222" # Client connections

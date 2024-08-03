@@ -11,7 +11,7 @@ use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     get_env::get_env,
-    logger::{LogLevel, LogObject, Logger},
+    logger::{LogLevel, LogObject, Logger, LoggerContext},
     mongodb::connect_to_mongodb,
 };
 use structs::app_state::AppState;
@@ -32,14 +32,10 @@ async fn main() {
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
-    info!("Environment variables loaded");
-    // Setup logging
-    let logger = Logger::new();
-    info!("Logger initialized in API");
+    let logger = Logger::new(LoggerContext { caller: "api" });
 
     // Connect to database - TODO update res/option
     let mongodb = connect_to_mongodb(&logger).await;
-    info!("Connected to MongoDB");
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);

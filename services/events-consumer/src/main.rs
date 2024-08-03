@@ -1,17 +1,21 @@
+use async_nats::jetstream::consumer;
 use async_nats::jetstream::{self, consumer::Consumer, Message};
 use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
+use serde_json::json;
 use shared::events::PlutomiEventTypes;
-use shared::logger::{LogLevel, LogObject, Logger};
+use shared::get_current_time::get_current_time;
+use shared::logger::{self, LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
 use std::sync::Arc;
+use std::vec;
+use time::OffsetDateTime;
 use tokio::task::JoinHandle;
 
 // TODO: Acceptance criteria
 // - [ ] Can read .env parsed
 // - [ ] Can connect to MongoDB
-// - [ ] Can log messages
 // - [ ] Can consume events / consumer groups
 // - [ ] Can process/ publish  events
 // - [ ] Can generate ids with shared lib
@@ -27,8 +31,10 @@ type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     dotenv().ok();
-    // Setup logging
-    let logger = Logger::new();
+
+    let logger = Logger::new(LoggerContext {
+        caller: "events-consumer",
+    });
 
     // TODO: Add nats url to secrets
 
@@ -44,24 +50,21 @@ async fn main() -> Result<(), String> {
         .await?,
     );
 
-    // Define all consumers
     let consumer_configs: Vec<ConsumerOptions> = vec![
         // Email consumer
         ConsumerOptions {
             consumer_name: String::from("email-consumer"),
-            consumer_subjects: vec![PlutomiEventTypes::TOTPRequested]
-                .into_iter()
-                .map(|e| e.as_string())
-                .collect(),
+            filter_subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
             stream: Arc::clone(&event_stream),
             message_handler: Arc::new(send_email),
+            logger: Arc::clone(&logger),
         },
     ];
 
-    // Spawn all consumers concurrently
+    // Spawn all consumers in their own threads
     let consumer_handles: Vec<_> = consumer_configs.into_iter().map(spawn_consumer).collect();
 
-    // Wait for the consumers to start and run indefinitely
+    // Run indefinitely
     let _ = futures::future::join_all(consumer_handles).await;
 
     tokio::signal::ctrl_c()
@@ -72,10 +75,42 @@ async fn main() -> Result<(), String> {
 }
 
 async fn run_consumer(
-    consumer: Consumer<jetstream::consumer::pull::Config>,
+    mut consumer: Consumer<jetstream::consumer::pull::Config>,
     message_handler: MessageHandler,
+    logger: Arc<Logger>,
 ) -> Result<(), String> {
-    println!("Consumer started");
+    // Fetch the info once on start
+    let consumer_info = consumer.info().await.map_err(|e| {
+        let msg = format!("Error getting consumer info: {}", e);
+        logger.log(LogObject {
+            level: LogLevel::Error,
+            message: msg.clone(),
+            error: Some(json!({ "error": e.to_string() })),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: None,
+        });
+        msg
+    })?;
+
+    let consumer_name = consumer_info
+        .config
+        .name
+        .as_deref()
+        .unwrap_or("unknown-consumer-name")
+        .to_string();
+
+    logger.log(LogObject {
+        level: LogLevel::Info,
+        message: format!("{} started", consumer_name),
+        error: None,
+        _time: get_current_time(OffsetDateTime::now_utc()),
+        request: None,
+        response: None,
+        data: None,
+    });
+
     loop {
         println!("Waiting for messages...");
         let mut messages = match consumer.messages().await {
@@ -87,7 +122,6 @@ async fn run_consumer(
             }
         };
 
-        
         println!("Entering message processing loop");
         while let Some(message_result) = messages.next().await {
             match message_result {
@@ -115,8 +149,9 @@ struct ConsumerOptions {
     stream: Arc<jetstream::stream::Stream>,
     consumer_name: String,
     // What events the consumer will listen to
-    consumer_subjects: Vec<String>,
+    filter_subjects: Vec<String>,
     message_handler: MessageHandler,
+    logger: Arc<Logger>,
 }
 
 const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
@@ -125,20 +160,20 @@ async fn spawn_consumer(
     ConsumerOptions {
         stream,
         consumer_name,
-        consumer_subjects,
+        filter_subjects,
         message_handler,
+        logger,
     }: ConsumerOptions,
 ) -> JoinHandle<()> {
     tokio::spawn(async move {
         loop {
-            println!("Setting up consumer: {}", &consumer_name);
             let consumer = match stream
                 .get_or_create_consumer(
                     &consumer_name,
                     jetstream::consumer::pull::Config {
                         durable_name: Some(consumer_name.clone()),
-                        filter_subjects: consumer_subjects.clone(),
                         name: Some(consumer_name.clone()),
+                        filter_subjects: filter_subjects.clone(),
                         ..Default::default()
                     },
                 )
@@ -146,22 +181,34 @@ async fn spawn_consumer(
             {
                 Ok(consumer) => consumer,
                 Err(e) => {
-                    eprintln!("Failed to create consumer: {}. Retrying...", e);
+                    logger.log(LogObject {
+                        level: LogLevel::Error,
+                        message: format!("Error creating consumer: {}", &consumer_name),
+                        error: Some(json!({ "error": e.to_string() })),
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        request: None,
+                        response: None,
+                        data: None,
+                    });
                     return;
                 }
             };
-
-            println!("Consumer {} created", &consumer_name);
-
             // Run the consumer
             if let Err(e) = run_consumer(consumer, message_handler.clone()).await {
-                eprintln!(
-                    "{} consumer error: {}. Restarting in 5 seconds...",
-                    &consumer_name, e
-                );
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: format!(
+                        "Consumer error - restarting in {:?} seconds",
+                        RESTART_ON_ERROR_DURATION
+                    ),
+                    error: Some(json!({ "error": e.to_string() })),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                });
                 tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
             }
-            // tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
         }
     })
 }
