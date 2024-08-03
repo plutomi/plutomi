@@ -146,13 +146,73 @@ async fn run_consumer(
         while let Some(message_result) = messages.next().await {
             match message_result {
                 Ok(message) => {
-                    println!("Received a message on subject: {}", message.subject);
+                    logger.log(LogObject {
+                        level: LogLevel::Debug,
+                        message: format!(
+                            "Processing message {} in {} ",
+                            &message.subject, &consumer_name
+                        ),
+                        error: None,
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        request: None,
+                        response: None,
+                        data: None,
+                    });
                     if let Err(e) = message_handler(&message).await {
-                        eprintln!("Error processing message: {}", e);
+                        logger.log(LogObject {
+                            level: LogLevel::Error,
+                            message: format!(
+                                "Error processing message {} in {}",
+                                &message.subject, &consumer_name
+                            ),
+                            error: Some(json!({ "error": e })),
+                            _time: get_current_time(OffsetDateTime::now_utc()),
+                            request: None,
+                            response: None,
+                            data: None,
+                        });
                         return Err(e);
+                    } else {
+                        logger.log(LogObject {
+                            level: LogLevel::Debug,
+                            message: format!(
+                                "Message {} processed in {}",
+                                &message.subject, &consumer_name
+                            ),
+                            error: None,
+                            _time: get_current_time(OffsetDateTime::now_utc()),
+                            request: None,
+                            response: None,
+                            data: None,
+                        });
                     }
+
                     if let Err(e) = message.ack().await {
-                        eprintln!("Failed to acknowledge message: {}", e);
+                        logger.log(LogObject {
+                            level: LogLevel::Error,
+                            message: format!(
+                                "Error acknowledging message {} in {}",
+                                &message.subject, &consumer_name
+                            ),
+                            error: Some(json!({ "error": e.to_string() })),
+                            _time: get_current_time(OffsetDateTime::now_utc()),
+                            request: None,
+                            response: None,
+                            data: None,
+                        }); // TODO return error?
+                    } else {
+                        logger.log(LogObject {
+                            level: LogLevel::Debug,
+                            message: format!(
+                                "Message {} acknowledged in {}",
+                                &message.subject, &consumer_name
+                            ),
+                            error: None,
+                            _time: get_current_time(OffsetDateTime::now_utc()),
+                            request: None,
+                            response: None,
+                            data: None,
+                        });
                     }
                 }
                 Err(e) => {
