@@ -1,4 +1,3 @@
-use async_nats::jetstream::consumer;
 use async_nats::jetstream::{self, consumer::Consumer, Message};
 use dotenv::dotenv;
 use futures::future::BoxFuture;
@@ -6,9 +5,10 @@ use futures::stream::StreamExt;
 use serde_json::json;
 use shared::events::PlutomiEventTypes;
 use shared::get_current_time::get_current_time;
-use shared::logger::{self, LogLevel, LogObject, Logger, LoggerContext};
+use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
 use std::sync::Arc;
+use std::time::Duration;
 use std::vec;
 use time::OffsetDateTime;
 use tokio::task::JoinHandle;
@@ -74,36 +74,47 @@ async fn main() -> Result<(), String> {
     Ok(())
 }
 
-async fn run_consumer(
+struct GetConsumerInfoResult {
+    consumer_name: String,
+    consumer: Consumer<jetstream::consumer::pull::Config>,
+}
+
+// Get the consumer name from the consumer when calling run_consumer
+async fn get_consumer_info(
     mut consumer: Consumer<jetstream::consumer::pull::Config>,
+) -> Result<GetConsumerInfoResult, String> {
+    let info = consumer
+        .info()
+        .await
+        .map_err(|e| format!("Error getting consumer info: {}", e))?;
+
+    let consumer_name = info
+        .config
+        .name
+        .as_deref()
+        .unwrap_or_else(|| "unknown-consumer-name")
+        .to_string();
+
+    Ok(GetConsumerInfoResult {
+        consumer_name,
+        consumer,
+    })
+}
+
+async fn run_consumer(
+    consumer: Consumer<jetstream::consumer::pull::Config>,
     message_handler: MessageHandler,
     logger: Arc<Logger>,
 ) -> Result<(), String> {
     // Fetch the info once on start
-    let consumer_info = consumer.info().await.map_err(|e| {
-        let msg = format!("Error getting consumer info: {}", e);
-        logger.log(LogObject {
-            level: LogLevel::Error,
-            message: msg.clone(),
-            error: Some(json!({ "error": e.to_string() })),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            request: None,
-            response: None,
-            data: None,
-        });
-        msg
-    })?;
-
-    let consumer_name = consumer_info
-        .config
-        .name
-        .as_deref()
-        .unwrap_or("unknown-consumer-name")
-        .to_string();
+    let GetConsumerInfoResult {
+        consumer_name,
+        consumer,
+    } = get_consumer_info(consumer).await?;
 
     logger.log(LogObject {
         level: LogLevel::Info,
-        message: format!("{} started", consumer_name),
+        message: format!("{} started", &consumer_name),
         error: None,
         _time: get_current_time(OffsetDateTime::now_utc()),
         request: None,
@@ -112,17 +123,26 @@ async fn run_consumer(
     });
 
     loop {
-        println!("Waiting for messages...");
         let mut messages = match consumer.messages().await {
             Ok(msgs) => msgs,
             Err(e) => {
-                eprintln!("Failed to get messages: {}. Retrying in 1 second", e);
-                tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: format!(
+                        "Failed to get message stream in {} - restarting in {:?}",
+                        &consumer_name, FETCH_EVENT_STREAM_RESTART_DURATION
+                    ),
+                    error: Some(json!({ "error": e.to_string() })),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                });
+                tokio::time::sleep(FETCH_EVENT_STREAM_RESTART_DURATION).await;
                 continue;
             }
         };
 
-        println!("Entering message processing loop");
         while let Some(message_result) = messages.next().await {
             match message_result {
                 Ok(message) => {
@@ -141,7 +161,6 @@ async fn run_consumer(
                 }
             }
         }
-        println!("No more messages in batch. Looping back to fetch more.");
     }
 }
 struct ConsumerOptions {
@@ -155,6 +174,7 @@ struct ConsumerOptions {
 }
 
 const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
+const FETCH_EVENT_STREAM_RESTART_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
 
 async fn spawn_consumer(
     ConsumerOptions {
@@ -194,12 +214,12 @@ async fn spawn_consumer(
                 }
             };
             // Run the consumer
-            if let Err(e) = run_consumer(consumer, message_handler.clone()).await {
+            if let Err(e) = run_consumer(consumer, message_handler.clone(), logger.clone()).await {
                 logger.log(LogObject {
                     level: LogLevel::Error,
                     message: format!(
-                        "Consumer error - restarting in {:?} seconds",
-                        RESTART_ON_ERROR_DURATION
+                        "{} error - restarting in {:?} seconds",
+                        consumer_name, RESTART_ON_ERROR_DURATION
                     ),
                     error: Some(json!({ "error": e.to_string() })),
                     _time: get_current_time(OffsetDateTime::now_utc()),
@@ -212,6 +232,7 @@ async fn spawn_consumer(
         }
     })
 }
+
 fn send_email(message: &Message) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         // Send email
