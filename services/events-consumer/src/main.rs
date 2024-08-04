@@ -126,20 +126,21 @@ async fn run_consumer(
         let mut messages = match consumer.messages().await {
             Ok(msgs) => msgs,
             Err(e) => {
+                // Log and restart the consumer
+                let error = e.to_string();
                 logger.log(LogObject {
                     level: LogLevel::Error,
                     message: format!(
-                        "Failed to get message stream in {} - restarting in {:?}",
-                        &consumer_name, FETCH_EVENT_STREAM_RESTART_DURATION
+                        "Failed to get message stream in {} - restarting!",
+                        &consumer_name
                     ),
-                    error: Some(json!({ "error": e.to_string() })),
+                    error: Some(json!({ "error": error })),
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     request: None,
                     response: None,
                     data: None,
                 });
-                tokio::time::sleep(FETCH_EVENT_STREAM_RESTART_DURATION).await;
-                continue;
+                return Err(error);
             }
         };
 
@@ -159,6 +160,8 @@ async fn run_consumer(
                         data: None,
                     });
                     if let Err(e) = message_handler(&message).await {
+                        // Log the error and continue to the next message
+                        // ack_wait will send it to us again
                         logger.log(LogObject {
                             level: LogLevel::Error,
                             message: format!(
@@ -171,7 +174,7 @@ async fn run_consumer(
                             response: None,
                             data: None,
                         });
-                        return Err(e);
+                        continue;
                     } else {
                         logger.log(LogObject {
                             level: LogLevel::Debug,
@@ -187,19 +190,24 @@ async fn run_consumer(
                         });
                     }
 
+                    // Acknowledge the message if it was processed successfully
                     if let Err(e) = message.ack().await {
+                        let error: String = e.to_string();
+                        // Log the acknowledgment error and continue to the next message
+                        // ack_wait will send it to us again
                         logger.log(LogObject {
                             level: LogLevel::Error,
                             message: format!(
                                 "Error acknowledging message {} in {}",
                                 &message.subject, &consumer_name
                             ),
-                            error: Some(json!({ "error": e.to_string() })),
+                            error: Some(json!({ "error": error })),
                             _time: get_current_time(OffsetDateTime::now_utc()),
                             request: None,
                             response: None,
                             data: None,
-                        }); // TODO return error?
+                        });
+                        continue;
                     } else {
                         logger.log(LogObject {
                             level: LogLevel::Debug,
@@ -215,9 +223,22 @@ async fn run_consumer(
                         });
                     }
                 }
-                Err(e) => {
-                    eprintln!("Error receiving message: {}", e);
-                    return Err(e.to_string());
+                Err(error) => {
+                    // Log error and restart the consumer if we had issues receiving the message
+                    let error: String = error.to_string();
+                    logger.log(LogObject {
+                        level: LogLevel::Error,
+                        message: format!(
+                            "Error receiving message in {} - restarting",
+                            &consumer_name
+                        ),
+                        error: Some(json!({ "error": error })),
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        request: None,
+                        response: None,
+                        data: None,
+                    });
+                    return Err(error);
                 }
             }
         }
@@ -234,7 +255,6 @@ struct ConsumerOptions {
 }
 
 const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
-const FETCH_EVENT_STREAM_RESTART_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
 
 async fn spawn_consumer(
     ConsumerOptions {
@@ -254,6 +274,7 @@ async fn spawn_consumer(
                         durable_name: Some(consumer_name.clone()),
                         name: Some(consumer_name.clone()),
                         filter_subjects: filter_subjects.clone(),
+                        ack_wait: Duration::from_secs(5),
                         ..Default::default()
                     },
                 )

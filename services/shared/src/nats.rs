@@ -58,6 +58,7 @@ pub async fn create_stream<'a>(
             max_bytes: 5_000_000_000, // 5GB
             max_age: Duration::from_secs(60 * 60 * 24 * MESSAGE_RETENTION_DAYS),
             discard: jetstream::stream::DiscardPolicy::Old,
+            
             ..Default::default()
         })
         .await
