@@ -51,7 +51,7 @@ pub struct LogObject {
      * Axiom uses `_time` so we can use it as well
      */
     pub _time: String,
-    pub message: String,
+    pub message: String, // TODO make this a reference?
     /**
      * Used for adding additional data to the log object
      */

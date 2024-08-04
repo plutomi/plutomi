@@ -3,10 +3,13 @@ use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use serde_json::json;
-use shared::events::PlutomiEventTypes;
+use shared::events::{PlutomiEventPayload, PlutomiEventTypes};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
-use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
+use shared::nats::{
+    connect_to_nats, create_stream, publish_event, ConnectToNatsOptions, CreateStreamOptions,
+    PublishEventOptions,
+};
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
@@ -45,8 +48,10 @@ async fn main() -> Result<(), String> {
 
     // TODO: Add nats url to secrets
 
-    // Connect to the NATS server
-    let jetstream = connect_to_nats().await?;
+    let jetstream = connect_to_nats(ConnectToNatsOptions {
+        logger: Arc::clone(&logger),
+    })
+    .await?;
 
     let stream_configs: Vec<CreateStreamOptions> = vec![
         // Main events stream for all messages
@@ -407,7 +412,6 @@ fn send_email(
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         // Send email
-
         if (String::from_utf8(message.payload.to_vec()))
             .unwrap()
             .contains("crash")
@@ -440,6 +444,19 @@ fn handle_meta(
             response: None,
             data: None,
         });
+
+        // TODO: Fetch message using message_id
+        
+        // 
+        publish_event(PublishEventOptions {
+            jetstream: message, // TODO,,
+            stream_name: "events-retry".to_string(),
+            event: PlutomiEventPayload {
+                event_type: PlutomiEventTypes::TOTPRequested,
+                payload: json!({ "message": "retry" }),
+            },
+        });
+
         Ok(())
     })
 }

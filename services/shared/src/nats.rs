@@ -4,26 +4,46 @@ use async_nats::{
 };
 use serde_json::json;
 use std::{sync::Arc, time::Duration};
-use tracing::Instrument;
+use time::OffsetDateTime;
 
-use crate::{constants::EVENT_STREAM_NAME, events::PlutomiEventPayload, get_env::get_env};
+use crate::{
+    events::PlutomiEventPayload,
+    get_current_time::get_current_time,
+    get_env::get_env,
+    logger::{LogObject, Logger},
+};
 
 const MESSAGE_RETENTION_DAYS: u64 = 7;
 
+pub struct ConnectToNatsOptions {
+    pub logger: Arc<Logger>,
+}
 /**
  * Connect to the NATS server and returns a Jetstream context.
  */
-pub async fn connect_to_nats() -> Result<Context, String> {
+pub async fn connect_to_nats(
+    ConnectToNatsOptions { logger }: ConnectToNatsOptions,
+) -> Result<Context, String> {
     let env = get_env();
 
     let nats_config: ConnectOptions = ConnectOptions::new()
         .user_and_password(env.NATS_USERNAME, env.NATS_PASSWORD)
         .no_echo();
 
-    let client = nats_config
-        .connect(&env.NATS_URL)
-        .await
-        .map_err(|e| format!("Failed to connect to NATS: {}", e))?;
+    let client = nats_config.connect(&env.NATS_URL).await.map_err(|e| {
+        let msg = String::from("Failed to connect to NATS");
+        logger.log(LogObject {
+            level: crate::logger::LogLevel::Error,
+            message: msg.clone(),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            data: None,
+            error: Some(json!({ "error": e.to_string() })),
+            request: None,
+            response: None,
+        });
+        // Return it to upstream callers
+        msg
+    })?;
 
     let jetstream = new(client);
 
@@ -71,8 +91,9 @@ pub async fn create_stream<'a>(
 }
 
 pub struct PublishEventOptions<'a> {
-    jetstream: &'a Context,
-    event: PlutomiEventPayload,
+    pub jetstream: &'a Context,
+    pub stream_name: String,
+    pub event: PlutomiEventPayload,
 }
 
 /**
@@ -80,13 +101,17 @@ pub struct PublishEventOptions<'a> {
  * https://natsbyexample.com/examples/messaging/json/rust
  */
 pub async fn publish_event<'a>(
-    PublishEventOptions { jetstream, event }: PublishEventOptions<'a>,
+    PublishEventOptions {
+        jetstream,
+        event,
+        stream_name,
+    }: PublishEventOptions<'a>,
 ) -> Result<(), String> {
     let bytes = serde_json::to_vec(&json!(event))
         .map_err(|e| format!("Failed to serialize event: {}", e))?;
 
     jetstream
-        .publish(EVENT_STREAM_NAME, bytes.into())
+        .publish(stream_name, bytes.into())
         .await
         .map_err(|e| format!("Failed to publish event: {}", e))?
         .await
