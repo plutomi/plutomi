@@ -7,6 +7,7 @@ use shared::events::PlutomiEventTypes;
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{connect_to_nats, create_stream, CreateStreamOptions};
+use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use std::vec;
@@ -41,23 +42,79 @@ async fn main() -> Result<(), String> {
     // Connect to the NATS server
     let jetstream = connect_to_nats().await?;
 
-    // Create the event stream if it doesn't exist
-    let event_stream = Arc::new(
-        create_stream(CreateStreamOptions {
+    let stream_configs: Vec<CreateStreamOptions> = vec![
+        // Main events stream for all messages
+        // events.totp.requested or events.email.sent
+        CreateStreamOptions {
             jetstream: &jetstream,
-            subjects: None,
-        })
-        .await?,
-    );
+            stream_name: "events".to_string(),
+            subjects: vec!["events.>".to_string()],
+        },
+        // The format here is consumer based: events-retry.consumer-name
+        // That way we only retry messages that failed for a specific consumer
+        // ie: SES is down, don't resend the message to ClickHouse or MeiliSearch consumers
+        // The logic here doesn't change, but the retry backoff does
+        CreateStreamOptions {
+            jetstream: &jetstream,
+            stream_name: "events-retry".to_string(),
+            subjects: vec!["events-retry.>".to_string()],
+        },
+        // DLQ for messages that have failed too many times and require manual intervention
+        // Same formats as the retry stream: events-dlq.consumer-name
+        CreateStreamOptions {
+            jetstream: &jetstream,
+            stream_name: "events-dlq".to_string(),
+            subjects: vec!["events-dlq.>".to_string()],
+        },
+    ];
+
+    // Create all streams
+    let streams: HashMap<String, Arc<jetstream::stream::Stream>> =
+        futures::future::try_join_all(stream_configs.into_iter().map(create_stream))
+            .await?
+            .into_iter()
+            .collect();
 
     let consumer_configs: Vec<ConsumerOptions> = vec![
-        // Email consumer
+        ConsumerOptions {
+            // This consumer listens to all events that have reached their max delivery attempts
+            // and forwards them to the proper retry/dlq stream.
+            // https://docs.nats.io/using-nats/developer/develop_jetstream/consumers#dead-letter-queues-type-functionality
+            // We do not have separate per stream as I figured it might be overkill
+            consumer_name: String::from("meta-consumer"),
+            filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
+            stream: Arc::clone(&streams["events"]),
+            logger: Arc::clone(&logger),
+            message_handler: Arc::new(handle_meta),
+            max_delivery_attempts: 10000, // Kind of crucial to handle retries
+            redeliver_after: Duration::from_secs(5),
+        },
         ConsumerOptions {
             consumer_name: String::from("email-consumer"),
             filter_subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
-            stream: Arc::clone(&event_stream),
-            message_handler: Arc::new(send_email),
+            stream: Arc::clone(&streams["events"]),
             logger: Arc::clone(&logger),
+            message_handler: Arc::new(send_email),
+            max_delivery_attempts: 3,
+            redeliver_after: Duration::from_secs(5),
+        },
+        ConsumerOptions {
+            consumer_name: String::from("retry-email-consumer"),
+            filter_subjects: vec![String::from("events-retry.email-consumer")],
+            stream: Arc::clone(&streams["events-retry"]),
+            logger: Arc::clone(&logger),
+            message_handler: Arc::new(send_email),
+            max_delivery_attempts: 5,
+            redeliver_after: Duration::from_secs(5),
+        },
+        ConsumerOptions {
+            consumer_name: String::from("dlq-email-consumer"),
+            filter_subjects: vec![String::from("events-dlq.email-consumer")],
+            stream: Arc::clone(&streams["events-dlq"]),
+            logger: Arc::clone(&logger),
+            message_handler: Arc::new(send_email),
+            max_delivery_attempts: 10,
+            redeliver_after: Duration::from_secs(60),
         },
     ];
 
@@ -252,6 +309,10 @@ struct ConsumerOptions {
     filter_subjects: Vec<String>,
     message_handler: MessageHandler,
     logger: Arc<Logger>,
+    // How many times to attempt to deliver a message before moving it to the next retry/dlq stream
+    max_delivery_attempts: i64,
+    // How long to wait before redelivering a message - ie: ack_wait
+    redeliver_after: Duration,
 }
 
 const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
@@ -263,6 +324,8 @@ async fn spawn_consumer(
         filter_subjects,
         message_handler,
         logger,
+        max_delivery_attempts,
+        redeliver_after,
     }: ConsumerOptions,
 ) -> JoinHandle<()> {
     tokio::spawn(async move {
@@ -274,7 +337,8 @@ async fn spawn_consumer(
                         durable_name: Some(consumer_name.clone()),
                         name: Some(consumer_name.clone()),
                         filter_subjects: filter_subjects.clone(),
-                        ack_wait: Duration::from_secs(5),
+                        ack_wait: redeliver_after,
+                        max_deliver: max_delivery_attempts,
                         ..Default::default()
                     },
                 )
@@ -324,8 +388,15 @@ fn send_email(message: &Message) -> BoxFuture<'_, Result<(), String>> {
         {
             return Err("Crash detected".to_string());
         };
-        // println!("SEM evnet: {:?}", message);
         println!("Sending email for event {}", message.subject);
+        Ok(())
+    })
+}
+
+fn handle_meta(message: &Message) -> BoxFuture<'_, Result<(), String>> {
+    Box::pin(async move {
+        println!("HANDLING META EVENT {:?}", message);
+
         Ok(())
     })
 }

@@ -1,11 +1,9 @@
-use std::time::Duration;
-
 use async_nats::{
-    connect,
     jetstream::{self, new, Context},
     ConnectOptions,
 };
 use serde_json::json;
+use std::{sync::Arc, time::Duration};
 
 use crate::{constants::EVENT_STREAM_NAME, events::PlutomiEventPayload, get_env::get_env};
 
@@ -32,37 +30,33 @@ pub async fn connect_to_nats() -> Result<Context, String> {
 
 pub struct CreateStreamOptions<'a> {
     pub jetstream: &'a Context,
-    pub subjects: Option<Vec<String>>,
+    // Typically, you want "name.>" to match all events under the name
+    pub subjects: Vec<String>,
+    pub stream_name: String,
 }
+
 pub async fn create_stream<'a>(
     CreateStreamOptions {
         jetstream,
         subjects,
+        stream_name,
     }: CreateStreamOptions<'a>,
-) -> Result<jetstream::stream::Stream, String> {
-    // The default should be the event stream name
-    // if you want to create another stream, for example "jobs.>", you can pass it in the subjects
-    let subjects = match subjects {
-        Some(subjects) => subjects,
-        // Catch all for events.anything.after.multiple.subjects
-        // https://docs.nats.io/nats-concepts/subjects#matching-multiple-tokens
-        None => vec![format!("{}.>", EVENT_STREAM_NAME).to_string()],
-    };
-
-    jetstream
+) -> Result<(String, Arc<jetstream::stream::Stream>), String> {
+    let stream = jetstream
         .get_or_create_stream(jetstream::stream::Config {
-            name: EVENT_STREAM_NAME.to_string(),
+            name: stream_name.clone(),
             subjects,
             retention: jetstream::stream::RetentionPolicy::Limits,
             max_messages: 1_000_000,
             max_bytes: 5_000_000_000, // 5GB
             max_age: Duration::from_secs(60 * 60 * 24 * MESSAGE_RETENTION_DAYS),
             discard: jetstream::stream::DiscardPolicy::Old,
-            
             ..Default::default()
         })
         .await
-        .map_err(|e| format!("Failed to create stream: {}", e))
+        .map_err(|e| format!("Failed to create stream: {}", e))?;
+
+    Ok((stream_name, Arc::new(stream)))
 }
 
 pub struct PublishEventOptions<'a> {
