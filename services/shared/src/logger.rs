@@ -116,11 +116,11 @@ impl Logger {
      * Create a new logger instance.
      * This also spawns a long lived thread that will handle logging.
      */
-    pub fn new(context: LoggerContext) -> Arc<Logger> {
+    pub fn init(context: LoggerContext) -> Arc<Logger> {
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
-            // .pretty()
-            .with_max_level(tracing::Level::DEBUG) // Adjust this level as needed
+            .pretty()
+            .with_max_level(tracing::Level::INFO) // Adjust this level as needed
             .with_target(false)
             .finish();
 

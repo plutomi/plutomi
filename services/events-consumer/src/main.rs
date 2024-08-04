@@ -33,7 +33,7 @@ type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> 
 async fn main() -> Result<(), String> {
     dotenv().ok();
 
-    let logger = Logger::new(LoggerContext {
+    let logger = Logger::init(LoggerContext {
         caller: "events-consumer",
     });
 
@@ -80,14 +80,14 @@ async fn main() -> Result<(), String> {
             // This consumer listens to all events that have reached their max delivery attempts
             // and forwards them to the proper retry/dlq stream.
             // https://docs.nats.io/using-nats/developer/develop_jetstream/consumers#dead-letter-queues-type-functionality
+            consumer_name: String::from("meta-consumer"), // TODO rename to max_deliveries handler or something
             // We do not have separate per stream as I figured it might be overkill
-            consumer_name: String::from("meta-consumer"),
             filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
             stream: Arc::clone(&streams["events"]),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(handle_meta),
             max_delivery_attempts: 10000, // Kind of crucial to handle retries
-            redeliver_after: Duration::from_secs(5),
+            redeliver_after: Duration::from_secs(2),
         },
         ConsumerOptions {
             consumer_name: String::from("email-consumer"),
@@ -205,7 +205,7 @@ async fn run_consumer(
             match message_result {
                 Ok(message) => {
                     logger.log(LogObject {
-                        level: LogLevel::Debug,
+                        level: LogLevel::Info,
                         message: format!(
                             "Processing message {} in {} ",
                             &message.subject, &consumer_name
@@ -234,7 +234,7 @@ async fn run_consumer(
                         continue;
                     } else {
                         logger.log(LogObject {
-                            level: LogLevel::Debug,
+                            level: LogLevel::Info,
                             message: format!(
                                 "Message {} processed in {}",
                                 &message.subject, &consumer_name
@@ -267,7 +267,7 @@ async fn run_consumer(
                         continue;
                     } else {
                         logger.log(LogObject {
-                            level: LogLevel::Debug,
+                            level: LogLevel::Info,
                             message: format!(
                                 "Message {} acknowledged in {}",
                                 &message.subject, &consumer_name

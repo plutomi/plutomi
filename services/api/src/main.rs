@@ -32,7 +32,7 @@ async fn main() {
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
-    let logger = Logger::new(LoggerContext { caller: "api" });
+    let logger = Logger::init(LoggerContext { caller: "api" });
 
     // Connect to database - TODO update res/option
     let mongodb = connect_to_mongodb(&logger).await;

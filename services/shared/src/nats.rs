@@ -4,6 +4,7 @@ use async_nats::{
 };
 use serde_json::json;
 use std::{sync::Arc, time::Duration};
+use tracing::Instrument;
 
 use crate::{constants::EVENT_STREAM_NAME, events::PlutomiEventPayload, get_env::get_env};
 
@@ -15,8 +16,9 @@ const MESSAGE_RETENTION_DAYS: u64 = 7;
 pub async fn connect_to_nats() -> Result<Context, String> {
     let env = get_env();
 
-    let nats_config: ConnectOptions =
-        ConnectOptions::new().user_and_password(env.NATS_USERNAME, env.NATS_PASSWORD);
+    let nats_config: ConnectOptions = ConnectOptions::new()
+        .user_and_password(env.NATS_USERNAME, env.NATS_PASSWORD)
+        .no_echo();
 
     let client = nats_config
         .connect(&env.NATS_URL)
@@ -42,10 +44,19 @@ pub async fn create_stream<'a>(
         stream_name,
     }: CreateStreamOptions<'a>,
 ) -> Result<(String, Arc<jetstream::stream::Stream>), String> {
+    let mut all_subjects = subjects;
+
+    // All streams should listen to this event so that the meta_handler can send it to the retry/dlq stream
+    let max_deliver_attempts_event = format!(
+        "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.{}.>",
+        stream_name
+    );
+    all_subjects.push(max_deliver_attempts_event);
+
     let stream = jetstream
         .get_or_create_stream(jetstream::stream::Config {
             name: stream_name.clone(),
-            subjects,
+            subjects: all_subjects,
             retention: jetstream::stream::RetentionPolicy::Limits,
             max_messages: 1_000_000,
             max_bytes: 5_000_000_000, // 5GB
