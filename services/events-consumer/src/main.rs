@@ -27,7 +27,13 @@ use tokio::task::JoinHandle;
 // Errors are logged but don't cause the entire application to crash
 // If all consumers somehow exit (which shouldn't happen under normal circumstances), the application will log final statuses and exit
 
-type MessageHandler = Arc<dyn Fn(&Message) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
+struct MessageHandlerOptions<'a> {
+    message: &'a Message,
+    logger: Arc<Logger>,
+}
+
+type MessageHandler =
+    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
@@ -158,10 +164,17 @@ async fn get_consumer_info(
     })
 }
 
-async fn run_consumer(
+struct RunConsumerOptions {
     consumer: Consumer<jetstream::consumer::pull::Config>,
     message_handler: MessageHandler,
     logger: Arc<Logger>,
+}
+async fn run_consumer(
+    RunConsumerOptions {
+        consumer,
+        message_handler,
+        logger,
+    }: RunConsumerOptions,
 ) -> Result<(), String> {
     // Fetch the info once on start
     let GetConsumerInfoResult {
@@ -216,7 +229,12 @@ async fn run_consumer(
                         response: None,
                         data: None,
                     });
-                    if let Err(e) = message_handler(&message).await {
+                    if let Err(e) = message_handler(MessageHandlerOptions {
+                        message: &message,
+                        logger: Arc::clone(&logger),
+                    })
+                    .await
+                    {
                         // Log the error and continue to the next message
                         // ack_wait will send it to us again
                         logger.log(LogObject {
@@ -359,7 +377,13 @@ async fn spawn_consumer(
                 }
             };
             // Run the consumer
-            if let Err(e) = run_consumer(consumer, message_handler.clone(), logger.clone()).await {
+            if let Err(e) = run_consumer(RunConsumerOptions {
+                consumer,
+                message_handler: Arc::clone(&message_handler),
+                logger: Arc::clone(&logger),
+            })
+            .await
+            {
                 logger.log(LogObject {
                     level: LogLevel::Error,
                     message: format!(
@@ -378,7 +402,9 @@ async fn spawn_consumer(
     })
 }
 
-fn send_email(message: &Message) -> BoxFuture<'_, Result<(), String>> {
+fn send_email(
+    MessageHandlerOptions { message, logger }: MessageHandlerOptions,
+) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         // Send email
 
@@ -388,15 +414,32 @@ fn send_email(message: &Message) -> BoxFuture<'_, Result<(), String>> {
         {
             return Err("Crash detected".to_string());
         };
-        println!("Sending email for event {}", message.subject);
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("Sending email for event {}", message.subject),
+            error: None,
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: None,
+        });
         Ok(())
     })
 }
 
-fn handle_meta(message: &Message) -> BoxFuture<'_, Result<(), String>> {
+fn handle_meta(
+    MessageHandlerOptions { message, logger }: MessageHandlerOptions,
+) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        println!("HANDLING META EVENT {:?}", message);
-
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("Handling meta event: {:?}", message),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            error: None,
+            request: None,
+            response: None,
+            data: None,
+        });
         Ok(())
     })
 }
