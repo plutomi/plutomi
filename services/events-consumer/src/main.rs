@@ -36,7 +36,7 @@ use tokio::task::JoinHandle;
 struct MessageHandlerOptions<'a> {
     message: &'a Message,
     logger: Arc<Logger>,
-    jetstream: &'a jetstream::Context,
+    jetstream_context: &'a Context,
 }
 
 type MessageHandler =
@@ -52,7 +52,7 @@ async fn main() -> Result<(), String> {
 
     // TODO: Add nats url to secrets
 
-    let jetstream = connect_to_nats(ConnectToNatsOptions {
+    let jetstream_context = connect_to_nats(ConnectToNatsOptions {
         logger: Arc::clone(&logger),
     })
     .await?;
@@ -61,7 +61,7 @@ async fn main() -> Result<(), String> {
         // Main events stream for all messages
         // events.totp.requested or events.email.sent
         CreateStreamOptions {
-            jetstream: &jetstream,
+            jetstream_context: &jetstream_context,
             stream_name: "events".to_string(),
             subjects: vec!["events.>".to_string()],
         },
@@ -70,14 +70,14 @@ async fn main() -> Result<(), String> {
         // ie: SES is down, don't resend the message to ClickHouse or MeiliSearch consumers
         // The logic here doesn't change, but the retry backoff does
         CreateStreamOptions {
-            jetstream: &jetstream,
+            jetstream_context: &jetstream_context,
             stream_name: "events-retry".to_string(),
             subjects: vec!["events-retry.>".to_string()],
         },
         // DLQ for messages that have failed too many times and require manual intervention
         // Same formats as the retry stream: events-dlq.consumer-name
         CreateStreamOptions {
-            jetstream: &jetstream,
+            jetstream_context: &jetstream_context,
             stream_name: "events-dlq".to_string(),
             subjects: vec!["events-dlq.>".to_string()],
         },
@@ -99,6 +99,7 @@ async fn main() -> Result<(), String> {
             // We do not have separate per stream as I figured it might be overkill
             filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
             stream: Arc::clone(&streams["events"]),
+            jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(handle_meta),
             max_delivery_attempts: 10000, // Kind of crucial to handle retries
@@ -108,6 +109,7 @@ async fn main() -> Result<(), String> {
             consumer_name: String::from("email-consumer"),
             filter_subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
             stream: Arc::clone(&streams["events"]),
+            jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
             max_delivery_attempts: 3,
@@ -117,6 +119,7 @@ async fn main() -> Result<(), String> {
             consumer_name: String::from("retry-email-consumer"),
             filter_subjects: vec![String::from("events-retry.email-consumer")], // TODO use consts to avoid typos
             stream: Arc::clone(&streams["events-retry"]),
+            jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
             max_delivery_attempts: 5,
@@ -125,6 +128,7 @@ async fn main() -> Result<(), String> {
         ConsumerOptions {
             consumer_name: String::from("dlq-email-consumer"),
             filter_subjects: vec![String::from("events-dlq.email-consumer")],
+            jetstream_context: Arc::clone(&jetstream_context),
             stream: Arc::clone(&streams["events-dlq"]),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
@@ -177,12 +181,14 @@ struct RunConsumerOptions {
     consumer: Consumer<jetstream::consumer::pull::Config>,
     message_handler: MessageHandler,
     logger: Arc<Logger>,
+    jetstream_context: Arc<jetstream::Context>,
 }
 async fn run_consumer(
     RunConsumerOptions {
         consumer,
         message_handler,
         logger,
+        jetstream_context,
     }: RunConsumerOptions,
 ) -> Result<(), String> {
     // Fetch the info once on start
@@ -241,7 +247,7 @@ async fn run_consumer(
                     if let Err(e) = message_handler(MessageHandlerOptions {
                         message: &message,
                         logger: Arc::clone(&logger),
-                        jetstream: &jestream, // TODO
+                        jetstream_context: &jetstream_context,
                     })
                     .await
                     {
@@ -330,6 +336,8 @@ async fn run_consumer(
     }
 }
 struct ConsumerOptions {
+    // Jetstream context to pass down to the run_consumer function
+    jetstream_context: Arc<jetstream::Context>,
     // A reference to the event stream to create the consumer on
     stream: Arc<jetstream::stream::Stream>,
     consumer_name: String,
@@ -347,6 +355,7 @@ const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from
 
 async fn spawn_consumer(
     ConsumerOptions {
+        jetstream_context,
         stream,
         consumer_name,
         filter_subjects,
@@ -392,6 +401,7 @@ async fn spawn_consumer(
                 consumer,
                 message_handler: Arc::clone(&message_handler),
                 logger: Arc::clone(&logger),
+                jetstream_context: Arc::clone(&jetstream_context),
             })
             .await
             {
@@ -417,7 +427,7 @@ fn send_email(
     MessageHandlerOptions {
         message,
         logger,
-        jetstream,
+        jetstream_context,
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
@@ -462,7 +472,7 @@ fn handle_meta(
     MessageHandlerOptions {
         message,
         logger,
-        jetstream,
+        jetstream_context,
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {

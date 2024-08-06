@@ -1,5 +1,5 @@
 use async_nats::{
-    jetstream::{self, new, Context},
+    jetstream::{self, Context},
     ConnectOptions, HeaderMap,
 };
 use serde_json::json;
@@ -23,7 +23,7 @@ pub struct ConnectToNatsOptions {
  */
 pub async fn connect_to_nats(
     ConnectToNatsOptions { logger }: ConnectToNatsOptions,
-) -> Result<Context, String> {
+) -> Result<Arc<Context>, String> {
     let env = get_env();
 
     let nats_config: ConnectOptions = ConnectOptions::new()
@@ -45,13 +45,13 @@ pub async fn connect_to_nats(
         msg
     })?;
 
-    let jetstream = new(client);
+    let jetstream = Arc::new(jetstream::new(client));
 
     Ok(jetstream)
 }
 
 pub struct CreateStreamOptions<'a> {
-    pub jetstream: &'a Context,
+    pub jetstream_context: &'a Context,
     // Typically, you want "name.>" to match all events under the name
     pub subjects: Vec<String>,
     pub stream_name: String,
@@ -59,7 +59,7 @@ pub struct CreateStreamOptions<'a> {
 
 pub async fn create_stream<'a>(
     CreateStreamOptions {
-        jetstream,
+        jetstream_context,
         subjects,
         stream_name,
     }: CreateStreamOptions<'a>,
@@ -73,7 +73,7 @@ pub async fn create_stream<'a>(
     );
     all_subjects.push(max_deliver_attempts_event);
 
-    let stream = jetstream
+    let stream = jetstream_context
         .get_or_create_stream(jetstream::stream::Config {
             name: stream_name.clone(),
             subjects: all_subjects,
