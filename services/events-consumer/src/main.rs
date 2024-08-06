@@ -1,4 +1,6 @@
+use async_nats::jetstream::Context;
 use async_nats::jetstream::{self, consumer::Consumer, Message};
+use async_nats::HeaderMap;
 use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
@@ -384,6 +386,7 @@ async fn spawn_consumer(
                     return;
                 }
             };
+
             // Run the consumer
             if let Err(e) = run_consumer(RunConsumerOptions {
                 consumer,
@@ -510,7 +513,7 @@ fn handle_meta(
             }
         };
 
-        // Get the new stream to put the event into (ie waterfall)
+        // Get the new stream prefix to put the event into (ie waterfall)
         let new_stream = match payload.stream.as_str() {
             "events" => "events-retry",
             "events-retry" => "events-dlq",
@@ -529,12 +532,18 @@ fn handle_meta(
             }
         };
 
+        // Add some headers to the message so we can re-use the same handler
+        // For example, if SES is down the handler can use a different email provider on retries
+        let mut headers = HeaderMap::new();
+        headers.insert("current_stream", new_stream);
+
         publish_event(PublishEventOptions {
-            jetstream,
+            jetstream_context,
             // events-retry.email-consumer etc.
             stream_name: format!("{}.{}", new_stream, payload.consumer),
-            data: PlutomiEvent {
-                _type: PlutomiEventTypes::TOTPRequested,
+            headers: Some(headers),
+            plutomi_event: PlutomiEvent {
+                event_type: PlutomiEventTypes::TOTPRequested,
                 // Only send the headers, not the payload?
                 payload: json!({ "message": "retry" }),
             },
@@ -543,14 +552,15 @@ fn handle_meta(
         .map_err(|e| {
             logger.log(LogObject {
                 level: LogLevel::Error,
-                // TODO better logging
-                message: format!("Failed to publish event to {}", new_stream),
+                message: format!("Failed to publish meta event to {}", new_stream),
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 error: Some(json!({ "error": e })),
                 request: None,
                 response: None,
                 data: Some(json!({ "payload": payload })),
             });
+
+            // Return the error to the caller
             e
         })?;
 
