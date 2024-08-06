@@ -1,13 +1,13 @@
 use async_nats::{
     jetstream::{self, new, Context},
-    ConnectOptions,
+    ConnectOptions, HeaderMap,
 };
 use serde_json::json;
 use std::{sync::Arc, time::Duration};
 use time::OffsetDateTime;
 
 use crate::{
-    events::PlutomiEventPayload,
+    events::PlutomiEvent,
     get_current_time::get_current_time,
     get_env::get_env,
     logger::{LogObject, Logger},
@@ -91,9 +91,11 @@ pub async fn create_stream<'a>(
 }
 
 pub struct PublishEventOptions<'a> {
-    pub jetstream: &'a Context,
+    pub jetstream_context: &'a Context,
     pub stream_name: String,
-    pub event: PlutomiEventPayload,
+    pub plutomi_event: PlutomiEvent,
+    // For retry and DLQ streams
+    pub headers: Option<HeaderMap>,
 }
 
 /**
@@ -102,17 +104,25 @@ pub struct PublishEventOptions<'a> {
  */
 pub async fn publish_event<'a>(
     PublishEventOptions {
-        jetstream,
-        event,
+        jetstream_context,
+        plutomi_event,
         stream_name,
+        headers,
     }: PublishEventOptions<'a>,
 ) -> Result<(), String> {
-    let bytes = serde_json::to_vec(&json!(event))
+    let bytes = serde_json::to_vec(&json!(plutomi_event))
         .map_err(|e| format!("Failed to serialize event: {}", e))?;
 
-    jetstream
-        .publish(stream_name, bytes.into())
-        .await
+    let publish_result = match headers {
+        Some(headers) => {
+            jetstream_context
+                .publish_with_headers(stream_name, headers, bytes.into())
+                .await
+        }
+        None => jetstream_context.publish(stream_name, bytes.into()).await,
+    };
+
+    publish_result
         .map_err(|e| format!("Failed to publish event: {}", e))?
         .await
         .map_err(|e| {

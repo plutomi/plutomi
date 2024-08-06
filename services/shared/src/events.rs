@@ -36,7 +36,7 @@ impl PlutomiEventTypes {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct PlutomiEventPayload {
+pub struct PlutomiEvent {
     pub event_type: PlutomiEventTypes,
     pub payload: serde_json::Value,
 }

@@ -2,8 +2,9 @@ use async_nats::jetstream::{self, consumer::Consumer, Message};
 use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::events::{PlutomiEventPayload, PlutomiEventTypes};
+use shared::events::{PlutomiEvent, PlutomiEventTypes};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
@@ -33,6 +34,7 @@ use tokio::task::JoinHandle;
 struct MessageHandlerOptions<'a> {
     message: &'a Message,
     logger: Arc<Logger>,
+    jetstream: &'a jetstream::Context,
 }
 
 type MessageHandler =
@@ -111,7 +113,7 @@ async fn main() -> Result<(), String> {
         },
         ConsumerOptions {
             consumer_name: String::from("retry-email-consumer"),
-            filter_subjects: vec![String::from("events-retry.email-consumer")],
+            filter_subjects: vec![String::from("events-retry.email-consumer")], // TODO use consts to avoid typos
             stream: Arc::clone(&streams["events-retry"]),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
@@ -237,6 +239,7 @@ async fn run_consumer(
                     if let Err(e) = message_handler(MessageHandlerOptions {
                         message: &message,
                         logger: Arc::clone(&logger),
+                        jetstream: &jestream, // TODO
                     })
                     .await
                     {
@@ -408,7 +411,11 @@ async fn spawn_consumer(
 }
 
 fn send_email(
-    MessageHandlerOptions { message, logger }: MessageHandlerOptions,
+    MessageHandlerOptions {
+        message,
+        logger,
+        jetstream,
+    }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         // Send email
@@ -427,35 +434,125 @@ fn send_email(
             response: None,
             data: None,
         });
+
         Ok(())
     })
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "snake_case")]
+pub struct MaxDeliverAdvisory {
+    #[serde(rename = "type")]
+    pub event_type: String,
+    // Unique correlation ID for this event
+    pub id: String,
+    #[serde(with = "time::serde::rfc3339")]
+    pub timestamp: OffsetDateTime, // The time this event was created in RFC3339 format
+    pub stream: String, // The name of the consumer where the message reached its limit
+    pub consumer: String,
+    pub stream_seq: u64,
+    // How many times the message was delivered
+    pub deliveries: u64,
+}
+
 fn handle_meta(
-    MessageHandlerOptions { message, logger }: MessageHandlerOptions,
+    MessageHandlerOptions {
+        message,
+        logger,
+        jetstream,
+    }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         logger.log(LogObject {
             level: LogLevel::Info,
-            message: format!("Handling meta event: {:?}", message),
+            message: format!(
+                "Processing {} event in {}",
+                &message.subject, "meta-consumer"
+            ),
             _time: get_current_time(OffsetDateTime::now_utc()),
             error: None,
             request: None,
             response: None,
-            data: None,
+            data: Some(json!({  "subject": &message.subject, "payload": &message.payload,})),
         });
 
-        // TODO: Fetch message using message_id
-        
-        // 
+        let payload = match serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload) {
+            Ok(payload) => payload,
+            Err(e) => {
+                // We are only listening for the MAX_DELIVERIES event
+                // If we try to parse it (above), and it fails, that's an error
+                // If it's because it's a different structure, then warn since we are not listening for it but it doesn't matter
+                let is_max_delivery_advisory = &message
+                    .subject
+                    .contains("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES");
+                let error_message = is_max_delivery_advisory
+                    .then_some("Failed to parse max delivery advisory message")
+                    .unwrap_or("Unknown message in meta-consumer - skipping...");
+                let log_level = is_max_delivery_advisory
+                    .then_some(LogLevel::Error)
+                    .unwrap_or(LogLevel::Warn);
+
+                logger.log(LogObject {
+                    level: LogLevel::Warn, // Changed to Debug as this might be common
+                    message: error_message.to_string(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    error: Some(json!({ "error": e.to_string() })),
+                    request: None,
+                    response: None,
+                    data: Some(json!({
+                        "subject": message.subject,
+                        "payload": message.payload })),
+                });
+                // Again, if it is a max delivery advisory, we return an error otherwise skip it who cares
+                return is_max_delivery_advisory
+                    .then_some(Err(e.to_string()))
+                    .unwrap_or(Ok(()));
+            }
+        };
+
+        // Get the new stream to put the event into (ie waterfall)
+        let new_stream = match payload.stream.as_str() {
+            "events" => "events-retry",
+            "events-retry" => "events-dlq",
+            _ => {
+                let msg = format!("Unknown stream fallback: {}", payload.stream);
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: msg.clone(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    error: None,
+                    request: None,
+                    response: None,
+                    data: Some(json!({ "payload": payload })),
+                });
+                return Err(msg);
+            }
+        };
+
         publish_event(PublishEventOptions {
-            jetstream: message, // TODO,,
-            stream_name: "events-retry".to_string(),
-            event: PlutomiEventPayload {
-                event_type: PlutomiEventTypes::TOTPRequested,
+            jetstream,
+            // events-retry.email-consumer etc.
+            stream_name: format!("{}.{}", new_stream, payload.consumer),
+            data: PlutomiEvent {
+                _type: PlutomiEventTypes::TOTPRequested,
+                // Only send the headers, not the payload?
                 payload: json!({ "message": "retry" }),
             },
-        });
+        })
+        .await
+        .map_err(|e| {
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                // TODO better logging
+                message: format!("Failed to publish event to {}", new_stream),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                error: Some(json!({ "error": e })),
+                request: None,
+                response: None,
+                data: Some(json!({ "payload": payload })),
+            });
+            e
+        })?;
 
         Ok(())
     })
