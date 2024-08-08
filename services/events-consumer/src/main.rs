@@ -431,6 +431,8 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
+        let headers = message.headers.clone().unwrap_or_default();
+        
         // Send email
         if (String::from_utf8(message.payload.to_vec()))
             .unwrap()
