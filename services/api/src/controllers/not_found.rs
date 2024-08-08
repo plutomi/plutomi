@@ -10,7 +10,7 @@ use serde_json::{json, Value};
 use shared::{get_current_time::get_current_time, logger::{LogLevel, LogObject}};
 
 use crate::{
-    consts::REQUEST_ID_HEADER,
+    constants::REQUEST_ID_HEADER,
     structs::{api_error::ApiError, app_state::AppState},
     utils::get_header_value::get_header_value,
 };

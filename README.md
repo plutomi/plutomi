@@ -117,3 +117,40 @@ Some common issues you might run into are documented in [TROUBLESHOOTING.md](TRO
 If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there.
 
 If you have any other questions, open a discussion / issue and we can talk about it or reach out to me on Twitter [@notjoswayski](https://twitter.com/notjoswayski) or email jose@plutomi.com!
+
+
+// TODO
+Event flow:
+
+"totp.requested" event comes into the "events" stream
+Clickhouse consumer processes it successfully
+Email consumer fails to process it (due to SES being down)
+After max delivery attempts, NATS publishes:
+$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.email-consumer
+
+
+DLQ Stream:
+
+Yes, create a new stream for "DLQ.>"
+This stream will contain references to failed messages, not the messages themselves
+
+
+DLQ Handling:
+
+Set up a consumer to listen to $JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>
+When an advisory is received, publish a message to the DLQ stream like:
+"DLQ.events.email-consumer"
+This message contains headers with the original message ID and stream
+
+
+Reprocessing:
+
+Create consumer(s) for the DLQ stream
+When processing DLQ messages, use the headers to fetch the original message from the "events" stream
+Call the appropriate handler based on the consumer name in the DLQ subject
+
+
+Message existence:
+
+Correct, only one version of the original message exists in the main "events" stream
+The DLQ stream contains only references to these messages

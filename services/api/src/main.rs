@@ -4,23 +4,23 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use consts::{DOCS_ROUTES, PORT};
+use constants::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
 use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     get_env::get_env,
-    logger::{LogLevel, LogObject, Logger},
+    logger::{LogLevel, LogObject, Logger, LoggerContext},
     mongodb::connect_to_mongodb,
 };
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
-use tracing::{info, warn};
+use tracing::info;
 use utils::{log_req_res::log_req_res, timeout::timeout};
 
-mod consts;
+mod constants;
 mod controllers;
 mod structs;
 mod utils;
@@ -32,14 +32,10 @@ async fn main() {
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
-    info!("Environment variables loaded");
-    // Setup logging
-    let logger = Logger::new();
-    info!("Logger initialized");
+    let logger = Logger::init(LoggerContext { caller: "api" });
 
     // Connect to database - TODO update res/option
     let mongodb = connect_to_mongodb(&logger).await;
-    info!("Connected to MongoDB");
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
