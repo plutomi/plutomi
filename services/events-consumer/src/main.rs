@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use shared::events::{PlutomiEvent, PlutomiEventTypes};
 use shared::get_current_time::get_current_time;
-use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
+use shared::logger::{self, LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
     connect_to_nats, create_stream, publish_event, publish_event_headers_only,
     ConnectToNatsOptions, CreateStreamOptions, MaxDeliverAdvisory, PublishEventHeadersOnlyOptions,
@@ -426,6 +426,55 @@ async fn spawn_consumer(
     })
 }
 
+/**
+ * While inside a message handler, check if a message is in the retry or DLQ stream
+ * If it is, lookup the original event in the main stream and return it
+ * Otherwise, return the original message
+ */
+async fn extract_message(
+    message: &Message,
+    logger: Arc<Logger>,
+    jetstream_context: &Context,
+    stream_name: &str,
+) -> Result<&PlutomiEvent, String> {
+    let is_retry_or_dlq =
+        message.subject.starts_with("events-retry.") || message.subject.starts_with("events-dlq.");
+
+    // We are in the main events stream, return the message as is
+    if !is_retry_or_dlq {
+        return Ok(message);
+    }
+    // Parse the advisory message and look up the original event in the main stream
+    let parsed_message = serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload)
+        .unwrap_or_else(|e| {
+            let error = format!("Failed to parse max delivery advisory message: {}", e);
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                message: error.clone(),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                error: Some(json!({ "error": e.to_string() })),
+                request: None,
+                response: None,
+                data: Some(json!({ "subject": message.subject, "payload": message.payload })),
+            });
+            return Err(e);
+        });
+
+    // Look up the original event in the main stream
+    let stream = jetstream_context
+        .get_stream(stream_name)
+        .await
+        .map_err(|e| format!("Failed to get stream: {}", e))?;
+
+    let original_message = stream
+        .get_raw_message(parsed_message.stream_seq)
+        .await
+        .map_err(|e| format!("Failed to get original message: {}", e))?;
+
+    // Convert the original message to PlutomiEvent
+    Ok(PlutomiEvent::from(&original_message))
+}
+
 fn send_email(
     MessageHandlerOptions {
         message,
@@ -435,8 +484,6 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        let headers = message.headers.clone().unwrap_or_default();
-
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
@@ -450,13 +497,43 @@ fn send_email(
             // TODO payload is in bytes, should be converted to string
             data: Some(json!({ "subject": &message.subject, "payload": &message.payload, })),
         });
-        // Send email
-        if (String::from_utf8(message.payload.to_vec()))
-            .unwrap()
-            .contains("crash")
-        {
-            return Err("Crash detected".to_string());
+
+        let payload_str = match String::from_utf8(message.payload.to_vec()) {
+            Ok(payload) => payload,
+            Err(e) => {
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: format!("Failed to convert payload to string: {}", e),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    error: Some(json!({ "error": e.to_string() })),
+                    request: None,
+                    response: None,
+                    data: None,
+                });
+                return Err(format!("Failed to convert payload to string: {}", e));
+            }
         };
+
+        if payload_str.contains("crash") {
+            return Err("Crash detected".to_string());
+        }
+
+        let parsed_payload = match serde_json::from_str(&payload_str) {
+            Ok(json) => json,
+            Err(e) => {
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: format!("Failed to parse JSON payload: {}", e),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    error: Some(json!({ "error": e.to_string() })),
+                    request: None,
+                    response: None,
+                    data: Some(json!({ "raw_payload": payload_str })),
+                });
+                return Err(format!("Failed to parse JSON payload: {}", e));
+            }
+        };
+
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!("Sending email for event {}", message.subject),
@@ -464,7 +541,7 @@ fn send_email(
             _time: get_current_time(OffsetDateTime::now_utc()),
             request: None,
             response: None,
-            data: None,
+            data: Some(json!({ "payload": parsed_payload })),
         });
 
         Ok(())
@@ -523,8 +600,8 @@ fn handle_meta(
                     request: None,
                     response: None,
                     data: Some(json!({
-                        "subject": message.subject,
-                        "payload": message.payload })),
+                            "subject": message.subject,
+                            "payload": message.payload })),
                 });
                 // Again, if it is a max delivery advisory, we return an error otherwise skip it
                 // We don't care about other meta events
@@ -553,17 +630,11 @@ fn handle_meta(
             }
         };
 
-        // Add some headers to the message so we can re-use the same handler
-        // For example, if SES is down the handler can use a different email provider on retries
-        // All it has to do is look at the headers to decide where the message is currently at and what to do
-        let mut headers = HeaderMap::new();
-        headers.insert("current_stream", new_stream);
-
         publish_event_headers_only(PublishEventHeadersOnlyOptions {
             jetstream_context,
             // events-retry.email-consumer etc.
             stream_name: format!("{}.{}", new_stream, payload.consumer),
-            headers,
+            headers: None,
             payload: &payload,
         })
         .await
