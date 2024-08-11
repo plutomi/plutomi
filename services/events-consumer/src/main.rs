@@ -11,7 +11,8 @@ use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
     connect_to_nats, create_stream, publish_event, publish_event_headers_only,
-    ConnectToNatsOptions, CreateStreamOptions, PublishEventHeadersOnlyOptions, PublishEventOptions,
+    ConnectToNatsOptions, CreateStreamOptions, MaxDeliverAdvisory, PublishEventHeadersOnlyOptions,
+    PublishEventOptions,
 };
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -470,22 +471,6 @@ fn send_email(
     })
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "snake_case")]
-pub struct MaxDeliverAdvisory {
-    #[serde(rename = "type")]
-    pub event_type: String,
-    // Unique correlation ID for this event
-    pub id: String,
-    #[serde(with = "time::serde::rfc3339")]
-    pub timestamp: OffsetDateTime, // The time this event was created in RFC3339 format
-    pub stream: String, // The name of the consumer where the message reached its limit
-    pub consumer: String,
-    pub stream_seq: u64,
-    // How many times the message was delivered
-    pub deliveries: u64,
-}
-
 fn handle_meta(
     MessageHandlerOptions {
         message,
@@ -579,6 +564,7 @@ fn handle_meta(
             // events-retry.email-consumer etc.
             stream_name: format!("{}.{}", new_stream, payload.consumer),
             headers,
+            payload: &payload,
         })
         .await
         .map_err(|e| {
