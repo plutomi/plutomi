@@ -10,8 +10,8 @@ use shared::events::{PlutomiEvent, PlutomiEventTypes};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
-    connect_to_nats, create_stream, publish_event, ConnectToNatsOptions, CreateStreamOptions,
-    PublishEventOptions,
+    connect_to_nats, create_stream, publish_event, publish_event_headers_only,
+    ConnectToNatsOptions, CreateStreamOptions, PublishEventHeadersOnlyOptions, PublishEventOptions,
 };
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -574,12 +574,11 @@ fn handle_meta(
         let mut headers = HeaderMap::new();
         headers.insert("current_stream", new_stream);
 
-        publish_event(PublishEventOptions {
+        publish_event_headers_only(PublishEventHeadersOnlyOptions {
             jetstream_context,
             // events-retry.email-consumer etc.
             stream_name: format!("{}.{}", new_stream, payload.consumer),
-            headers: Some(headers),
-            plutomi_event: None,
+            headers,
         })
         .await
         .map_err(|e| {
