@@ -37,6 +37,7 @@ struct MessageHandlerOptions<'a> {
     message: &'a Message,
     logger: Arc<Logger>,
     jetstream_context: &'a Context,
+    consumer_name: &'a str,
 }
 
 type MessageHandler =
@@ -102,7 +103,7 @@ async fn main() -> Result<(), String> {
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(handle_meta),
-            max_delivery_attempts: 10000, // Kind of crucial to handle retries
+            max_delivery_attempts: 10000,
             redeliver_after: Duration::from_secs(2),
         },
         ConsumerOptions {
@@ -112,8 +113,8 @@ async fn main() -> Result<(), String> {
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
-            max_delivery_attempts: 3,
-            redeliver_after: Duration::from_secs(5),
+            max_delivery_attempts: 1,
+            redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
             consumer_name: String::from("retry-email-consumer"),
@@ -122,8 +123,8 @@ async fn main() -> Result<(), String> {
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
-            max_delivery_attempts: 5,
-            redeliver_after: Duration::from_secs(5),
+            max_delivery_attempts: 1,
+            redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
             consumer_name: String::from("dlq-email-consumer"),
@@ -132,7 +133,7 @@ async fn main() -> Result<(), String> {
             stream: Arc::clone(&streams["events-dlq"]),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
-            max_delivery_attempts: 10,
+            max_delivery_attempts: 1,
             redeliver_after: Duration::from_secs(60),
         },
     ];
@@ -235,7 +236,7 @@ async fn run_consumer(
                     logger.log(LogObject {
                         level: LogLevel::Info,
                         message: format!(
-                            "Processing message {} in {} ",
+                            "Sending {} message to {} handler",
                             &message.subject, &consumer_name
                         ),
                         error: None,
@@ -248,6 +249,7 @@ async fn run_consumer(
                         message: &message,
                         logger: Arc::clone(&logger),
                         jetstream_context: &jetstream_context,
+                        consumer_name: &consumer_name,
                     })
                     .await
                     {
@@ -428,11 +430,25 @@ fn send_email(
         message,
         logger,
         jetstream_context,
+        consumer_name,
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         let headers = message.headers.clone().unwrap_or_default();
-        
+
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!(
+                "Processing {} message in {}",
+                &message.subject, &consumer_name
+            ),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            error: None,
+            request: None,
+            response: None,
+            // TODO payload is in bytes, should be converted to string
+            data: Some(json!({ "subject": &message.subject, "payload": &message.payload, })),
+        });
         // Send email
         if (String::from_utf8(message.payload.to_vec()))
             .unwrap()
@@ -475,19 +491,23 @@ fn handle_meta(
         message,
         logger,
         jetstream_context,
+        consumer_name,
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
+        println!("INCOMIGN MESSAGE {:?}", message);
+
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
-                "Processing {} event in {}",
-                &message.subject, "meta-consumer"
+                "Processing {} message in {}",
+                &message.subject, &consumer_name
             ),
             _time: get_current_time(OffsetDateTime::now_utc()),
             error: None,
             request: None,
             response: None,
+            // TODO payload is in bytes, should be converted to string
             data: Some(json!({  "subject": &message.subject, "payload": &message.payload,})),
         });
 
@@ -500,15 +520,18 @@ fn handle_meta(
                 let is_max_delivery_advisory = &message
                     .subject
                     .contains("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES");
+
+                let default_err = format!("Unknown message in {} - skipping...", &consumer_name);
                 let error_message = is_max_delivery_advisory
                     .then_some("Failed to parse max delivery advisory message")
-                    .unwrap_or("Unknown message in meta-consumer - skipping...");
+                    .unwrap_or(&default_err);
+
                 let log_level = is_max_delivery_advisory
                     .then_some(LogLevel::Error)
                     .unwrap_or(LogLevel::Warn);
 
                 logger.log(LogObject {
-                    level: LogLevel::Warn, // Changed to Debug as this might be common
+                    level: log_level,
                     message: error_message.to_string(),
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     error: Some(json!({ "error": e.to_string() })),
@@ -518,7 +541,8 @@ fn handle_meta(
                         "subject": message.subject,
                         "payload": message.payload })),
                 });
-                // Again, if it is a max delivery advisory, we return an error otherwise skip it who cares
+                // Again, if it is a max delivery advisory, we return an error otherwise skip it
+                // We don't care about other meta events
                 return is_max_delivery_advisory
                     .then_some(Err(e.to_string()))
                     .unwrap_or(Ok(()));
@@ -546,6 +570,7 @@ fn handle_meta(
 
         // Add some headers to the message so we can re-use the same handler
         // For example, if SES is down the handler can use a different email provider on retries
+        // All it has to do is look at the headers to decide where the message is currently at and what to do
         let mut headers = HeaderMap::new();
         headers.insert("current_stream", new_stream);
 
@@ -554,11 +579,7 @@ fn handle_meta(
             // events-retry.email-consumer etc.
             stream_name: format!("{}.{}", new_stream, payload.consumer),
             headers: Some(headers),
-            plutomi_event: PlutomiEvent {
-                event_type: PlutomiEventTypes::TOTPRequested,
-                // Only send the headers, not the payload?
-                payload: json!({ "message": "retry" }),
-            },
+            plutomi_event: None,
         })
         .await
         .map_err(|e| {
