@@ -471,13 +471,7 @@ async fn extract_message(
             (message.subject.to_string(), message.payload.clone())
         };
 
-    // Parse the event type from the subject
-    let event_type = PlutomiEventTypes::from_str(&original_subject).map_err(|_| {
-        format!(
-            "Invalid event type in extract_message for handler TODO: {}",
-            original_subject
-        )
-    })?;
+    let event = PlutomiEvent::from_jetstream(&original_subject, &original_payload)?;
 
     logger.log(LogObject {
         level: LogLevel::Info,
@@ -493,8 +487,8 @@ async fn extract_message(
     });
 
     // Parse the payload based on the event type
-    let payload = match event_type {
-        PlutomiEventTypes::TOTPRequested => {
+    let payload = match event {
+        PlutomiEvent::TOTPRequested(ps) => {
             let payload: TOTPRequestedPayload = serde_json::from_slice(&original_payload)
                 .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
             PlutomiEventPayload::TOTPRequested(payload)
@@ -534,24 +528,26 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        let message = extract_message(&message, Arc::clone(&logger), jetstream_context).await?;
+        let event = extract_message(&message, Arc::clone(&logger), jetstream_context).await?;
 
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
                 "Processing {:?} message in {}",
-                &message.event_type, &consumer_name
+                &event.event_type(),
+                &consumer_name
             ),
             _time: get_current_time(OffsetDateTime::now_utc()),
             error: None,
             request: None,
             response: None,
             // TODO payload is in bytes, should be converted to string
-            data: Some(json!({ "subject": &message.event_type, "payload": &message.payload })),
+            data: Some(json!({ "subject": &event.event_type(), "payload": &message.payload })),
         });
 
-        match message.event_type {
-            PlutomiEventTypes::TOTPRequested => {
+        match event {
+            PlutomiEventTypes::TOTPRequested(payload) => {
+                let x = payload.email;
                 // Send the email
                 // let payload = match message.payload {
                 //     PlutomiEventPayload::TOTPRequested(payload) => payload,
@@ -577,7 +573,7 @@ fn send_email(
                     level: LogLevel::Warn,
                     message: format!(
                         "Unknown event type {:?} in {:?}",
-                        message.event_type, consumer_name
+                        message.subject, consumer_name
                     ),
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     error: None,
