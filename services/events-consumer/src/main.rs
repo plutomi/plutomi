@@ -1,20 +1,21 @@
-use async_nats::jetstream::Context;
 use async_nats::jetstream::{self, consumer::Consumer, Message};
+use async_nats::jetstream::{publish, Context};
 use async_nats::HeaderMap;
+use bytes::Bytes;
 use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::events::{PlutomiEvent, PlutomiEventTypes};
+use shared::events::{PlutomiEvent, PlutomiEventPayload, PlutomiEventTypes, TOTPRequestedPayload};
 use shared::get_current_time::get_current_time;
 use shared::logger::{self, LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
-    connect_to_nats, create_stream, publish_event, publish_event_headers_only,
-    ConnectToNatsOptions, CreateStreamOptions, MaxDeliverAdvisory, PublishEventHeadersOnlyOptions,
-    PublishEventOptions,
+    connect_to_nats, create_stream, publish_event, ConnectToNatsOptions, CreateStreamOptions,
+    MaxDeliverAdvisory, PublishEventOptions,
 };
 use std::collections::HashMap;
+use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
 use std::vec;
@@ -435,44 +436,72 @@ async fn extract_message(
     message: &Message,
     logger: Arc<Logger>,
     jetstream_context: &Context,
-    stream_name: &str,
-) -> Result<&PlutomiEvent, String> {
-    let is_retry_or_dlq =
-        message.subject.starts_with("events-retry.") || message.subject.starts_with("events-dlq.");
+) -> Result<PlutomiEvent, String> {
+    let (original_subject, original_payload): (String, Bytes) =
+        if message.subject.starts_with("events-retry.")
+            || message.subject.starts_with("events-dlq.")
+        {
+            // Parse the advisory message
+            let advisory: MaxDeliverAdvisory = serde_json::from_slice(&message.payload)
+                .map_err(|e| format!("Failed to parse max delivery advisory message: {}", e))?;
 
-    // We are in the main events stream, return the message as is
-    if !is_retry_or_dlq {
-        return Ok(message);
-    }
-    // Parse the advisory message and look up the original event in the main stream
-    let parsed_message = serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload)
-        .unwrap_or_else(|e| {
-            let error = format!("Failed to parse max delivery advisory message: {}", e);
+            // Look up the original event in the main stream
+            let stream = jetstream_context
+                .get_stream(&advisory.stream)
+                .await
+                .map_err(|e| format!("Failed to get stream: {}", e))?;
+
+            let original_message = stream
+                .get_raw_message(advisory.stream_seq)
+                .await
+                .map_err(|e| format!("Failed to get original message: {}", e))?;
+
+            (original_message.subject, original_message.payload.into())
+        } else {
+            // Return the passed in message
+            (message.subject.to_string(), message.payload.clone())
+        };
+
+    // Parse the event type from the subject
+    let event_type = PlutomiEventTypes::from_str(&original_subject).map_err(|_| {
+        format!(
+            "Invalid event type in extract_message for handler TODO: {}",
+            original_subject
+        )
+    })?;
+
+    // Parse the payload based on the event type
+    let payload = match event_type {
+        PlutomiEventTypes::TOTPRequested => {
+            let payload: TOTPRequestedPayload = serde_json::from_slice(&original_payload)
+                .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
+            PlutomiEventPayload::TOTPRequested(payload)
+        }
+        // Add more cases here for different event types
+        // Example:
+        // PlutomiEventTypes::InviteInitialized => {
+        //     let payload: InviteInitializedPayload = serde_json::from_slice(&original_payload)
+        //         .map_err(|e| format!("Failed to parse Invite initialized payload: {}", e))?;
+        //     PlutomiEventPayload::InviteInitialized(payload)
+        // }
+        _ => {
             logger.log(LogObject {
-                level: LogLevel::Error,
-                message: error.clone(),
+                level: LogLevel::Warn,
+                message: format!("Unknown event type: {}", original_subject),
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                error: Some(json!({ "error": e.to_string() })),
+                error: None,
                 request: None,
                 response: None,
-                data: Some(json!({ "subject": message.subject, "payload": message.payload })),
+                data: None,
             });
-            return Err(e);
-        });
+            return Err(format!("Unknown event type: {}", original_subject));
+        }
+    };
 
-    // Look up the original event in the main stream
-    let stream = jetstream_context
-        .get_stream(stream_name)
-        .await
-        .map_err(|e| format!("Failed to get stream: {}", e))?;
-
-    let original_message = stream
-        .get_raw_message(parsed_message.stream_seq)
-        .await
-        .map_err(|e| format!("Failed to get original message: {}", e))?;
-
-    // Convert the original message to PlutomiEvent
-    Ok(PlutomiEvent::from(&original_message))
+    Ok(PlutomiEvent {
+        event_type,
+        payload,
+    })
 }
 
 fn send_email(
@@ -484,6 +513,9 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
+        let f_message =
+            extract_message(&message, Arc::clone(&logger), jetstream_context, "events").await?;
+
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
@@ -630,12 +662,17 @@ fn handle_meta(
             }
         };
 
-        publish_event_headers_only(PublishEventHeadersOnlyOptions {
+        publish_event(PublishEventOptions {
             jetstream_context,
             // events-retry.email-consumer etc.
             stream_name: format!("{}.{}", new_stream, payload.consumer),
             headers: None,
-            payload: &payload,
+            plutomi_event: Some(PlutomiEvent {
+                event_type: PlutomiEventTypes::from_str(&payload.event_type)
+                    .map_err(|_| "Failed to parse event type".to_string())?,
+                payload: PlutomiEventPayload::from_str(&payload.payload)
+                    .map_err(|_| "Failed to parse payload".to_string())?,
+            }),
         })
         .await
         .map_err(|e| {
