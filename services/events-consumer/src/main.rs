@@ -1,18 +1,18 @@
+use async_nats::jetstream::Context;
 use async_nats::jetstream::{self, consumer::Consumer, Message};
-use async_nats::jetstream::{publish, Context};
-use async_nats::HeaderMap;
 use bytes::Bytes;
 use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
-use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::events::{PlutomiEvent, PlutomiEventPayload, PlutomiEventTypes, TOTPRequestedPayload};
+use shared::events::{
+    MaxDeliverAdvisory, PlutomiEvent, PlutomiEventPayload, PlutomiEventTypes, TOTPRequestedPayload,
+};
 use shared::get_current_time::get_current_time;
-use shared::logger::{self, LogLevel, LogObject, Logger, LoggerContext};
+use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
     connect_to_nats, create_stream, publish_event, ConnectToNatsOptions, CreateStreamOptions,
-    MaxDeliverAdvisory, PublishEventOptions,
+    PublishEventOptions,
 };
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -477,24 +477,22 @@ async fn extract_message(
                 .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
             PlutomiEventPayload::TOTPRequested(payload)
         }
-        // Add more cases here for different event types
-        // Example:
-        // PlutomiEventTypes::InviteInitialized => {
-        //     let payload: InviteInitializedPayload = serde_json::from_slice(&original_payload)
-        //         .map_err(|e| format!("Failed to parse Invite initialized payload: {}", e))?;
-        //     PlutomiEventPayload::InviteInitialized(payload)
-        // }
+
         _ => {
+            let msg = format!(
+                "Unknown event type while extracting message: {}",
+                original_subject
+            );
             logger.log(LogObject {
                 level: LogLevel::Warn,
-                message: format!("Unknown event type: {}", original_subject),
+                message: msg.clone(),
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 error: None,
                 request: None,
                 response: None,
                 data: None,
             });
-            return Err(format!("Unknown event type: {}", original_subject));
+            return Err(msg);
         }
     };
 
@@ -513,68 +511,59 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        let f_message =
-            extract_message(&message, Arc::clone(&logger), jetstream_context, "events").await?;
+        let message = extract_message(&message, Arc::clone(&logger), jetstream_context).await?;
 
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
-                "Processing {} message in {}",
-                &message.subject, &consumer_name
+                "Processing {:?} message in {}",
+                &message.event_type, &consumer_name
             ),
             _time: get_current_time(OffsetDateTime::now_utc()),
             error: None,
             request: None,
             response: None,
             // TODO payload is in bytes, should be converted to string
-            data: Some(json!({ "subject": &message.subject, "payload": &message.payload, })),
+            data: Some(json!({ "subject": &message.event_type, "payload": &message.payload })),
         });
 
-        let payload_str = match String::from_utf8(message.payload.to_vec()) {
-            Ok(payload) => payload,
-            Err(e) => {
+        match message.event_type {
+            PlutomiEventTypes::TOTPRequested => {
+                // Send the email
+                // let payload = match message.payload {
+                //     PlutomiEventPayload::TOTPRequested(payload) => payload,
+                //     _ => {
+                //         logger.log(LogObject {
+                //             level: LogLevel::Error,
+                //             message: "Invalid payload for TOTPRequested".to_string(),
+                //             _time: get_current_time(OffsetDateTime::now_utc()),
+                //             error: None,
+                //             request: None,
+                //             response: None,
+                //             data: Some(json!({ "payload": message.payload })),
+                //         });
+                //         return Err("Invalid payload for TOTPRequested".to_string());
+                //     }
+                // };
+
+                // Send the email
+                // send_email(payload.email).await?;
+            }
+            _ => {
                 logger.log(LogObject {
-                    level: LogLevel::Error,
-                    message: format!("Failed to convert payload to string: {}", e),
+                    level: LogLevel::Warn,
+                    message: format!(
+                        "Unknown event type {:?} in {:?}",
+                        message.event_type, consumer_name
+                    ),
                     _time: get_current_time(OffsetDateTime::now_utc()),
-                    error: Some(json!({ "error": e.to_string() })),
+                    error: None,
                     request: None,
                     response: None,
-                    data: None,
+                    data: Some(json!({ "payload": message.payload })),
                 });
-                return Err(format!("Failed to convert payload to string: {}", e));
             }
-        };
-
-        if payload_str.contains("crash") {
-            return Err("Crash detected".to_string());
         }
-
-        let parsed_payload = match serde_json::from_str(&payload_str) {
-            Ok(json) => json,
-            Err(e) => {
-                logger.log(LogObject {
-                    level: LogLevel::Error,
-                    message: format!("Failed to parse JSON payload: {}", e),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    error: Some(json!({ "error": e.to_string() })),
-                    request: None,
-                    response: None,
-                    data: Some(json!({ "raw_payload": payload_str })),
-                });
-                return Err(format!("Failed to parse JSON payload: {}", e));
-            }
-        };
-
-        logger.log(LogObject {
-            level: LogLevel::Info,
-            message: format!("Sending email for event {}", message.subject),
-            error: None,
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            request: None,
-            response: None,
-            data: Some(json!({ "payload": parsed_payload })),
-        });
 
         Ok(())
     })
@@ -589,8 +578,6 @@ fn handle_meta(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        println!("INCOMIGN MESSAGE {:?}", message);
-
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
@@ -665,14 +652,9 @@ fn handle_meta(
         publish_event(PublishEventOptions {
             jetstream_context,
             // events-retry.email-consumer etc.
-            stream_name: format!("{}.{}", new_stream, payload.consumer),
+            stream_name: format!("{}.{}", new_stream, &payload.consumer),
             headers: None,
-            plutomi_event: Some(PlutomiEvent {
-                event_type: PlutomiEventTypes::from_str(&payload.event_type)
-                    .map_err(|_| "Failed to parse event type".to_string())?,
-                payload: PlutomiEventPayload::from_str(&payload.payload)
-                    .map_err(|_| "Failed to parse payload".to_string())?,
-            }),
+            event: Some(&message.payload),
         })
         .await
         .map_err(|e| {
