@@ -441,6 +441,15 @@ async fn extract_message(
         if message.subject.starts_with("events-retry.")
             || message.subject.starts_with("events-dlq.")
         {
+            logger.log(LogObject {
+                level: LogLevel::Info,
+                message: format!("JOSE DEBUG IN EXTRACT {}", message.subject),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                error: None,
+                request: None,
+                response: None,
+                data: Some(json!({ "entire_message_payload": message.payload.clone() })),
+            });
             // Parse the advisory message
             let advisory: MaxDeliverAdvisory = serde_json::from_slice(&message.payload)
                 .map_err(|e| format!("Failed to parse max delivery advisory message: {}", e))?;
@@ -470,6 +479,19 @@ async fn extract_message(
         )
     })?;
 
+    logger.log(LogObject {
+        level: LogLevel::Info,
+        message: format!(
+            "JOSE DEBUG EXTRACTED MESSAGE NEED TO PARSE: {}",
+            original_subject
+        ),
+        _time: get_current_time(OffsetDateTime::now_utc()),
+        error: None,
+        request: None,
+        response: None,
+        data: Some(json!({ "subject": original_subject, "payload": original_payload })),
+    });
+
     // Parse the payload based on the event type
     let payload = match event_type {
         PlutomiEventTypes::TOTPRequested => {
@@ -478,6 +500,7 @@ async fn extract_message(
             PlutomiEventPayload::TOTPRequested(payload)
         }
 
+        // Unused
         _ => {
             let msg = format!(
                 "Unknown event type while extracting message: {}",
