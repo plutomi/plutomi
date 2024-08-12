@@ -5,9 +5,7 @@ use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use serde_json::json;
-use shared::events::{
-    MaxDeliverAdvisory, PlutomiEvent, PlutomiEventPayload, PlutomiEventTypes, TOTPRequestedPayload,
-};
+use shared::events::{MaxDeliverAdvisory, PlutomiEvent, PlutomiEventPayload, TOTPRequestedPayload};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
@@ -15,7 +13,6 @@ use shared::nats::{
     PublishEventOptions,
 };
 use std::collections::HashMap;
-use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
 use std::vec;
@@ -110,7 +107,7 @@ async fn main() -> Result<(), String> {
         },
         ConsumerOptions {
             consumer_name: String::from("email-consumer"),
-            filter_subjects: vec![PlutomiEventTypes::TOTPRequested.as_string()],
+            filter_subjects: vec![PlutomiEvent::TOTP_REQUESTED_EVENT.to_string()],
             stream: Arc::clone(&streams["events"]),
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
@@ -487,11 +484,12 @@ async fn extract_message(
     });
 
     // Parse the payload based on the event type
-    let payload = match event {
+    match event {
         PlutomiEvent::TOTPRequested(ps) => {
             let payload: TOTPRequestedPayload = serde_json::from_slice(&original_payload)
                 .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
-            PlutomiEventPayload::TOTPRequested(payload)
+
+            Ok(PlutomiEvent::TOTPRequested(ps))
         }
 
         // Unused
@@ -509,14 +507,10 @@ async fn extract_message(
                 response: None,
                 data: None,
             });
-            return Err(msg);
-        }
-    };
 
-    Ok(PlutomiEvent {
-        event_type,
-        payload,
-    })
+            Err(msg)
+        }
+    }
 }
 
 fn send_email(
@@ -546,7 +540,7 @@ fn send_email(
         });
 
         match event {
-            PlutomiEventTypes::TOTPRequested(payload) => {
+            PlutomiEvent::TOTPRequested(payload) => {
                 let x = payload.email;
                 // Send the email
                 // let payload = match message.payload {

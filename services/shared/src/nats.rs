@@ -2,6 +2,7 @@ use async_nats::{
     jetstream::{self, Context},
     ConnectOptions, HeaderMap,
 };
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{sync::Arc, time::Duration};
 use time::OffsetDateTime;
@@ -90,37 +91,39 @@ pub async fn create_stream<'a>(
     Ok((stream_name, Arc::new(stream)))
 }
 
-pub struct PublishEventOptions<'a> {
+pub struct PublishEventOptions<'a, T: Serialize> {
     pub jetstream_context: &'a Context,
     pub stream_name: String,
-    pub plutomi_event: PlutomiEvent,
+    // This is optional because on retry & DLQ streams, we don't want to re-publish the event
+    // It'll stay in the original 'events' stream and metadata will be sent to the handlers to handle it
+    pub event: Option<T>,
     // For retry and DLQ streams
     pub headers: Option<HeaderMap>,
 }
 
 /**
- * Publish an event to the event stream.
+ * Publish an event to a primary stream like 'events'.
+ * If you want to publish to retry or DLQ streams, use the headers function to publish headers only,
+ * and have the handler lookup the original event in the 'events' stream.
  * https://natsbyexample.com/examples/messaging/json/rust
  */
-pub async fn publish_event<'a>(
+pub async fn publish_event<'a, T: Serialize>(
     PublishEventOptions {
         jetstream_context,
-        plutomi_event,
+        event,
         stream_name,
         headers,
-    }: PublishEventOptions<'a>,
+    }: PublishEventOptions<'a, T>,
 ) -> Result<(), String> {
-    let bytes = serde_json::to_vec(&json!(plutomi_event))
+    let bytes = serde_json::to_vec(&json!(event))
         .map_err(|e| format!("Failed to serialize event: {}", e))?;
 
-    let publish_result = match headers {
-        Some(headers) => {
-            jetstream_context
-                .publish_with_headers(stream_name, headers, bytes.into())
-                .await
-        }
-        None => jetstream_context.publish(stream_name, bytes.into()).await,
-    };
+    // Set the headers to an empty map if it's None
+    let headers = headers.unwrap_or_else(HeaderMap::new);
+
+    let publish_result = jetstream_context
+        .publish_with_headers(stream_name, headers, bytes.into())
+        .await;
 
     publish_result
         .map_err(|e| format!("Failed to publish event: {}", e))?
