@@ -5,7 +5,7 @@ use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use serde_json::json;
-use shared::events::{MaxDeliverAdvisory, PlutomiEvent, PlutomiEventPayload, TOTPRequestedPayload};
+use shared::events::{MaxDeliverAdvisory, PlutomiEvent, TOTPRequestedPayload};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
@@ -542,6 +542,10 @@ fn send_email(
         match event {
             PlutomiEvent::TOTPRequested(payload) => {
                 let x = payload.email;
+
+                if x.contains("crash") {
+                    return Err("Email contains crash".to_string());
+                }
                 // Send the email
                 // let payload = match message.payload {
                 //     PlutomiEventPayload::TOTPRequested(payload) => payload,
