@@ -2,13 +2,12 @@ use async_nats::{
     jetstream::{self, Context},
     ConnectOptions, HeaderMap,
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::json;
 use std::{sync::Arc, time::Duration};
 use time::OffsetDateTime;
 
 use crate::{
-    events::PlutomiEvent,
     get_current_time::get_current_time,
     get_env::get_env,
     logger::{LogObject, Logger},

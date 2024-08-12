@@ -41,6 +41,7 @@ impl PlutomiEvent {
                     .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
                 Ok(PlutomiEvent::TOTPRequested(payload))
             }
+            // Add other event types here with their corresponding payload deserialization
             _ => Err(format!("Unknown event type in from_jetstream: {}", subject)),
         }
     }
