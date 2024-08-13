@@ -112,6 +112,7 @@ struct GetConsumerInfoResult {
     consumer: Consumer<jetstream::consumer::pull::Config>,
 }
 
+// TODO move this to config and use directly
 fn get_message_handler(consumer_name: &str) -> MessageHandler {
     match consumer_name {
         name if name.starts_with("meta") => Arc::new(handle_meta),
@@ -619,6 +620,29 @@ fn handle_meta(
             // TODO payload is in bytes, should be converted to string
             data: Some(json!({  "subject": &message.subject })),
         });
+
+        if message
+            .subject
+            .starts_with("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.")
+        {
+            let x = serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload).unwrap();
+            logger.log(LogObject {
+                level: LogLevel::Warn,
+                message: format!(
+                    "JOSE DEBUG ERROR - THROWING ON FIRST RETRY STREAM FOR CONSUMER {}",
+                    &consumer_name
+                ),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                error: None,
+                request: None,
+                response: None,
+                data: Some(json!({
+                    "subject": &message.subject,
+                    "payload": x,
+                })),
+            });
+            return Err("TEST ERROR HERE".to_string());
+        }
 
         let payload = match serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload) {
             Ok(payload) => payload,
