@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use strum_macros::{AsRefStr, EnumString};
 use time::OffsetDateTime;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -17,6 +18,16 @@ pub struct MaxDeliverAdvisory {
     pub deliveries: u64,
 }
 
+/**
+ *
+ */
+#[derive(Debug, EnumString, AsRefStr, Serialize, Deserialize)]
+#[strum(serialize_all = "snake_case")]
+pub enum EventType {
+    #[strum(serialize = "events.totp.requested")]
+    TOTPRequested,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub enum PlutomiEvent {
     TOTPRequested(TOTPRequestedPayload),
@@ -24,26 +35,21 @@ pub enum PlutomiEvent {
 
 #[allow(non_snake_case)]
 impl PlutomiEvent {
-    // The string representation of the event type
-    // TODO Make this to an enum so we can match on it? hmm..
-    pub const TOTP_REQUESTED_EVENT: &'static str = "events.totp.requested";
-
-    pub fn event_type(&self) -> &'static str {
+    pub fn event_type(&self) -> EventType {
         match self {
-            PlutomiEvent::TOTPRequested(_) => Self::TOTP_REQUESTED_EVENT,
+            PlutomiEvent::TOTPRequested(_) => EventType::TOTPRequested,
         }
     }
 
     // Convert a Jetstream Message to a PlutomiEvent
     pub fn from_jetstream(subject: &str, payload: &[u8]) -> Result<Self, String> {
-        match subject {
-            TOTP_REQUESTED_EVENT => {
+        match subject.parse::<EventType>() {
+            Ok(EventType::TOTPRequested) => {
                 let payload = serde_json::from_slice(payload)
                     .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
                 Ok(PlutomiEvent::TOTPRequested(payload))
             }
-            // Add other event types here with their corresponding payload deserialization
-            _ => Err(format!("Unknown event type in from_jetstream: {}", subject)),
+            Err(_) => Err(format!("Unknown event type in from_jetstream: {}", subject)),
         }
     }
 }

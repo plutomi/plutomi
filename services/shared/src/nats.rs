@@ -52,7 +52,6 @@ pub async fn connect_to_nats(
 
 pub struct CreateStreamOptions<'a> {
     pub jetstream_context: &'a Context,
-    // Typically, you want "name.>" to match all events under the name
     pub subjects: Vec<String>,
     pub stream_name: String,
 }
