@@ -534,7 +534,8 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        let event = extract_message(&message, Arc::clone(&logger), jetstream_context).await?;
+        let event: PlutomiEvent =
+            extract_message(&message, Arc::clone(&logger), jetstream_context).await?;
 
         logger.log(LogObject {
             level: LogLevel::Info,
@@ -598,6 +599,34 @@ fn send_email(
     })
 }
 
+async fn meta_get_previous_advisory(
+    jetstream_context: &Context,
+    payload: &MaxDeliverAdvisory,
+) -> Result<MaxDeliverAdvisory, String> {
+    let stream = jetstream_context
+        .get_stream(base_consumer_or_stream_name(&payload.stream))
+        .await
+        .map_err(|e| format!("Failed to get stream: {}", e))?;
+
+    let original_message = stream
+        .get_raw_message(payload.stream_seq)
+        .await
+        .map_err(|e| format!("Failed to get original message: {}", e))?;
+
+    let decoded_payload = engine::general_purpose::STANDARD
+        .decode(&original_message.payload)
+        .map_err(|e| format!("Failed to decode base64 payload: {}", e))?;
+
+    let original_max_delivery_advisory: MaxDeliverAdvisory =
+        serde_json::from_slice(&decoded_payload).map_err(|e| {
+            format!(
+                "Failed to parse max delivery advisory message in extract: {}",
+                e
+            )
+        })?;
+
+    Ok(original_max_delivery_advisory)
+}
 fn handle_meta(
     MessageHandlerOptions {
         message,
@@ -643,7 +672,7 @@ fn handle_meta(
             return Err("TEST ERROR HERE".to_string());
         }
 
-        let payload = match serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload) {
+        let mut payload = match serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload) {
             Ok(payload) => payload,
             Err(e) => {
                 // We are only listening for the MAX_DELIVERIES event
@@ -681,39 +710,82 @@ fn handle_meta(
             }
         };
 
+        /* We need a copy of the original advisory to pass down to the retry/dlq handlers. For example:
+        1. notifications-consumer reaches max delivery attempts
+        2. NATS sends a MAX_DELIVERIES advisory to the meta-consumer
+        3. meta-consumer reaches max delivery attempts
+        4. NATS sends a MAX_DELIVERIES advisory to the meta-consumer-retry
+        5. The meta-consumer-retry needs to know the original message that failed, to properly send it down to the retry/dlq handlers.
+            The message it receives will be the MAX_DELIVERIES advisory, not the original message. So when publishing, it would publish the MAX_DELIVERY advisory
+            of the meta-consumer to the events-retry.meta-consumer-retry stream. This is wrong and it should be the original message sequence ID with the original consumer.*/
+
         // Get the new stream prefix to put the event into (ie waterfall)
         let (new_stream, new_consumer) = match payload.stream.as_str() {
             "events" => {
+                // Get the original advisory from a business logic consumer
+                let previous_max_delivery_advisory =
+                    meta_get_previous_advisory(&jetstream_context, &payload).await?;
+
                 logger.log(LogObject {
                     level: LogLevel::Info,
-                    message: "Moving message from events to events-retry stream".to_string(),
+                    message: "Moving message 1 from events to events-retry stream".to_string(),
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     error: None,
                     request: None,
                     response: None,
-                    data: Some(json!({ "payload": payload })),
+                    data: Some(json!({ "payload": payload, "previous_advisory": previous_max_delivery_advisory })),
                 });
+
                 (
                     "events-retry",
-                    format!("{}-retry", base_consumer_or_stream_name(&payload.consumer)),
+                    format!(
+                        "{}-retry",
+                        base_consumer_or_stream_name(&previous_max_delivery_advisory.consumer)
+                    ),
                 )
             }
             "events-retry" => {
+                // Get the previous advisory from a meta-consumer logic consumer
+                let previous_max_delivery_advisory =
+                    meta_get_previous_advisory(&jetstream_context, &payload).await?;
+
+                // Get the original advisory from a meta-consumer logic consumer
+                let original_max_delivery_advisory =
+                    meta_get_previous_advisory(&jetstream_context, &previous_max_delivery_advisory)
+                        .await?;
+
                 logger.log(LogObject {
                     level: LogLevel::Info,
-                    message: "Moving message from events-retry to events-dlq stream".to_string(),
+                    message: "Moving message 2 from events-retry to events-dlq stream".to_string(),
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     error: None,
                     request: None,
                     response: None,
-                    data: Some(json!({ "payload": payload })),
+                    data: Some(json!({ "payload": payload, "previous_advisory": previous_max_delivery_advisory, "original_max_delivery_advisory": original_max_delivery_advisory }))
                 });
+
                 (
                     "events-dlq",
-                    format!("{}-dlq", base_consumer_or_stream_name(&payload.consumer)),
+                    format!(
+                        "{}-dlq",
+                        base_consumer_or_stream_name(&original_max_delivery_advisory.consumer)
+                    ),
                 )
             }
             "events-dlq" => {
+                // Get the previous advisory from a meta-consumer-retry logic consumer
+                let previous_max_delivery_advisory =
+                    meta_get_previous_advisory(&jetstream_context, &payload).await?;
+
+                // Get the first advisory from a meta-consumer logic consumer
+                let first_max_delivery_advisory =
+                    meta_get_previous_advisory(&jetstream_context, &previous_max_delivery_advisory)
+                        .await?;
+
+                // Get the original advisory from a meta-consumer logic consumer
+                let original_max_delivery_advisory =
+                    meta_get_previous_advisory(&jetstream_context, &first_max_delivery_advisory)
+                        .await?;
                 logger.log(LogObject {
                     level: LogLevel::Warn,
                     message: "Message has reached max delivery attempts and will not be retried"
@@ -722,7 +794,7 @@ fn handle_meta(
                     error: None,
                     request: None,
                     response: None,
-                    data: Some(json!({ "payload": payload })),
+                    data: Some(json!({ "payload": payload, "previous_max_delivery_advisory": previous_max_delivery_advisory, "first_max_delivery_advisory": first_max_delivery_advisory, "original_max_delivery_advisory": original_max_delivery_advisory })),
                 });
                 return Ok(());
             }
@@ -741,8 +813,6 @@ fn handle_meta(
             }
         };
 
-        // TODO: Bug is here, payload.consumer should be the new consumer name otherwise the stream wont work!
-        // Publish function using stream: events-dlq.retry-email-consumer,
         let pub_fn_stream = format!("{}.{}", new_stream, new_consumer);
         logger.log(LogObject {
             level: LogLevel::Info,

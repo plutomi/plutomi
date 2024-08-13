@@ -79,7 +79,7 @@ impl Config {
                 // This should listen to any MAX_DELIVERIES failures for the above 'meta-consumer-retry'. Something really went wrong here.
                 stream: "events-retry".to_string(),
                 filter_subjects: vec![
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.meta-consumer-retry"
+                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.meta-consumer-retry"
                         .to_string(),
                 ],
                 max_delivery_attempts: 1,

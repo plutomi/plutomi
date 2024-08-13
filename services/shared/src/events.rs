@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use strum_macros::{AsRefStr, EnumString};
 use time::OffsetDateTime;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct MaxDeliverAdvisory {
     #[serde(rename = "type")]
@@ -16,6 +16,10 @@ pub struct MaxDeliverAdvisory {
     pub stream_seq: u64,
     // How many times the message was delivered
     pub deliveries: u64,
+    /* If we have a notifications-consumer which reaches it's MAX_DELIVERIES, NATS sends a MAX_DELIVERIES advisory to the meta-consumer.
+    However, the meta-consumer can also reach it's MAX_DELIVERIES, so we need to know the original message that failed for when it gets to the meta-consumer-retry, and same for the DLQ.
+    That is why we have this field, so in each handler when calling extract_message, we can pull the original message from the 'events' stream and process it */
+    // pub original_advisory: Option<Box<MaxDeliverAdvisory>>,
 }
 
 /**
