@@ -1,5 +1,6 @@
 use async_nats::jetstream::Context;
 use async_nats::jetstream::{self, consumer::Consumer, Message};
+use base64::{decode, decode_engine, engine, Engine}; // Add this to the top with your imports
 use bytes::Bytes;
 use dotenv::dotenv;
 use futures::future::BoxFuture;
@@ -92,13 +93,32 @@ async fn main() -> Result<(), String> {
 
     let consumer_configs: Vec<ConsumerOptions> = vec![
         ConsumerOptions {
-            // This consumer listens to all events that have reached their max delivery attempts
-            // and forwards them to the proper retry/dlq stream.
-            // https://docs.nats.io/using-nats/developer/develop_jetstream/consumers#dead-letter-queues-type-functionality
             consumer_name: String::from("meta-consumer"), // TODO rename to max_deliveries handler or something
             // We do not have separate per stream as I figured it might be overkill
             filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
             stream: Arc::clone(&streams["events"]),
+            jetstream_context: Arc::clone(&jetstream_context),
+            logger: Arc::clone(&logger),
+            message_handler: Arc::new(handle_meta),
+            max_delivery_attempts: 10000,
+            redeliver_after: Duration::from_secs(2),
+        },
+        ConsumerOptions {
+            consumer_name: String::from("events-retry-meta-consumer"), // TODO rename to max_deliveries handler or something
+            // We do not have separate per stream as I figured it might be overkill
+            filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
+            stream: Arc::clone(&streams["events-retry"]),
+            jetstream_context: Arc::clone(&jetstream_context),
+            logger: Arc::clone(&logger),
+            message_handler: Arc::new(handle_meta),
+            max_delivery_attempts: 10000,
+            redeliver_after: Duration::from_secs(2),
+        },
+        ConsumerOptions {
+            consumer_name: String::from("events-dlq-meta-consumer"), // TODO rename to max_deliveries handler or something
+            // We do not have separate per stream as I figured it might be overkill
+            filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
+            stream: Arc::clone(&streams["events-dlq"]),
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(handle_meta),
@@ -116,7 +136,7 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
-            consumer_name: String::from("retry-email-consumer"),
+            consumer_name: String::from("email-consumer"),
             filter_subjects: vec![String::from("events-retry.email-consumer")], // TODO use consts to avoid typos
             stream: Arc::clone(&streams["events-retry"]),
             jetstream_context: Arc::clone(&jetstream_context),
@@ -126,14 +146,14 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
-            consumer_name: String::from("dlq-email-consumer"),
+            consumer_name: String::from("email-consumer"),
             filter_subjects: vec![String::from("events-dlq.email-consumer")],
             jetstream_context: Arc::clone(&jetstream_context),
             stream: Arc::clone(&streams["events-dlq"]),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
             max_delivery_attempts: 1,
-            redeliver_after: Duration::from_secs(60),
+            redeliver_after: Duration::from_secs(5),
         },
     ];
 
@@ -448,8 +468,13 @@ async fn extract_message(
                 data: Some(json!({ "entire_message_payload": message.payload.clone() })),
             });
             // Parse the advisory message
-            let advisory: MaxDeliverAdvisory = serde_json::from_slice(&message.payload)
-                .map_err(|e| format!("Failed to parse max delivery advisory message: {}", e))?;
+            let advisory: MaxDeliverAdvisory =
+                serde_json::from_slice(&message.payload).map_err(|e| {
+                    format!(
+                        "Failed to parse max delivery advisory message in extract: {}",
+                        e
+                    )
+                })?;
 
             // Look up the original event in the main stream
             let stream = jetstream_context
@@ -462,32 +487,63 @@ async fn extract_message(
                 .await
                 .map_err(|e| format!("Failed to get original message: {}", e))?;
 
-            (original_message.subject, original_message.payload.into())
+            // When using get_raw_message, the payload is base64 encoded
+            let decoded_payload = engine::general_purpose::STANDARD
+                .decode(&original_message.payload)
+                .map_err(|e| format!("Failed to decode base64 payload: {}", e))?;
+
+            logger.log(LogObject {
+                level: LogLevel::Info,
+                message: format!(
+                    "JOSE DEBUG GOT MESSAGE FROM MAIN STREAM {}",
+                    original_message.subject
+                ),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                error: None,
+                request: None,
+                response: None,
+                data: None,
+            });
+            (original_message.subject, decoded_payload.into())
         } else {
             // Return the passed in message
             (message.subject.to_string(), message.payload.clone())
         };
 
-    let event = PlutomiEvent::from_jetstream(&original_subject, &original_payload)?;
-
     logger.log(LogObject {
         level: LogLevel::Info,
-        message: format!(
-            "JOSE DEBUG EXTRACTED MESSAGE NEED TO PARSE: {}",
-            original_subject
-        ),
+        message: format!("JOSE DEBUG EVENT GOT IT FROM MAIN STREAM GOOD",),
         _time: get_current_time(OffsetDateTime::now_utc()),
         error: None,
         request: None,
         response: None,
-        data: Some(json!({ "subject": original_subject, "payload": original_payload })),
+        data: Some(json!({ "original_subject": original_subject.clone(), "original_payload": original_payload.clone() })),
+    });
+
+    let event = PlutomiEvent::from_jetstream(&original_subject, &original_payload)?;
+
+    logger.log(LogObject {
+        level: LogLevel::Info,
+        message: format!("JOSE DEBUG EXTRACTED MESSAGE",),
+        _time: get_current_time(OffsetDateTime::now_utc()),
+        error: None,
+        request: None,
+        response: None,
+        data: Some(json!({ "event": event })),
     });
 
     // Parse the payload based on the event type
     match event {
         PlutomiEvent::TOTPRequested(ps) => {
-            let payload: TOTPRequestedPayload = serde_json::from_slice(&original_payload)
-                .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
+            logger.log(LogObject {
+                level: LogLevel::Info,
+                message: format!("JOSE DEBUG MATCHED EVENT",),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                error: None,
+                request: None,
+                response: None,
+                data: Some(json!({ "payload": ps })),
+            });
 
             Ok(PlutomiEvent::TOTPRequested(ps))
         }
@@ -527,7 +583,7 @@ fn send_email(
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
-                "Processing {:?} message in {}",
+                "Processing 1 {:?} message in {}",
                 &event.event_type(),
                 &consumer_name
             ),
@@ -598,7 +654,7 @@ fn handle_meta(
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
-                "Processing {} message in {}",
+                "Processing 2 {} message in {}",
                 &message.subject, &consumer_name
             ),
             _time: get_current_time(OffsetDateTime::now_utc()),
@@ -666,12 +722,22 @@ fn handle_meta(
             }
         };
 
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: "".to_string(),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            error: None,
+            request: None,
+            response: None,
+            data: Some(json!({ "payload": payload })),
+        });
+
         publish_event(PublishEventOptions {
             jetstream_context,
             // events-retry.email-consumer etc.
             stream_name: format!("{}.{}", new_stream, &payload.consumer),
             headers: None,
-            event: Some(&message.payload),
+            event: Some(&payload), // TODO
         })
         .await
         .map_err(|e| {
