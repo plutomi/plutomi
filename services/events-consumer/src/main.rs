@@ -6,7 +6,7 @@ use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use serde_json::json;
-use shared::events::{EventType, MaxDeliverAdvisory, PlutomiEvent};
+use shared::events::{MaxDeliverAdvisory, PlutomiEvent};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
@@ -16,7 +16,6 @@ use shared::nats::{
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
-use std::vec;
 use time::OffsetDateTime;
 use tokio::task::JoinHandle;
 
@@ -62,115 +61,44 @@ async fn main() -> Result<(), String> {
     })
     .await?;
 
-    let stream_configs: Vec<CreateStreamOptions> = vec![
-        // Main events stream for all messages
-        // events.totp.requested or events.email.sent
-        CreateStreamOptions {
-            jetstream_context: &jetstream_context,
-            stream_name: config.streams.events.name,
-            subjects: config.streams.events.subjects,
-        },
-        // The format here is consumer based: events-retry.consumer-name
-        // That way we only retry messages that failed for a specific consumer
-        // ie: SES is down, don't resend the message to ClickHouse or MeiliSearch consumers
-        // The logic here doesn't change, but the retry backoff does
-        CreateStreamOptions {
-            jetstream_context: &jetstream_context,
-            stream_name: config.streams.events_retry.name,
-            subjects: config.streams.events_retry.subjects,
-        },
-        // DLQ for messages that have failed too many times and require manual intervention
-        // Same formats as the retry stream: events-dlq.consumer-name
-        CreateStreamOptions {
-            jetstream_context: &jetstream_context,
-            stream_name: config.streams.events_dlq.name,
-            subjects: config.streams.events_dlq.subjects,
-        },
-    ];
-
     // Create all streams
     let streams: HashMap<String, Arc<jetstream::stream::Stream>> =
-        futures::future::try_join_all(stream_configs.into_iter().map(create_stream))
-            .await?
-            .into_iter()
-            .collect();
+        futures::future::try_join_all(config.streams.iter().map(|stream_config| {
+            create_stream(CreateStreamOptions {
+                jetstream_context: &jetstream_context,
+                stream_name: stream_config.name.clone(),
+                subjects: stream_config.subjects.clone(),
+            })
+        }))
+        .await?
+        .into_iter()
+        .collect();
 
-    let consumer_configs: Vec<ConsumerOptions> = vec![
-        ConsumerOptions {
-            consumer_name: config.consumers.meta.name,
-            filter_subjects: config.consumers.meta.filter_subjects,
-            max_delivery_attempts: config.consumers.meta.max_delivery_attempts,
-            redeliver_after: config.consumers.meta.redeliver_after_duration,
-
-            stream: Arc::clone(&streams["events"]),
-            jetstream_context: Arc::clone(&jetstream_context),
-            logger: Arc::clone(&logger),
-            message_handler: Arc::new(handle_meta),
-        },
-        ConsumerOptions {
-            consumer_name: config.consumers.meta_retry.name,
-            filter_subjects: config.consumers.meta_retry.filter_subjects,
-            max_delivery_attempts: config.consumers.meta_retry.max_delivery_attempts,
-            redeliver_after: config.consumers.meta_retry.redeliver_after_duration,
-
-            stream: Arc::clone(&streams["events-retry"]),
-            jetstream_context: Arc::clone(&jetstream_context),
-            logger: Arc::clone(&logger),
-            message_handler: Arc::new(handle_meta),
-        },
-        ConsumerOptions {
-            consumer_name: config.consumers.meta_dlq.name,
-            filter_subjects: config.consumers.meta_dlq.filter_subjects,
-            stream: Arc::clone(&streams["events-dlq"]),
-            jetstream_context: Arc::clone(&jetstream_context),
-            logger: Arc::clone(&logger),
-            message_handler: Arc::new(handle_meta),
-            max_delivery_attempts: config.consumers.meta_dlq.max_delivery_attempts,
-            redeliver_after: config.consumers.meta_dlq.redeliver_after_duration,
-        },
-        ConsumerOptions {
-            consumer_name: config.consumers.notifications.name,
-            filter_subjects: config.consumers.notifications.filter_subjects,
-            max_delivery_attempts: config.consumers.notifications.max_delivery_attempts,
-            redeliver_after: config.consumers.notifications.redeliver_after_duration,
-            stream: Arc::clone(&streams["events"]),
-            jetstream_context: Arc::clone(&jetstream_context),
-            logger: Arc::clone(&logger),
-            message_handler: Arc::new(send_email),
-        },
-        ConsumerOptions {
-            // Retry & DLQ filter subjects are different because we essentially get some headers and then fetch the original message from the 'events' stream.
-            consumer_name: config.consumers.notifications_retry.name,
-            filter_subjects: config.consumers.notifications_retry.filter_subjects,
-            max_delivery_attempts: config.consumers.notifications_retry.max_delivery_attempts,
-            redeliver_after: config
-                .consumers
-                .notifications_retry
-                .redeliver_after_duration,
-
-            stream: Arc::clone(&streams["events-retry"]),
-            jetstream_context: Arc::clone(&jetstream_context),
-            logger: Arc::clone(&logger),
-            message_handler: Arc::new(send_email),
-        },
-        ConsumerOptions {
-            consumer_name: config.consumers.notifications_dlq.name,
-            filter_subjects: config.consumers.notifications_dlq.filter_subjects,
-            max_delivery_attempts: config.consumers.notifications_dlq.max_delivery_attempts,
-            redeliver_after: config.consumers.notifications_dlq.redeliver_after_duration,
-
-            stream: Arc::clone(&streams["events-dlq"]),
-            jetstream_context: Arc::clone(&jetstream_context),
-            logger: Arc::clone(&logger),
-            message_handler: Arc::new(send_email),
-        },
-    ];
-
-    // Spawn all consumers in their own threads
-    let consumer_handles: Vec<_> = consumer_configs.into_iter().map(spawn_consumer).collect();
+    // Create all consumers
+    let consumer_handles: Vec<_> = config
+        .consumers
+        .iter()
+        .map(|consumer_config| {
+            let stream = Arc::clone(&streams[&consumer_config.stream]);
+            spawn_consumer(ConsumerOptions {
+                consumer_name: consumer_config.name.clone(),
+                filter_subjects: consumer_config.filter_subjects.clone(),
+                max_delivery_attempts: consumer_config.max_delivery_attempts,
+                redeliver_after: consumer_config.redeliver_after_duration,
+                stream,
+                jetstream_context: Arc::clone(&jetstream_context),
+                logger: Arc::clone(&logger),
+                message_handler: get_message_handler(&consumer_config.name),
+            })
+        })
+        .collect();
 
     // Run indefinitely
     let _ = futures::future::join_all(consumer_handles).await;
+
+    tokio::signal::ctrl_c()
+        .await
+        .expect("Failed to wait for ctrl_c signal");
 
     tokio::signal::ctrl_c()
         .await
@@ -182,6 +110,14 @@ async fn main() -> Result<(), String> {
 struct GetConsumerInfoResult {
     consumer_name: String,
     consumer: Consumer<jetstream::consumer::pull::Config>,
+}
+
+fn get_message_handler(consumer_name: &str) -> MessageHandler {
+    match consumer_name {
+        name if name.starts_with("meta") => Arc::new(handle_meta),
+        name if name.starts_with("notification") => Arc::new(send_email),
+        _ => panic!("Unknown consumer type"),
+    }
 }
 
 // Get the consumer name from the consumer when calling run_consumer
