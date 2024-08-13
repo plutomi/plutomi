@@ -1,12 +1,12 @@
 use async_nats::jetstream::Context;
 use async_nats::jetstream::{self, consumer::Consumer, Message};
-use base64::{decode, decode_engine, engine, Engine}; // Add this to the top with your imports
+use base64::{engine, Engine}; // Add this to the top with your imports
 use bytes::Bytes;
 use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use serde_json::json;
-use shared::events::{MaxDeliverAdvisory, PlutomiEvent, TOTPRequestedPayload};
+use shared::events::{MaxDeliverAdvisory, PlutomiEvent};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{

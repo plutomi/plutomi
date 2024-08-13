@@ -25,6 +25,7 @@ pub enum PlutomiEvent {
 #[allow(non_snake_case)]
 impl PlutomiEvent {
     // The string representation of the event type
+    // TODO Make this to an enum so we can match on it? hmm..
     pub const TOTP_REQUESTED_EVENT: &'static str = "events.totp.requested";
 
     pub fn event_type(&self) -> &'static str {
