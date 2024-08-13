@@ -67,7 +67,7 @@ pub async fn create_stream<'a>(
 
     // All streams should listen to this event so that the meta_handler can send it to the retry/dlq stream
     let max_deliver_attempts_event = format!(
-        "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.{}.>",
+        "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.{}.>", // todo remove?
         stream_name
     );
     all_subjects.push(max_deliver_attempts_event);
