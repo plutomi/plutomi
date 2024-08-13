@@ -136,7 +136,7 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
-            consumer_name: String::from("email-consumer"),
+            consumer_name: String::from("retry-email-consumer"),
             filter_subjects: vec![String::from("events-retry.email-consumer")], // TODO use consts to avoid typos
             stream: Arc::clone(&streams["events-retry"]),
             jetstream_context: Arc::clone(&jetstream_context),
@@ -146,7 +146,7 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
-            consumer_name: String::from("email-consumer"),
+            consumer_name: String::from("dlq-email-consumer"),
             filter_subjects: vec![String::from("events-dlq.email-consumer")],
             jetstream_context: Arc::clone(&jetstream_context),
             stream: Arc::clone(&streams["events-dlq"]),
@@ -510,15 +510,15 @@ async fn extract_message(
             (message.subject.to_string(), message.payload.clone())
         };
 
-    logger.log(LogObject {
-        level: LogLevel::Info,
-        message: format!("JOSE DEBUG EVENT GOT IT FROM MAIN STREAM GOOD",),
-        _time: get_current_time(OffsetDateTime::now_utc()),
-        error: None,
-        request: None,
-        response: None,
-        data: Some(json!({ "original_subject": original_subject.clone(), "original_payload": original_payload.clone() })),
-    });
+    // logger.log(LogObject {
+    //     level: LogLevel::Info,
+    //     message: format!("JOSE DEBUG EVENT GOT IT FROM MAIN STREAM GOOD",),
+    //     _time: get_current_time(OffsetDateTime::now_utc()),
+    //     error: None,
+    //     request: None,
+    //     response: None,
+    //     data: Some(json!({ "original_subject": original_subject.clone(), "original_payload": original_payload.clone() })),
+    // });
 
     let event = PlutomiEvent::from_jetstream(&original_subject, &original_payload)?;
 
