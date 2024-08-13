@@ -104,7 +104,7 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(2),
         },
         ConsumerOptions {
-            consumer_name: String::from("events-retry-meta-consumer"), // TODO rename to max_deliveries handler or something
+            consumer_name: String::from("meta-consumer-retry"), // TODO rename to max_deliveries handler or something
             // We do not have separate per stream as I figured it might be overkill
             filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
             stream: Arc::clone(&streams["events-retry"]),
@@ -115,7 +115,7 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(2),
         },
         ConsumerOptions {
-            consumer_name: String::from("events-dlq-meta-consumer"), // TODO rename to max_deliveries handler or something
+            consumer_name: String::from("meta-consumer-dlq"), // TODO rename to max_deliveries handler or something
             // We do not have separate per stream as I figured it might be overkill
             filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
             stream: Arc::clone(&streams["events-dlq"]),
@@ -126,9 +126,9 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(2),
         },
         ConsumerOptions {
+            stream: Arc::clone(&streams["events"]),
             consumer_name: String::from("email-consumer"),
             filter_subjects: vec![PlutomiEvent::TOTP_REQUESTED_EVENT.to_string()],
-            stream: Arc::clone(&streams["events"]),
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
@@ -136,20 +136,21 @@ async fn main() -> Result<(), String> {
             redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
-            consumer_name: String::from("retry-email-consumer"),
-            filter_subjects: vec![String::from("events-retry.email-consumer")], // TODO use consts to avoid typos
+            // Retry & DLQ filter subjects are different because we essentially get some headers and then fetch the original message from the 'events' stream.
+            consumer_name: String::from("email-consumer-retry"),
             stream: Arc::clone(&streams["events-retry"]),
+            filter_subjects: vec![String::from("events-retry.email-consumer-retry")], // TODO use consts to avoid typos
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
-            max_delivery_attempts: 1,
+            max_delivery_attempts: 2,
             redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
-            consumer_name: String::from("dlq-email-consumer"),
-            filter_subjects: vec![String::from("events-dlq.email-consumer")],
-            jetstream_context: Arc::clone(&jetstream_context),
+            consumer_name: String::from("email-consumer-dlq"),
             stream: Arc::clone(&streams["events-dlq"]),
+            filter_subjects: vec![String::from("events-dlq.email-consumer-dlq")],
+            jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
             max_delivery_attempts: 1,
@@ -445,6 +446,15 @@ async fn spawn_consumer(
 }
 
 /**
+ * When handling retries & DLQ, we need to strip the suffix to get the original name in some cases
+ */
+fn base_consumer_or_stream_name(name: &str) -> &str {
+    name.strip_suffix("-retry")
+        .or_else(|| name.strip_suffix("-dlq"))
+        .unwrap_or(name)
+}
+
+/**
  * While inside a message handler, check if a message is in the retry or DLQ stream
  * If it is, lookup the original event in the main stream and return it
  * Otherwise, return the original message
@@ -478,7 +488,8 @@ async fn extract_message(
 
             // Look up the original event in the main stream
             let stream = jetstream_context
-                .get_stream(&advisory.stream)
+                // Do not use the MaxDeliverAdvisory stream because in a DLQ scenario, this will be the events-retry stream
+                .get_stream(base_consumer_or_stream_name(&advisory.stream))
                 .await
                 .map_err(|e| format!("Failed to get stream: {}", e))?;
 
@@ -662,7 +673,7 @@ fn handle_meta(
             request: None,
             response: None,
             // TODO payload is in bytes, should be converted to string
-            data: Some(json!({  "subject": &message.subject, "payload": &message.payload,})),
+            data: Some(json!({  "subject": &message.subject })),
         });
 
         let payload = match serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload) {
@@ -704,9 +715,50 @@ fn handle_meta(
         };
 
         // Get the new stream prefix to put the event into (ie waterfall)
-        let new_stream = match payload.stream.as_str() {
-            "events" => "events-retry",
-            "events-retry" => "events-dlq",
+        let (new_stream, new_consumer) = match payload.stream.as_str() {
+            "events" => {
+                logger.log(LogObject {
+                    level: LogLevel::Info,
+                    message: "Moving message from events to events-retry stream".to_string(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    error: None,
+                    request: None,
+                    response: None,
+                    data: Some(json!({ "payload": payload })),
+                });
+                (
+                    "events-retry",
+                    format!("{}-retry", base_consumer_or_stream_name(&payload.consumer)),
+                )
+            }
+            "events-retry" => {
+                logger.log(LogObject {
+                    level: LogLevel::Info,
+                    message: "Moving message from events-retry to events-dlq stream".to_string(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    error: None,
+                    request: None,
+                    response: None,
+                    data: Some(json!({ "payload": payload })),
+                });
+                (
+                    "events-dlq",
+                    format!("{}-dlq", base_consumer_or_stream_name(&payload.consumer)),
+                )
+            }
+            "events-dlq" => {
+                logger.log(LogObject {
+                    level: LogLevel::Warn,
+                    message: "Message has reached max delivery attempts and will not be retried"
+                        .to_string(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    error: None,
+                    request: None,
+                    response: None,
+                    data: Some(json!({ "payload": payload })),
+                });
+                return Ok(());
+            }
             _ => {
                 let msg = format!("Unknown stream fallback: {}", payload.stream);
                 logger.log(LogObject {
@@ -722,9 +774,12 @@ fn handle_meta(
             }
         };
 
+        // TODO: Bug is here, payload.consumer should be the new consumer name otherwise the stream wont work!
+        // Publish function using stream: events-dlq.retry-email-consumer,
+        let pub_fn_stream = format!("{}.{}", new_stream, new_consumer);
         logger.log(LogObject {
             level: LogLevel::Info,
-            message: "".to_string(),
+            message: format!("Publish function using stream: {}", pub_fn_stream),
             _time: get_current_time(OffsetDateTime::now_utc()),
             error: None,
             request: None,
@@ -735,7 +790,7 @@ fn handle_meta(
         publish_event(PublishEventOptions {
             jetstream_context,
             // events-retry.email-consumer etc.
-            stream_name: format!("{}.{}", new_stream, &payload.consumer),
+            stream_name: pub_fn_stream,
             headers: None,
             event: Some(&payload), // TODO
         })
