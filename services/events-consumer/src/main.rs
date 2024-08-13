@@ -6,7 +6,7 @@ use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use serde_json::json;
-use shared::events::{MaxDeliverAdvisory, PlutomiEvent};
+use shared::events::{EventType, MaxDeliverAdvisory, PlutomiEvent};
 use shared::get_current_time::get_current_time;
 use shared::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use shared::nats::{
@@ -19,6 +19,8 @@ use std::time::Duration;
 use std::vec;
 use time::OffsetDateTime;
 use tokio::task::JoinHandle;
+
+mod config;
 
 // TODO: Acceptance criteria
 // - [ ] Can read .env parsed
@@ -47,8 +49,10 @@ type MessageHandler =
 async fn main() -> Result<(), String> {
     dotenv().ok();
 
+    let config = config::Config::new();
+
     let logger = Logger::init(LoggerContext {
-        caller: "events-consumer",
+        caller: &config.app_name,
     });
 
     // TODO: Add nats url to secrets
@@ -63,8 +67,8 @@ async fn main() -> Result<(), String> {
         // events.totp.requested or events.email.sent
         CreateStreamOptions {
             jetstream_context: &jetstream_context,
-            stream_name: "events".to_string(),
-            subjects: vec!["events.>".to_string()],
+            stream_name: config.streams.events.name,
+            subjects: config.streams.events.subjects,
         },
         // The format here is consumer based: events-retry.consumer-name
         // That way we only retry messages that failed for a specific consumer
@@ -72,15 +76,15 @@ async fn main() -> Result<(), String> {
         // The logic here doesn't change, but the retry backoff does
         CreateStreamOptions {
             jetstream_context: &jetstream_context,
-            stream_name: "events-retry".to_string(),
-            subjects: vec!["events-retry.>".to_string()],
+            stream_name: config.streams.events_retry.name,
+            subjects: config.streams.events_retry.subjects,
         },
         // DLQ for messages that have failed too many times and require manual intervention
         // Same formats as the retry stream: events-dlq.consumer-name
         CreateStreamOptions {
             jetstream_context: &jetstream_context,
-            stream_name: "events-dlq".to_string(),
-            subjects: vec!["events-dlq.>".to_string()],
+            stream_name: config.streams.events_dlq.name,
+            subjects: config.streams.events_dlq.subjects,
         },
     ];
 
@@ -93,68 +97,72 @@ async fn main() -> Result<(), String> {
 
     let consumer_configs: Vec<ConsumerOptions> = vec![
         ConsumerOptions {
-            consumer_name: String::from("meta-consumer"), // TODO rename to max_deliveries handler or something
-            // We do not have separate per stream as I figured it might be overkill
-            filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
+            consumer_name: config.consumers.meta.name,
+            filter_subjects: config.consumers.meta.filter_subjects,
+            max_delivery_attempts: config.consumers.meta.max_delivery_attempts,
+            redeliver_after: config.consumers.meta.redeliver_after_duration,
+
             stream: Arc::clone(&streams["events"]),
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(handle_meta),
-            max_delivery_attempts: 10000,
-            redeliver_after: Duration::from_secs(2),
         },
         ConsumerOptions {
-            consumer_name: String::from("meta-consumer-retry"), // TODO rename to max_deliveries handler or something
-            // We do not have separate per stream as I figured it might be overkill
-            filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
+            consumer_name: config.consumers.meta_retry.name,
+            filter_subjects: config.consumers.meta_retry.filter_subjects,
+            max_delivery_attempts: config.consumers.meta_retry.max_delivery_attempts,
+            redeliver_after: config.consumers.meta_retry.redeliver_after_duration,
+
             stream: Arc::clone(&streams["events-retry"]),
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(handle_meta),
-            max_delivery_attempts: 10000,
-            redeliver_after: Duration::from_secs(2),
         },
         ConsumerOptions {
-            consumer_name: String::from("meta-consumer-dlq"), // TODO rename to max_deliveries handler or something
-            // We do not have separate per stream as I figured it might be overkill
-            filter_subjects: vec!["$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.>".to_string()],
+            consumer_name: config.consumers.meta_dlq.name,
+            filter_subjects: config.consumers.meta_dlq.filter_subjects,
             stream: Arc::clone(&streams["events-dlq"]),
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(handle_meta),
-            max_delivery_attempts: 10000,
-            redeliver_after: Duration::from_secs(2),
+            max_delivery_attempts: config.consumers.meta_dlq.max_delivery_attempts,
+            redeliver_after: config.consumers.meta_dlq.redeliver_after_duration,
         },
         ConsumerOptions {
+            consumer_name: config.consumers.notifications.name,
+            filter_subjects: config.consumers.notifications.filter_subjects,
+            max_delivery_attempts: config.consumers.notifications.max_delivery_attempts,
+            redeliver_after: config.consumers.notifications.redeliver_after_duration,
             stream: Arc::clone(&streams["events"]),
-            consumer_name: String::from("email-consumer"),
-            filter_subjects: vec![PlutomiEvent::TOTP_REQUESTED_EVENT.to_string()],
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
-            max_delivery_attempts: 1,
-            redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
             // Retry & DLQ filter subjects are different because we essentially get some headers and then fetch the original message from the 'events' stream.
-            consumer_name: String::from("email-consumer-retry"),
+            consumer_name: config.consumers.notifications_retry.name,
+            filter_subjects: config.consumers.notifications_retry.filter_subjects,
+            max_delivery_attempts: config.consumers.notifications_retry.max_delivery_attempts,
+            redeliver_after: config
+                .consumers
+                .notifications_retry
+                .redeliver_after_duration,
+
             stream: Arc::clone(&streams["events-retry"]),
-            filter_subjects: vec![String::from("events-retry.email-consumer-retry")], // TODO use consts to avoid typos
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
-            max_delivery_attempts: 2,
-            redeliver_after: Duration::from_secs(3),
         },
         ConsumerOptions {
-            consumer_name: String::from("email-consumer-dlq"),
+            consumer_name: config.consumers.notifications_dlq.name,
+            filter_subjects: config.consumers.notifications_dlq.filter_subjects,
+            max_delivery_attempts: config.consumers.notifications_dlq.max_delivery_attempts,
+            redeliver_after: config.consumers.notifications_dlq.redeliver_after_duration,
+
             stream: Arc::clone(&streams["events-dlq"]),
-            filter_subjects: vec![String::from("events-dlq.email-consumer-dlq")],
             jetstream_context: Arc::clone(&jetstream_context),
             logger: Arc::clone(&logger),
             message_handler: Arc::new(send_email),
-            max_delivery_attempts: 1,
-            redeliver_after: Duration::from_secs(5),
         },
     ];
 
