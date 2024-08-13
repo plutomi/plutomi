@@ -621,15 +621,14 @@ fn handle_meta(
             data: Some(json!({  "subject": &message.subject })),
         });
 
-        if message
-            .subject
-            .starts_with("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.")
+        if message.subject.to_string()
+            == ("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer")
         {
             let x = serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload).unwrap();
             logger.log(LogObject {
                 level: LogLevel::Warn,
                 message: format!(
-                    "JOSE DEBUG ERROR - THROWING ON FIRST RETRY STREAM FOR CONSUMER {}",
+                    "JOSE DEBUG SIMULATING ERROR - THROWING ON FIRST RETRY STREAM FOR CONSUMER {}",
                     &consumer_name
                 ),
                 _time: get_current_time(OffsetDateTime::now_utc()),
@@ -638,7 +637,7 @@ fn handle_meta(
                 response: None,
                 data: Some(json!({
                     "subject": &message.subject,
-                    "payload": x,
+                    "sequence": x.stream_seq,
                 })),
             });
             return Err("TEST ERROR HERE".to_string());
