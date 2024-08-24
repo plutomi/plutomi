@@ -52,18 +52,34 @@ impl Config {
                 name: "meta-consumer".to_string(),
                 stream: "events".to_string(),
                 filter_subjects: vec![
-                    // This should listen to all MAX_DELIVERIES events for all business logic consumers
+                    // This should listen to all MAX_DELIVERIES events for all 'events' business logic consumers
                     // Don't use a wildcard here because it will listen to it's own MAX_DELIVERIES event, causing a loop
                     "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer"
                         .to_string(),
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer-retry"
-                        .to_string(),
-                        "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer-dlq"
-                        .to_string(),
+                    // "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-retry"
+                    //     .to_string(),
+                    //     "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-dlq.notifications-consumer-dlq"
+                    //     .to_string(),
                 ],
                 max_delivery_attempts: 3,
                 redeliver_after_duration: Duration::from_secs(1),
             },
+            ConsumerConfig {
+                name: "meta-consumer-TEST".to_string(),
+                stream: "events-retry".to_string(),
+                filter_subjects: vec![
+                    // This should listen to all MAX_DELIVERIES events for all 'retry' business logic consumers
+                    // Don't use a wildcard here because it will listen to it's own MAX_DELIVERIES event, causing a loop
+                    // "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer"
+                    //     .to_string(),
+                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-retry"
+                        .to_string(),
+                        // "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-dlq.notifications-consumer-dlq"
+                        // .to_string(),
+                ],
+                max_delivery_attempts: 3,
+                redeliver_after_duration: Duration::from_secs(1),
+            }, // TODO add DLQ meta-consumer
             ConsumerConfig {
                 name: "meta-consumer-retry".to_string(),
                 stream: "events".to_string(),
