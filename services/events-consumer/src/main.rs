@@ -542,7 +542,7 @@ fn send_email(
             level: LogLevel::Info,
             message: format!(
                 "Processing 1 {:?} message in {}",
-                &event.event_type(),
+                &event.event_type(), // TODO this should use the actual event subject / type instead of this i think for easier filtering
                 &consumer_name
             ),
             _time: get_current_time(OffsetDateTime::now_utc()),
@@ -619,6 +619,13 @@ async fn meta_get_previous_advisory(
         .decode(&original_message.payload)
         .map_err(|e| format!("Failed to decode base64 payload: {}", e))?;
 
+    println!(
+        "JOSE DEBUG, decoded payload in meta get previous advisory: {:?}",
+        decoded_payload
+    );
+
+    print!("Attempting to parse...");
+
     let original_max_delivery_advisory: MaxDeliverAdvisory =
         serde_json::from_slice(&decoded_payload).map_err(|e| {
             format!(
@@ -683,6 +690,7 @@ fn handle_meta(
                 response: None,
                 data: Some(json!({
                     "subject": &message.subject,
+                    "payload": &message.payload,
                 })),
             });
         }
@@ -725,6 +733,19 @@ fn handle_meta(
             }
         };
 
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("PARSED PAYLOAD",),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            error: None,
+            request: None,
+            response: None,
+            data: Some(json!({
+                "subject": &message.subject,
+                "payload": &payload,
+            })),
+        });
+
         /* We need a copy of the original advisory to pass down to the retry/dlq handlers. For example:
         1. notifications-consumer reaches max delivery attempts
         2. NATS sends a MAX_DELIVERIES advisory to the meta-consumer
@@ -762,16 +783,45 @@ fn handle_meta(
                     )
                 }
                 "events-retry" => {
+                    logger.log(LogObject {
+                        level: LogLevel::Info,
+                        message: "in events-retry match clause".to_string(),
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        error: None,
+                        request: None,
+                        response: None,
+                        data: None,
+                    });
+
                     // Get the previous advisory from a meta-consumer logic consumer
                     let previous_max_delivery_advisory =
                         meta_get_previous_advisory(&jetstream_context, &payload).await?;
 
+                    logger.log(LogObject {
+                        level: LogLevel::Info,
+                        message: "Got previous max delivery advisory, one more to go".to_string(),
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        error: None,
+                        request: None,
+                        response: None,
+                        data: Some(json!({ "previous_max_delivery_advisory": previous_max_delivery_advisory })),
+                    });
                     // Get the original advisory from a meta-consumer logic consumer
                     let original_max_delivery_advisory = meta_get_previous_advisory(
                         &jetstream_context,
                         &previous_max_delivery_advisory,
                     )
                     .await?;
+
+                    logger.log(LogObject {
+                        level: LogLevel::Info,
+                        message: "Got original max delivery advisory".to_string(),
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        error: None,
+                        request: None,
+                        response: None,
+                        data: Some(json!({ "original_max_delivery_adivisory": original_max_delivery_advisory })),
+                    });
 
                     logger.log(LogObject {
                     level: LogLevel::Info,
