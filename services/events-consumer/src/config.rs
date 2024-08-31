@@ -52,38 +52,20 @@ impl Config {
                 name: "meta-consumer".to_string(),
                 stream: "events".to_string(),
                 filter_subjects: vec![
-                    // This should listen to all MAX_DELIVERIES events for all 'events' business logic consumers
-                    // Don't use a wildcard here because it will listen to it's own MAX_DELIVERIES event, causing a loop
+                    // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events' stream
+                    // You should add all 'events' stream consumers MAX_DELIVERY subjects here
                     "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer"
                         .to_string(),
-                    // "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-retry"
-                    //     .to_string(),
-                    //     "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-dlq.notifications-consumer-dlq"
-                    //     .to_string(),
+   
                 ],
                 max_delivery_attempts: 3,
                 redeliver_after_duration: Duration::from_secs(1),
             },
-            ConsumerConfig {
-                name: "meta-consumer-TEST".to_string(),
-                stream: "events-retry".to_string(),
-                filter_subjects: vec![
-                    // This should listen to all MAX_DELIVERIES events for all 'retry' business logic consumers
-                    // Don't use a wildcard here because it will listen to it's own MAX_DELIVERIES event, causing a loop
-                    // "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer"
-                    //     .to_string(),
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-retry"
-                        .to_string(),
-                        // "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-dlq.notifications-consumer-dlq"
-                        // .to_string(),
-                ],
-                max_delivery_attempts: 3,
-                redeliver_after_duration: Duration::from_secs(1),
-            }, // TODO add DLQ meta-consumer
+
             ConsumerConfig {
                 name: "meta-consumer-retry".to_string(),
                 stream: "events".to_string(),
-                // This should listen to any MAX_DELIVERIES failures for the above 'meta-consumer'.
+                // This should listen to any MAX_DELIVERIES failures for the 'meta-consumer' above. Its a meta-meta consumer if that makes sense
                 filter_subjects: vec![
                     "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.meta-consumer".to_string(),
                 ],
@@ -92,7 +74,7 @@ impl Config {
             },
             ConsumerConfig {
                 name: "meta-consumer-dlq".to_string(),
-                // This should listen to any MAX_DELIVERIES failures for the above 'meta-consumer-retry'. Something really went wrong here.
+                // This should listen to any MAX_DELIVERIES failures for the above 'meta-consumer-retry' above. Something really went wrong here.
                 stream: "events-retry".to_string(),
                 filter_subjects: vec![
                     "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.meta-consumer-retry"
@@ -101,7 +83,35 @@ impl Config {
                 max_delivery_attempts: 1,
                 redeliver_after_duration: Duration::from_secs(1),
             },
-            /* Business logic consumers
+
+
+            ConsumerConfig {
+                name: "meta-consumer-NEEDS_RENAME-1".to_string(),
+                stream: "events-retry".to_string(),
+                filter_subjects: vec![
+                    // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events-retry' stream
+                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-retry"
+                        .to_string(),
+    
+                ],
+                max_delivery_attempts: 3,
+                redeliver_after_duration: Duration::from_secs(1),
+            }, 
+
+            ConsumerConfig {
+                name: "meta-consumer-NEEDS_RENAME-2".to_string(),
+                stream: "events-dlq".to_string(),
+                filter_subjects: vec![
+                    // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events-dlq' stream
+                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-dlq"
+                        .to_string(),
+    
+                ],
+                max_delivery_attempts: 3,
+                redeliver_after_duration: Duration::from_secs(1),
+            }, 
+            /* !!!!!!!!!
+            Business logic consumers
             These handle actual functionality in the system
              */
             ConsumerConfig {
