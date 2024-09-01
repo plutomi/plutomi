@@ -118,7 +118,6 @@ If you're wondering why certain architectural decisions were made, check the [de
 
 If you have any other questions, open a discussion / issue and we can talk about it or reach out to me on Twitter [@notjoswayski](https://twitter.com/notjoswayski) or email jose@plutomi.com!
 
-
 // TODO
 Event flow:
 
@@ -128,12 +127,10 @@ Email consumer fails to process it (due to SES being down)
 After max delivery attempts, NATS publishes:
 $JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.email-consumer
 
-
 DLQ Stream:
 
 Yes, create a new stream for "DLQ.>"
 This stream will contain references to failed messages, not the messages themselves
-
 
 DLQ Handling:
 
@@ -142,15 +139,59 @@ When an advisory is received, publish a message to the DLQ stream like:
 "DLQ.events.email-consumer"
 This message contains headers with the original message ID and stream
 
-
 Reprocessing:
 
 Create consumer(s) for the DLQ stream
 When processing DLQ messages, use the headers to fetch the original message from the "events" stream
 Call the appropriate handler based on the consumer name in the DLQ subject
 
-
 Message existence:
 
 Correct, only one version of the original message exists in the main "events" stream
 The DLQ stream contains only references to these messages
+
+todo:
+
+. Consumer Hierarchy:
+Business Logic Consumers:
+
+Process core events like TOTPRequested.
+Have retries and DLQ handling, ensuring resilience if something goes wrong in the primary processing.
+Meta Consumers:
+
+Handle failures in the business logic consumers (via MAX_DELIVERIES advisories).
+Have their own retries and DLQs, adding another layer of fault tolerance.
+Super-Meta Consumers:
+
+Handle failures in the meta consumers, ensuring that even system-level events are robustly managed.
+These consumers handle the edge cases where the meta handling itself fails, which is a critical part of making your system highly resilient. 2. Stream Design:
+Events Stream: Holds the primary events like TOTPRequested.
+Retry Stream: Catches events that need to be retried after a failure.
+DLQ Stream: Stores events that failed even after retries, ensuring they don’t get lost. 3. Error Handling:
+Retries: Each consumer layer (business, meta, and super-meta) has a retry mechanism to handle transient errors.
+DLQs: Each consumer layer also has a DLQ to catch and log persistent failures, ensuring no message is lost.
+
+Certainly! Based on the code you've provided, here's an overview of what's happening in your event streaming pipeline:
+
+You're using NATS JetStream to create an event streaming system with retry and dead-letter queue (DLQ) functionality.
+You have three main streams:
+
+"events": for primary event processing
+"events-retry": for retrying failed events
+"events-dlq": for events that have failed all retry attempts
+
+You have two types of consumers:
+a. Meta consumers: These handle system advisory messages, particularly MAX_DELIVERIES events.
+b. Business logic consumers: These handle actual business events (e.g., TOTPRequested).
+The meta consumers are responsible for:
+
+Monitoring MAX_DELIVERIES events for business logic consumers
+Moving failed events to the appropriate retry or DLQ streams
+Handling their own failure cases (meta-consumer-retry and meta-consumer-dlq)
+
+The business logic consumers (e.g., notifications-consumer) process actual events like TOTPRequested.
+You've implemented a waterfall retry mechanism:
+
+If a business logic consumer fails, it's picked up by a meta-consumer
+The meta-consumer moves it to the retry stream
+If it fails in the retry stream, it's moved to the DLQ stream

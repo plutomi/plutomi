@@ -63,7 +63,7 @@ impl Config {
             },
 
             ConsumerConfig {
-                name: "meta-consumer-retry".to_string(),
+                name: "super-meta-consumer-retry".to_string(),
                 stream: "events".to_string(),
                 // This should listen to any MAX_DELIVERIES failures for the 'meta-consumer' above. Its a meta-meta consumer if that makes sense
                 filter_subjects: vec![
@@ -73,11 +73,11 @@ impl Config {
                 redeliver_after_duration: Duration::from_secs(1),
             },
             ConsumerConfig {
-                name: "meta-consumer-dlq".to_string(),
-                // This should listen to any MAX_DELIVERIES failures for the above 'meta-consumer-retry' above. Something really went wrong here.
+                name: "super-meta-consumer-dlq".to_string(),
+                // This should listen to any MAX_DELIVERIES failures for the above 'super-meta-consumer-retry' above. Something really went wrong here.
                 stream: "events-retry".to_string(),
                 filter_subjects: vec![
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.meta-consumer-retry"
+                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.super-meta-consumer-retry"
                         .to_string(),
                 ],
                 max_delivery_attempts: 1,
@@ -85,8 +85,10 @@ impl Config {
             },
 
 
+            // Business logic meta handlers:
+
             ConsumerConfig {
-                name: "meta-consumer-NEEDS_RENAME-1".to_string(),
+                name: "meta-consumer-retry".to_string(),
                 stream: "events-retry".to_string(),
                 filter_subjects: vec![
                     // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events-retry' stream
@@ -99,7 +101,7 @@ impl Config {
             }, 
 
             ConsumerConfig {
-                name: "meta-consumer-NEEDS_RENAME-2".to_string(),
+                name: "meta-consumer-dlq".to_string(),
                 stream: "events-dlq".to_string(),
                 filter_subjects: vec![
                     // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events-dlq' stream
