@@ -848,8 +848,11 @@ fn meta_handler(
 
                         original_max_delivery_advisory
                     } else {
-                        // Use the current message and send it downstream
-                        payload.clone()
+                        // Go down one level from the retry stream to the events stream
+                        let previous_max_delivery_advisory =
+                            meta_get_previous_advisory(&jetstream_context, &payload).await?;
+
+                        previous_max_delivery_advisory
                     };
 
                     logger.log(LogObject {
@@ -903,7 +906,18 @@ fn meta_handler(
 
                         original_max_delivery_advisory
                     } else {
-                        payload.clone()
+                        // Go down one level from the events-dlq  to the events-retry stream
+                        let previous_max_delivery_advisory =
+                            meta_get_previous_advisory(&jetstream_context, &payload).await?;
+
+                        // Go down one level from the events-retry  to the events-dlq stream
+                        let first_max_delivery_advisory = meta_get_previous_advisory(
+                            &jetstream_context,
+                            &previous_max_delivery_advisory,
+                        )
+                        .await?;
+
+                        first_max_delivery_advisory
                     };
 
                     // Do nothing for now, just log

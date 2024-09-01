@@ -195,3 +195,6 @@ You've implemented a waterfall retry mechanism:
 If a business logic consumer fails, it's picked up by a meta-consumer
 The meta-consumer moves it to the retry stream
 If it fails in the retry stream, it's moved to the DLQ stream
+
+NOTE: important
+retry and DLQ streams never get a duplicate copy of a message, instead they get a pointer (the max delivery event) and then lookup the message in the main stream.
