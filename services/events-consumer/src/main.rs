@@ -7,6 +7,7 @@ use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use rdkafka::admin::{AdminClient, AdminOptions, NewTopic, TopicReplication};
 use rdkafka::client::DefaultClientContext;
+use rdkafka::consumer::StreamConsumer;
 use rdkafka::error::{KafkaError, KafkaResult};
 use rdkafka::types::RDKafkaErrorCode;
 use rdkafka::ClientConfig;
@@ -59,12 +60,19 @@ async fn main() -> Result<(), String> {
         caller: &config.app_name,
     });
 
+    // # TODO
     let brokers = "localhost:29092,localhost:39092,localhost:49092";
-    let topic_name = "orders";
-    let partitions = 3;
-    let replication = 1;
 
-    create_topic(brokers, topic_name, partitions, replication).await?;
+    // Create the topics
+    let orders_topic = PlutomiTopic::new("orders", 3, 1, brokers); // 3 partitions, 1 replication factor
+    let users_topic = PlutomiTopic::new("users", 2, 1, brokers); // 2 partitions
+
+    // Create the consumers
+    let order_notifications_consumers =
+        create_consumers_for_group("notifications-consumer-group", &orders_topic).await?;
+
+    let user_notifications_consumers =
+        create_consumers_for_group("notifications-consumer-group", &orders_topic).await?;
 
     // let jetstream_context = connect_to_nats(ConnectToNatsOptions {
     //     logger: Arc::clone(&logger),
@@ -117,20 +125,106 @@ async fn main() -> Result<(), String> {
     Ok(())
 }
 
-async fn create_topic(
-    brokers: &str,
-    topic_name: &str,
+async fn create_producer(brokers: &str) -> KafkaResult<rdkafka::producer::FutureProducer> {
+    let producer: rdkafka::producer::FutureProducer = ClientConfig::new()
+        .set("bootstrap.servers", brokers)
+        .set("message.timeout.ms", "60000")
+        .create()
+        .expect("Producer creation error");
+
+    Ok(producer)
+}
+
+async fn create_consumers_for_group(
+    group_id: &str,
+    topic: &PlutomiTopic,
+) -> KafkaResult<Vec<JoinHandle<()>>> {
+    let mut consumer_handles = Vec::new();
+
+    for i in 0..topic.partitions {
+        let brokers = topic.brokers.to_string();
+        let group_id = group_id.to_string();
+        let topic_name = topic.name.clone();
+
+        let handle: JoinHandle<()> = tokio::spawn(async move {
+            let consumer: StreamConsumer = ClientConfig::new()
+                .set("group.id", &group_id)
+                .set("bootstrap.servers", &brokers)
+                .set("enable.partition.eof", "false")
+                .set("session.timeout.ms", "6000")
+                .set("enable.auto.commit", "false")
+                .create()
+                .expect("Consumer creation failed");
+
+            // Subscribe to the topic
+            consumer
+                .subscribe(&[&topic_name])
+                .expect("Subscription failed");
+
+            loop {
+                match consumer.recv().await {
+                    Err(e) => {
+                        println!("Error receiving message: {:?}", e);
+                    }
+                    Ok(m) => {
+                        let payload = match m.payload_view::<str>() {
+                            Some(Ok(payload)) => payload,
+                            Some(Err(e)) => {
+                                println!("Error while deserializing message payload: {:?}", e);
+                                continue;
+                            }
+                            None => "",
+                        };
+                        println!(
+                            "Consumer {} processing message from topic {}: {}",
+                            i,
+                            m.topic(),
+                            payload
+                        );
+
+                        consumer.commit_message(&m, CommitMode::Async).unwrap();
+                    }
+                };
+            }
+        });
+
+        consumer_handles.push(handle);
+    }
+
+    Ok(consumer_handles)
+}
+
+struct PlutomiTopic {
+    name: String,
     partitions: i32,
-    replication: i32,
-) -> Result<(), String> {
+    replication_factor: i32,
+    brokers: String,
+}
+
+impl PlutomiTopic {
+    fn new(name: &str, partitions: i32, replication_factor: i32, brokers: &str) -> Self {
+        PlutomiTopic {
+            name: name.to_string(),
+            partitions,
+            replication_factor,
+            brokers: brokers.to_string(),
+        }
+    }
+}
+
+async fn create_topic(topic: &PlutomiTopic) -> Result<(), String> {
     // Create the AdminClient
     let admin_client: AdminClient<DefaultClientContext> = ClientConfig::new()
-        .set("bootstrap.servers", brokers)
+        .set("bootstrap.servers", &topic.brokers)
         .create()
         .expect("Admin client creation failed");
 
     // Define the new topic with the desired number of partitions and replication factor
-    let new_topic = NewTopic::new(topic_name, partitions, TopicReplication::Fixed(replication));
+    let new_topic = NewTopic::new(
+        &topic.name,
+        topic.partitions,
+        TopicReplication::Fixed(topic.replication_factor),
+    );
 
     // Create the topic
     let res = admin_client
@@ -141,13 +235,13 @@ async fn create_topic(
     match res.get(0) {
         Some(Err((error_string, error_code))) => match error_code {
             RDKafkaErrorCode::TopicAlreadyExists => {
-                println!("Topic '{}' already exists.", topic_name);
+                println!("Topic '{}' already exists.", topic.name);
                 return Ok(());
             }
             _ => Err(format!("Failed to create topic: {:?}", error_string)),
         },
         Some(Ok(_)) => {
-            println!("Topic '{}' created successfully.", topic_name);
+            println!("Topic '{}' created successfully.", topic.name);
             return Ok(());
         }
         None => Err("Unexpected empty result when creating topic.".to_string()),
