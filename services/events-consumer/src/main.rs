@@ -1,5 +1,5 @@
 use async_nats::jetstream::Context;
-use async_nats::jetstream::{self, consumer::Consumer, Message};
+use async_nats::jetstream::{self, Message};
 use base64::{engine, Engine}; // Add this to the top with your imports
 use bytes::Bytes;
 use dotenv::dotenv;
@@ -7,7 +7,7 @@ use futures::future::BoxFuture;
 use futures::stream::StreamExt;
 use rdkafka::admin::{AdminClient, AdminOptions, NewTopic, TopicReplication};
 use rdkafka::client::DefaultClientContext;
-use rdkafka::consumer::StreamConsumer;
+use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::error::{KafkaError, KafkaResult};
 use rdkafka::types::RDKafkaErrorCode;
 use rdkafka::ClientConfig;
@@ -24,6 +24,7 @@ use std::sync::Arc;
 use std::time::Duration;
 use time::OffsetDateTime;
 use tokio::task::JoinHandle;
+use tracing_subscriber::fmt::format;
 
 mod config;
 
@@ -43,7 +44,6 @@ mod config;
 struct MessageHandlerOptions<'a> {
     message: &'a Message,
     logger: Arc<Logger>,
-    jetstream_context: &'a Context,
     consumer_name: &'a str,
 }
 
@@ -67,49 +67,24 @@ async fn main() -> Result<(), String> {
     let orders_topic = PlutomiTopic::new("orders", 3, 1, brokers); // 3 partitions, 1 replication factor
     let users_topic = PlutomiTopic::new("users", 2, 1, brokers); // 2 partitions
 
-    // Create the consumers
-    let order_notifications_consumers =
-        create_consumers_for_group("notifications-consumer-group", &orders_topic).await?;
+    let order_notification_consumers = orders_topic::create_consumer_group("notifications-consumer", &orders_topic).await?;
+    let user_notification_consumers = orders_topic::create_consumer_group("notifications-consumer", &orders_topic).await?;
 
-    let user_notifications_consumers =
-        create_consumers_for_group("notifications-consumer-group", &orders_topic).await?;
 
-    // let jetstream_context = connect_to_nats(ConnectToNatsOptions {
-    //     logger: Arc::clone(&logger),
-    // })
-    // .await?;
-
-    // // Create all streams
-    // let streams: HashMap<String, Arc<jetstream::stream::Stream>> =
-    //     futures::future::try_join_all(config.streams.iter().map(|stream_config| {
-    //         create_stream(CreateStreamOptions {
-    //             jetstream_context: &jetstream_context,
-    //             stream_name: stream_config.name.clone(),
-    //             subjects: stream_config.subjects.clone(),
-    //         })
-    //     }))
-    //     .await?
-    //     .into_iter()
-    //     .collect();
-
-    // // Create all consumers
-    // let consumer_handles: Vec<_> = config
-    //     .consumers
-    //     .iter()
-    //     .map(|consumer_config| {
-    //         let stream = Arc::clone(&streams[&consumer_config.stream]);
-    //         spawn_consumer(ConsumerOptions {
-    //             consumer_name: consumer_config.name.clone(),
-    //             filter_subjects: consumer_config.filter_subjects.clone(),
-    //             max_delivery_attempts: consumer_config.max_delivery_attempts,
-    //             redeliver_after: consumer_config.redeliver_after_duration,
-    //             stream,
-    //             jetstream_context: Arc::clone(&jetstream_context),
-    //             logger: Arc::clone(&logger),
-    //             message_handler: get_message_handler(&consumer_config.name),
-    //         })
-    //     })
-    //     .collect();
+ 
+    let all_consumers = vec![order_notifications_consumers, user_notifications_consumers];
+    //  Create all consumers
+    let consumer_handles: Vec<_> = all_consumers
+        .iter()
+        .map(|consumer_config| {
+            spawn_consumer(SpawnConsumerOptions {
+                consumer_name: consumer_config.name.clone(),
+                topic,
+                logger: Arc::clone(&logger),
+                message_handler: get_message_handler(&consumer_config.name),
+            })
+        })
+        .collect();
 
     // // Run indefinitely
     // let _ = futures::future::join_all(consumer_handles).await;
@@ -138,60 +113,16 @@ async fn create_producer(brokers: &str) -> KafkaResult<rdkafka::producer::Future
 async fn create_consumers_for_group(
     group_id: &str,
     topic: &PlutomiTopic,
-) -> KafkaResult<Vec<JoinHandle<()>>> {
-    let mut consumer_handles = Vec::new();
+) -> Result<Vec<PlutomiConsumer>, String> {
+    let mut all_consumers = vec![];
 
     for i in 0..topic.partitions {
-        let brokers = topic.brokers.to_string();
-        let group_id = group_id.to_string();
-        let topic_name = topic.name.clone();
-
-        let handle: JoinHandle<()> = tokio::spawn(async move {
-            let consumer: StreamConsumer = ClientConfig::new()
-                .set("group.id", &group_id)
-                .set("bootstrap.servers", &brokers)
-                .set("enable.partition.eof", "false")
-                .set("session.timeout.ms", "6000")
-                .set("enable.auto.commit", "false")
-                .create()
-                .expect("Consumer creation failed");
-
-            // Subscribe to the topic
-            consumer
-                .subscribe(&[&topic_name])
-                .expect("Subscription failed");
-
-            loop {
-                match consumer.recv().await {
-                    Err(e) => {
-                        println!("Error receiving message: {:?}", e);
-                    }
-                    Ok(m) => {
-                        let payload = match m.payload_view::<str>() {
-                            Some(Ok(payload)) => payload,
-                            Some(Err(e)) => {
-                                println!("Error while deserializing message payload: {:?}", e);
-                                continue;
-                            }
-                            None => "",
-                        };
-                        println!(
-                            "Consumer {} processing message from topic {}: {}",
-                            i,
-                            m.topic(),
-                            payload
-                        );
-
-                        consumer.commit_message(&m, CommitMode::Async).unwrap();
-                    }
-                };
-            }
-        });
-
-        consumer_handles.push(handle);
+        let consumer_name = format!("{}-{}", &group_id, i);
+        let consumer = PlutomiConsumer::new(consumer_name, group_id, &topic.brokers, &topic)?;
+        all_consumers.push(consumer);
     }
 
-    Ok(consumer_handles)
+    Ok(all_consumers)
 }
 
 struct PlutomiTopic {
@@ -203,12 +134,21 @@ struct PlutomiTopic {
 
 impl PlutomiTopic {
     fn new(name: &str, partitions: i32, replication_factor: i32, brokers: &str) -> Self {
+        // TODO move that logic down here
         PlutomiTopic {
             name: name.to_string(),
             partitions,
             replication_factor,
             brokers: brokers.to_string(),
         }
+    }
+
+    // Creates a consumer for each partition on a topic
+    async fn create_consumer_group(&self, consumer: PlutomiConsumer) -> Result<PlutomiConsumer, String> {
+        for i in 0..topic.partitions {
+
+            
+        PlutomiConsumer::new(group_id, &self.brokers, self).await?;
     }
 }
 
@@ -287,283 +227,327 @@ async fn create_topic(topic: &PlutomiTopic) -> Result<(), String> {
 // }
 
 struct RunConsumerOptions {
-    consumer: Consumer<jetstream::consumer::pull::Config>,
+    consumer: PlutomiConsumer
+    
+    ,
     message_handler: MessageHandler,
     logger: Arc<Logger>,
-    jetstream_context: Arc<jetstream::Context>,
 }
-// async fn run_consumer(
-//     RunConsumerOptions {
-//         consumer,
-//         message_handler,
-//         logger,
-//         jetstream_context,
-//     }: RunConsumerOptions,
-// ) -> Result<(), String> {
-//     // Fetch the info once on start
-//     let GetConsumerInfoResult {
-//         consumer_name,
-//         consumer,
-//     } = get_consumer_info(consumer).await?;
+async fn run_consumer(
+    RunConsumerOptions {
+        consumer,
+        message_handler,
+        logger,
+    }: RunConsumerOptions,
+) -> Result<(), String> {
+    // Fetch the info once on start
 
-//     logger.log(LogObject {
-//         level: LogLevel::Info,
-//         message: format!("{} started", &consumer_name),
-//         error: None,
-//         _time: get_current_time(OffsetDateTime::now_utc()),
-//         request: None,
-//         response: None,
-//         data: None,
-//     });
+    // logger.log(LogObject {
+    //     level: LogLevel::Info,
+    //     message: format!("{} started", &consumer.),
+    //     error: None,
+    //     _time: get_current_time(OffsetDateTime::now_utc()),
+    //     request: None,
+    //     response: None,
+    //     data: None,
+    // });
 
-//     loop {
-//         let mut messages = match consumer.messages().await {
-//             Ok(msgs) => msgs,
-//             Err(e) => {
-//                 // Log and restart the consumer
-//                 let error = e.to_string();
-//                 logger.log(LogObject {
-//                     level: LogLevel::Error,
-//                     message: format!(
-//                         "Failed to get message stream in {} - restarting!",
-//                         &consumer_name
-//                     ),
-//                     error: Some(json!({ "error": error })),
-//                     _time: get_current_time(OffsetDateTime::now_utc()),
-//                     request: None,
-//                     response: None,
-//                     data: None,
-//                 });
-//                 return Err(error);
-//             }
-//         };
+    loop {
+        match consumer.consumer.recv().await {
+            Ok(msg) => {
+                println!("Received message: {:?}", msg);
+                // Process message here
+            }
+            Err(e) => {
+                println!("Error receiving message: {:?}", e);
+            }
+        }
 
-//         while let Some(message_result) = messages.next().await {
-//             match message_result {
-//                 Ok(message) => {
-//                     logger.log(LogObject {
-//                         level: LogLevel::Info,
-//                         message: format!(
-//                             "Sending {} message to {} handler",
-//                             &message.subject, &consumer_name
-//                         ),
-//                         error: None,
-//                         _time: get_current_time(OffsetDateTime::now_utc()),
-//                         request: None,
-//                         response: None,
-//                         data: None,
-//                     });
-//                     if let Err(e) = message_handler(MessageHandlerOptions {
-//                         message: &message,
-//                         logger: Arc::clone(&logger),
-//                         jetstream_context: &jetstream_context,
-//                         consumer_name: &consumer_name,
-//                     })
-//                     .await
-//                     {
-//                         // Log the error and continue to the next message
-//                         logger.log(LogObject {
-//                             level: LogLevel::Error,
-//                             message: format!(
-//                                 "Error processing message {} in {}",
-//                                 &message.subject, &consumer_name
-//                             ),
-//                             error: Some(json!({ "error": e })),
-//                             _time: get_current_time(OffsetDateTime::now_utc()),
-//                             request: None,
-//                             response: None,
-//                             data: None,
-//                         });
+        //     let mut messages = match consumer.messages().await {
+        //         Ok(msgs) => msgs,
+        //         Err(e) => {
+        //             // Log and restart the consumer
+        //             let error = e.to_string();
+        //             logger.log(LogObject {
+        //                 level: LogLevel::Error,
+        //                 message: format!(
+        //                     "Failed to get message stream in {} - restarting!",
+        //                     &consumer_name
+        //                 ),
+        //                 error: Some(json!({ "error": error })),
+        //                 _time: get_current_time(OffsetDateTime::now_utc()),
+        //                 request: None,
+        //                 response: None,
+        //                 data: None,
+        //             });
+        //             return Err(error);
+        //         }
+        //     };
 
-//                         // Publish the message to the correct stream
-//                         publish_event(PublishEventOptions {
-//                             event: Some(PlutomiEvent::from_jetstream(
-//                                 &message.subject,
-//                                 &message.payload,
-//                             )?),
-//                             headers: None,
-//                             jetstream_context: &jetstream_context,
-//                             stream_name: "events-retry".to_string(),
-//                         })
-//                         .await?;
+        //     while let Some(message_result) = messages.next().await {
+        //         match message_result {
+        //             Ok(message) => {
+        //                 logger.log(LogObject {
+        //                     level: LogLevel::Info,
+        //                     message: format!(
+        //                         "Sending {} message to {} handler",
+        //                         &message.subject, &consumer_name
+        //                     ),
+        //                     error: None,
+        //                     _time: get_current_time(OffsetDateTime::now_utc()),
+        //                     request: None,
+        //                     response: None,
+        //                     data: None,
+        //                 });
+        //                 if let Err(e) = message_handler(MessageHandlerOptions {
+        //                     message: &message,
+        //                     logger: Arc::clone(&logger),
+        //                     jetstream_context: &jetstream_context,
+        //                     consumer_name: &consumer_name,
+        //                 })
+        //                 .await
+        //                 {
+        //                     // Log the error and continue to the next message
+        //                     logger.log(LogObject {
+        //                         level: LogLevel::Error,
+        //                         message: format!(
+        //                             "Error processing message {} in {}",
+        //                             &message.subject, &consumer_name
+        //                         ),
+        //                         error: Some(json!({ "error": e })),
+        //                         _time: get_current_time(OffsetDateTime::now_utc()),
+        //                         request: None,
+        //                         response: None,
+        //                         data: None,
+        //                     });
 
-//                         // Acknowledge the event in the current stream
-//                         if let Err(e) = message.ack().await {
-//                             let error: String = e.to_string();
-//                             // Log the acknowledgment error and continue to the next message
-//                             logger.log(LogObject {
-//                                 level: LogLevel::Error,
-//                                 message: format!(
-//                                     "Error acknowledging message {} in {}",
-//                                     &message.subject, &consumer_name
-//                                 ),
-//                                 error: Some(json!({ "error": error })),
-//                                 _time: get_current_time(OffsetDateTime::now_utc()),
-//                                 request: None,
-//                                 response: None,
-//                                 data: None,
-//                             });
+        //                     // Publish the message to the correct stream
+        //                     publish_event(PublishEventOptions {
+        //                         event: Some(PlutomiEvent::from_jetstream(
+        //                             &message.subject,
+        //                             &message.payload,
+        //                         )?),
+        //                         headers: None,
+        //                         jetstream_context: &jetstream_context,
+        //                         stream_name: "events-retry".to_string(),
+        //                     })
+        //                     .await?;
 
-//                             // ! TODO: here we need to publish the message to the retry / dlq stream
-//                             // AND acknowledge the message in the current stream so it doesn't get resent.
-//                             continue;
-//                         }
-//                     } else {
-//                         logger.log(LogObject {
-//                             level: LogLevel::Info,
-//                             message: format!(
-//                                 "Message {} processed in {}",
-//                                 &message.subject, &consumer_name
-//                             ),
-//                             error: None,
-//                             _time: get_current_time(OffsetDateTime::now_utc()),
-//                             request: None,
-//                             response: None,
-//                             data: None,
-//                         });
-//                     }
+        //                     // Acknowledge the event in the current stream
+        //                     if let Err(e) = message.ack().await {
+        //                         let error: String = e.to_string();
+        //                         // Log the acknowledgment error and continue to the next message
+        //                         logger.log(LogObject {
+        //                             level: LogLevel::Error,
+        //                             message: format!(
+        //                                 "Error acknowledging message {} in {}",
+        //                                 &message.subject, &consumer_name
+        //                             ),
+        //                             error: Some(json!({ "error": error })),
+        //                             _time: get_current_time(OffsetDateTime::now_utc()),
+        //                             request: None,
+        //                             response: None,
+        //                             data: None,
+        //                         });
 
-//                     // Acknowledge the message if it was processed successfully
-//                     if let Err(e) = message.ack().await {
-//                         let error: String = e.to_string();
-//                         // Log the acknowledgment error and continue to the next message
-//                         // ack_wait will send it to us again
-//                         logger.log(LogObject {
-//                             level: LogLevel::Error,
-//                             message: format!(
-//                                 "Error acknowledging message {} in {}",
-//                                 &message.subject, &consumer_name
-//                             ),
-//                             error: Some(json!({ "error": error })),
-//                             _time: get_current_time(OffsetDateTime::now_utc()),
-//                             request: None,
-//                             response: None,
-//                             data: None,
-//                         });
-//                         continue;
-//                     } else {
-//                         logger.log(LogObject {
-//                             level: LogLevel::Info,
-//                             message: format!(
-//                                 "Message {} acknowledged in {}",
-//                                 &message.subject, &consumer_name
-//                             ),
-//                             error: None,
-//                             _time: get_current_time(OffsetDateTime::now_utc()),
-//                             request: None,
-//                             response: None,
-//                             data: None,
-//                         });
-//                     }
-//                 }
-//                 Err(error) => {
-//                     // Log error and restart the consumer if we had issues receiving the message
-//                     let error: String = error.to_string();
-//                     logger.log(LogObject {
-//                         level: LogLevel::Error,
-//                         message: format!(
-//                             "Error receiving message in {} - restarting",
-//                             &consumer_name
-//                         ),
-//                         error: Some(json!({ "error": error })),
-//                         _time: get_current_time(OffsetDateTime::now_utc()),
-//                         request: None,
-//                         response: None,
-//                         data: None,
-//                     });
-//                     return Err(error);
-//                 }
-//             }
-//         }
-//     }
-// }
-struct ConsumerOptions {
-    // Jetstream context to pass down to the run_consumer function
-    jetstream_context: Arc<jetstream::Context>,
-    // A reference to the event stream to create the consumer on
-    stream: Arc<jetstream::stream::Stream>,
-    consumer_name: String,
-    // What events the consumer will listen to
-    filter_subjects: Vec<String>,
+        //                         // ! TODO: here we need to publish the message to the retry / dlq stream
+        //                         // AND acknowledge the message in the current stream so it doesn't get resent.
+        //                         continue;
+        //                     }
+        //                 } else {
+        //                     logger.log(LogObject {
+        //                         level: LogLevel::Info,
+        //                         message: format!(
+        //                             "Message {} processed in {}",
+        //                             &message.subject, &consumer_name
+        //                         ),
+        //                         error: None,
+        //                         _time: get_current_time(OffsetDateTime::now_utc()),
+        //                         request: None,
+        //                         response: None,
+        //                         data: None,
+        //                     });
+        //                 }
+
+        //                 // Acknowledge the message if it was processed successfully
+        //                 if let Err(e) = message.ack().await {
+        //                     let error: String = e.to_string();
+        //                     // Log the acknowledgment error and continue to the next message
+        //                     // ack_wait will send it to us again
+        //                     logger.log(LogObject {
+        //                         level: LogLevel::Error,
+        //                         message: format!(
+        //                             "Error acknowledging message {} in {}",
+        //                             &message.subject, &consumer_name
+        //                         ),
+        //                         error: Some(json!({ "error": error })),
+        //                         _time: get_current_time(OffsetDateTime::now_utc()),
+        //                         request: None,
+        //                         response: None,
+        //                         data: None,
+        //                     });
+        //                     continue;
+        //                 } else {
+        //                     logger.log(LogObject {
+        //                         level: LogLevel::Info,
+        //                         message: format!(
+        //                             "Message {} acknowledged in {}",
+        //                             &message.subject, &consumer_name
+        //                         ),
+        //                         error: None,
+        //                         _time: get_current_time(OffsetDateTime::now_utc()),
+        //                         request: None,
+        //                         response: None,
+        //                         data: None,
+        //                     });
+        //                 }
+        //             }
+        //             Err(error) => {
+        //                 // Log error and restart the consumer if we had issues receiving the message
+        //                 let error: String = error.to_string();
+        //                 logger.log(LogObject {
+        //                     level: LogLevel::Error,
+        //                     message: format!(
+        //                         "Error receiving message in {} - restarting",
+        //                         &consumer_name
+        //                     ),
+        //                     error: Some(json!({ "error": error })),
+        //                     _time: get_current_time(OffsetDateTime::now_utc()),
+        //                     request: None,
+        //                     response: None,
+        //                     data: None,
+        //                 });
+        //                 return Err(error);
+        //             }
+        //         }
+        //     }
+        // }
+    }
+}
+
+// Wrapper around StreamConsumer to add extra functionality
+struct PlutomiConsumer {
+    name: String,
+    consumer: StreamConsumer,
+}
+
+impl PlutomiConsumer {
+    /**
+     * Creates a consumer and subscribes it to the given topic
+     */
+    fn new(
+        name: String,
+        group_id: &str,
+        brokers: &str,
+        topic: &PlutomiTopic,
+    ) -> Result<Self, String> {
+        let consumer: StreamConsumer = ClientConfig::new()
+            .set("group.id", group_id)
+            .set("bootstrap.servers", brokers)
+            .set("enable.partition.eof", "false")
+            .set("session.timeout.ms", "6000")
+            .set("enable.auto.commit", "false")
+            .create()
+            .map_err(|e| format!("Consumer {} creation failed: {}", name, e))?;
+
+
+            consumer.subscribe(&[&topic.name])
+            .map_err(|e| format!("Consumer {} ailed to subscribe to topic {}: {}", name, topic.name, e))?;
+
+        Ok(PlutomiConsumer {
+            name: name.to_string(),
+            consumer,
+        })
+    }
+
+  
+
+    async fn run(&self, message_handler: MessageHandler) -> Result<(), String> {
+        loop {
+            match self.consumer.recv().await {
+                Ok(msg) => {
+                    println!("Received message: {:?}", msg);
+                    // Process message here
+                    message_handler(MessageHandlerOptions {
+                        message: &msg,
+                        logger: Arc::clone(&logger),
+                        jetstream_context: &jetstream_context,
+                        consumer_name: &consumer_name,
+                    })
+                }
+                Err(e) => {
+                    println!("Error receiving message: {:?}", e);
+                }
+            }
+        }
+    }
+
+    async fn handle_message(&self, message: Message) -> Result<(), String> {
+        // Process the message
+        Ok(())
+    }
+}
+struct SpawnConsumerOptions {
+    topic: PlutomiTopic,
+    consumer: PlutomiConsumer,
     message_handler: MessageHandler,
     logger: Arc<Logger>,
-    // How many times to attempt to deliver a message before moving it to the next retry/dlq stream
-    max_delivery_attempts: i64,
-    // How long to wait before redelivering a message - ie: ack_wait
-    redeliver_after: Duration,
 }
 
 const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
 
-// async fn spawn_consumer(
-//     ConsumerOptions {
-//         jetstream_context,
-//         stream,
-//         consumer_name,
-//         filter_subjects,
-//         message_handler,
-//         logger,
-//         max_delivery_attempts,
-//         redeliver_after,
-//     }: ConsumerOptions,
-// ) -> JoinHandle<()> {
-//     tokio::spawn(async move {
-//         loop {
-//             let consumer = match stream
-//                 .get_or_create_consumer(
-//                     &consumer_name,
-//                     jetstream::consumer::pull::Config {
-//                         durable_name: Some(consumer_name.clone()),
-//                         name: Some(consumer_name.clone()),
-//                         filter_subjects: filter_subjects.clone(),
-//                         ack_wait: redeliver_after,
-//                         max_deliver: max_delivery_attempts,
-//                         ..Default::default()
-//                     },
-//                 )
-//                 .await
-//             {
-//                 Ok(consumer) => consumer,
-//                 Err(e) => {
-//                     logger.log(LogObject {
-//                         level: LogLevel::Error,
-//                         message: format!("Error creating consumer: {}", &consumer_name),
-//                         error: Some(json!({ "error": e.to_string() })),
-//                         _time: get_current_time(OffsetDateTime::now_utc()),
-//                         request: None,
-//                         response: None,
-//                         data: None,
-//                     });
-//                     return;
-//                 }
-//             };
+async fn spawn_consumer(
+    SpawnConsumerOptions {
+        topic,
+        consumer,
+        message_handler,
+        logger,
+    }: SpawnConsumerOptions,
+) -> JoinHandle<()> {
+    // Loop through all of the consumers
+    tokio::spawn(async move {
+        loop {
+            // Run the consumer
+            // if let Err(e) = run_consumer(RunConsumerOptions {
+            //     consumer,
+            //     message_handler: Arc::clone(&message_handler),
+            //     logger: Arc::clone(&logger),
+            // })
+            // .await
 
-//             // Run the consumer
-//             if let Err(e) = run_consumer(RunConsumerOptions {
-//                 consumer,
-//                 message_handler: Arc::clone(&message_handler),
-//                 logger: Arc::clone(&logger),
-//                 jetstream_context: Arc::clone(&jetstream_context),
-//             })
-//             .await
-//             {
-//                 logger.log(LogObject {
-//                     level: LogLevel::Error,
-//                     message: format!(
-//                         "{} error - restarting in {:?} seconds",
-//                         consumer_name, RESTART_ON_ERROR_DURATION
-//                     ),
-//                     error: Some(json!({ "error": e.to_string() })),
-//                     _time: get_current_time(OffsetDateTime::now_utc()),
-//                     request: None,
-//                     response: None,
-//                     data: None,
-//                 });
-//                 tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
-//             }
-//         }
-//     })
-// }
+            if let Err(e) = consumer.run().await {
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: format!(
+                        "{} error - restarting in {:?} seconds",
+                        consumer.name, RESTART_ON_ERROR_DURATION
+                    ),
+                    error: Some(json!({ "error": e })),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                });
+                tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
+            }
+            {
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: format!(
+                        "{} error - restarting in {:?} seconds",
+                        consumer_name, RESTART_ON_ERROR_DURATION
+                    ),
+                    error: Some(json!({ "error": e.to_string() })),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                });
+                tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
+            }
+        }
+    })
+}
 
 /**
  * When handling retries & DLQ, we need to strip the suffix to get the original name in some cases
@@ -685,7 +669,6 @@ fn send_email(
     MessageHandlerOptions {
         message,
         logger,
-        jetstream_context,
         consumer_name,
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {

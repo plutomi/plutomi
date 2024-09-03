@@ -14,10 +14,7 @@ pub struct StreamConfig {
 
 pub struct ConsumerConfig {
     pub name: String,
-    pub stream: String,
-    pub filter_subjects: Vec<String>,
-    pub max_delivery_attempts: i64,
-    pub redeliver_after_duration: Duration,
+    pub topic: String,
 }
 
 impl Config {
@@ -49,47 +46,17 @@ impl Config {
         https://docs.nats.io/using-nats/developer/develop_jetstream/consumers#dead-letter-queues-type-functionality */
         let consumers = vec![
             ConsumerConfig {
-                name: "meta-consumer".to_string(),
-                stream: "events".to_string(),
-                filter_subjects: vec!["$JS.EVENT.ADVISORY.>".to_string()],
-                max_delivery_attempts: 3,
-                redeliver_after_duration: Duration::from_secs(100),
-            },
-            ConsumerConfig {
-                name: "meta-retry-consumer".to_string(),
-                stream: "events-retry".to_string(),
-                filter_subjects: vec!["$JS.EVENT.ADVISORY.>".to_string()],
-                max_delivery_attempts: 3,
-                redeliver_after_duration: Duration::from_secs(100),
-            },
-            ConsumerConfig {
-                name: "meta-dlq-consumer".to_string(),
-                stream: "events-dlq".to_string(),
-                filter_subjects: vec!["$JS.EVENT.ADVISORY.>".to_string()],
-                max_delivery_attempts: 3,
-                redeliver_after_duration: Duration::from_secs(100),
-            },
-            ConsumerConfig {
                 name: "notifications-consumer".to_string(),
-                stream: "events".to_string(),
-                filter_subjects: vec!["events.totp.requested".to_string()],
-                max_delivery_attempts: 1,
-                redeliver_after_duration: Duration::from_secs(1), // 3 Seconds
+                topic: "orders".to_string(),
             },
             ConsumerConfig {
                 name: "notifications-retry-consumer".to_string(),
-                stream: "events-retry".to_string(),
-                filter_subjects: vec!["events-retry.totp.requested".to_string()],
-                max_delivery_attempts: 1,
-                redeliver_after_duration: Duration::from_secs(1), // 5 Minutes
+                topic: "orders-retry".to_string(),
             },
             // TODO add fallback?
             ConsumerConfig {
                 name: "notifications-dlq-consumer".to_string(),
-                stream: "events-dlq".to_string(),
-                filter_subjects: vec!["events-dlq.totp.requested".to_string()],
-                max_delivery_attempts: 1,
-                redeliver_after_duration: Duration::from_secs(1), // 5 Hours
+                topic: "events-dlq".to_string(),
             },
         ];
 
