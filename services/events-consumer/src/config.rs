@@ -51,89 +51,43 @@ impl Config {
             ConsumerConfig {
                 name: "meta-consumer".to_string(),
                 stream: "events".to_string(),
-                filter_subjects: vec![
-                    // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events' stream
-                    // You should add all 'events' stream consumers MAX_DELIVERY subjects here
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer"
-                        .to_string(),
-   
-                ],
+                filter_subjects: vec!["$JS.EVENT.ADVISORY.>".to_string()],
                 max_delivery_attempts: 3,
-                redeliver_after_duration: Duration::from_secs(1),
-            },
-
-            ConsumerConfig {
-                name: "super-meta-consumer-retry".to_string(),
-                stream: "events".to_string(),
-                // This should listen to any MAX_DELIVERIES failures for the 'meta-consumer' above. Its a meta-meta consumer if that makes sense
-                filter_subjects: vec![
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.meta-consumer".to_string(),
-                ],
-                max_delivery_attempts: 1,
-                redeliver_after_duration: Duration::from_secs(1),
+                redeliver_after_duration: Duration::from_secs(100),
             },
             ConsumerConfig {
-                name: "super-meta-consumer-dlq".to_string(),
-                // This should listen to any MAX_DELIVERIES failures for the above 'super-meta-consumer-retry' above. Something really went wrong here.
+                name: "meta-retry-consumer".to_string(),
                 stream: "events-retry".to_string(),
-                filter_subjects: vec![
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.super-meta-consumer-retry"
-                        .to_string(),
-                ],
-                max_delivery_attempts: 1,
-                redeliver_after_duration: Duration::from_secs(1),
-            },
-
-
-            // Business logic meta handlers:
-
-            ConsumerConfig {
-                name: "meta-consumer-retry".to_string(),
-                stream: "events-retry".to_string(),
-                filter_subjects: vec![
-                    // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events-retry' stream
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-retry"
-                        .to_string(),
-    
-                ],
+                filter_subjects: vec!["$JS.EVENT.ADVISORY.>".to_string()],
                 max_delivery_attempts: 3,
-                redeliver_after_duration: Duration::from_secs(1),
-            }, 
-
+                redeliver_after_duration: Duration::from_secs(100),
+            },
             ConsumerConfig {
-                name: "meta-consumer-dlq".to_string(),
+                name: "meta-dlq-consumer".to_string(),
                 stream: "events-dlq".to_string(),
-                filter_subjects: vec![
-                    // This should listen to all MAX_DELIVERIES events for all business logic consumers listening on the 'events-dlq' stream
-                    "$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events-retry.notifications-consumer-dlq"
-                        .to_string(),
-    
-                ],
+                filter_subjects: vec!["$JS.EVENT.ADVISORY.>".to_string()],
                 max_delivery_attempts: 3,
-                redeliver_after_duration: Duration::from_secs(1),
-            }, 
-            /* !!!!!!!!!
-            Business logic consumers
-            These handle actual functionality in the system
-             */
+                redeliver_after_duration: Duration::from_secs(100),
+            },
             ConsumerConfig {
                 name: "notifications-consumer".to_string(),
                 stream: "events".to_string(),
-                filter_subjects: vec![EventType::TOTPRequested.as_ref().to_string()],
+                filter_subjects: vec!["events.totp.requested".to_string()],
                 max_delivery_attempts: 1,
                 redeliver_after_duration: Duration::from_secs(1), // 3 Seconds
             },
             ConsumerConfig {
-                name: "notifications-consumer-retry".to_string(),
+                name: "notifications-retry-consumer".to_string(),
                 stream: "events-retry".to_string(),
-                filter_subjects: vec!["events-retry.notifications-consumer-retry".to_string()],
+                filter_subjects: vec!["events-retry.totp.requested".to_string()],
                 max_delivery_attempts: 1,
                 redeliver_after_duration: Duration::from_secs(1), // 5 Minutes
             },
+            // TODO add fallback?
             ConsumerConfig {
-                name: "notifications-consumer-dlq".to_string(),
+                name: "notifications-dlq-consumer".to_string(),
                 stream: "events-dlq".to_string(),
-                filter_subjects: vec!["events-dlq.notifications-consumer-dlq".to_string()],
+                filter_subjects: vec!["events-dlq.totp.requested".to_string()],
                 max_delivery_attempts: 1,
                 redeliver_after_duration: Duration::from_secs(1), // 5 Hours
             },

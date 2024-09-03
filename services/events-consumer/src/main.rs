@@ -5,6 +5,11 @@ use bytes::Bytes;
 use dotenv::dotenv;
 use futures::future::BoxFuture;
 use futures::stream::StreamExt;
+use rdkafka::admin::{AdminClient, AdminOptions, NewTopic, TopicReplication};
+use rdkafka::client::DefaultClientContext;
+use rdkafka::error::{KafkaError, KafkaResult};
+use rdkafka::types::RDKafkaErrorCode;
+use rdkafka::ClientConfig;
 use serde_json::json;
 use shared::events::{MaxDeliverAdvisory, PlutomiEvent};
 use shared::get_current_time::get_current_time;
@@ -54,96 +59,138 @@ async fn main() -> Result<(), String> {
         caller: &config.app_name,
     });
 
-    // TODO: Add nats url to secrets
+    let brokers = "localhost:29092,localhost:39092,localhost:49092";
+    let topic_name = "orders";
+    let partitions = 3;
+    let replication = 1;
 
-    let jetstream_context = connect_to_nats(ConnectToNatsOptions {
-        logger: Arc::clone(&logger),
-    })
-    .await?;
+    create_topic(brokers, topic_name, partitions, replication).await?;
 
-    // Create all streams
-    let streams: HashMap<String, Arc<jetstream::stream::Stream>> =
-        futures::future::try_join_all(config.streams.iter().map(|stream_config| {
-            create_stream(CreateStreamOptions {
-                jetstream_context: &jetstream_context,
-                stream_name: stream_config.name.clone(),
-                subjects: stream_config.subjects.clone(),
-            })
-        }))
-        .await?
-        .into_iter()
-        .collect();
+    // let jetstream_context = connect_to_nats(ConnectToNatsOptions {
+    //     logger: Arc::clone(&logger),
+    // })
+    // .await?;
 
-    // Create all consumers
-    let consumer_handles: Vec<_> = config
-        .consumers
-        .iter()
-        .map(|consumer_config| {
-            let stream = Arc::clone(&streams[&consumer_config.stream]);
-            spawn_consumer(ConsumerOptions {
-                consumer_name: consumer_config.name.clone(),
-                filter_subjects: consumer_config.filter_subjects.clone(),
-                max_delivery_attempts: consumer_config.max_delivery_attempts,
-                redeliver_after: consumer_config.redeliver_after_duration,
-                stream,
-                jetstream_context: Arc::clone(&jetstream_context),
-                logger: Arc::clone(&logger),
-                message_handler: get_message_handler(&consumer_config.name),
-            })
-        })
-        .collect();
+    // // Create all streams
+    // let streams: HashMap<String, Arc<jetstream::stream::Stream>> =
+    //     futures::future::try_join_all(config.streams.iter().map(|stream_config| {
+    //         create_stream(CreateStreamOptions {
+    //             jetstream_context: &jetstream_context,
+    //             stream_name: stream_config.name.clone(),
+    //             subjects: stream_config.subjects.clone(),
+    //         })
+    //     }))
+    //     .await?
+    //     .into_iter()
+    //     .collect();
 
-    // Run indefinitely
-    let _ = futures::future::join_all(consumer_handles).await;
+    // // Create all consumers
+    // let consumer_handles: Vec<_> = config
+    //     .consumers
+    //     .iter()
+    //     .map(|consumer_config| {
+    //         let stream = Arc::clone(&streams[&consumer_config.stream]);
+    //         spawn_consumer(ConsumerOptions {
+    //             consumer_name: consumer_config.name.clone(),
+    //             filter_subjects: consumer_config.filter_subjects.clone(),
+    //             max_delivery_attempts: consumer_config.max_delivery_attempts,
+    //             redeliver_after: consumer_config.redeliver_after_duration,
+    //             stream,
+    //             jetstream_context: Arc::clone(&jetstream_context),
+    //             logger: Arc::clone(&logger),
+    //             message_handler: get_message_handler(&consumer_config.name),
+    //         })
+    //     })
+    //     .collect();
 
-    tokio::signal::ctrl_c()
-        .await
-        .expect("Failed to wait for ctrl_c signal");
+    // // Run indefinitely
+    // let _ = futures::future::join_all(consumer_handles).await;
 
-    tokio::signal::ctrl_c()
-        .await
-        .expect("Failed to wait for ctrl_c signal");
+    // tokio::signal::ctrl_c()
+    //     .await
+    //     .expect("Failed to wait for ctrl_c signal");
+
+    // tokio::signal::ctrl_c()
+    //     .await
+    //     .expect("Failed to wait for ctrl_c signal");
 
     Ok(())
 }
 
-struct GetConsumerInfoResult {
-    consumer_name: String,
-    consumer: Consumer<jetstream::consumer::pull::Config>,
-}
+async fn create_topic(
+    brokers: &str,
+    topic_name: &str,
+    partitions: i32,
+    replication: i32,
+) -> Result<(), String> {
+    // Create the AdminClient
+    let admin_client: AdminClient<DefaultClientContext> = ClientConfig::new()
+        .set("bootstrap.servers", brokers)
+        .create()
+        .expect("Admin client creation failed");
 
-// TODO move this to config and use directly
-fn get_message_handler(consumer_name: &str) -> MessageHandler {
-    match consumer_name {
-        name if name.starts_with("meta") || name.starts_with("super-meta") => {
-            Arc::new(meta_handler)
+    // Define the new topic with the desired number of partitions and replication factor
+    let new_topic = NewTopic::new(topic_name, partitions, TopicReplication::Fixed(replication));
+
+    // Create the topic
+    let res = admin_client
+        .create_topics(&[new_topic], &AdminOptions::new())
+        .await
+        .map_err(|e| format!("Failed to create topic: {}", e.to_string()))?;
+
+    match res.get(0) {
+        Some(Err((error_string, error_code))) => match error_code {
+            RDKafkaErrorCode::TopicAlreadyExists => {
+                println!("Topic '{}' already exists.", topic_name);
+                return Ok(());
+            }
+            _ => Err(format!("Failed to create topic: {:?}", error_string)),
+        },
+        Some(Ok(_)) => {
+            println!("Topic '{}' created successfully.", topic_name);
+            return Ok(());
         }
-        name if name.starts_with("notification") => Arc::new(send_email),
-        _ => panic!("Unknown consumer type"),
+        None => Err("Unexpected empty result when creating topic.".to_string()),
     }
 }
 
-// Get the consumer name from the consumer when calling run_consumer
-async fn get_consumer_info(
-    mut consumer: Consumer<jetstream::consumer::pull::Config>,
-) -> Result<GetConsumerInfoResult, String> {
-    let info = consumer
-        .info()
-        .await
-        .map_err(|e| format!("Error getting consumer info: {}", e))?;
+// struct GetConsumerInfoResult {
+//     consumer_name: String,
+//     consumer: Consumer<jetstream::consumer::pull::Config>,
+// }
 
-    let consumer_name = info
-        .config
-        .name
-        .as_deref()
-        .unwrap_or_else(|| "unknown-consumer-name")
-        .to_string();
+// TODO move this to config and use directly
+// fn get_message_handler(consumer_name: &str) -> MessageHandler {
+//     match consumer_name {
+//         name if name.starts_with("meta") || name.starts_with("super-meta") => {
+//             Arc::new(meta_handler)
+//         }
+//         name if name.starts_with("notification") => Arc::new(send_email),
+//         _ => panic!("Unknown consumer type"),
+//     }
+// }
 
-    Ok(GetConsumerInfoResult {
-        consumer_name,
-        consumer,
-    })
-}
+// // Get the consumer name from the consumer when calling run_consumer
+// async fn get_consumer_info(
+//     mut consumer: Consumer<jetstream::consumer::pull::Config>,
+// ) -> Result<GetConsumerInfoResult, String> {
+//     let info = consumer
+//         .info()
+//         .await
+//         .map_err(|e| format!("Error getting consumer info: {}", e))?;
+
+//     let consumer_name = info
+//         .config
+//         .name
+//         .as_deref()
+//         .unwrap_or_else(|| "unknown-consumer-name")
+//         .to_string();
+
+//     Ok(GetConsumerInfoResult {
+//         consumer_name,
+//         consumer,
+//     })
+// }
 
 struct RunConsumerOptions {
     consumer: Consumer<jetstream::consumer::pull::Config>,
@@ -151,159 +198,191 @@ struct RunConsumerOptions {
     logger: Arc<Logger>,
     jetstream_context: Arc<jetstream::Context>,
 }
-async fn run_consumer(
-    RunConsumerOptions {
-        consumer,
-        message_handler,
-        logger,
-        jetstream_context,
-    }: RunConsumerOptions,
-) -> Result<(), String> {
-    // Fetch the info once on start
-    let GetConsumerInfoResult {
-        consumer_name,
-        consumer,
-    } = get_consumer_info(consumer).await?;
+// async fn run_consumer(
+//     RunConsumerOptions {
+//         consumer,
+//         message_handler,
+//         logger,
+//         jetstream_context,
+//     }: RunConsumerOptions,
+// ) -> Result<(), String> {
+//     // Fetch the info once on start
+//     let GetConsumerInfoResult {
+//         consumer_name,
+//         consumer,
+//     } = get_consumer_info(consumer).await?;
 
-    logger.log(LogObject {
-        level: LogLevel::Info,
-        message: format!("{} started", &consumer_name),
-        error: None,
-        _time: get_current_time(OffsetDateTime::now_utc()),
-        request: None,
-        response: None,
-        data: None,
-    });
+//     logger.log(LogObject {
+//         level: LogLevel::Info,
+//         message: format!("{} started", &consumer_name),
+//         error: None,
+//         _time: get_current_time(OffsetDateTime::now_utc()),
+//         request: None,
+//         response: None,
+//         data: None,
+//     });
 
-    loop {
-        let mut messages = match consumer.messages().await {
-            Ok(msgs) => msgs,
-            Err(e) => {
-                // Log and restart the consumer
-                let error = e.to_string();
-                logger.log(LogObject {
-                    level: LogLevel::Error,
-                    message: format!(
-                        "Failed to get message stream in {} - restarting!",
-                        &consumer_name
-                    ),
-                    error: Some(json!({ "error": error })),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    request: None,
-                    response: None,
-                    data: None,
-                });
-                return Err(error);
-            }
-        };
+//     loop {
+//         let mut messages = match consumer.messages().await {
+//             Ok(msgs) => msgs,
+//             Err(e) => {
+//                 // Log and restart the consumer
+//                 let error = e.to_string();
+//                 logger.log(LogObject {
+//                     level: LogLevel::Error,
+//                     message: format!(
+//                         "Failed to get message stream in {} - restarting!",
+//                         &consumer_name
+//                     ),
+//                     error: Some(json!({ "error": error })),
+//                     _time: get_current_time(OffsetDateTime::now_utc()),
+//                     request: None,
+//                     response: None,
+//                     data: None,
+//                 });
+//                 return Err(error);
+//             }
+//         };
 
-        while let Some(message_result) = messages.next().await {
-            match message_result {
-                Ok(message) => {
-                    logger.log(LogObject {
-                        level: LogLevel::Info,
-                        message: format!(
-                            "Sending {} message to {} handler",
-                            &message.subject, &consumer_name
-                        ),
-                        error: None,
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        request: None,
-                        response: None,
-                        data: None,
-                    });
-                    if let Err(e) = message_handler(MessageHandlerOptions {
-                        message: &message,
-                        logger: Arc::clone(&logger),
-                        jetstream_context: &jetstream_context,
-                        consumer_name: &consumer_name,
-                    })
-                    .await
-                    {
-                        // Log the error and continue to the next message
-                        // ack_wait will send it to us again
-                        logger.log(LogObject {
-                            level: LogLevel::Error,
-                            message: format!(
-                                "Error processing message {} in {}",
-                                &message.subject, &consumer_name
-                            ),
-                            error: Some(json!({ "error": e })),
-                            _time: get_current_time(OffsetDateTime::now_utc()),
-                            request: None,
-                            response: None,
-                            data: None,
-                        });
-                        continue;
-                    } else {
-                        logger.log(LogObject {
-                            level: LogLevel::Info,
-                            message: format!(
-                                "Message {} processed in {}",
-                                &message.subject, &consumer_name
-                            ),
-                            error: None,
-                            _time: get_current_time(OffsetDateTime::now_utc()),
-                            request: None,
-                            response: None,
-                            data: None,
-                        });
-                    }
+//         while let Some(message_result) = messages.next().await {
+//             match message_result {
+//                 Ok(message) => {
+//                     logger.log(LogObject {
+//                         level: LogLevel::Info,
+//                         message: format!(
+//                             "Sending {} message to {} handler",
+//                             &message.subject, &consumer_name
+//                         ),
+//                         error: None,
+//                         _time: get_current_time(OffsetDateTime::now_utc()),
+//                         request: None,
+//                         response: None,
+//                         data: None,
+//                     });
+//                     if let Err(e) = message_handler(MessageHandlerOptions {
+//                         message: &message,
+//                         logger: Arc::clone(&logger),
+//                         jetstream_context: &jetstream_context,
+//                         consumer_name: &consumer_name,
+//                     })
+//                     .await
+//                     {
+//                         // Log the error and continue to the next message
+//                         logger.log(LogObject {
+//                             level: LogLevel::Error,
+//                             message: format!(
+//                                 "Error processing message {} in {}",
+//                                 &message.subject, &consumer_name
+//                             ),
+//                             error: Some(json!({ "error": e })),
+//                             _time: get_current_time(OffsetDateTime::now_utc()),
+//                             request: None,
+//                             response: None,
+//                             data: None,
+//                         });
 
-                    // Acknowledge the message if it was processed successfully
-                    if let Err(e) = message.ack().await {
-                        let error: String = e.to_string();
-                        // Log the acknowledgment error and continue to the next message
-                        // ack_wait will send it to us again
-                        logger.log(LogObject {
-                            level: LogLevel::Error,
-                            message: format!(
-                                "Error acknowledging message {} in {}",
-                                &message.subject, &consumer_name
-                            ),
-                            error: Some(json!({ "error": error })),
-                            _time: get_current_time(OffsetDateTime::now_utc()),
-                            request: None,
-                            response: None,
-                            data: None,
-                        });
-                        continue;
-                    } else {
-                        logger.log(LogObject {
-                            level: LogLevel::Info,
-                            message: format!(
-                                "Message {} acknowledged in {}",
-                                &message.subject, &consumer_name
-                            ),
-                            error: None,
-                            _time: get_current_time(OffsetDateTime::now_utc()),
-                            request: None,
-                            response: None,
-                            data: None,
-                        });
-                    }
-                }
-                Err(error) => {
-                    // Log error and restart the consumer if we had issues receiving the message
-                    let error: String = error.to_string();
-                    logger.log(LogObject {
-                        level: LogLevel::Error,
-                        message: format!(
-                            "Error receiving message in {} - restarting",
-                            &consumer_name
-                        ),
-                        error: Some(json!({ "error": error })),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        request: None,
-                        response: None,
-                        data: None,
-                    });
-                    return Err(error);
-                }
-            }
-        }
-    }
-}
+//                         // Publish the message to the correct stream
+//                         publish_event(PublishEventOptions {
+//                             event: Some(PlutomiEvent::from_jetstream(
+//                                 &message.subject,
+//                                 &message.payload,
+//                             )?),
+//                             headers: None,
+//                             jetstream_context: &jetstream_context,
+//                             stream_name: "events-retry".to_string(),
+//                         })
+//                         .await?;
+
+//                         // Acknowledge the event in the current stream
+//                         if let Err(e) = message.ack().await {
+//                             let error: String = e.to_string();
+//                             // Log the acknowledgment error and continue to the next message
+//                             logger.log(LogObject {
+//                                 level: LogLevel::Error,
+//                                 message: format!(
+//                                     "Error acknowledging message {} in {}",
+//                                     &message.subject, &consumer_name
+//                                 ),
+//                                 error: Some(json!({ "error": error })),
+//                                 _time: get_current_time(OffsetDateTime::now_utc()),
+//                                 request: None,
+//                                 response: None,
+//                                 data: None,
+//                             });
+
+//                             // ! TODO: here we need to publish the message to the retry / dlq stream
+//                             // AND acknowledge the message in the current stream so it doesn't get resent.
+//                             continue;
+//                         }
+//                     } else {
+//                         logger.log(LogObject {
+//                             level: LogLevel::Info,
+//                             message: format!(
+//                                 "Message {} processed in {}",
+//                                 &message.subject, &consumer_name
+//                             ),
+//                             error: None,
+//                             _time: get_current_time(OffsetDateTime::now_utc()),
+//                             request: None,
+//                             response: None,
+//                             data: None,
+//                         });
+//                     }
+
+//                     // Acknowledge the message if it was processed successfully
+//                     if let Err(e) = message.ack().await {
+//                         let error: String = e.to_string();
+//                         // Log the acknowledgment error and continue to the next message
+//                         // ack_wait will send it to us again
+//                         logger.log(LogObject {
+//                             level: LogLevel::Error,
+//                             message: format!(
+//                                 "Error acknowledging message {} in {}",
+//                                 &message.subject, &consumer_name
+//                             ),
+//                             error: Some(json!({ "error": error })),
+//                             _time: get_current_time(OffsetDateTime::now_utc()),
+//                             request: None,
+//                             response: None,
+//                             data: None,
+//                         });
+//                         continue;
+//                     } else {
+//                         logger.log(LogObject {
+//                             level: LogLevel::Info,
+//                             message: format!(
+//                                 "Message {} acknowledged in {}",
+//                                 &message.subject, &consumer_name
+//                             ),
+//                             error: None,
+//                             _time: get_current_time(OffsetDateTime::now_utc()),
+//                             request: None,
+//                             response: None,
+//                             data: None,
+//                         });
+//                     }
+//                 }
+//                 Err(error) => {
+//                     // Log error and restart the consumer if we had issues receiving the message
+//                     let error: String = error.to_string();
+//                     logger.log(LogObject {
+//                         level: LogLevel::Error,
+//                         message: format!(
+//                             "Error receiving message in {} - restarting",
+//                             &consumer_name
+//                         ),
+//                         error: Some(json!({ "error": error })),
+//                         _time: get_current_time(OffsetDateTime::now_utc()),
+//                         request: None,
+//                         response: None,
+//                         data: None,
+//                     });
+//                     return Err(error);
+//                 }
+//             }
+//         }
+//     }
+// }
 struct ConsumerOptions {
     // Jetstream context to pass down to the run_consumer function
     jetstream_context: Arc<jetstream::Context>,
@@ -322,75 +401,75 @@ struct ConsumerOptions {
 
 const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
 
-async fn spawn_consumer(
-    ConsumerOptions {
-        jetstream_context,
-        stream,
-        consumer_name,
-        filter_subjects,
-        message_handler,
-        logger,
-        max_delivery_attempts,
-        redeliver_after,
-    }: ConsumerOptions,
-) -> JoinHandle<()> {
-    tokio::spawn(async move {
-        loop {
-            let consumer = match stream
-                .get_or_create_consumer(
-                    &consumer_name,
-                    jetstream::consumer::pull::Config {
-                        durable_name: Some(consumer_name.clone()),
-                        name: Some(consumer_name.clone()),
-                        filter_subjects: filter_subjects.clone(),
-                        ack_wait: redeliver_after,
-                        max_deliver: max_delivery_attempts,
-                        ..Default::default()
-                    },
-                )
-                .await
-            {
-                Ok(consumer) => consumer,
-                Err(e) => {
-                    logger.log(LogObject {
-                        level: LogLevel::Error,
-                        message: format!("Error creating consumer: {}", &consumer_name),
-                        error: Some(json!({ "error": e.to_string() })),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        request: None,
-                        response: None,
-                        data: None,
-                    });
-                    return;
-                }
-            };
+// async fn spawn_consumer(
+//     ConsumerOptions {
+//         jetstream_context,
+//         stream,
+//         consumer_name,
+//         filter_subjects,
+//         message_handler,
+//         logger,
+//         max_delivery_attempts,
+//         redeliver_after,
+//     }: ConsumerOptions,
+// ) -> JoinHandle<()> {
+//     tokio::spawn(async move {
+//         loop {
+//             let consumer = match stream
+//                 .get_or_create_consumer(
+//                     &consumer_name,
+//                     jetstream::consumer::pull::Config {
+//                         durable_name: Some(consumer_name.clone()),
+//                         name: Some(consumer_name.clone()),
+//                         filter_subjects: filter_subjects.clone(),
+//                         ack_wait: redeliver_after,
+//                         max_deliver: max_delivery_attempts,
+//                         ..Default::default()
+//                     },
+//                 )
+//                 .await
+//             {
+//                 Ok(consumer) => consumer,
+//                 Err(e) => {
+//                     logger.log(LogObject {
+//                         level: LogLevel::Error,
+//                         message: format!("Error creating consumer: {}", &consumer_name),
+//                         error: Some(json!({ "error": e.to_string() })),
+//                         _time: get_current_time(OffsetDateTime::now_utc()),
+//                         request: None,
+//                         response: None,
+//                         data: None,
+//                     });
+//                     return;
+//                 }
+//             };
 
-            // Run the consumer
-            if let Err(e) = run_consumer(RunConsumerOptions {
-                consumer,
-                message_handler: Arc::clone(&message_handler),
-                logger: Arc::clone(&logger),
-                jetstream_context: Arc::clone(&jetstream_context),
-            })
-            .await
-            {
-                logger.log(LogObject {
-                    level: LogLevel::Error,
-                    message: format!(
-                        "{} error - restarting in {:?} seconds",
-                        consumer_name, RESTART_ON_ERROR_DURATION
-                    ),
-                    error: Some(json!({ "error": e.to_string() })),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    request: None,
-                    response: None,
-                    data: None,
-                });
-                tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
-            }
-        }
-    })
-}
+//             // Run the consumer
+//             if let Err(e) = run_consumer(RunConsumerOptions {
+//                 consumer,
+//                 message_handler: Arc::clone(&message_handler),
+//                 logger: Arc::clone(&logger),
+//                 jetstream_context: Arc::clone(&jetstream_context),
+//             })
+//             .await
+//             {
+//                 logger.log(LogObject {
+//                     level: LogLevel::Error,
+//                     message: format!(
+//                         "{} error - restarting in {:?} seconds",
+//                         consumer_name, RESTART_ON_ERROR_DURATION
+//                     ),
+//                     error: Some(json!({ "error": e.to_string() })),
+//                     _time: get_current_time(OffsetDateTime::now_utc()),
+//                     request: None,
+//                     response: None,
+//                     data: None,
+//                 });
+//                 tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
+//             }
+//         }
+//     })
+// }
 
 /**
  * When handling retries & DLQ, we need to strip the suffix to get the original name in some cases
@@ -403,108 +482,110 @@ fn base_consumer_or_stream_name(name: &str) -> &str {
 
 /**
  * While inside a message handler, check if a message is in the retry or DLQ stream
- * If it is, lookup the original event in the main'events' stream and return it
+ * If it is, lookup the original event in the main 'events' stream and return it
  * Otherwise, return the original message that was passed in
  */
-async fn extract_message(
-    message: &Message,
-    logger: Arc<Logger>,
-    jetstream_context: &Context,
-) -> Result<PlutomiEvent, String> {
-    let (original_subject, original_payload): (String, Bytes) =
-        if message.subject.starts_with("events-retry.")
-            || message.subject.starts_with("events-dlq.")
-        {
-            logger.log(LogObject {
-                level: LogLevel::Info,
-                message: format!("JOSE DEBUG IN EXTRACT {}", message.subject),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                error: None,
-                request: None,
-                response: None,
-                data: Some(json!({ "entire_message_payload": message.payload.clone() })),
-            });
-            // Parse the advisory message
-            let advisory: MaxDeliverAdvisory =
-                serde_json::from_slice(&message.payload).map_err(|e| {
-                    format!(
-                        "Failed to parse max delivery advisory message in extract 2: {}",
-                        e
-                    )
-                })?;
+// async fn extract_message(
+//     message: &Message,
+//     logger: Arc<Logger>,
+//     jetstream_context: &Context,
+// ) -> Result<PlutomiEvent, String> {
+//     // let (original_subject, original_payload): (String, Bytes) =
+//     //     if message.subject.starts_with("events-retry.")
+//     //         || message.subject.starts_with("events-dlq.")
+//     //     {
+//     //         logger.log(LogObject {
+//     //             level: LogLevel::Info,
+//     //             message: format!("JOSE DEBUG IN EXTRACT {}", message.subject),
+//     //             _time: get_current_time(OffsetDateTime::now_utc()),
+//     //             error: None,
+//     //             request: None,
+//     //             response: None,
+//     //             data: Some(json!({ "entire_message_payload": message.payload.clone() })),
+//     //         });
+//     //         // Parse the advisory message
+//     //         let advisory: MaxDeliverAdvisory =
+//     //             serde_json::from_slice(&message.payload).map_err(|e| {
+//     //                 format!(
+//     //                     "Failed to parse max delivery advisory message in extract 2: {}",
+//     //                     e
+//     //                 )
+//     //             })?;
 
-            // When using get_raw_message, the payload is base64 encoded
-            let (subject, decoded_payload) =
-                get_original_subject_and_payload_from_max_delivery_advisory(
-                    jetstream_context,
-                    &advisory,
-                )
-                .await?;
+//     //         // When using get_raw_message, the payload is base64 encoded
+//     //         let (subject, decoded_payload) =
+//     //             get_original_subject_and_payload_from_max_delivery_advisory(
+//     //                 jetstream_context,
+//     //                 &advisory,
+//     //             )
+//     //             .await?;
 
-            (subject, decoded_payload)
-        } else {
-            // Return the passed in message
-            (message.subject.to_string(), message.payload.clone())
-        };
+//     //         (subject, decoded_payload)
+//     //     } else {
+//     //         // Return the passed in message
+//     //         (message.subject.to_string(), message.payload.clone())
+//     //     };
 
-    logger.log(LogObject {
-        level: LogLevel::Info,
-        message: format!("JOSE DEBUG Trying to extract message from_jestream",),
-        _time: get_current_time(OffsetDateTime::now_utc()),
-        error: None,
-        request: None,
-        response: None,
-        data: Some(json!({ "original_subject": original_subject.clone(), "original_payload": original_payload.clone() })),
-    });
+//     logger.log(LogObject {
+//         level: LogLevel::Info,
+//         message: format!("JOSE DEBUG Trying to extract message from_jestream",),
+//         _time: get_current_time(OffsetDateTime::now_utc()),
+//         error: None,
+//         request: None,
+//         response: None,
+//         data: Some(
+//             json!({ "original_subject": &message.subject, "original_payload": &message.payload }),
+//         ),
+//     });
 
-    let event = PlutomiEvent::from_jetstream(&original_subject, &original_payload)?;
+//     let event = PlutomiEvent::from_jetstream(&message.subject, &message.payload)?;
 
-    logger.log(LogObject {
-        level: LogLevel::Info,
-        message: format!("JOSE DEBUG EXTRACTED MESSAGE",),
-        _time: get_current_time(OffsetDateTime::now_utc()),
-        error: None,
-        request: None,
-        response: None,
-        data: Some(json!({ "event": event })),
-    });
+//     logger.log(LogObject {
+//         level: LogLevel::Info,
+//         message: format!("JOSE DEBUG EXTRACTED MESSAGE",),
+//         _time: get_current_time(OffsetDateTime::now_utc()),
+//         error: None,
+//         request: None,
+//         response: None,
+//         data: Some(json!({ "event": event })),
+//     });
 
-    // Parse the payload based on the event type
-    match event {
-        PlutomiEvent::TOTPRequested(ps) => {
-            logger.log(LogObject {
-                level: LogLevel::Info,
-                message: format!("JOSE DEBUG MATCHED EVENT",),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                error: None,
-                request: None,
-                response: None,
-                data: Some(json!({ "payload": ps })),
-            });
+//     // Parse the payload based on the event type
+//     match event {
+//         PlutomiEvent::TOTPRequested(ps) => {
+//             logger.log(LogObject {
+//                 level: LogLevel::Info,
+//                 message: format!("JOSE DEBUG MATCHED EVENT",),
+//                 _time: get_current_time(OffsetDateTime::now_utc()),
+//                 error: None,
+//                 request: None,
+//                 response: None,
+//                 data: Some(json!({ "payload": ps })),
+//             });
 
-            Ok(PlutomiEvent::TOTPRequested(ps))
-        }
+//             Ok(PlutomiEvent::TOTPRequested(ps))
+//         }
 
-        // Unused
-        _ => {
-            let msg = format!(
-                "Unknown event type while extracting message: {}",
-                original_subject
-            );
-            logger.log(LogObject {
-                level: LogLevel::Warn,
-                message: msg.clone(),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                error: None,
-                request: None,
-                response: None,
-                data: None,
-            });
+//         // Unused
+//         _ => {
+//             let msg = format!(
+//                 "Unknown event type while extracting message: {}",
+//                 message.subject
+//             );
+//             logger.log(LogObject {
+//                 level: LogLevel::Warn,
+//                 message: msg.clone(),
+//                 _time: get_current_time(OffsetDateTime::now_utc()),
+//                 error: None,
+//                 request: None,
+//                 response: None,
+//                 data: None,
+//             });
 
-            Err(msg)
-        }
-    }
-}
+//             Err(msg)
+//         }
+//     }
+// }
 
 fn send_email(
     MessageHandlerOptions {
@@ -515,8 +596,10 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        let event: PlutomiEvent =
-            extract_message(&message, Arc::clone(&logger), jetstream_context).await?;
+        // let event: PlutomiEvent =
+        //     extract_message(&message, Arc::clone(&logger), jetstream_context).await?;
+
+        let event = PlutomiEvent::from_jetstream(&message.subject, &message.payload)?;
 
         logger.log(LogObject {
             level: LogLevel::Info,
@@ -644,7 +727,7 @@ fn meta_handler(
     MessageHandlerOptions {
         message,
         logger,
-        jetstream_context,
+        jetstream_context: _,
         consumer_name,
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
@@ -652,7 +735,7 @@ fn meta_handler(
         logger.log(LogObject {
             level: LogLevel::Info,
             message: format!(
-                "Processing 2 {} message in {}",
+                "Processing event {} message in {}",
                 &message.subject, &consumer_name
             ),
             _time: get_current_time(OffsetDateTime::now_utc()),
@@ -663,92 +746,92 @@ fn meta_handler(
             data: Some(json!({  "subject": &message.subject })),
         });
 
-        if message.subject.to_string()
-        // ! TODO: Simulate error on the meta-handler first pass TODO: Remove this
-            == ("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer")
-        {
-            let x = serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload).unwrap();
-            logger.log(LogObject {
-                level: LogLevel::Warn,
-                message: format!(
-                    "JOSE DEBUG SIMULATING ERROR - THROWING ON FIRST RETRY STREAM FOR CONSUMER {}",
-                    &consumer_name
-                ),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                error: None,
-                request: None,
-                response: None,
-                data: Some(json!({
-                    "subject": &message.subject,
-                    "sequence": x.stream_seq,
-                })),
-            });
-            return Err("TEST ERROR HERE".to_string());
-        } else {
-            logger.log(LogObject {
-                level: LogLevel::Info,
-                message: format!("JOSE DEBUG META consumer - NO ERROR - CONTINUING",),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                error: None,
-                request: None,
-                response: None,
-                data: Some(json!({
-                    "subject": &message.subject,
-                    "payload": &message.payload,
-                })),
-            });
-        }
+        // if message.subject.to_string()
+        // // ! Simulate error on the meta-handler first pass TODO: Remove this
+        //     == ("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.events.notifications-consumer")
+        // {
+        //     let x = serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload).unwrap();
+        //     logger.log(LogObject {
+        //         level: LogLevel::Warn,
+        //         message: format!(
+        //             "JOSE DEBUG SIMULATING ERROR - THROWING ON FIRST RETRY STREAM FOR CONSUMER {}",
+        //             &consumer_name
+        //         ),
+        //         _time: get_current_time(OffsetDateTime::now_utc()),
+        //         error: None,
+        //         request: None,
+        //         response: None,
+        //         data: Some(json!({
+        //             "subject": &message.subject,
+        //             "sequence": x.stream_seq,
+        //         })),
+        //     });
+        //     return Err("TEST ERROR HERE".to_string());
+        // } else {
+        //     logger.log(LogObject {
+        //         level: LogLevel::Info,
+        //         message: format!("JOSE DEBUG META consumer - NO ERROR - CONTINUING",),
+        //         _time: get_current_time(OffsetDateTime::now_utc()),
+        //         error: None,
+        //         request: None,
+        //         response: None,
+        //         data: Some(json!({
+        //             "subject": &message.subject,
+        //             "payload": &message.payload,
+        //         })),
+        //     });
+        // }
 
-        let payload = match serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload) {
-            Ok(payload) => payload,
-            Err(e) => {
-                // We are only listening for the MAX_DELIVERIES event
-                // If we try to parse it (above), and it fails, that's an error
-                // If it's because it's a different structure, then warn since we are not listening for it but it doesn't matter
-                let is_max_delivery_advisory = &message
-                    .subject
-                    .contains("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES");
+        // let payload = match serde_json::from_slice::<MaxDeliverAdvisory>(&message.payload) {
+        //     Ok(payload) => payload,
+        //     Err(e) => {
+        //         // We are only listening for the MAX_DELIVERIES event
+        //         // If we try to parse it (above), and it fails, that's an error
+        //         // If it's because it's a different structure, then warn since we are not listening for it but it doesn't matter
+        //         let is_max_delivery_advisory = &message
+        //             .subject
+        //             .contains("$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES");
 
-                let default_err = format!("Unknown message in {} - skipping...", &consumer_name);
-                let error_message = is_max_delivery_advisory
-                    .then_some("Failed to parse max delivery advisory message")
-                    .unwrap_or(&default_err);
+        //         let default_err = format!("Unknown message in {} - skipping...", &consumer_name);
+        //         let error_message = is_max_delivery_advisory
+        //             .then_some("Failed to parse max delivery advisory message")
+        //             .unwrap_or(&default_err);
 
-                let log_level = is_max_delivery_advisory
-                    .then_some(LogLevel::Error)
-                    .unwrap_or(LogLevel::Warn);
+        //         let log_level = is_max_delivery_advisory
+        //             .then_some(LogLevel::Error)
+        //             .unwrap_or(LogLevel::Warn);
 
-                logger.log(LogObject {
-                    level: log_level,
-                    message: error_message.to_string(),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    error: Some(json!({ "error": e.to_string() })),
-                    request: None,
-                    response: None,
-                    data: Some(json!({
-                            "subject": message.subject,
-                            "payload": message.payload })),
-                });
-                // Again, if it is a max delivery advisory, we return an error otherwise skip it
-                // We don't care about other meta events
-                return is_max_delivery_advisory
-                    .then_some(Err(e.to_string()))
-                    .unwrap_or(Ok(()));
-            }
-        };
+        //         logger.log(LogObject {
+        //             level: log_level,
+        //             message: error_message.to_string(),
+        //             _time: get_current_time(OffsetDateTime::now_utc()),
+        //             error: Some(json!({ "error": e.to_string() })),
+        //             request: None,
+        //             response: None,
+        //             data: Some(json!({
+        //                     "subject": message.subject,
+        //                     "payload": message.payload })),
+        //         });
+        //         // Again, if it is a max delivery advisory, we return an error otherwise skip it
+        //         // We don't care about other meta events
+        //         return is_max_delivery_advisory
+        //             .then_some(Err(e.to_string()))
+        //             .unwrap_or(Ok(()));
+        //     }
+        // };
 
-        logger.log(LogObject {
-            level: LogLevel::Info,
-            message: format!("PARSED PAYLOAD",),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            error: None,
-            request: None,
-            response: None,
-            data: Some(json!({
-                "subject": &message.subject,
-                "payload": &payload,
-            })),
-        });
+        // logger.log(LogObject {
+        //     level: LogLevel::Info,
+        //     message: format!("PARSED PAYLOAD",),
+        //     _time: get_current_time(OffsetDateTime::now_utc()),
+        //     error: None,
+        //     request: None,
+        //     response: None,
+        //     data: Some(json!({
+        //         "subject": &message.subject,
+        //         "payload": &payload,
+        //     })),
+        // });
 
         /* For advisories for the meta* consumers, We need a copy of the original advisory to pass down to the retry/dlq handlers. For example:
         1. notifications-consumer reaches max delivery attempts
@@ -762,227 +845,227 @@ fn meta_handler(
         If the current MAX_DELIVERIES advisory is for a business consumer like notifications-consumer, simply pass that down to the handler. TODO */
 
         // Get the new stream prefix to put the event into (ie waterfall)
-        let (new_stream, new_consumer, new_payload): (&str, String, MaxDeliverAdvisory) =
-            match payload.stream.as_str() {
-                "events" => {
-                    logger.log(LogObject {
-                        level: LogLevel::Info,
-                        message: "in events match clause".to_string(),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        error: None,
-                        request: None,
-                        response: None,
-                        data: None,
-                    });
-                    // Get the original MaxDeliveryAdvisory from a business logic consumer if we're currently handling a meta-consumer* advisory
-                    let message_to_use = if payload.consumer.contains("meta-consumer") {
-                        meta_get_previous_advisory(&jetstream_context, &payload).await?
-                    } else {
-                        // Use the current message and send it downstream
-                        payload.clone()
-                    };
+        // let (new_stream, new_consumer, new_payload): (&str, String, MaxDeliverAdvisory) =
+        //     match payload.stream.as_str() {
+        //         "events" => {
+        //             logger.log(LogObject {
+        //                 level: LogLevel::Info,
+        //                 message: "in events match clause".to_string(),
+        //                 _time: get_current_time(OffsetDateTime::now_utc()),
+        //                 error: None,
+        //                 request: None,
+        //                 response: None,
+        //                 data: None,
+        //             });
+        //             // Get the original MaxDeliveryAdvisory from a business logic consumer if we're currently handling a meta-consumer* advisory
+        //             let message_to_use = if payload.consumer.contains("meta-consumer") {
+        //                 meta_get_previous_advisory(&jetstream_context, &payload).await?
+        //             } else {
+        //                 // Use the current message and send it downstream
+        //                 payload.clone()
+        //             };
 
-                    logger.log(LogObject {
-                    level: LogLevel::Info,
-                    message: "Moving message 1 from events to events-retry stream".to_string(),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    error: None,
-                    request: None,
-                    response: None,
-                    data: Some(json!({ "payload": payload, "previous_advisory": message_to_use.clone() })),
-                });
+        //             logger.log(LogObject {
+        //             level: LogLevel::Info,
+        //             message: "Moving message 1 from events to events-retry stream".to_string(),
+        //             _time: get_current_time(OffsetDateTime::now_utc()),
+        //             error: None,
+        //             request: None,
+        //             response: None,
+        //             data: Some(json!({ "payload": payload, "previous_advisory": message_to_use.clone() })),
+        //         });
 
-                    (
-                        "events-retry",
-                        format!(
-                            "{}-retry",
-                            base_consumer_or_stream_name(&message_to_use.consumer)
-                        ),
-                        message_to_use,
-                    )
-                }
-                "events-retry" => {
-                    logger.log(LogObject {
-                        level: LogLevel::Info,
-                        message: "in events-retry match clause".to_string(),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        error: None,
-                        request: None,
-                        response: None,
-                        data: None,
-                    });
+        //             (
+        //                 "events-retry",
+        //                 format!(
+        //                     "{}-retry",
+        //                     base_consumer_or_stream_name(&message_to_use.consumer)
+        //                 ),
+        //                 message_to_use,
+        //             )
+        //         }
+        //         "events-retry" => {
+        //             logger.log(LogObject {
+        //                 level: LogLevel::Info,
+        //                 message: "in events-retry match clause".to_string(),
+        //                 _time: get_current_time(OffsetDateTime::now_utc()),
+        //                 error: None,
+        //                 request: None,
+        //                 response: None,
+        //                 data: None,
+        //             });
 
-                    // TODO new error is here, when it is processed by the retry consumer, in the meta consumer retry this fails parsing
-                    // Issue is that we shouldnt be trying to get the previous max delivery advisory as there is none unless we CURRENTLy have a max delivery for a meta consumer
-                    // Get the previous advisory from a meta-consumer logic consumer
-                    // Get the original MaxDeliveryAdvisory from a business logic consumer if we're currently handling a meta-consumer* advisory
-                    let message_to_use = if payload.consumer.contains("meta-consumer") {
-                        let previous_max_delivery_advisory =
-                            meta_get_previous_advisory(&jetstream_context, &payload).await?;
+        //             // TODO new error is here, when it is processed by the retry consumer, in the meta consumer retry this fails parsing
+        //             // Issue is that we shouldnt be trying to get the previous max delivery advisory as there is none unless we CURRENTLy have a max delivery for a meta consumer
+        //             // Get the previous advisory from a meta-consumer logic consumer
+        //             // Get the original MaxDeliveryAdvisory from a business logic consumer if we're currently handling a meta-consumer* advisory
+        //             let message_to_use = if payload.consumer.contains("meta-consumer") {
+        //                 let previous_max_delivery_advisory =
+        //                     meta_get_previous_advisory(&jetstream_context, &payload).await?;
 
-                        logger.log(LogObject {
-                            level: LogLevel::Info,
-                            message: "Got previous max delivery advisory, one more to go".to_string(),
-                            _time: get_current_time(OffsetDateTime::now_utc()),
-                            error: None,
-                            request: None,
-                            response: None,
-                            data: Some(json!({ "previous_max_delivery_advisory": previous_max_delivery_advisory })),
-                        });
-                        // Get the original advisory from a meta-consumer logic consumer
-                        let original_max_delivery_advisory = meta_get_previous_advisory(
-                            &jetstream_context,
-                            &previous_max_delivery_advisory,
-                        )
-                        .await?;
+        //                 logger.log(LogObject {
+        //                     level: LogLevel::Info,
+        //                     message: "Got previous max delivery advisory, one more to go".to_string(),
+        //                     _time: get_current_time(OffsetDateTime::now_utc()),
+        //                     error: None,
+        //                     request: None,
+        //                     response: None,
+        //                     data: Some(json!({ "previous_max_delivery_advisory": previous_max_delivery_advisory })),
+        //                 });
+        //                 // Get the original advisory from a meta-consumer logic consumer
+        //                 let original_max_delivery_advisory = meta_get_previous_advisory(
+        //                     &jetstream_context,
+        //                     &previous_max_delivery_advisory,
+        //                 )
+        //                 .await?;
 
-                        logger.log(LogObject {
-                            level: LogLevel::Info,
-                            message: "Got original max delivery advisory".to_string(),
-                            _time: get_current_time(OffsetDateTime::now_utc()),
-                            error: None,
-                            request: None,
-                            response: None,
-                            data: Some(json!({ "original_max_delivery_adivisory": original_max_delivery_advisory })),
-                        });
+        //                 logger.log(LogObject {
+        //                     level: LogLevel::Info,
+        //                     message: "Got original max delivery advisory".to_string(),
+        //                     _time: get_current_time(OffsetDateTime::now_utc()),
+        //                     error: None,
+        //                     request: None,
+        //                     response: None,
+        //                     data: Some(json!({ "original_max_delivery_adivisory": original_max_delivery_advisory })),
+        //                 });
 
-                        original_max_delivery_advisory
-                    } else {
-                        // Go down one level from the retry stream to the events stream
-                        let previous_max_delivery_advisory =
-                            meta_get_previous_advisory(&jetstream_context, &payload).await?;
+        //                 original_max_delivery_advisory
+        //             } else {
+        //                 // Go down one level from the retry stream to the events stream
+        //                 let previous_max_delivery_advisory =
+        //                     meta_get_previous_advisory(&jetstream_context, &payload).await?;
 
-                        previous_max_delivery_advisory
-                    };
+        //                 previous_max_delivery_advisory
+        //             };
 
-                    logger.log(LogObject {
-                    level: LogLevel::Info,
-                    message: "Moving message 2 from events-retry to events-dlq stream".to_string(),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    error: None,
-                    request: None,
-                    response: None,
-                    data: Some(json!({ "payload": payload, "previous_advisory": message_to_use, "original_max_delivery_advisory": message_to_use.clone() }))
-                });
+        //             logger.log(LogObject {
+        //             level: LogLevel::Info,
+        //             message: "Moving message 2 from events-retry to events-dlq stream".to_string(),
+        //             _time: get_current_time(OffsetDateTime::now_utc()),
+        //             error: None,
+        //             request: None,
+        //             response: None,
+        //             data: Some(json!({ "payload": payload, "previous_advisory": message_to_use, "original_max_delivery_advisory": message_to_use.clone() }))
+        //         });
 
-                    (
-                        "events-dlq",
-                        format!(
-                            "{}-dlq",
-                            base_consumer_or_stream_name(&message_to_use.consumer)
-                        ),
-                        message_to_use,
-                    )
-                }
-                "events-dlq" => {
-                    logger.log(LogObject {
-                        level: LogLevel::Info,
-                        message: "in events-dlq match clause".to_string(),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        error: None,
-                        request: None,
-                        response: None,
-                        data: None,
-                    });
+        //             (
+        //                 "events-dlq",
+        //                 format!(
+        //                     "{}-dlq",
+        //                     base_consumer_or_stream_name(&message_to_use.consumer)
+        //                 ),
+        //                 message_to_use,
+        //             )
+        //         }
+        //         "events-dlq" => {
+        //             logger.log(LogObject {
+        //                 level: LogLevel::Info,
+        //                 message: "in events-dlq match clause".to_string(),
+        //                 _time: get_current_time(OffsetDateTime::now_utc()),
+        //                 error: None,
+        //                 request: None,
+        //                 response: None,
+        //                 data: None,
+        //             });
 
-                    // Get the previous advisory from a meta-consumer-retry logic consumer
-                    let message_to_use = if payload.consumer.contains("meta-consumer") {
-                        let previous_max_delivery_advisory =
-                            meta_get_previous_advisory(&jetstream_context, &payload).await?;
+        //             // Get the previous advisory from a meta-consumer-retry logic consumer
+        //             let message_to_use = if payload.consumer.contains("meta-consumer") {
+        //                 let previous_max_delivery_advisory =
+        //                     meta_get_previous_advisory(&jetstream_context, &payload).await?;
 
-                        // Get the first advisory from a meta-consumer logic consumer
-                        let first_max_delivery_advisory = meta_get_previous_advisory(
-                            &jetstream_context,
-                            &previous_max_delivery_advisory,
-                        )
-                        .await?;
+        //                 // Get the first advisory from a meta-consumer logic consumer
+        //                 let first_max_delivery_advisory = meta_get_previous_advisory(
+        //                     &jetstream_context,
+        //                     &previous_max_delivery_advisory,
+        //                 )
+        //                 .await?;
 
-                        // Get the original advisory from a meta-consumer logic consumer
-                        let original_max_delivery_advisory = meta_get_previous_advisory(
-                            &jetstream_context,
-                            &first_max_delivery_advisory,
-                        )
-                        .await?;
+        //                 // Get the original advisory from a meta-consumer logic consumer
+        //                 let original_max_delivery_advisory = meta_get_previous_advisory(
+        //                     &jetstream_context,
+        //                     &first_max_delivery_advisory,
+        //                 )
+        //                 .await?;
 
-                        original_max_delivery_advisory
-                    } else {
-                        // Go down one level from the events-dlq  to the events-retry stream
-                        let previous_max_delivery_advisory =
-                            meta_get_previous_advisory(&jetstream_context, &payload).await?;
+        //                 original_max_delivery_advisory
+        //             } else {
+        //                 // Go down one level from the events-dlq  to the events-retry stream
+        //                 let previous_max_delivery_advisory =
+        //                     meta_get_previous_advisory(&jetstream_context, &payload).await?;
 
-                        // Go down one level from the events-retry  to the events-dlq stream
-                        let first_max_delivery_advisory = meta_get_previous_advisory(
-                            &jetstream_context,
-                            &previous_max_delivery_advisory,
-                        )
-                        .await?;
+        //                 // Go down one level from the events-retry  to the events-dlq stream
+        //                 let first_max_delivery_advisory = meta_get_previous_advisory(
+        //                     &jetstream_context,
+        //                     &previous_max_delivery_advisory,
+        //                 )
+        //                 .await?;
 
-                        first_max_delivery_advisory
-                    };
+        //                 first_max_delivery_advisory
+        //             };
 
-                    // Do nothing for now, just log
-                    logger.log(LogObject {
-                        level: LogLevel::Warn,
-                        message:
-                            "Message has reached max delivery attempts and will not be retried "
-                                .to_string(),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        error: None,
-                        request: None,
-                        response: None,
-                        data: Some(json!({ "payload": payload, })),
-                    });
+        //             // Do nothing for now, just log
+        //             logger.log(LogObject {
+        //                 level: LogLevel::Warn,
+        //                 message:
+        //                     "Message has reached max delivery attempts and will not be retried "
+        //                         .to_string(),
+        //                 _time: get_current_time(OffsetDateTime::now_utc()),
+        //                 error: None,
+        //                 request: None,
+        //                 response: None,
+        //                 data: Some(json!({ "payload": payload, })),
+        //             });
 
-                    return Ok(());
-                }
-                _ => {
-                    let msg = format!("Unknown stream fallback: {}", payload.stream);
-                    logger.log(LogObject {
-                        level: LogLevel::Error,
-                        message: msg.clone(),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        error: None,
-                        request: None,
-                        response: None,
-                        data: Some(json!({ "payload": payload })),
-                    });
-                    return Err(msg);
-                }
-            };
+        //             return Ok(());
+        //         }
+        //         _ => {
+        //             let msg = format!("Unknown stream fallback: {}", payload.stream);
+        //             logger.log(LogObject {
+        //                 level: LogLevel::Error,
+        //                 message: msg.clone(),
+        //                 _time: get_current_time(OffsetDateTime::now_utc()),
+        //                 error: None,
+        //                 request: None,
+        //                 response: None,
+        //                 data: Some(json!({ "payload": payload })),
+        //             });
+        //             return Err(msg);
+        //         }
+        //     };
 
-        let pub_fn_stream = format!("{}.{}", new_stream, new_consumer);
-        logger.log(LogObject {
-            level: LogLevel::Info,
-            message: format!("Publish function using stream: {}", pub_fn_stream),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            error: None,
-            request: None,
-            response: None,
-            data: Some(json!({ "payload": new_payload })),
-        });
+        // let pub_fn_stream = format!("{}.{}", new_stream, new_consumer);
+        // logger.log(LogObject {
+        //     level: LogLevel::Info,
+        //     message: format!("Publish function using stream: {}", pub_fn_stream),
+        //     _time: get_current_time(OffsetDateTime::now_utc()),
+        //     error: None,
+        //     request: None,
+        //     response: None,
+        //     data: Some(json!({ "payload": new_payload })),
+        // });
 
-        publish_event(PublishEventOptions {
-            jetstream_context,
-            // events-retry.email-consumer etc.
-            stream_name: pub_fn_stream,
-            headers: None,
-            event: Some(&new_payload),
-        })
-        .await
-        .map_err(|e| {
-            logger.log(LogObject {
-                level: LogLevel::Error,
-                message: format!("Failed to publish meta event to {}", new_stream),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                error: Some(json!({ "error": e })),
-                request: None,
-                response: None,
-                data: Some(json!({ "payload": payload })),
-            });
+        // publish_event(PublishEventOptions {
+        //     jetstream_context,
+        //     // events-retry.email-consumer etc.
+        //     stream_name: pub_fn_stream,
+        //     headers: None,
+        //     event: Some(&new_payload),
+        // })
+        // .await
+        // .map_err(|e| {
+        //     logger.log(LogObject {
+        //         level: LogLevel::Error,
+        //         message: format!("Failed to publish meta event to {}", new_stream),
+        //         _time: get_current_time(OffsetDateTime::now_utc()),
+        //         error: Some(json!({ "error": e })),
+        //         request: None,
+        //         response: None,
+        //         data: Some(json!({ "payload": payload })),
+        //     });
 
-            // Return the error to the caller
-            e
-        })?;
+        //     // Return the error to the caller
+        //     e
+        // })?;
 
         Ok(())
     })

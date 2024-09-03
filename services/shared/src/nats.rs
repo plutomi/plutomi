@@ -77,7 +77,7 @@ pub async fn create_stream<'a>(
             name: stream_name.clone(),
             subjects: all_subjects,
             retention: jetstream::stream::RetentionPolicy::Limits,
-            max_messages: 1_000_000,
+            max_messages: 5_000_000,
             max_bytes: 5_000_000_000, // 5GB
             max_age: Duration::from_secs(60 * 60 * 24 * MESSAGE_RETENTION_DAYS),
             discard: jetstream::stream::DiscardPolicy::Old,
