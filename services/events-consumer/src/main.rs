@@ -67,12 +67,20 @@ async fn main() -> Result<(), String> {
     let orders_topic = PlutomiTopic::new("orders", 3, 1, brokers).await?; // 3 partitions, 1 replication factor
     let users_topic = PlutomiTopic::new("users", 2, 1, brokers).await?; // 2 partitions
 
-    let order_notification_consumers = orders_topic.create_consumer_group("notifications-consumer", &orders_topic).await?;
-    let user_notification_consumers = users_topic.create_consumer_group("notifications-consumer", &orders_topic).await?;
+    // Create the consumer groups - one consumer for each partition
+    let order_notification_consumers = orders_topic
+        .create_consumer_group("notifications-consumer")
+        .await?;
+    let user_notification_consumers = users_topic
+        .create_consumer_group("notifications-consumer")
+        .await?;
 
+    let all_consumers: Vec<PlutomiConsumer> =
+        vec![order_notification_consumers, user_notification_consumers]
+            .into_iter()
+            .flatten()
+            .collect();
 
- 
-    let all_consumers = vec![order_notifications_consumers, user_notifications_consumers];
     //  Create all consumers
     let consumer_handles: Vec<_> = all_consumers
         .iter()
@@ -110,7 +118,68 @@ async fn main() -> Result<(), String> {
 //     Ok(producer)
 // }
 
+// Wrapper around StreamConsumer to add extra functionality
+struct PlutomiConsumer {
+    name: String,
+    consumer: StreamConsumer,
+}
 
+impl PlutomiConsumer {
+    /**
+     * Creates a consumer and subscribes it to the given topic
+     */
+    fn new(
+        name: String,
+        group_id: &str,
+        brokers: &str,
+        topic: &PlutomiTopic,
+    ) -> Result<Self, String> {
+        let consumer: StreamConsumer = ClientConfig::new()
+            .set("group.id", group_id)
+            .set("bootstrap.servers", brokers)
+            .set("enable.partition.eof", "false")
+            .set("session.timeout.ms", "6000")
+            .set("enable.auto.commit", "false")
+            .create()
+            .map_err(|e| format!("Consumer {} creation failed: {}", name, e))?;
+
+        consumer.subscribe(&[&topic.name]).map_err(|e| {
+            format!(
+                "Consumer {} ailed to subscribe to topic {}: {}",
+                name, topic.name, e
+            )
+        })?;
+
+        Ok(PlutomiConsumer {
+            name: name.to_string(),
+            consumer,
+        })
+    }
+
+    // async fn run(&self, message_handler: MessageHandler) -> Result<(), String> {
+    //     loop {
+    //         match self.consumer.recv().await {
+    //             Ok(msg) => {
+    //                 println!("Received message: {:?}", msg);
+    //                 // Process message here
+    //                 message_handler(MessageHandlerOptions {
+    //                     message: &msg,
+    //                     logger: Arc::clone(&logger),
+    //                     consumer_name: &consumer_name,
+    //                 })
+    //             }
+    //             Err(e) => {
+    //                 println!("Error receiving message: {:?}", e);
+    //             }
+    //         }
+    //     }
+    // }
+
+    async fn handle_message(&self, message: Message) -> Result<(), String> {
+        // Process the message
+        Ok(())
+    }
+}
 
 struct PlutomiTopic {
     name: String,
@@ -120,9 +189,12 @@ struct PlutomiTopic {
 }
 
 impl PlutomiTopic {
-    async fn new(name: &str, partitions: i32, replication_factor: i32, brokers: &str) -> Result<PlutomiTopic, String> {
-        
-
+    async fn new(
+        name: &str,
+        partitions: i32,
+        replication_factor: i32,
+        brokers: &str,
+    ) -> Result<PlutomiTopic, String> {
         let topic_result = PlutomiTopic {
             name: name.to_string(),
             partitions,
@@ -131,57 +203,52 @@ impl PlutomiTopic {
         };
 
         let admin_client: AdminClient<DefaultClientContext> = ClientConfig::new()
-        .set("bootstrap.servers", &topic.brokers)
-        .create()
-        .expect("Admin client creation failed");
+            .set("bootstrap.servers", brokers)
+            .create()
+            .expect("Admin client creation failed");
 
-    // Define the new topic with the desired number of partitions and replication factor
-    let new_topic = NewTopic::new(
-        &topic.name,
-        topic.partitions,
-        TopicReplication::Fixed(topic.replication_factor),
-    );
+        // Define the new topic with the desired number of partitions and replication factor
+        let new_topic = NewTopic::new(
+            name,
+            partitions,
+            TopicReplication::Fixed(replication_factor),
+        );
 
-    // Create the topic
-    let res = admin_client
-        .create_topics(&[new_topic], &AdminOptions::new())
-        .await
-        .map_err(|e| format!("Failed to create topic: {}", e.to_string()))?;
+        // Create the topic
+        let res = admin_client
+            .create_topics(&[new_topic], &AdminOptions::new())
+            .await
+            .map_err(|e| format!("Failed to create topic: {}", e.to_string()))?;
 
-    match res.get(0) {
-        Some(Err((error_string, error_code))) => match error_code {
-            RDKafkaErrorCode::TopicAlreadyExists => {
-                println!("Topic '{}' already exists.", topic.name);
+        match res.get(0) {
+            Some(Err((error_string, error_code))) => match error_code {
+                RDKafkaErrorCode::TopicAlreadyExists => {
+                    println!("Topic '{}' already exists.", name);
+                    return Ok(topic_result);
+                }
+                _ => Err(format!("Failed to create topic: {:?}", error_string)),
+            },
+            Some(Ok(_)) => {
+                println!("Topic '{}' created successfully.", name);
                 return Ok(topic_result);
             }
-            _ => Err(format!("Failed to create topic: {:?}", error_string)),
-        },
-        Some(Ok(_)) => {
-            println!("Topic '{}' created successfully.", topic.name);
-            return Ok(topic_result);
+            None => Err("Unexpected empty result when creating topic.".to_string()),
         }
-        None => Err("Unexpected empty result when creating topic.".to_string()),
-    }
-
-
     }
 
     // Creates a consumer for each partition on a topic
-    async fn create_consumer_group(&self, group_id: &str, topic: PlutomiTopic) -> Result<PlutomiConsumer, String> {
-    
-        let all_consumers: Vec<PlutomiConsumer> = vec![];
-        for i in 0..topic.partitions {
-            let consumer = PlutomiConsumer::new(group_id, &self.brokers, self).await?;
+    async fn create_consumer_group(&self, group_id: &str) -> Result<Vec<PlutomiConsumer>, String> {
+        let mut all_consumers: Vec<PlutomiConsumer> = vec![];
+
+        for i in 0..self.partitions {
+            let consumer_name = format!("{}-{}", group_id, i);
+            let consumer = PlutomiConsumer::new(consumer_name, group_id, &self.brokers, self)?;
             all_consumers.push(consumer);
         }
 
         Ok(all_consumers)
     }
 }
-
-
-
-
 
 struct RunConsumerOptions {
     consumer: PlutomiConsumer,
@@ -378,241 +445,144 @@ async fn run_consumer(
         //         }
         //     }
         // }
-    
-}
+    }
 
-// Wrapper around StreamConsumer to add extra functionality
-struct PlutomiConsumer {
-    name: String,
-    consumer: StreamConsumer,
-}
+    struct SpawnConsumerOptions {
+        topic: PlutomiTopic,
+        consumer: PlutomiConsumer,
+        message_handler: MessageHandler,
+        logger: Arc<Logger>,
+    }
 
-impl PlutomiConsumer {
-    /**
-     * Creates a consumer and subscribes it to the given topic
-     */
-    fn new(
-        name: String,
-        group_id: &str,
-        brokers: &str,
-        topic: &PlutomiTopic,
-    ) -> Result<Self, String> {
-        let consumer: StreamConsumer = ClientConfig::new()
-            .set("group.id", group_id)
-            .set("bootstrap.servers", brokers)
-            .set("enable.partition.eof", "false")
-            .set("session.timeout.ms", "6000")
-            .set("enable.auto.commit", "false")
-            .create()
-            .map_err(|e| format!("Consumer {} creation failed: {}", name, e))?;
+    const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
 
-
-            consumer.subscribe(&[&topic.name])
-            .map_err(|e| format!("Consumer {} ailed to subscribe to topic {}: {}", name, topic.name, e))?;
-
-        Ok(PlutomiConsumer {
-            name: name.to_string(),
+    async fn spawn_consumer(
+        SpawnConsumerOptions {
+            topic,
             consumer,
+            message_handler,
+            logger,
+        }: SpawnConsumerOptions,
+    ) -> JoinHandle<()> {
+        // Loop through all of the consumers
+        tokio::spawn(async move {
+            loop {
+                // Run the consumer
+                // if let Err(e) = run_consumer(RunConsumerOptions {
+                //     consumer,
+                //     message_handler: Arc::clone(&message_handler),
+                //     logger: Arc::clone(&logger),
+                // })
+                // .await
+
+                // if let Err(e) = consumer.run().await {
+                //     logger.log(LogObject {
+                //         level: LogLevel::Error,
+                //         message: format!(
+                //             "{} error - restarting in {:?} seconds",
+                //             consumer.name, RESTART_ON_ERROR_DURATION
+                //         ),
+                //         error: Some(json!({ "error": e })),
+                //         _time: get_current_time(OffsetDateTime::now_utc()),
+                //         request: None,
+                //         response: None,
+                //         data: None,
+                //     });
+                //     tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
+                // }
+                // {
+                //     logger.log(LogObject {
+                //         level: LogLevel::Error,
+                //         message: format!(
+                //             "{} error - restarting in {:?} seconds",
+                //             consumer_name, RESTART_ON_ERROR_DURATION
+                //         ),
+                //         error: Some(json!({ "error": e.to_string() })),
+                //         _time: get_current_time(OffsetDateTime::now_utc()),
+                //         request: None,
+                //         response: None,
+                //         data: None,
+                //     });
+                //     tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
+                // }
+            }
         })
     }
 
-  
+    //     //         // When using get_raw_message, the payload is base64 encoded
+    //     //         let (subject, decoded_payload) =
+    //     //             get_original_subject_and_payload_from_max_delivery_advisory(
+    //     //                 jetstream_context,
+    //     //                 &advisory,
+    //     //             )
+    //     //             .await?;
 
-    // async fn run(&self, message_handler: MessageHandler) -> Result<(), String> {
-    //     loop {
-    //         match self.consumer.recv().await {
-    //             Ok(msg) => {
-    //                 println!("Received message: {:?}", msg);
-    //                 // Process message here
-    //                 message_handler(MessageHandlerOptions {
-    //                     message: &msg,
-    //                     logger: Arc::clone(&logger),
-    //                     consumer_name: &consumer_name,
-    //                 })
-    //             }
-    //             Err(e) => {
-    //                 println!("Error receiving message: {:?}", e);
-    //             }
+    //     //         (subject, decoded_payload)
+    //     //     } else {
+    //     //         // Return the passed in message
+    //     //         (message.subject.to_string(), message.payload.clone())
+    //     //     };
+
+    //     logger.log(LogObject {
+    //         level: LogLevel::Info,
+    //         message: format!("JOSE DEBUG Trying to extract message from_jestream",),
+    //         _time: get_current_time(OffsetDateTime::now_utc()),
+    //         error: None,
+    //         request: None,
+    //         response: None,
+    //         data: Some(
+    //             json!({ "original_subject": &message.subject, "original_payload": &message.payload }),
+    //         ),
+    //     });
+
+    //     let event = PlutomiEvent::from_jetstream(&message.subject, &message.payload)?;
+
+    //     logger.log(LogObject {
+    //         level: LogLevel::Info,
+    //         message: format!("JOSE DEBUG EXTRACTED MESSAGE",),
+    //         _time: get_current_time(OffsetDateTime::now_utc()),
+    //         error: None,
+    //         request: None,
+    //         response: None,
+    //         data: Some(json!({ "event": event })),
+    //     });
+
+    //     // Parse the payload based on the event type
+    //     match event {
+    //         PlutomiEvent::TOTPRequested(ps) => {
+    //             logger.log(LogObject {
+    //                 level: LogLevel::Info,
+    //                 message: format!("JOSE DEBUG MATCHED EVENT",),
+    //                 _time: get_current_time(OffsetDateTime::now_utc()),
+    //                 error: None,
+    //                 request: None,
+    //                 response: None,
+    //                 data: Some(json!({ "payload": ps })),
+    //             });
+
+    //             Ok(PlutomiEvent::TOTPRequested(ps))
+    //         }
+
+    //         // Unused
+    //         _ => {
+    //             let msg = format!(
+    //                 "Unknown event type while extracting message: {}",
+    //                 message.subject
+    //             );
+    //             logger.log(LogObject {
+    //                 level: LogLevel::Warn,
+    //                 message: msg.clone(),
+    //                 _time: get_current_time(OffsetDateTime::now_utc()),
+    //                 error: None,
+    //                 request: None,
+    //                 response: None,
+    //                 data: None,
+    //             });
+
+    //             Err(msg)
     //         }
     //     }
-    // }
-
-    async fn handle_message(&self, message: Message) -> Result<(), String> {
-        // Process the message
-        Ok(())
-    }
 }
-
-struct SpawnConsumerOptions {
-    topic: PlutomiTopic,
-    consumer: PlutomiConsumer,
-    message_handler: MessageHandler,
-    logger: Arc<Logger>,
-}
-
-const RESTART_ON_ERROR_DURATION: std::time::Duration = std::time::Duration::from_secs(5);
-
-async fn spawn_consumer(
-    SpawnConsumerOptions {
-        topic,
-        consumer,
-        message_handler,
-        logger,
-    }: SpawnConsumerOptions,
-) -> JoinHandle<()> {
-    // Loop through all of the consumers
-    tokio::spawn(async move {
-        loop {
-            // Run the consumer
-            // if let Err(e) = run_consumer(RunConsumerOptions {
-            //     consumer,
-            //     message_handler: Arc::clone(&message_handler),
-            //     logger: Arc::clone(&logger),
-            // })
-            // .await
-
-            if let Err(e) = consumer.run().await {
-                logger.log(LogObject {
-                    level: LogLevel::Error,
-                    message: format!(
-                        "{} error - restarting in {:?} seconds",
-                        consumer.name, RESTART_ON_ERROR_DURATION
-                    ),
-                    error: Some(json!({ "error": e })),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    request: None,
-                    response: None,
-                    data: None,
-                });
-                tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
-            }
-            {
-                logger.log(LogObject {
-                    level: LogLevel::Error,
-                    message: format!(
-                        "{} error - restarting in {:?} seconds",
-                        consumer_name, RESTART_ON_ERROR_DURATION
-                    ),
-                    error: Some(json!({ "error": e.to_string() })),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    request: None,
-                    response: None,
-                    data: None,
-                });
-                tokio::time::sleep(RESTART_ON_ERROR_DURATION).await;
-            }
-        }
-    })
-}
-
-
-
-/**
- * While inside a message handler, check if a message is in the retry or DLQ stream
- * If it is, lookup the original event in the main 'events' stream and return it
- * Otherwise, return the original message that was passed in
- */
-// async fn extract_message(
-//     message: &Message,
-//     logger: Arc<Logger>,
-//     jetstream_context: &Context,
-// ) -> Result<PlutomiEvent, String> {
-//     // let (original_subject, original_payload): (String, Bytes) =
-//     //     if message.subject.starts_with("events-retry.")
-//     //         || message.subject.starts_with("events-dlq.")
-//     //     {
-//     //         logger.log(LogObject {
-//     //             level: LogLevel::Info,
-//     //             message: format!("JOSE DEBUG IN EXTRACT {}", message.subject),
-//     //             _time: get_current_time(OffsetDateTime::now_utc()),
-//     //             error: None,
-//     //             request: None,
-//     //             response: None,
-//     //             data: Some(json!({ "entire_message_payload": message.payload.clone() })),
-//     //         });
-//     //         // Parse the advisory message
-//     //         let advisory: MaxDeliverAdvisory =
-//     //             serde_json::from_slice(&message.payload).map_err(|e| {
-//     //                 format!(
-//     //                     "Failed to parse max delivery advisory message in extract 2: {}",
-//     //                     e
-//     //                 )
-//     //             })?;
-
-//     //         // When using get_raw_message, the payload is base64 encoded
-//     //         let (subject, decoded_payload) =
-//     //             get_original_subject_and_payload_from_max_delivery_advisory(
-//     //                 jetstream_context,
-//     //                 &advisory,
-//     //             )
-//     //             .await?;
-
-//     //         (subject, decoded_payload)
-//     //     } else {
-//     //         // Return the passed in message
-//     //         (message.subject.to_string(), message.payload.clone())
-//     //     };
-
-//     logger.log(LogObject {
-//         level: LogLevel::Info,
-//         message: format!("JOSE DEBUG Trying to extract message from_jestream",),
-//         _time: get_current_time(OffsetDateTime::now_utc()),
-//         error: None,
-//         request: None,
-//         response: None,
-//         data: Some(
-//             json!({ "original_subject": &message.subject, "original_payload": &message.payload }),
-//         ),
-//     });
-
-//     let event = PlutomiEvent::from_jetstream(&message.subject, &message.payload)?;
-
-//     logger.log(LogObject {
-//         level: LogLevel::Info,
-//         message: format!("JOSE DEBUG EXTRACTED MESSAGE",),
-//         _time: get_current_time(OffsetDateTime::now_utc()),
-//         error: None,
-//         request: None,
-//         response: None,
-//         data: Some(json!({ "event": event })),
-//     });
-
-//     // Parse the payload based on the event type
-//     match event {
-//         PlutomiEvent::TOTPRequested(ps) => {
-//             logger.log(LogObject {
-//                 level: LogLevel::Info,
-//                 message: format!("JOSE DEBUG MATCHED EVENT",),
-//                 _time: get_current_time(OffsetDateTime::now_utc()),
-//                 error: None,
-//                 request: None,
-//                 response: None,
-//                 data: Some(json!({ "payload": ps })),
-//             });
-
-//             Ok(PlutomiEvent::TOTPRequested(ps))
-//         }
-
-//         // Unused
-//         _ => {
-//             let msg = format!(
-//                 "Unknown event type while extracting message: {}",
-//                 message.subject
-//             );
-//             logger.log(LogObject {
-//                 level: LogLevel::Warn,
-//                 message: msg.clone(),
-//                 _time: get_current_time(OffsetDateTime::now_utc()),
-//                 error: None,
-//                 request: None,
-//                 response: None,
-//                 data: None,
-//             });
-
-//             Err(msg)
-//         }
-//     }
- }
 
 fn send_email(
     MessageHandlerOptions {
@@ -699,8 +669,6 @@ fn send_email(
         Ok(())
     })
 }
-}
-
 
 // async fn get_original_subject_and_payload_from_max_delivery_advisory(
 //     jetstream_context: &Context,
@@ -869,7 +837,6 @@ fn send_email(
 //             of the meta-consumer to the events-retry.meta-consumer-retry stream. This is wrong and it should be the original message sequence ID with the original consumer.
 
 //         If the current MAX_DELIVERIES advisory is for a business consumer like notifications-consumer, simply pass that down to the handler. TODO */
-
 //         // Get the new stream prefix to put the event into (ie waterfall)
 //         // let (new_stream, new_consumer, new_payload): (&str, String, MaxDeliverAdvisory) =
 //         //     match payload.stream.as_str() {
