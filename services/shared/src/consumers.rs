@@ -7,45 +7,80 @@ use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::{ClientConfig, Message};
 use time::OffsetDateTime;
 
-pub struct CreateConsumerOptions {
-    pub name: &'static str,
-    pub consumer_group: &'static str,
-    pub topic: &'static str,
-}
-
-pub struct PlutomiConsumer {
+// Wrapper around StreamConsumer to add extra functionality
+struct PlutomiConsumer {
+    name: String,
     consumer: StreamConsumer,
     logger: Arc<Logger>,
-    name: &'static str,
-    topic: &'static str,
 }
 
-pub fn create_consumer(
-    CreateConsumerOptions {
-        name,
-        consumer_group,
-        topic,
-    }: CreateConsumerOptions,
-) -> PlutomiConsumer {
-    let consumer: StreamConsumer = ClientConfig::new()
-        .set("group.id", consumer_group)
-        .set("client.id", name)
-        .set("bootstrap.servers", crate::constants::BROKERS)
-        .set("enable.partition.eof", "false")
-        .create()
-        .expect("Consumer creation failed");
+impl PlutomiConsumer {
+    /**
+     * Creates a consumer and subscribes it to the given topic
+     */
+    fn new(
+        name: String,
+        group_id: &str,
+        brokers: &str,
+        topic: &'static str,
+        // handler: MessageHandler,
+        logger: Arc<Logger>,
+    ) -> Result<Self, String> {
+        let consumer: StreamConsumer = ClientConfig::new()
+            .set("group.id", group_id)
+            .set("client.id", name)
+            .set("bootstrap.servers", brokers)
+            .set("enable.partition.eof", "false")
+            .set("session.timeout.ms", "6000")
+            .set("enable.auto.commit", "false")
+            .create()
+            .map_err(|e| format!("Consumer {} creation failed: {}", name, e))?;
 
-    consumer
-        .subscribe(&[topic])
-        .expect(format!("Consumer {} failed to subscribe to topic {}", name, topic).as_str());
+        consumer.subscribe(&[&topic]).map_err(|e| {
+            format!(
+                "Consumer {} failed to subscribe to topic {}: {}",
+                name, topic, e
+            )
+        })?;
 
-    let logger = Logger::init(LoggerContext { caller: name });
+        Ok(PlutomiConsumer {
+            name: name.to_string(),
+            consumer,
+            logger,
+        })
+    }
+    async fn run(&self) -> Result<(), String> {
+        self.logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("{} started", &self.name),
+            error: None,
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: None,
+        });
 
-    PlutomiConsumer {
-        consumer,
-        logger,
-        name,
-        topic,
+        loop {
+            match self.consumer.recv().await {
+                Ok(msg) => {
+                    println!("Received message: {:?}", msg);
+                    // Process message here
+                    // message_handler(MessageHandlerOptions {
+                    //     message: &msg,
+                    //     logger: Arc::clone(&logger),
+                    //     consumer_name: &consumer_name,
+                    // })
+                }
+                Err(e) => {
+                    println!("Error receiving message: {:?}", e);
+                }
+            }
+        }
+    }
+
+    async fn handle_message(&self, message: Message) -> Result<(), String> {
+        // Process the message
+        Ok(())
     }
 }
 
