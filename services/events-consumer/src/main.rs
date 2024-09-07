@@ -18,25 +18,19 @@ use tokio::task::JoinHandle;
 
 mod config;
 
-// TODO: Acceptance criteria
-// - [ ] Can read .env parsed
-// - [ ] Can connect to MongoDB
-// - [ ] Can consume events / consumer groups
-// - [ ] Can process/ publish  events
-// - [ ] Can generate ids with shared lib
-
-// Each consumer runs in its own task and will restart itself if it encounters an error
-// We use a shared consumer_statuses to keep track of errors across all consumers
-// The main function will continue running indefinitely, even if one or more consumers fail
-// Errors are logged but don't cause the entire application to crash
-// If all consumers somehow exit (which shouldn't happen under normal circumstances), the application will log final statuses and exit
-
 const RESTART_ON_ERROR_DURATION: Duration = Duration::from_secs(2);
 
 struct MessageHandlerOptions<'a> {
     message: &'a Message,
     logger: Arc<Logger>,
     consumer_name: &'a str,
+}
+
+fn test_handler() -> BoxFuture<'static, Result<(), String>> {
+    Box::pin(async {
+        println!("Hello from test handler");
+        Ok(())
+    })
 }
 
 type MessageHandler =
@@ -61,11 +55,7 @@ async fn main() -> Result<(), String> {
 
     // Create the consumer groups - one consumer for each partition
     let order_notification_consumers = orders_topic
-        .create_consumer_group(
-            "notifications-consumer",
-            send_email(message_handler_options),
-            Arc::clone(&logger),
-        )
+        .create_consumer_group("notifications-consumer", test_handler, Arc::clone(&logger))
         .await?;
     let user_notification_consumers = users_topic
         .create_consumer_group(

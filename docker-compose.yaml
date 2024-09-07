@@ -123,6 +123,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo_data:/data/mongodb
+
 volumes:
   mongo_data:
     driver: local
