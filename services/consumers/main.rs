@@ -42,29 +42,9 @@ async fn main() -> Result<(), String> {
 
     let config = config::Config::new();
 
-    let logger = Logger::init(LoggerContext {
-        caller: &config.app_name,
-    });
+  
 
 
-
-
-    let all_consumers: Vec<PlutomiConsumer> =
-        vec![order_notification_consumers, user_notification_consumers]
-            .into_iter()
-            .flatten()
-            .collect();
-
-    //  Create all consumers
-    let consumer_handles: Vec<_> = all_consumers
-        .iter()
-        .map(|consumer| async move {
-            consumer
-                .spawn()
-                .await
-                .map_err(|e| format!("Failed to spawn consumer: {}", e))
-        })
-        .collect();
 
     // // Run indefinitely
     // let _ = futures::future::join_all(consumer_handles).await;

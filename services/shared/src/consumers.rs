@@ -1,17 +1,25 @@
-use std::any::Any;
-use std::sync::Arc;
-
 use crate::get_current_time::get_current_time;
 use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
+use async_nats::jetstream::message;
 use rdkafka::consumer::{Consumer, StreamConsumer};
+use rdkafka::message::BorrowedMessage;
 use rdkafka::{ClientConfig, Message};
+use std::future::Future;
+use std::sync::Arc;
 use time::OffsetDateTime;
 
+pub struct MessageHandlerOptions {
+    pub message: BorrowedMessage,
+    pub plutomi_consumer: Arc<PlutomiConsumer>,
+}
+type MessageHandler =
+    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
 // Wrapper around StreamConsumer to add extra functionality
 struct PlutomiConsumer {
-    name: String,
+    name: &'static str,
     consumer: StreamConsumer,
     logger: Arc<Logger>,
+    message_handler: MessageHandler,
 }
 
 impl PlutomiConsumer {
@@ -19,13 +27,24 @@ impl PlutomiConsumer {
      * Creates a consumer and subscribes it to the given topic
      */
     fn new(
-        name: String,
+        name: &'static str,
         group_id: &str,
         brokers: &str,
         topic: &'static str,
-        // handler: MessageHandler,
-        logger: Arc<Logger>,
+        message_handler: MessageHandler,
     ) -> Result<Self, String> {
+        let logger = Logger::init(LoggerContext { caller: &name });
+
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("Creating {}", name),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: None,
+            error: None,
+        });
+
         let consumer: StreamConsumer = ClientConfig::new()
             .set("group.id", group_id)
             .set("client.id", name)
@@ -34,25 +53,68 @@ impl PlutomiConsumer {
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "false")
             .create()
-            .map_err(|e| format!("Consumer {} creation failed: {}", name, e))?;
+            .map_err(|e| {
+                let err = format!("Failed to create consumer {}: {}", name, e);
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: err.clone(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                    error: None,
+                });
+                err
+            })?;
 
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("{} created!", name),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: None,
+            error: None,
+        });
         consumer.subscribe(&[&topic]).map_err(|e| {
-            format!(
+            let err = format!(
                 "Consumer {} failed to subscribe to topic {}: {}",
                 name, topic, e
-            )
+            );
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                message: err.clone(),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                request: None,
+                response: None,
+                data: None,
+                error: None,
+            });
+
+            err
         })?;
 
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("{} subscribed to {} topic", name, topic),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: None,
+            error: None,
+        });
+
         Ok(PlutomiConsumer {
-            name: name.to_string(),
+            name,
             consumer,
             logger,
+            message_handler,
         })
     }
     async fn run(&self) -> Result<(), String> {
         self.logger.log(LogObject {
             level: LogLevel::Info,
-            message: format!("{} started", &self.name),
+            message: format!("{} running...", &self.name),
             error: None,
             _time: get_current_time(OffsetDateTime::now_utc()),
             request: None,
@@ -64,55 +126,20 @@ impl PlutomiConsumer {
             match self.consumer.recv().await {
                 Ok(msg) => {
                     println!("Received message: {:?}", msg);
-                    // Process message here
-                    // message_handler(MessageHandlerOptions {
-                    //     message: &msg,
-                    //     logger: Arc::clone(&logger),
-                    //     consumer_name: &consumer_name,
-                    // })
+                    (self.message_handler)(msg).await
                 }
                 Err(e) => {
-                    println!("Error receiving message: {:?}", e);
+                    self.logger.log(LogObject {
+                        level: LogLevel::Error,
+                        message: format!("{} encountered an error awaiting messages", &self.name),
+                        error: None,
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        request: None,
+                        response: None,
+                        data: None,
+                    });
                 }
             }
-        }
-    }
-
-    async fn handle_message(&self, message: Message) -> Result<(), String> {
-        // Process the message
-        Ok(())
-    }
-}
-
-pub async fn consume_messages<F>(plutomi_consumer: PlutomiConsumer, process_fn: F)
-where
-    F: Fn(String) + Send + Sync + 'static,
-{
-    // Destructure plutomi_consumer
-    let PlutomiConsumer {
-        consumer,
-        logger,
-        name,
-        topic,
-    } = plutomi_consumer;
-
-    loop {
-        match consumer.recv().await {
-            Ok(message) => {
-                if let Some(payload) = message.payload() {
-                    let payload_str = String::from_utf8(payload.to_vec()).unwrap();
-                    process_fn(payload_str);
-                }
-            }
-            Err(e) => logger.log(LogObject {
-                level: LogLevel::Error,
-                message: format!("Error while consuming messages in {}", name),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                data: None,
-                error: None,
-                request: None,
-                response: None,
-            }),
         }
     }
 }
