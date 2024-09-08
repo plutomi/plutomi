@@ -1,25 +1,33 @@
 use crate::get_current_time::get_current_time;
 use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
-use async_nats::jetstream::message;
+use futures::future::BoxFuture;
 use rdkafka::consumer::{Consumer, StreamConsumer};
+use rdkafka::error::KafkaError;
 use rdkafka::message::BorrowedMessage;
 use rdkafka::{ClientConfig, Message};
-use std::future::Future;
+use serde_json::json;
 use std::sync::Arc;
 use time::OffsetDateTime;
 
-pub struct MessageHandlerOptions {
-    pub message: BorrowedMessage,
-    pub plutomi_consumer: Arc<PlutomiConsumer>,
+pub struct MessageHandlerOptions<'a> {
+    pub message: BorrowedMessage<'a>,
+    pub plutomi_consumer: &'a PlutomiConsumer,
 }
 type MessageHandler =
-    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
+    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'static, Result<(), String>> + Send + Sync>;
+
 // Wrapper around StreamConsumer to add extra functionality
 struct PlutomiConsumer {
     name: &'static str,
     consumer: StreamConsumer,
     logger: Arc<Logger>,
     message_handler: MessageHandler,
+}
+
+enum MessageType {
+    Retry,
+    DLQ,
+    Main,
 }
 
 impl PlutomiConsumer {
@@ -111,6 +119,17 @@ impl PlutomiConsumer {
             message_handler,
         })
     }
+
+    fn get_message_type(&self, topic: &str) -> MessageType {
+        if topic.contains("-retry") {
+            MessageType::Retry
+        } else if topic.contains("-dlq") {
+            MessageType::DLQ
+        } else {
+            MessageType::Main
+        }
+    }
+
     async fn run(&self) -> Result<(), String> {
         self.logger.log(LogObject {
             level: LogLevel::Info,
@@ -124,15 +143,38 @@ impl PlutomiConsumer {
 
         loop {
             match self.consumer.recv().await {
-                Ok(msg) => {
-                    println!("Received message: {:?}", msg);
-                    (self.message_handler)(msg).await
+                Ok(message) => {
+                    println!("Received message: {:?}", message);
+                    if let Err(e) = (self.message_handler)(MessageHandlerOptions {
+                        message,
+                        plutomi_consumer: &self,
+                    })
+                    .await
+                    {
+                        // TODO send message
+                        self.logger.log(LogObject {
+                            level: LogLevel::Error,
+                            message: format!(
+                                "{} encountered an error handling message: {:?}",
+                                &self.name, e
+                            ),
+                            error: Some(json!(e)),
+                            _time: get_current_time(OffsetDateTime::now_utc()),
+                            request: None,
+                            response: None,
+                            data: None,
+                        });
+                    }
                 }
                 Err(e) => {
+                    let error_string = format!("{:?}", e);
                     self.logger.log(LogObject {
                         level: LogLevel::Error,
-                        message: format!("{} encountered an error awaiting messages", &self.name),
-                        error: None,
+                        message: format!(
+                            "{} encountered an error awaiting messages from Kafka",
+                            &self.name
+                        ),
+                        error: Some(json!(error_string)),
                         _time: get_current_time(OffsetDateTime::now_utc()),
                         request: None,
                         response: None,
@@ -141,5 +183,33 @@ impl PlutomiConsumer {
                 }
             }
         }
+    }
+
+    async fn handle_failed_message<'a>(&self, message: BorrowedMessage<'a>) -> Result<(), String> {
+        let topic = message.topic();
+
+        match self.get_message_type(topic) {
+            MessageType::Main => {
+                // Send to retry
+            }
+            MessageType::Retry => {
+                // Send to DLQ
+            }
+            MessageType::DLQ => {
+                // Just log - end of the line
+            }
+        }
+
+        self.logger.log(LogObject {
+            level: LogLevel::Warn,
+            message: format!("{} failed to handle message", &self.name),
+            error: None,
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: Some(json!({ "message": message.payload() })),
+        });
+
+        Ok(())
     }
 }

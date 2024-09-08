@@ -2341,6 +2341,7 @@ dependencies = [
  "base-encode",
  "byteorder",
  "bytes",
+ "futures",
  "mongodb",
  "rand",
  "rdkafka",

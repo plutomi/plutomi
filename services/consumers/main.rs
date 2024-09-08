@@ -26,12 +26,6 @@ struct MessageHandlerOptions<'a> {
     consumer_name: &'a str,
 }
 
-fn test_handler() -> BoxFuture<'static, Result<(), String>> {
-    Box::pin(async {
-        println!("Hello from test handler");
-        Ok(())
-    })
-}
 
 type MessageHandler =
     Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), String>> + Send + Sync>;
