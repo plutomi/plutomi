@@ -8,7 +8,6 @@ async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
         "notifications-orders-consumer",
         "notifications",
-        "todo",
         "orders",
         Arc::new(send_email),
     )?;
@@ -22,7 +21,7 @@ async fn main() -> Result<(), String> {
 struct OrderPayload {
     pub order_id: String,
     pub customer_id: String,
-    pub total: f64,
+    pub total: u64,
 }
 fn send_email(
     MessageHandlerOptions {
@@ -31,13 +30,6 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        // Your logic to handle the message and send an email
-        println!("Sending email for message: {:?}", message);
-
-        // Example email sending logic:
-        // You could extract information from `message` here and call an email sending service
-        // For now, we'll just print the payload and return Ok
-
         match message.payload() {
             Some(payload) => {
                 let payload = String::from_utf8_lossy(payload);

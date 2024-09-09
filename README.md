@@ -134,3 +134,6 @@ Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). I
     "services/shared/Cargo.toml"
   ]
 }
+
+
+### Adding anew consumer

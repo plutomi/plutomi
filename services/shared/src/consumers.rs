@@ -1,4 +1,5 @@
 use crate::get_current_time::get_current_time;
+use crate::get_env::get_env;
 use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
 use dotenv::dotenv;
 use futures::future::BoxFuture;
@@ -36,12 +37,12 @@ impl PlutomiConsumer {
     pub fn new(
         name: &'static str,
         group_id: &str,
-        brokers: &str,
         topic: &'static str,
         message_handler: MessageHandler,
     ) -> Result<Self, String> {
         dotenv().ok();
 
+        let env = get_env();
         let logger = Logger::init(LoggerContext { caller: &name });
 
         logger.log(LogObject {
@@ -57,7 +58,7 @@ impl PlutomiConsumer {
         let consumer: StreamConsumer = ClientConfig::new()
             .set("group.id", group_id)
             .set("client.id", name)
-            .set("bootstrap.servers", brokers)
+            .set("bootstrap.servers", env.REDPANDA_BROKERS)
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "false")
