@@ -1,1 +1,0 @@
-fn() -> impl Future<Output = Arc<(dyn for<'a> Fn(MessageHandlerOptions<'a>) -> Pin<Box<(dyn Future<Output = Result<(), String>> + Send + 'static)>> + Send + Sync + 'static)>> {send_email}
