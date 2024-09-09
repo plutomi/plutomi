@@ -1,4 +1,4 @@
-use shared::consumers::PlutomiConsumer;
+use shared::consumers::{MessageHandler, PlutomiConsumer};
 
 fn main() {
     println!("Hello, world!");
@@ -12,7 +12,8 @@ fn main() {
     );
 }
 
-async fn send_email() -> Result<(), String> {
+async fn send_email() -> MessageHandler {
     println!("Sending email...");
-    Ok(())
+
+    Ok("yeah".to_string())
 }

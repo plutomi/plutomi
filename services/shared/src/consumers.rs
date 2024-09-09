@@ -13,7 +13,7 @@ pub struct MessageHandlerOptions<'a> {
     pub message: BorrowedMessage<'a>,
     pub plutomi_consumer: &'a PlutomiConsumer,
 }
-type MessageHandler =
+pub type MessageHandler =
     Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'static, Result<(), String>> + Send + Sync>;
 
 // Wrapper around StreamConsumer to add extra functionality
