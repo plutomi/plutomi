@@ -91,6 +91,7 @@ The system is configuration-driven, allowing easy adjustments to streams, consum
 - [cmake](https://cmake.org/download/) - for `rdkafka` crate
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
+- [RFK cli](https://www.redpanda.com/blog/homebrew) brew install redpanda-data/tap/redpanda
 
 Simply copy the `.env.example` file to `.env` and execute the `run.sh` script:
 
@@ -99,10 +100,17 @@ $ cp .env.example .env
 $ ./scripts/run.sh
 ```
 
-This will setup MongoDB, NATS + Jetstream, start the web app on port 3000, the API on port 8080, and the event consumers in the background. A few notes:
+This will setup:
 
-- The NATS server will be created with a `sys` user for server management _(see [nats-config.conf](./nats-config.conf))_
-- Credentials for all datasources for all other interactions are `admin` and `password`.
+- MongoDB on port 27017
+- 3 Redpanda brokers
+- Redpanda console on port 9000
+- Web app on port 3000
+- API on port 8080
+- All of the Redpanda consumers:
+  - TODO
+
+> Credentials for all datasources for all other interactions are `admin` and `password`.
 
 You can also run any stack individually:
 

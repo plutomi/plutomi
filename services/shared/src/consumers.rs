@@ -142,6 +142,9 @@ impl PlutomiConsumer {
         });
 
         loop {
+            let stream = self.consumer.stream();
+            let msg = stream.next();
+            
             match self.consumer.recv().await {
                 Ok(message) => {
                     println!("Received message: {:?}", message);
