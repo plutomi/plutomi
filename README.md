@@ -22,13 +22,13 @@ Plutomi allows you to create `applications` for anything from jobs to program en
 
 ## Tech Stack
 
-The frontend is built with [Remix](https://remix.run/) and [Express](https://expressjs.com/), while the API is written in Rust using the [Axum framework](https://github.com/tokio-rs/axum). All data is stored [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094), and we use [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. The event-driven architecture is powered by [NATS + JetStream](https://docs.nats.io/), as well as certain KV operations. We send emails with SES + SNS and SQS for those events. All asynchronous events are handled by Rust services, including normalizing SES events into NATS. We use Axiom for logging and Kubernetes with [K3S](https://k3s.io/) for orchestration. We plan to add [MeiliSearch](https://www.meilisearch.com/) for search and [ClickHouse](https://clickhouse.tech/) for analytics.
+The frontend is built with [Remix](https://remix.run/) and [Express](https://expressjs.com/), while the API is written in Rust using the [Axum framework](https://github.com/tokio-rs/axum). All data is stored [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094), and we use [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. The event-driven architecture is powered by [Redpanda](redpanda.com), and we use [Valkey](https://valkey.io/) for rate limiting mostly. We send emails with SES + SNS and SQS for those events. All asynchronous events are handled by Rust services, including normalizing SES events into Redpanda. We use Axiom for logging and Kubernetes with [K3S](https://k3s.io/) for orchestration. We plan to add [MeiliSearch](https://www.meilisearch.com/) for search and [ClickHouse](https://clickhouse.tech/) for analytics.
 
 ### Event Streaming Pipeline
 
 TODO add summary
 The structure is highly configurable, allowing for easy addition of new event types and consumers as the application grows.
-It leverages NATS JetStream features like durable consumers and filtered subjects, which provide fine-grained control over message processing.
+
 
 Key Components:
 TODO add table of contents
@@ -37,11 +37,6 @@ TODO add table of contents
 
 The pipeline defines three main streams:
 
-**events**: The primary stream where events are first published
-**events-retry**: Handles retrying failed events
-**events-dlq**: A final destination for events that fail to process after multiple attempts
-
-> Retry & DLQ streams do not store duplicate copies of messages. Instead, they receive a pointer ([MAX_DELIVERIES advisory](https://docs.nats.io/using-nats/developer/develop_jetstream/consumers#dead-letter-queues-type-functionality)) that references the original message in the **events** stream. This ensures the events stream remains the single source of truth, maintaining data integrity and simplifying error handling by always processing the original event data and one
 
 #### Consumers
 
@@ -127,3 +122,15 @@ Plutomi is designed to be flexible and can be deployed on any VPS (_we recommend
 Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If you have other questions, feel free to open a discussion or issue, or [contact me on X @notjoswayski](https://twitter.com/notjoswayski) or via email at jose@plutomi.com.
 
 ---
+
+
+## TODO troubleshooting rust analyzer
+
+.vscode
+{
+  "rust-analyzer.linkedProjects": [
+    "services/api/Cargo.toml",
+    "services/consumers/orders/Cargo.toml",
+    "services/shared/Cargo.toml"
+  ]
+}

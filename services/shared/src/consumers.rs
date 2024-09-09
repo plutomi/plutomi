@@ -17,11 +17,11 @@ type MessageHandler =
     Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'static, Result<(), String>> + Send + Sync>;
 
 // Wrapper around StreamConsumer to add extra functionality
-struct PlutomiConsumer {
-    name: &'static str,
-    consumer: StreamConsumer,
-    logger: Arc<Logger>,
-    message_handler: MessageHandler,
+pub struct PlutomiConsumer {
+    pub name: &'static str,
+    pub consumer: StreamConsumer,
+    pub logger: Arc<Logger>,
+    pub message_handler: MessageHandler,
 }
 
 enum MessageType {
@@ -34,7 +34,7 @@ impl PlutomiConsumer {
     /**
      * Creates a consumer and subscribes it to the given topic
      */
-    fn new(
+    pub fn new(
         name: &'static str,
         group_id: &str,
         brokers: &str,
@@ -120,7 +120,7 @@ impl PlutomiConsumer {
         })
     }
 
-    fn get_message_type(&self, topic: &str) -> MessageType {
+    pub fn get_message_type(&self, topic: &str) -> MessageType {
         if topic.contains("-retry") {
             MessageType::Retry
         } else if topic.contains("-dlq") {
@@ -130,7 +130,7 @@ impl PlutomiConsumer {
         }
     }
 
-    async fn run(&self) -> Result<(), String> {
+    pub async fn run(&self) -> Result<(), String> {
         self.logger.log(LogObject {
             level: LogLevel::Info,
             message: format!("{} running...", &self.name),
@@ -142,9 +142,6 @@ impl PlutomiConsumer {
         });
 
         loop {
-            let stream = self.consumer.stream();
-            let msg = stream.next();
-            
             match self.consumer.recv().await {
                 Ok(message) => {
                     println!("Received message: {:?}", message);
@@ -188,7 +185,10 @@ impl PlutomiConsumer {
         }
     }
 
-    async fn handle_failed_message<'a>(&self, message: BorrowedMessage<'a>) -> Result<(), String> {
+    pub async fn handle_failed_message<'a>(
+        &self,
+        message: BorrowedMessage<'a>,
+    ) -> Result<(), String> {
         let topic = message.topic();
 
         match self.get_message_type(topic) {
