@@ -1,8 +1,8 @@
 use crate::get_current_time::get_current_time;
 use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
+use dotenv::dotenv;
 use futures::future::BoxFuture;
 use rdkafka::consumer::{Consumer, StreamConsumer};
-use rdkafka::error::KafkaError;
 use rdkafka::message::BorrowedMessage;
 use rdkafka::{ClientConfig, Message};
 use serde_json::json;
@@ -14,8 +14,7 @@ pub struct MessageHandlerOptions<'a> {
     pub plutomi_consumer: &'a PlutomiConsumer,
 }
 pub type MessageHandler =
-    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'static, Result<(), String>> + Send + Sync>;
-
+    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), String>> + Send + Sync + 'static>;
 // Wrapper around StreamConsumer to add extra functionality
 pub struct PlutomiConsumer {
     pub name: &'static str,
@@ -41,6 +40,8 @@ impl PlutomiConsumer {
         topic: &'static str,
         message_handler: MessageHandler,
     ) -> Result<Self, String> {
+        dotenv().ok();
+
         let logger = Logger::init(LoggerContext { caller: &name });
 
         logger.log(LogObject {
