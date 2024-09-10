@@ -35,6 +35,7 @@ fn send_email(
                 let payload = String::from_utf8_lossy(payload);
                 let order_payload: OrderPayload = serde_json::from_str::<OrderPayload>(&payload)
                     .map_err(|e| format!("Failed to parse payload: {}", e))?;
+                // ! TODO: if it fails to pasre send to DLQ right away
                 println!("Sending email for order: {:?}", order_payload);
             }
             None => {

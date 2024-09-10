@@ -1,3 +1,4 @@
+use crate::constants::Topics;
 use crate::get_current_time::get_current_time;
 use crate::get_env::get_env;
 use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
@@ -217,4 +218,50 @@ impl PlutomiConsumer {
 
         Ok(())
     }
+}
+
+// Example usage in a producer function
+use rdkafka::producer::{FutureProducer, FutureRecord};
+use std::time::Duration;
+
+async fn produce_message(
+    producer: &FutureProducer,
+    topic: Topics,
+    key: &str,
+    payload: &str,
+) -> Result<(), rdkafka::error::KafkaError> {
+    let topic_name = topic.as_str();
+
+    producer
+        .send(
+            FutureRecord::to(topic_name).payload(payload).key(key),
+            Duration::from_secs(0),
+        )
+        .await
+        .map(|delivery| {
+            println!("Message delivered to topic {}: {:?}", topic_name, delivery);
+        })
+        .map_err(|(err, _)| err)
+}
+
+// Function that parses a message to the given structure, and if it fails, sends it to the DLQ
+fn parse_message<'a, T>(message: BorrowedMessage<'a>, logger: &Arc<Logger>) -> Result<T, String>
+where
+    T: serde::de::DeserializeOwned,
+{
+    let payload = message.payload().ok_or("No payload found in message")?;
+    let payload = String::from_utf8_lossy(payload);
+    serde_json::from_str::<T>(&payload).map_err(|e| {
+        logger.log(LogObject {
+            level: LogLevel::Error,
+            message: format!("Failed to parse payload: {}", e),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            data: None,
+            error: Some(json!(e.to_string())),
+            request: None,
+            response: None,
+        });
+
+        e.to_string()
+    })
 }
