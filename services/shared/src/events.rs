@@ -44,18 +44,6 @@ impl PlutomiEvent {
             PlutomiEvent::TOTPRequested(_) => EventType::TOTPRequested,
         }
     }
-
-    // Convert a Jetstream Message to a PlutomiEvent
-    pub fn from_jetstream(subject: &str, payload: &[u8]) -> Result<Self, String> {
-        match subject.parse::<EventType>() {
-            Ok(EventType::TOTPRequested) => {
-                let payload = serde_json::from_slice(payload)
-                    .map_err(|e| format!("Failed to parse TOTP requested payload: {}", e))?;
-                Ok(PlutomiEvent::TOTPRequested(payload))
-            }
-            Err(_) => Err(format!("Unknown event type in from_jetstream: {}", subject)),
-        }
-    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]

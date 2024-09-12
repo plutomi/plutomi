@@ -9,20 +9,38 @@ use rdkafka::message::BorrowedMessage;
 use rdkafka::{ClientConfig, Message};
 use serde_json::json;
 use std::sync::Arc;
+use thiserror::Error;
 use time::OffsetDateTime;
 
 pub struct MessageHandlerOptions<'a> {
-    pub message: BorrowedMessage<'a>,
+    pub message: &'a BorrowedMessage<'a>,
     pub plutomi_consumer: &'a PlutomiConsumer,
 }
-pub type MessageHandler =
-    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), String>> + Send + Sync + 'static>;
+pub type MessageHandler = Arc<
+    dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), ConsumerError>>
+        + Send
+        + Sync
+        + 'static,
+>;
 // Wrapper around StreamConsumer to add extra functionality
 pub struct PlutomiConsumer {
     pub name: &'static str,
     pub consumer: StreamConsumer,
     pub logger: Arc<Logger>,
     pub message_handler: MessageHandler,
+}
+
+// Custom error enum to represent different error types
+#[derive(Debug, Error)]
+pub enum ConsumerError {
+    #[error("Parse error: {0}")]
+    ParseError(String), // Represent a parse failure with an error message
+
+    #[error("Kafka error: {0}")]
+    KafkaError(String), // Represent a Kafka-specific failure with an error message
+
+    #[error("Unknown error: {0}")]
+    UnknownError(String), // Catch-all for other types of errors
 }
 
 enum MessageType {
@@ -147,26 +165,93 @@ impl PlutomiConsumer {
         loop {
             match self.consumer.recv().await {
                 Ok(message) => {
-                    println!("Received message: {:?}", message);
-                    if let Err(e) = (self.message_handler)(MessageHandlerOptions {
-                        message,
+                    self.logger.log(LogObject {
+                        level: LogLevel::Info,
+                        message: format!("{} received message", &self.name),
+                        error: None,
+                        _time: get_current_time(OffsetDateTime::now_utc()),
+                        request: None,
+                        response: None,
+                        data: Some(json!({ "message": message.payload() })),
+                    });
+
+                    let handler_result = (self.message_handler)(MessageHandlerOptions {
+                        message: &message,
                         plutomi_consumer: &self,
                     })
-                    .await
-                    {
-                        // TODO send message
-                        self.logger.log(LogObject {
-                            level: LogLevel::Error,
-                            message: format!(
-                                "{} encountered an error handling message: {:?}",
-                                &self.name, e
-                            ),
-                            error: Some(json!(e)),
-                            _time: get_current_time(OffsetDateTime::now_utc()),
-                            request: None,
-                            response: None,
-                            data: None,
-                        });
+                    .await;
+
+                    match handler_result {
+                        // We successfully processed the message
+                        // Commit the message to the Kafka broker
+                        Ok(_) => {
+                            self.consumer
+                                .commit_message(&message, rdkafka::consumer::CommitMode::Async)
+                                .unwrap_or_else(|e| {
+                                    self.logger.log(LogObject {
+                                        level: LogLevel::Error,
+                                        message: format!("Failed to commit message: {:?}", e),
+                                        _time: get_current_time(OffsetDateTime::now_utc()),
+                                        request: None,
+                                        response: None,
+                                        data: None,
+                                        error: Some(json!(e.to_string())),
+                                    });
+                                });
+                        }
+                        Err(e) => {
+                            // Match on the error type
+                            match e {
+                                ConsumerError::ParseError(err_msg) => {
+                                    // Send the message to the DLQ if it's a parse error
+                                    // We don't want to keep retrying this, we probably misconfigured something
+                                    self.logger.log(LogObject {
+                                        level: LogLevel::Error,
+                                        message: format!(
+                                            "{} encountered a parse error handling message: {:?}",
+                                            &self.name, err_msg
+                                        ),
+                                        error: Some(json!(err_msg)),
+                                        _time: get_current_time(OffsetDateTime::now_utc()),
+                                        request: None,
+                                        response: None,
+                                        data: None,
+                                    });
+                                    self.send_to_dlq(message).await?;
+                                }
+                                // Handle Kafka-specific errors (retry or DLQ logic)
+                                ConsumerError::KafkaError(err_msg) => {
+                                    self.logger.log(LogObject {
+                                        level: LogLevel::Error,
+                                        message: format!(
+                                            "{} encountered a Kafka error handling message: {:?}",
+                                            &self.name, err_msg
+                                        ),
+                                        error: Some(json!(err_msg)),
+                                        _time: get_current_time(OffsetDateTime::now_utc()),
+                                        request: None,
+                                        response: None,
+                                        data: None,
+                                    });
+                                    self.handle_failed_message(message).await?;
+                                }
+                                ConsumerError::UnknownError(err_msg) => {
+                                    // Log the error and continue
+                                    self.logger.log(LogObject {
+                                        level: LogLevel::Error,
+                                        message: format!(
+                                            "{} encountered an unknown error handling message: {:?}",
+                                            &self.name, err_msg
+                                        ),
+                                        error: Some(json!(err_msg)),
+                                        _time: get_current_time(OffsetDateTime::now_utc()),
+                                        request: None,
+                                        response: None,
+                                        data: None,
+                                    });
+                                }
+                            }
+                        }
                     }
                 }
                 Err(e) => {
@@ -186,6 +271,43 @@ impl PlutomiConsumer {
                 }
             }
         }
+    }
+
+    pub fn parse_message<'a, T>(
+        message: BorrowedMessage<'a>,
+        logger: &Arc<Logger>,
+    ) -> Result<T, ConsumerError>
+    where
+        T: serde::de::DeserializeOwned,
+    {
+        let payload = message.payload().ok_or_else(|| {
+            let msg = "No payload found in message".to_string();
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                message: msg.clone(),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                data: None,
+                error: None,
+                request: None,
+                response: None,
+            });
+            ConsumerError::ParseError(msg)
+        })?;
+
+        serde_json::from_slice::<T>(payload).map_err(|e| {
+            let msg = format!("Failed to parse payload: {}", e);
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                message: msg.clone(),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                data: None,
+                error: Some(json!(e.to_string())),
+                request: None,
+                response: None,
+            });
+
+            ConsumerError::ParseError(msg)
+        })
     }
 
     pub async fn handle_failed_message<'a>(
@@ -244,24 +366,150 @@ async fn produce_message(
         .map_err(|(err, _)| err)
 }
 
-// Function that parses a message to the given structure, and if it fails, sends it to the DLQ
-fn parse_message<'a, T>(message: BorrowedMessage<'a>, logger: &Arc<Logger>) -> Result<T, String>
-where
-    T: serde::de::DeserializeOwned,
-{
-    let payload = message.payload().ok_or("No payload found in message")?;
-    let payload = String::from_utf8_lossy(payload);
-    serde_json::from_str::<T>(&payload).map_err(|e| {
-        logger.log(LogObject {
-            level: LogLevel::Error,
-            message: format!("Failed to parse payload: {}", e),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            data: None,
-            error: Some(json!(e.to_string())),
-            request: None,
-            response: None,
-        });
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * Retry logic
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
-        e.to_string()
-    })
+impl PlutomiConsumer {
+    pub async fn handle_message(&self, message: BorrowedMessage<'_>) -> Result<(), String> {
+        // Parse the message payload to extract the event_type
+        let payload: serde_json::Value = serde_json::from_slice(message.payload().unwrap_or(&[]))
+            .map_err(|e| format!("Failed to parse payload: {}", e))?;
+
+        let event_type = payload
+            .get("event_type")
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or("unknown_event");
+
+        let retry_config = RetryConfig::for_event(event_type);
+
+        // Determine which topic the message is in
+        let current_topic = message.topic();
+        let retry_count = message
+            .headers()
+            .and_then(|headers| headers.get_as::<i32>("retry-count").ok())
+            .unwrap_or(0);
+
+        if self.is_in_dlq(current_topic) {
+            println!("Message already in DLQ, no further processing.");
+            return Ok(());
+        }
+
+        let max_retries = if self.is_in_retry(current_topic) {
+            retry_config.retry_retries
+        } else {
+            retry_config.main_retries
+        };
+
+        if retry_count < max_retries {
+            // Try processing the message
+            if let Err(e) = self.process_message(message).await {
+                println!(
+                    "Message processing failed. Retrying in {} seconds...",
+                    retry_config.retry_delay_seconds
+                );
+
+                // Spawn a new async task to retry after a delay, so the main consumer is not blocked
+                let message_clone = message.clone();
+                let producer_clone = self.producer.clone();
+
+                task::spawn(async move {
+                    // Delayed retry logic
+                    tokio::time::sleep(Duration::from_secs(retry_config.retry_delay_seconds)).await;
+
+                    // Resend the message after delay in background task
+                    if let Err(e) =
+                        Self::retry_message(producer_clone, message_clone, retry_count + 1).await
+                    {
+                        println!("Error retrying message: {}", e);
+                    }
+                });
+            }
+        } else {
+            // Send to DLQ after reaching max retries
+            println!("Max retries reached. Sending message to DLQ.");
+            self.send_to_dlq(message).await?;
+        }
+
+        Ok(())
+    }
+
+    // Retry message without blocking main consumer
+    pub async fn retry_message(
+        producer: FutureProducer,
+        message: BorrowedMessage<'_>,
+        retry_count: i32,
+    ) -> Result<(), String> {
+        let topic = if message.topic().contains("retry") {
+            message.topic() // Retry in the same retry topic
+        } else {
+            "orders-retry" // Move to retry topic if it's in the main topic
+        };
+
+        let retry_headers = OwnedHeaders::new()
+            .add("retry-count", &retry_count.to_string()) // Increment retry count
+            .add("last-error", "Failed to process message");
+
+        producer
+            .send(
+                FutureRecord::to(topic)
+                    .payload(message.payload())
+                    .key(message.key())
+                    .headers(retry_headers),
+                Duration::from_secs(0),
+            )
+            .await
+            .map_err(|e| format!("Failed to send message to retry topic: {:?}", e))?;
+
+        Ok(())
+    }
+
+    // Send to DLQ
+    pub async fn send_to_dlq(&self, message: BorrowedMessage<'_>) -> Result<(), String> {
+        self.producer
+            .send(
+                FutureRecord::to("orders-dlq")
+                    .payload(message.payload())
+                    .key(message.key())
+                    .headers(message.headers().unwrap_or_else(|| OwnedHeaders::new())),
+                Duration::from_secs(0),
+            )
+            .await
+            .map_err(|e| format!("Failed to send message to DLQ: {:?}", e))?;
+
+        Ok(())
+    }
+
+    // Check if message is in retry topic
+    fn is_in_retry(&self, topic: &str) -> bool {
+        topic.contains("retry")
+    }
+
+    // Check if message is in DLQ topic
+    fn is_in_dlq(&self, topic: &str) -> bool {
+        topic.contains("dlq")
+    }
 }
