@@ -17,6 +17,7 @@
   ],
   "words": [
     "ABCDEFGHJKMNPQRSTUVWXYZ",
+    "acks",
     "allcontributors",
     "apdex",
     "applicationautoscaling",
@@ -93,6 +94,7 @@
     "tabler",
     "tailwindcss",
     "tanstack",
+    "thiserror",
     "timesheets",
     "tiptap",
     "TLDR",

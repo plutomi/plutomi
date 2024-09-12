@@ -6,9 +6,11 @@ use dotenv::dotenv;
 use futures::future::BoxFuture;
 use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::message::BorrowedMessage;
+use rdkafka::producer::{FutureProducer, FutureRecord};
 use rdkafka::{ClientConfig, Message};
 use serde_json::json;
 use std::sync::Arc;
+use std::time::Duration;
 use thiserror::Error;
 use time::OffsetDateTime;
 
@@ -78,13 +80,35 @@ impl PlutomiConsumer {
         let consumer: StreamConsumer = ClientConfig::new()
             .set("group.id", group_id)
             .set("client.id", name)
-            .set("bootstrap.servers", env.REDPANDA_BROKERS)
+            .set("bootstrap.servers", &env.REDPANDA_BROKERS)
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "false")
             .create()
             .map_err(|e| {
                 let err = format!("Failed to create consumer {}: {}", name, e);
+                logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: err.clone(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                    error: None,
+                });
+                err
+            })?;
+
+        // For publishing
+        let producer: FutureProducer = ClientConfig::new()
+            .set("bootstrap.servers", env.REDPANDA_BROKERS)
+            .set("acks", "all")
+            .set("retries", "10")
+            .set("message.timeout.ms", "10000")
+            .set("retry.backoff.ms", "500")
+            .create()
+            .map_err(|e| {
+                let err = format!("Failed to create producer: {}", e);
                 logger.log(LogObject {
                     level: LogLevel::Error,
                     message: err.clone(),
@@ -138,6 +162,7 @@ impl PlutomiConsumer {
             name,
             consumer,
             logger,
+            producer,
             message_handler,
         })
     }
@@ -243,7 +268,6 @@ impl PlutomiConsumer {
                                 });
                         }
                         Err(e) => {
-                            // Match on the error type
                             match e {
                                 ConsumerError::ParseError(err_msg) => {
                                     // Send the message to the DLQ if it's a parse error
@@ -352,162 +376,5 @@ impl PlutomiConsumer {
 
             ConsumerError::ParseError(msg)
         })
-    }
-
-    pub async fn handle_failed_message<'a>(
-        &self,
-        message: BorrowedMessage<'a>,
-    ) -> Result<(), String> {
-        let topic = message.topic();
-
-        match self.get_current_topic(topic) {
-            MessageType::Main => {
-                // Send to retry
-            }
-            MessageType::Retry => {
-                // Send to DLQ
-            }
-            MessageType::DLQ => {
-                // Just log - end of the line
-            }
-        }
-
-        self.logger.log(LogObject {
-            level: LogLevel::Warn,
-            message: format!("{} failed to handle message", &self.name),
-            error: None,
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            request: None,
-            response: None,
-            data: Some(json!({ "message": message.payload() })),
-        });
-
-        Ok(())
-    }
-}
-
-// Example usage in a producer function
-use rdkafka::producer::{FutureProducer, FutureRecord};
-use std::time::Duration;
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * Retry logic
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-impl PlutomiConsumer {
-    pub async fn handle_message(&self, message: BorrowedMessage<'_>) -> Result<(), String> {
-        // Parse the message payload to extract the event_type
-        let payload: serde_json::Value = serde_json::from_slice(message.payload().unwrap_or(&[]))
-            .map_err(|e| format!("Failed to parse payload: {}", e))?;
-
-        let event_type = payload
-            .get("event_type")
-            .and_then(serde_json::Value::as_str)
-            .unwrap_or("unknown_event");
-
-        let retry_config = RetryConfig::for_event(event_type);
-
-        // Determine which topic the message is in
-        let current_topic = message.topic();
-        let retry_count = message
-            .headers()
-            .and_then(|headers| headers.get_as::<i32>("retry-count").ok())
-            .unwrap_or(0);
-
-        if self.is_in_dlq(current_topic) {
-            println!("Message already in DLQ, no further processing.");
-            return Ok(());
-        }
-
-        let max_retries = if self.is_in_retry(current_topic) {
-            retry_config.retry_retries
-        } else {
-            retry_config.main_retries
-        };
-
-        if retry_count < max_retries {
-            // Try processing the message
-            if let Err(e) = self.process_message(message).await {
-                println!(
-                    "Message processing failed. Retrying in {} seconds...",
-                    retry_config.retry_delay_seconds
-                );
-
-                // Spawn a new async task to retry after a delay, so the main consumer is not blocked
-                let message_clone = message.clone();
-                let producer_clone = self.producer.clone();
-
-                task::spawn(async move {
-                    // Delayed retry logic
-                    tokio::time::sleep(Duration::from_secs(retry_config.retry_delay_seconds)).await;
-
-                    // Resend the message after delay in background task
-                    if let Err(e) =
-                        Self::retry_message(producer_clone, message_clone, retry_count + 1).await
-                    {
-                        println!("Error retrying message: {}", e);
-                    }
-                });
-            }
-        } else {
-            // Send to DLQ after reaching max retries
-            println!("Max retries reached. Sending message to DLQ.");
-            self.send_to_dlq(message).await?;
-        }
-
-        Ok(())
-    }
-
-    // Retry message without blocking main consumer
-    pub async fn retry_message(
-        producer: FutureProducer,
-        message: BorrowedMessage<'_>,
-        retry_count: i32,
-    ) -> Result<(), String> {
-        let topic = if message.topic().contains("retry") {
-            message.topic() // Retry in the same retry topic
-        } else {
-            "orders-retry" // Move to retry topic if it's in the main topic
-        };
-
-        let retry_headers = OwnedHeaders::new()
-            .add("retry-count", &retry_count.to_string()) // Increment retry count
-            .add("last-error", "Failed to process message");
-
-        producer
-            .send(
-                FutureRecord::to(topic)
-                    .payload(message.payload())
-                    .key(message.key())
-                    .headers(retry_headers),
-                Duration::from_secs(0),
-            )
-            .await
-            .map_err(|e| format!("Failed to send message to retry topic: {:?}", e))?;
-
-        Ok(())
     }
 }
