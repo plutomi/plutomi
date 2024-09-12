@@ -1,4 +1,6 @@
 use futures::future::BoxFuture;
+use rdkafka::Message;
+use serde_json::json;
 use shared::{
     consumers::{ConsumerError, MessageHandlerOptions, PlutomiConsumer},
     events::PlutomiEvent,
@@ -10,9 +12,9 @@ use time::OffsetDateTime;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
-        "notifications-orders-consumer",
+        "notifications-orders-consumer2",
         "notifications",
-        "orders",
+        "orders-retry",
         Arc::new(send_email),
     )?;
 
@@ -33,10 +35,23 @@ fn send_email(
         match payload {
             PlutomiEvent::OrderCreated(order_payload) => {
                 plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Warn,
+                    level: LogLevel::Info,
                     _time: get_current_time(OffsetDateTime::now_utc()),
-                    message: "Invalid event type".to_string(),
-                    data: None,
+                    message: format!("Processing order created event"),
+                    data: Some(json!(order_payload)),
+                    error: None,
+                    request: None,
+                    response: None,
+                });
+
+                if order_payload.order_id.contains("crash me") && !message.topic().contains("dlq") {
+                    return Err(ConsumerError::KafkaError("Crashing on purpose".to_string()));
+                }
+                plutomi_consumer.logger.log(LogObject {
+                    level: LogLevel::Info,
+                    message: format!("Processed order created event in DLQ"),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    data: Some(json!(order_payload)),
                     error: None,
                     request: None,
                     response: None,
