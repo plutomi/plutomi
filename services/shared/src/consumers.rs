@@ -1,4 +1,5 @@
 use crate::constants::Topics;
+use crate::events::PlutomiEvent;
 use crate::get_current_time::get_current_time;
 use crate::get_env::get_env;
 use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
@@ -341,40 +342,22 @@ impl PlutomiConsumer {
         }
     }
 
-    pub fn parse_message<'a, T>(
-        message: BorrowedMessage<'a>,
-        logger: &Arc<Logger>,
-    ) -> Result<T, ConsumerError>
-    where
-        T: serde::de::DeserializeOwned,
-    {
-        let payload = message.payload().ok_or_else(|| {
-            let msg = "No payload found in message".to_string();
-            logger.log(LogObject {
+    pub fn parse_message<'a>(
+        &self,
+        message: &'a BorrowedMessage<'a>,
+    ) -> Result<PlutomiEvent, ConsumerError> {
+        // Deserialize directly into `PlutomiEvent`, which handles both event type and payload
+        serde_json::from_slice::<PlutomiEvent>(message.payload().unwrap_or(&[])).map_err(|e| {
+            self.logger.log(LogObject {
                 level: LogLevel::Error,
-                message: msg.clone(),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                data: None,
-                error: None,
-                request: None,
-                response: None,
-            });
-            ConsumerError::ParseError(msg)
-        })?;
-
-        serde_json::from_slice::<T>(payload).map_err(|e| {
-            let msg = format!("Failed to parse payload: {}", e);
-            logger.log(LogObject {
-                level: LogLevel::Error,
-                message: msg.clone(),
+                message: format!("Failed to parse event: {}", e),
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 data: None,
                 error: Some(json!(e.to_string())),
                 request: None,
                 response: None,
             });
-
-            ConsumerError::ParseError(msg)
+            ConsumerError::ParseError(format!("Failed to parse event: {}", e))
         })
     }
 }

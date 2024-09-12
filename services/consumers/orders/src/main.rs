@@ -1,8 +1,12 @@
-use std::sync::Arc;
-
 use futures::future::BoxFuture;
-use rdkafka::Message;
-use shared::consumers::{MessageHandler, MessageHandlerOptions, PlutomiConsumer};
+use shared::{
+    consumers::{ConsumerError, MessageHandlerOptions, PlutomiConsumer},
+    events::PlutomiEvent,
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
+};
+use std::sync::Arc;
+use time::OffsetDateTime;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
@@ -17,29 +21,37 @@ async fn main() -> Result<(), String> {
     Ok(())
 }
 
-#[derive(Debug, serde::Deserialize)]
-struct OrderPayload {
-    pub order_id: String,
-    pub customer_id: String,
-    pub total: u64,
-}
 fn send_email(
     MessageHandlerOptions {
         message,
         plutomi_consumer,
     }: MessageHandlerOptions,
-) -> BoxFuture<'_, Result<(), String>> {
+) -> BoxFuture<'_, Result<(), ConsumerError>> {
     Box::pin(async move {
-        match message.payload() {
-            Some(payload) => {
-                let payload = String::from_utf8_lossy(payload);
-                let order_payload: OrderPayload = serde_json::from_str::<OrderPayload>(&payload)
-                    .map_err(|e| format!("Failed to parse payload: {}", e))?;
-                // ! TODO: if it fails to pasre send to DLQ right away
-                println!("Sending email for order: {:?}", order_payload);
+        let payload = plutomi_consumer.parse_message(message)?;
+
+        match payload {
+            PlutomiEvent::OrderCreated(order_payload) => {
+                plutomi_consumer.logger.log(LogObject {
+                    level: LogLevel::Warn,
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    message: "Invalid event type".to_string(),
+                    data: None,
+                    error: None,
+                    request: None,
+                    response: None,
+                });
             }
-            None => {
-                println!("No payload found in message");
+            _ => {
+                plutomi_consumer.logger.log(LogObject {
+                    level: LogLevel::Warn,
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    message: "Invalid event type".to_string(),
+                    data: None,
+                    error: None,
+                    request: None,
+                    response: None,
+                });
             }
         }
 

@@ -10,4 +10,5 @@ rdkafka = "0.36.2"
 serde = "1.0.210"
 serde_json = "1.0.128"
 shared = { path = "../../shared" }
+time = "0.3.36"
 tokio = { version = "1.40.0", features = ["full"] }
