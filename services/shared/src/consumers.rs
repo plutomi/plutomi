@@ -1,4 +1,4 @@
-use crate::constants::Topics;
+use crate::constants::{ConsumerGroups, Topics};
 use crate::events::PlutomiEvent;
 use crate::get_current_time::get_current_time;
 use crate::get_env::get_env;
@@ -8,6 +8,7 @@ use futures::future::BoxFuture;
 use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::message::BorrowedMessage;
 use rdkafka::producer::{FutureProducer, FutureRecord};
+use rdkafka::statistics::Topic;
 use rdkafka::{ClientConfig, Message};
 use serde_json::json;
 use std::sync::Arc;
@@ -47,20 +48,14 @@ pub enum ConsumerError {
     UnknownError(String), // Catch-all for other types of errors
 }
 
-enum MessageType {
-    Retry,
-    DLQ,
-    Main,
-}
-
 impl PlutomiConsumer {
     /**
      * Creates a consumer and subscribes it to the given topic
      */
     pub fn new(
         name: &'static str,
-        group_id: &str,
-        topic: &'static str,
+        group_id: ConsumerGroups,
+        topic: Topics,
         message_handler: MessageHandler,
     ) -> Result<Self, String> {
         dotenv().ok();
@@ -79,12 +74,14 @@ impl PlutomiConsumer {
         });
 
         let consumer: StreamConsumer = ClientConfig::new()
-            .set("group.id", group_id)
+            .set("group.id", group_id.as_str())
             .set("client.id", name)
             .set("bootstrap.servers", &env.REDPANDA_BROKERS)
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "false")
+            // TODO: set for retries?
+            .set("auto.offset.reset", "earliest")
             .create()
             .map_err(|e| {
                 let err = format!("Failed to create consumer {}: {}", name, e);
@@ -131,10 +128,12 @@ impl PlutomiConsumer {
             data: None,
             error: None,
         });
-        consumer.subscribe(&[&topic]).map_err(|e| {
+        consumer.subscribe(&[&topic.as_str()]).map_err(|e| {
             let err = format!(
                 "Consumer {} failed to subscribe to topic {}: {}",
-                name, topic, e
+                name,
+                topic.as_str(),
+                e
             );
             logger.log(LogObject {
                 level: LogLevel::Error,
@@ -151,7 +150,7 @@ impl PlutomiConsumer {
 
         logger.log(LogObject {
             level: LogLevel::Info,
-            message: format!("{} subscribed to {} topic", name, topic),
+            message: format!("{} subscribed to {} topic", name, topic.as_str()),
             _time: get_current_time(OffsetDateTime::now_utc()),
             request: None,
             response: None,
@@ -168,13 +167,12 @@ impl PlutomiConsumer {
         })
     }
 
-    pub fn get_current_topic(&self, topic: &str) -> MessageType {
-        if topic.contains("-retry") {
-            MessageType::Retry
-        } else if topic.contains("-dlq") {
-            MessageType::DLQ
-        } else {
-            MessageType::Main
+    pub fn get_next_topic(&self, topic: Topics) -> Option<Topics> {
+        match topic {
+            Topics::Orders => Some(Topics::OrdersRetry),
+            Topics::OrdersRetry => Some(Topics::OrdersDLQ),
+            // Don't retry DLQ messages
+            Topics::OrdersDLQ => None,
         }
     }
 
@@ -187,6 +185,18 @@ impl PlutomiConsumer {
         let topic_name = topic.as_str();
         let key = message.key().unwrap_or(&[]);
         let payload = message.payload().unwrap_or(&[]);
+        if payload.is_empty() {
+            self.logger.log(LogObject {
+                level: LogLevel::Warn,
+                message: format!("Message payload is empty when producing a message"),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                request: None,
+                response: None,
+                data: None,
+                error: None,
+            });
+            return Err("Message payload is empty when producing a message".to_string());
+        }
 
         let record = FutureRecord::to(topic_name).payload(payload).key(key);
 
@@ -220,6 +230,37 @@ impl PlutomiConsumer {
             }
         }
     }
+
+    pub async fn commit_message<'a>(&self, message: &'a BorrowedMessage<'a>) -> Result<(), String> {
+        self.consumer
+            .commit_message(message, rdkafka::consumer::CommitMode::Async)
+            .map_err(|e| {
+                let err = format!("Failed to commit message: {:?}", e);
+                self.logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: err.clone(),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                    error: Some(json!(e.to_string())),
+                });
+                err
+            })?;
+
+        self.logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("Message successfully committed"),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            request: None,
+            response: None,
+            data: None,
+            error: None,
+        });
+
+        Ok(())
+    }
+
     pub async fn run(&self) -> Result<(), String> {
         self.logger.log(LogObject {
             level: LogLevel::Info,
@@ -234,6 +275,11 @@ impl PlutomiConsumer {
         loop {
             match self.consumer.recv().await {
                 Ok(message) => {
+                    let message_payload = message
+                        .payload()
+                        .map(|payload| String::from_utf8_lossy(payload).to_string()) // Convert bytes to a readable string
+                        .unwrap_or_else(|| "No payload".to_string());
+
                     self.logger.log(LogObject {
                         level: LogLevel::Info,
                         message: format!("{} received message", &self.name),
@@ -241,85 +287,74 @@ impl PlutomiConsumer {
                         _time: get_current_time(OffsetDateTime::now_utc()),
                         request: None,
                         response: None,
-                        data: Some(json!({ "message": message.payload() })),
+                        data: Some(json!({ "message": message_payload })),
                     });
 
-                    let handler_result = (self.message_handler)(MessageHandlerOptions {
+                    // Handle the message results
+                    match (self.message_handler)(MessageHandlerOptions {
                         message: &message,
                         plutomi_consumer: &self,
                     })
-                    .await;
-
-                    match handler_result {
-                        // We successfully processed the message
-                        // Commit the message to the Kafka broker
+                    .await
+                    {
                         Ok(_) => {
-                            self.consumer
-                                .commit_message(&message, rdkafka::consumer::CommitMode::Async)
-                                .unwrap_or_else(|e| {
-                                    self.logger.log(LogObject {
-                                        level: LogLevel::Error,
-                                        message: format!("Failed to commit message: {:?}", e),
-                                        _time: get_current_time(OffsetDateTime::now_utc()),
-                                        request: None,
-                                        response: None,
-                                        data: None,
-                                        error: Some(json!(e.to_string())),
-                                    });
-                                });
+                            self.logger.log(LogObject {
+                                level: LogLevel::Info,
+                                message: format!("{} successfully handled message", &self.name),
+                                _time: get_current_time(OffsetDateTime::now_utc()),
+                                request: None,
+                                response: None,
+                                data: Some(json!({ "message": message_payload })),
+                                error: None,
+                            });
+                            self.commit_message(&message).await?;
                         }
-                        Err(e) => {
-                            match e {
-                                ConsumerError::ParseError(err_msg) => {
-                                    // Send the message to the DLQ if it's a parse error
-                                    // We don't want to keep retrying this, we probably misconfigured something
-                                    self.logger.log(LogObject {
-                                        level: LogLevel::Error,
-                                        message: format!(
-                                            "{} encountered a parse error handling message: {:?}",
-                                            &self.name, err_msg
-                                        ),
-                                        error: Some(json!(err_msg)),
-                                        _time: get_current_time(OffsetDateTime::now_utc()),
-                                        request: None,
-                                        response: None,
-                                        data: None,
-                                    });
+                        Err(error) => {
+                            let (error_message, next_topic) = (
+                                format!(
+                                    "{:?}: {:?}",
+                                    error,
+                                    message.payload().map(|p| String::from_utf8_lossy(p))
+                                ),
+                                // Get the next topic based on the current one
+                                self.get_next_topic(message.topic().into()),
+                            );
 
-                                    self.publish_to_topic(Topics::OrdersDLQ, &message).await?;
-                                }
-                                // Handle Kafka-specific errors (retry or DLQ logic)
-                                ConsumerError::KafkaError(err_msg) => {
-                                    self.logger.log(LogObject {
-                                        level: LogLevel::Error,
-                                        message: format!(
-                                            "{} encountered a Kafka error handling message: {:?}",
-                                            &self.name, err_msg
-                                        ),
-                                        error: Some(json!(err_msg)),
-                                        _time: get_current_time(OffsetDateTime::now_utc()),
-                                        request: None,
-                                        response: None,
-                                        data: None,
-                                    });
-                                    self.publish_to_topic(Topics::OrdersRetry, &message).await?;
-                                }
-                                ConsumerError::UnknownError(err_msg) => {
-                                    // Do nothing, publish to DLQ though
-                                    self.logger.log(LogObject {
-                                        level: LogLevel::Error,
-                                        message: format!(
-                                            "{} encountered an unknown error handling message: {:?}",
-                                            &self.name, err_msg
-                                        ),
-                                        error: Some(json!(err_msg)),
-                                        _time: get_current_time(OffsetDateTime::now_utc()),
-                                        request: None,
-                                        response: None,
-                                        data: None,
-                                    });
-                                }
+                            // Log the error message
+                            self.logger.log(LogObject {
+                                level: LogLevel::Error,
+                                message: format!(
+                            "{} encountered an error handling message: {}, publishing into {:?}",
+                            &self.name, error_message, next_topic
+                        ),
+                                _time: get_current_time(OffsetDateTime::now_utc()),
+                                data: Some(json!({ "message": message_payload })),
+                                request: None,
+                                response: None,
+                                error: Some(json!(error_message)),
+                            });
+
+                            // Publish to the next topic (retry or DLQ)
+                            if let Some(next_topic) = next_topic {
+                                self.publish_to_topic(next_topic, &message).await?
+                            } else {
+                                // If no next topic is found, log a warning (message already in DLQ)
+                                self.logger.log(LogObject {
+                                    level: LogLevel::Warn,
+                                    message: format!(
+                                        "{} TODO add message will no longer be retried",
+                                        &self.name
+                                    ),
+                                    request: None,
+                                    response: None,
+                                    _time: get_current_time(OffsetDateTime::now_utc()),
+                                    data: Some(json!({ "message": message_payload })),
+                                    error: None,
+                                })
                             }
+
+                            // Commit the message to avoid reprocessing
+                            self.commit_message(&message).await?;
                         }
                     }
                 }
@@ -346,13 +381,34 @@ impl PlutomiConsumer {
         &self,
         message: &'a BorrowedMessage<'a>,
     ) -> Result<PlutomiEvent, ConsumerError> {
+        let payload = message.payload().unwrap_or(&[]);
+
+        // Check if the payload is empty before attempting to deserialize
+        if payload.is_empty() {
+            self.logger.log(LogObject {
+                level: LogLevel::Error,
+                message: "Message payload is empty when parsing message".to_string(),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                request: None,
+                response: None,
+                data: None,
+                error: None,
+            });
+            return Err(ConsumerError::ParseError(
+                "Message payload is empty when parsing message".to_string(),
+            ));
+        }
+
         // Deserialize directly into `PlutomiEvent`, which handles both event type and payload
-        serde_json::from_slice::<PlutomiEvent>(message.payload().unwrap_or(&[])).map_err(|e| {
+        serde_json::from_slice::<PlutomiEvent>(payload).map_err(|e| {
+            // If parsing fails, convert the payload to a readable string for logging
+            let payload_str = String::from_utf8_lossy(payload).to_string();
+
             self.logger.log(LogObject {
                 level: LogLevel::Error,
                 message: format!("Failed to parse event: {}", e),
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                data: None,
+                data: Some(json!({ "message": payload_str })),
                 error: Some(json!(e.to_string())),
                 request: None,
                 response: None,

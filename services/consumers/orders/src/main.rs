@@ -2,6 +2,7 @@ use futures::future::BoxFuture;
 use rdkafka::Message;
 use serde_json::json;
 use shared::{
+    constants::{ConsumerGroups, Topics},
     consumers::{ConsumerError, MessageHandlerOptions, PlutomiConsumer},
     events::PlutomiEvent,
     get_current_time::get_current_time,
@@ -12,9 +13,9 @@ use time::OffsetDateTime;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
-        "notifications-orders-consumer2",
-        "notifications",
-        "orders-retry",
+        "notifications-orders-consumer",
+        ConsumerGroups::Notifications,
+        Topics::OrdersDLQ,
         Arc::new(send_email),
     )?;
 
