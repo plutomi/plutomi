@@ -26,6 +26,7 @@ pub type MessageHandler = Arc<
 pub struct PlutomiConsumer {
     pub name: &'static str,
     pub consumer: StreamConsumer,
+    pub producer: FutureProducer,
     pub logger: Arc<Logger>,
     pub message_handler: MessageHandler,
 }
@@ -141,7 +142,7 @@ impl PlutomiConsumer {
         })
     }
 
-    pub fn get_message_type(&self, topic: &str) -> MessageType {
+    pub fn get_current_topic(&self, topic: &str) -> MessageType {
         if topic.contains("-retry") {
             MessageType::Retry
         } else if topic.contains("-dlq") {
@@ -151,6 +152,48 @@ impl PlutomiConsumer {
         }
     }
 
+    // Publish a message to the specified topic
+    pub async fn publish_to_topic<'a>(
+        &self,
+        topic: Topics,
+        message: &'a BorrowedMessage<'a>,
+    ) -> Result<(), String> {
+        let topic_name = topic.as_str();
+        let key = message.key().unwrap_or(&[]);
+        let payload = message.payload().unwrap_or(&[]);
+
+        let record = FutureRecord::to(topic_name).payload(payload).key(key);
+
+        match self.producer.send(record, Duration::from_secs(0)).await {
+            Ok(_) => {
+                self.logger.log(LogObject {
+                    level: LogLevel::Info,
+                    message: format!("Message successfully published to topic {}", topic_name),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                    error: None,
+                });
+                Ok(())
+            }
+            Err((err, _)) => {
+                self.logger.log(LogObject {
+                    level: LogLevel::Error,
+                    message: format!(
+                        "Failed to publish message to topic {}: {:?}",
+                        topic_name, err
+                    ),
+                    _time: get_current_time(OffsetDateTime::now_utc()),
+                    request: None,
+                    response: None,
+                    data: None,
+                    error: Some(json!(err.to_string())),
+                });
+                Err(err.to_string())
+            }
+        }
+    }
     pub async fn run(&self) -> Result<(), String> {
         self.logger.log(LogObject {
             level: LogLevel::Info,
@@ -217,7 +260,8 @@ impl PlutomiConsumer {
                                         response: None,
                                         data: None,
                                     });
-                                    self.send_to_dlq(message).await?;
+
+                                    self.publish_to_topic(Topics::OrdersDLQ, &message).await?;
                                 }
                                 // Handle Kafka-specific errors (retry or DLQ logic)
                                 ConsumerError::KafkaError(err_msg) => {
@@ -233,10 +277,10 @@ impl PlutomiConsumer {
                                         response: None,
                                         data: None,
                                     });
-                                    self.handle_failed_message(message).await?;
+                                    self.publish_to_topic(Topics::OrdersRetry, &message).await?;
                                 }
                                 ConsumerError::UnknownError(err_msg) => {
-                                    // Log the error and continue
+                                    // Do nothing, publish to DLQ though
                                     self.logger.log(LogObject {
                                         level: LogLevel::Error,
                                         message: format!(
@@ -316,7 +360,7 @@ impl PlutomiConsumer {
     ) -> Result<(), String> {
         let topic = message.topic();
 
-        match self.get_message_type(topic) {
+        match self.get_current_topic(topic) {
             MessageType::Main => {
                 // Send to retry
             }
@@ -345,26 +389,6 @@ impl PlutomiConsumer {
 // Example usage in a producer function
 use rdkafka::producer::{FutureProducer, FutureRecord};
 use std::time::Duration;
-
-async fn produce_message(
-    producer: &FutureProducer,
-    topic: Topics,
-    key: &str,
-    payload: &str,
-) -> Result<(), rdkafka::error::KafkaError> {
-    let topic_name = topic.as_str();
-
-    producer
-        .send(
-            FutureRecord::to(topic_name).payload(payload).key(key),
-            Duration::from_secs(0),
-        )
-        .await
-        .map(|delivery| {
-            println!("Message delivered to topic {}: {:?}", topic_name, delivery);
-        })
-        .map_err(|(err, _)| err)
-}
 
 /**
  *
@@ -485,31 +509,5 @@ impl PlutomiConsumer {
             .map_err(|e| format!("Failed to send message to retry topic: {:?}", e))?;
 
         Ok(())
-    }
-
-    // Send to DLQ
-    pub async fn send_to_dlq(&self, message: BorrowedMessage<'_>) -> Result<(), String> {
-        self.producer
-            .send(
-                FutureRecord::to("orders-dlq")
-                    .payload(message.payload())
-                    .key(message.key())
-                    .headers(message.headers().unwrap_or_else(|| OwnedHeaders::new())),
-                Duration::from_secs(0),
-            )
-            .await
-            .map_err(|e| format!("Failed to send message to DLQ: {:?}", e))?;
-
-        Ok(())
-    }
-
-    // Check if message is in retry topic
-    fn is_in_retry(&self, topic: &str) -> bool {
-        topic.contains("retry")
-    }
-
-    // Check if message is in DLQ topic
-    fn is_in_dlq(&self, topic: &str) -> bool {
-        topic.contains("dlq")
     }
 }

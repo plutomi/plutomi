@@ -170,6 +170,7 @@ impl Logger {
                         // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
                             if let Some(ref client) = axiom_client {
+                                // TODO remove expect / clean this up
                                  send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
                             }
                             // Clear the batch for the next batch
@@ -185,6 +186,7 @@ impl Logger {
                         if !log_batch.is_empty() {
                            // Send whatever is in the batch
                             if let Some(ref client) = axiom_client {
+                                // TODO remove expect / clean this up
                                 send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
                             }
 
