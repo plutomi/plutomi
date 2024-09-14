@@ -8,7 +8,6 @@ use futures::future::BoxFuture;
 use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::message::BorrowedMessage;
 use rdkafka::producer::{FutureProducer, FutureRecord};
-use rdkafka::statistics::Topic;
 use rdkafka::{ClientConfig, Message};
 use serde_json::json;
 use std::sync::Arc;
