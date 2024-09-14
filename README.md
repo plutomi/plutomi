@@ -17,6 +17,7 @@ Plutomi allows you to create `applications` for anything from jobs to program en
 1. **Questionnaire** - Collect basic applicant information. Automatically move applicants to the _Waiting List_ if not completed within 30 days.
 2. **Waiting List** - An idle pool of applicants.
 3. **Document Upload** - Collect the applicant's license.
+   minkube
 4. **Final Review** - Manually review the license for compliance.
 5. **Ready to Drive** - Applicants who have completed all stages and are approved.
 
@@ -29,14 +30,12 @@ The frontend is built with [Remix](https://remix.run/) and [Express](https://exp
 TODO add summary
 The structure is highly configurable, allowing for easy addition of new event types and consumers as the application grows.
 
-
 Key Components:
 TODO add table of contents
 
 #### Streams
 
 The pipeline defines three main streams:
-
 
 #### Consumers
 
@@ -123,17 +122,17 @@ Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). I
 
 ---
 
-
 ## TODO troubleshooting rust analyzer
 
 .vscode
 {
-  "rust-analyzer.linkedProjects": [
-    "services/api/Cargo.toml",
-    "services/consumers/orders/Cargo.toml",
-    "services/shared/Cargo.toml"
-  ]
+"rust-analyzer.linkedProjects": [
+"services/api/Cargo.toml",
+"services/consumers/orders/Cargo.toml",
+"services/shared/Cargo.toml"
+]
 }
 
-
 ### Adding anew consumer
+
+--
