@@ -79,8 +79,8 @@ impl PlutomiConsumer {
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "false")
-            // TODO: set for retries?
             .set("auto.offset.reset", "earliest")
+            .set("auto.commit.interval.ms", "1000")
             .create()
             .map_err(|e| {
                 let err = format!("Failed to create consumer {}: {}", name, e);
