@@ -23,7 +23,7 @@ Plutomi allows you to create `applications` for anything from jobs to program en
 
 ## Tech Stack
 
-The frontend is built with [Remix](https://remix.run/) and [Express](https://expressjs.com/), while the API is written in Rust using the [Axum framework](https://github.com/tokio-rs/axum). All data is stored [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094), and we use [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. The event-driven architecture is powered by [Redpanda](redpanda.com), and we use [Valkey](https://valkey.io/) for rate limiting mostly. We send emails with SES + SNS and SQS for those events. All asynchronous events are handled by Rust services, including normalizing SES events into Redpanda. We use Axiom for logging and Kubernetes with [K3S](https://k3s.io/) for orchestration. We plan to add [MeiliSearch](https://www.meilisearch.com/) for search and [ClickHouse](https://clickhouse.tech/) for analytics.
+The frontend is built with [Remix](https://remix.run/) and [Express](https://expressjs.com/), while the API is written in Rust using the [Axum framework](https://github.com/tokio-rs/axum). All data is stored [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094), and we use [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. The event-driven architecture is powered by [Kafka](https://kafka.apache.org/), and we use [Valkey](https://valkey.io/) for rate limiting mostly. We send emails with SES + SNS and SQS for those events. All asynchronous events are handled by Rust services, including normalizing SES events into Kafka. We use Axiom for logging and Kubernetes with [K3S](https://k3s.io/) for orchestration. We plan to add [MeiliSearch](https://www.meilisearch.com/) for search and [ClickHouse](https://clickhouse.tech/) for analytics.
 
 ### Event Streaming Pipeline
 
@@ -85,7 +85,6 @@ The system is configuration-driven, allowing easy adjustments to streams, consum
 - [cmake](https://cmake.org/download/) - for `rdkafka` crate
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
-- [RFK cli](https://www.redpanda.com/blog/homebrew) brew install redpanda-data/tap/redpanda
 
 Simply copy the `.env.example` file to `.env` and execute the `run.sh` script:
 
@@ -94,17 +93,9 @@ $ cp .env.example .env
 $ ./scripts/run.sh
 ```
 
-This will setup:
+This will setup MongoDB, Web, API, Kafka, and KafkaUI on ports 27017, 3000, 8080, 9092, 9000 respectively. Consumers will run in the background as well.
 
-- MongoDB on port 27017
-- 3 Redpanda brokers
-- Redpanda console on port 9000
-- Web app on port 3000
-- API on port 8080
-- All of the Redpanda consumers:
-  - TODO
-
-> Credentials for all datasources for all other interactions are `admin` and `password`.
+> Credentials for all datasources are `admin` and `password`.
 
 You can also run any stack individually:
 
@@ -114,7 +105,7 @@ $ ./scripts/run.sh --stack <web|api|datasources|consumer> TODO consumer
 
 #### Deploying and Self-Hosting
 
-Plutomi is designed to be flexible and can be deployed on any VPS (_we recommend [Hetzner](https://hetzner.cloud/?ref=7BufEUOAUm8x)_). While we use Kubernetes, it’s not a requirement. All Docker images are available on [Docker Hub](https://hub.docker.com/u/plutomi). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
+Plutomi is designed to be flexible and can be deployed on any environment and it is highly recommended to have three nodes. All Docker images are available on [Docker Hub](https://hub.docker.com/u/plutomi). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
 #### Questions / Troubleshooting
 
