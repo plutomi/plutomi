@@ -1,9 +1,4 @@
-use std::fmt::Display;
-
 use serde::{Deserialize, Serialize};
-
-// TODO make dynamic for prod
-pub const BROKERS: &str = "localhost:29092,localhost:39092,localhost:49092";
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Topics {

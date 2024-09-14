@@ -76,7 +76,7 @@ impl PlutomiConsumer {
         let consumer: StreamConsumer = ClientConfig::new()
             .set("group.id", group_id.as_str())
             .set("client.id", name)
-            .set("bootstrap.servers", &env.REDPANDA_BROKERS)
+            .set("bootstrap.servers", &env.KAFKA_URL)
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "false")
@@ -99,7 +99,7 @@ impl PlutomiConsumer {
 
         // For publishing
         let producer: FutureProducer = ClientConfig::new()
-            .set("bootstrap.servers", env.REDPANDA_BROKERS)
+            .set("bootstrap.servers", env.KAFKA_URL)
             .set("acks", "all")
             .set("retries", "10")
             .set("message.timeout.ms", "10000")

@@ -34,12 +34,11 @@ services:
     networks:
       - kafka
     ports:
-      - "9000:8080" # Expose Kafka UI on port 8080
+      - "9000:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: "local"
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092" # Point to Kafka broker within the Docker network
-      KAFKA_CLUSTERS_0_ZOOKEEPER: "kafka:9093" # Kafka UI doesn't need Zookeeper in KRaft mode but this can remain
-      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT" # Use PLAINTEXT for communication with Kafka
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT"
 
 volumes:
   mongo_data:

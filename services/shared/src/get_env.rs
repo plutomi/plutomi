@@ -8,7 +8,7 @@ pub struct Env {
     pub MONGODB_URL: String,
     pub BASE_WEB_URL: String,
     pub ENVIRONMENT: String,
-    pub REDPANDA_BROKERS: String,
+    pub KAFKA_URL: String,
     pub AXIOM_DATASET: Option<String>,
     pub AXIOM_TOKEN: Option<String>,
     pub AXIOM_ORG_ID: Option<String>,
@@ -42,7 +42,7 @@ pub fn get_env() -> Env {
     Env {
         // Required
         MONGODB_URL: get_key_from_env("MONGODB_URL", None),
-        REDPANDA_BROKERS: get_key_from_env("REDPANDA_BROKERS", None),
+        KAFKA_URL: get_key_from_env("KAFKA_URL", None),
         ENVIRONMENT: get_key_from_env("ENVIRONMENT", Some("development")),
         BASE_WEB_URL: get_key_from_env("BASE_WEB_URL", Some("http://localhost:3000")),
         AXIOM_DATASET: get_optional_key_from_env("AXIOM_DATASET"),
