@@ -13,8 +13,8 @@ use time::OffsetDateTime;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
-        "template-test-consumer",
-        ConsumerGroups::Notifications,
+        "template-consumer",
+        ConsumerGroups::TemplateDoNotUse,
         Topics::Test,
         Arc::new(send_email),
     )?;

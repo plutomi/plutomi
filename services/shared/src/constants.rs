@@ -1,3 +1,6 @@
+/**
+ * ! If you add / modify topics here, make sure to update the docker-compose.yaml file to include the topic in the Kafka setup
+ */
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -27,19 +30,19 @@ impl From<&str> for Topics {
             "test" => Topics::Test,
             "test-retry" => Topics::TestRetry,
             "test-dlq" => Topics::TestDLQ,
-            _ => panic!("Invalid topic: {}", topic), // Panics for invalid topics
+            _ => panic!("Invalid topic: {}", topic),
         }
     }
 }
 
 pub enum ConsumerGroups {
-    Notifications,
+    TemplateDoNotUse,
 }
 
 impl ConsumerGroups {
     pub fn as_str(&self) -> &'static str {
         match self {
-            ConsumerGroups::Notifications => "notifications",
+            ConsumerGroups::TemplateDoNotUse => "template-do-not-use",
         }
     }
 }
