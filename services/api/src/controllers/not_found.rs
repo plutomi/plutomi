@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use axum::{
     extract::{OriginalUri, State},
@@ -7,7 +7,10 @@ use axum::{
     Extension,
 };
 use serde_json::{json, Value};
-use shared::{get_current_time::get_current_time, logger::{LogLevel, LogObject}};
+use shared::{
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
+};
 
 use crate::{
     constants::REQUEST_ID_HEADER,
@@ -19,7 +22,7 @@ pub async fn not_found(
     Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     OriginalUri(uri): OriginalUri,
     method: Method,
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     let not_found_message = format!("Route at: '{} {}' not found", method, uri.path());
 

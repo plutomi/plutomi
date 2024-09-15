@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use super::get_header_value::get_header_value;
 use crate::{constants::REQUEST_ID_HEADER, structs::api_error::ApiError, AppState};
@@ -10,10 +10,13 @@ use axum::{
     Extension,
 };
 use serde_json::{json, Value};
-use shared::{get_current_time::get_current_time, logger::{LogLevel, LogObject}};
+use shared::{
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
+};
 use time::OffsetDateTime;
 pub async fn timeout(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     request: Request,
     next: Next,

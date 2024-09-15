@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::{parse_request::parse_request, parse_response::parse_response};
 
 use crate::{constants, structs::api_error::ApiError, AppState};
@@ -28,7 +30,7 @@ use constants::REQUEST_ID_HEADER;
  *
  */
 pub async fn log_req_res(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     mut request: Request,
     next: Next,
 ) -> Response<Body> {
@@ -148,23 +150,23 @@ pub async fn log_req_res(
             }
 
             // Everything here should be ok
-            let parsed_response = parse_response(response).await.unwrap();
+            // let parsed_response = parse_response(response).await.unwrap();
 
             // Log the response
-            state.logger.log(LogObject {
-                level: match parsed_response.original_response.status().as_u16() {
-                    400..=599 => LogLevel::Error,
-                    _ => LogLevel::Debug,
-                },
-                error: None,
-                message: "Response sent".to_string(),
-                data: Some(json!({ "duration": duration_ms })),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                request: Some(json!(&request_data.request_as_hashmap)),
-                response: Some(json!(parsed_response.response_as_hashmap)),
-            });
+            // state.logger.log(LogObject {
+            //     level: match parsed_response.original_response.status().as_u16() {
+            //         400..=599 => LogLevel::Error,
+            //         _ => LogLevel::Debug,
+            //     },
+            //     error: None,
+            //     message: "Response sent".to_string(),
+            //     data: Some(json!({ "duration": duration_ms })),
+            //     _time: get_current_time(OffsetDateTime::now_utc()),
+            //     request: Some(json!(&request_data.request_as_hashmap)),
+            //     response: Some(json!(parsed_response.response_as_hashmap)),
+            // });
 
-            parsed_response.original_response
+            response
         }
     }
 }

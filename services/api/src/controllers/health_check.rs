@@ -7,7 +7,7 @@ use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 use time::OffsetDateTime;
 
 #[derive(Serialize, Deserialize)]
@@ -19,7 +19,7 @@ pub struct HealthCheckResponse {
 }
 
 pub async fn health_check(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
     let options: FindOneOptions = {
@@ -55,7 +55,7 @@ pub async fn health_check(
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
         database,
-        environment: state.env.ENVIRONMENT,
+        environment: state.env.ENVIRONMENT.clone(),
         docs_url: format!("{}/docs/api", state.env.BASE_WEB_URL),
     };
 

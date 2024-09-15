@@ -34,7 +34,7 @@ We have a typical setup of three streams per _entity_ if you will: a main stream
 
 - [Node 20](https://nodejs.org/en/download)
 - [Rust](https://www.rust-lang.org/tools/install)
-- [cmake](https://cmake.org/download/) - for `rdkafka` crate
+- [cmake](https://cmake.org/download/) - for [rdkafka dependency](https://github.com/fede1024/rust-rdkafka?tab=readme-ov-file#installation)
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 

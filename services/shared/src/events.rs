@@ -1,25 +1,6 @@
 use serde::{Deserialize, Serialize};
 // use strum_macros::{AsRefStr, EnumString};
 
-/**
- *
- */
-// #[derive(Debug, EnumString, AsRefStr, Serialize, Deserialize)]
-// #[strum(serialize_all = "snake_case")]
-// pub enum EventType {
-//     #[strum(serialize = "events.totp.requested")]
-//     TOTPRequested,
-// }
-
-// #[allow(non_snake_case)]
-// impl PlutomiEvent {
-//     pub fn event_type(&self) -> EventType {
-//         match self {
-//             PlutomiEvent::TOTPRequested(_) => EventType::TOTPRequested,
-//         }
-//     }
-// }
-
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "event_type", content = "payload")]
 // This tells Serde to look for an event_type field in the input JSON,

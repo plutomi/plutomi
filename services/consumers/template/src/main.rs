@@ -15,7 +15,7 @@ async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
         "template-test-consumer",
         ConsumerGroups::Notifications,
-        Topics::TestDLQ,
+        Topics::Test,
         Arc::new(send_email),
     )?;
 

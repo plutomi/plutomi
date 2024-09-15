@@ -10,7 +10,7 @@ use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 use time::OffsetDateTime;
 
 use crate::{
@@ -24,7 +24,7 @@ use crate::{
  * https://github.com/tokio-rs/axum/discussions/932#discussioncomment-2559645
  */
 pub async fn method_not_allowed(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     OriginalUri(uri): OriginalUri,
     method: Method,
