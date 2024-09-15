@@ -26,7 +26,7 @@ Make sure your `.settings.json` file has the correct path to your workspace. For
 {
   "rust-analyzer.linkedProjects": [
     "services/api/Cargo.toml",
-    "services/consumers/sample/Cargo.toml",
+    "services/consumers/template/Cargo.toml",
     "services/shared/Cargo.toml"
   ]
 }
