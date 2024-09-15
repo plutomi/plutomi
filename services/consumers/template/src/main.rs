@@ -34,25 +34,25 @@ fn send_email(
         let payload = plutomi_consumer.parse_message(message)?;
 
         match payload {
-            PlutomiEvent::OrderCreated(order_payload) => {
+            PlutomiEvent::TemplateDoNotUse(template_payload) => {
                 plutomi_consumer.logger.log(LogObject {
                     level: LogLevel::Info,
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     message: format!("Processing order created event"),
-                    data: Some(json!(order_payload)),
+                    data: Some(json!(template_payload)),
                     error: None,
                     request: None,
                     response: None,
                 });
 
-                if order_payload.order_id.contains("crash me") && !message.topic().contains("dlq") {
+                if template_payload.email.contains("crash me") && !message.topic().contains("dlq") {
                     return Err(ConsumerError::KafkaError("Crashing on purpose".to_string()));
                 }
                 plutomi_consumer.logger.log(LogObject {
                     level: LogLevel::Info,
                     message: format!("Processed order created event"),
                     _time: get_current_time(OffsetDateTime::now_utc()),
-                    data: Some(json!(order_payload)),
+                    data: Some(json!(template_payload)),
                     error: None,
                     request: None,
                     response: None,

@@ -2,7 +2,7 @@ use axum::{extract::State, http::StatusCode, Json};
 use mongodb::bson::doc;
 use serde::Serialize;
 use shared::{
-    events::{OrderCreatedPayload, PlutomiEvent},
+    events::{PlutomiEvent, TemplatePayloadDoNotUse},
     get_env::get_env,
     mongodb::MongoDB,
 };
@@ -26,10 +26,8 @@ pub async fn request_totp(
         environment: get_env().ENVIRONMENT,
     };
 
-    let event = PlutomiEvent::OrderCreated(OrderCreatedPayload {
-        order_id: "12345".to_string(),
-        customer_id: "67890".to_string(),
-        total: 1000,
+    let event = PlutomiEvent::TemplateDoNotUse(TemplatePayloadDoNotUse {
+        email: "test".to_string(),
     });
 
     // Serialize the event to JSON

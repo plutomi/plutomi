@@ -1,26 +1,13 @@
 use serde::{Deserialize, Serialize};
-// use strum_macros::{AsRefStr, EnumString};
 
 #[derive(Debug, Serialize, Deserialize)]
+// Use `event_type` field to store the variant name and `payload` to store its data
 #[serde(tag = "event_type", content = "payload")]
-// This tells Serde to look for an event_type field in the input JSON,
-// and based on that field, it will deserialize the payload into
-// the appropriate variant of PlutomiEvent. The payload field holds the data for each specific event.
 pub enum PlutomiEvent {
     #[serde(rename = "totp.requested")]
-    TOTPRequested(TOTPRequestedPayload),
-    #[serde(rename = "order.created")]
-    OrderCreated(OrderCreatedPayload),
+    TemplateDoNotUse(TemplatePayloadDoNotUse),
 }
-
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TOTPRequestedPayload {
+pub struct TemplatePayloadDoNotUse {
     pub email: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct OrderCreatedPayload {
-    pub order_id: String,
-    pub customer_id: String,
-    pub total: u64,
 }
