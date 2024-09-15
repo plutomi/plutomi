@@ -113,17 +113,6 @@ Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). I
 
 ---
 
-## TODO troubleshooting rust analyzer
-
-.vscode
-{
-"rust-analyzer.linkedProjects": [
-"services/api/Cargo.toml",
-"services/consumers/orders/Cargo.toml",
-"services/shared/Cargo.toml"
-]
-}
-
 ### Adding anew consumer
 
 --
