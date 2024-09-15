@@ -8,5 +8,5 @@ pub struct AppState {
     pub logger: Arc<Logger>,
     pub mongodb: Arc<MongoDB>,
     pub env: Env,
-    pub producer: FutureProducer,
+    pub producer: Arc<FutureProducer>,
 }

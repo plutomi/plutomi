@@ -82,7 +82,7 @@ async fn main() {
         logger: Arc::clone(&logger),
         mongodb,
         env,
-        producer,
+        producer: Arc::new(producer),
     });
 
     // Redirect to web app routes
