@@ -22,7 +22,7 @@ Plutomi allows you to create `applications` for anything from jobs to program en
 
 ## Tech Stack
 
-The frontend is built with [Remix](https://remix.run/) and [Express](https://expressjs.com/), while the API is written in Rust using the [Axum framework](https://github.com/tokio-rs/axum). All data is stored [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094) inside [MongoDB](https://mongodb.com/), and we use [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. The event-driven architecture is powered by [Kafka](https://kafka.apache.org/), and we use [Valkey](https://valkey.io/) for rate limiting mostly. We send emails with SES, and setup SNS and SQS for email events. We have a handful of consumers all written in Rust which do all asynchronous work. We use Axiom for logging and Kubernetes with [K3S](https://k3s.io/) for orchestration. We plan to add [MeiliSearch](https://www.meilisearch.com/) for search and [ClickHouse](https://clickhouse.tech/) for analytics.
+The frontend is built with [Remix](https://remix.run/) and [Express](https://expressjs.com/), while the API is written in Rust using the [Axum framework](https://github.com/tokio-rs/axum). All data is stored [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094) inside [MongoDB](https://mongodb.com/), and we use [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. The event-driven architecture is powered by [Kafka](https://kafka.apache.org/), and we use [Valkey](https://valkey.io/) for rate limiting mostly. We send emails with SES, and setup SNS and SQS for email events. We have a handful of consumers all written in Rust which do all asynchronous work. We use [Axiom](https://axiom.co/) for logging and use [Kubernetes with K3S](https://k3s.io/) for orchestration. We plan to add [MeiliSearch](https://www.meilisearch.com/) for search and [ClickHouse](https://clickhouse.tech/) for analytics.
 
 ### Event Streaming Pipeline
 
@@ -49,7 +49,7 @@ $ ./scripts/run.sh
 
 > Credentials for all datasources are `admin` and `password`.
 
-You can also run any stack individually:
+You can also run any service individually:
 
 ```bash
 $ ./scripts/run.sh --stack <web|api|consumers>
