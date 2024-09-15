@@ -50,7 +50,7 @@ fn send_email(
                 }
                 plutomi_consumer.logger.log(LogObject {
                     level: LogLevel::Info,
-                    message: format!("Processed order created event in DLQ"),
+                    message: format!("Processed order created event"),
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     data: Some(json!(order_payload)),
                     error: None,
