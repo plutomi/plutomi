@@ -13,6 +13,7 @@ const BASE62_CHARS: &[u8] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn
 #[derive(Debug, PartialOrd, Ord, Clone, Copy, PartialEq, Eq)]
 pub struct PlutomiId([u8; TOTAL_BYTES]);
 
+// TODO Remove prefix
 impl PlutomiId {
     // Creates a new PlutomiId with the specified OffsetDateTime. Use OffsetDateTime::now_utc():
     pub fn new(datetime: &OffsetDateTime, entity: Entities) -> String {
