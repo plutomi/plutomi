@@ -4,7 +4,7 @@ This folder is to document why certain architectural decisions were made so when
 
 [Why K3S?](why-k3s.md "Why K3S?")
 
-[Why NATS + Jetstream?](why-nats.md "Why NATS + Jetstream?")
+[Why Kafka?](why-kafka.md "Why Kafka?")
 
 [Why not AWS?](why-not-aws.md "Why not AWS?")
 

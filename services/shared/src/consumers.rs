@@ -78,7 +78,7 @@ impl PlutomiConsumer {
             .set("bootstrap.servers", &env.KAFKA_URL)
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
-            .set("enable.auto.commit", "false")
+            .set("enable.auto.commit", "true")
             .set("auto.offset.reset", "earliest")
             .set("auto.commit.interval.ms", "1000")
             .create()
