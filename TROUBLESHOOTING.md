@@ -19,7 +19,7 @@ Make sure to `export KUBECONFIG=/etc/rancher/k3s/k3s.yaml` in your node first.
 
 "FetchWorkspaceError: rust-analyzer failed to load workspace: Failed to load the project at $DIRECTORY"
 
-Make sure your `.settings.json` file has the correct path to your workspace. For example:
+Make sure your `.vscode/.settings.json` file has the correct path to your workspace. For example:
 
 ```json
 {
