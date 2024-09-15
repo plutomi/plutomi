@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 // Use `event_type` field to store the variant name and `payload` to store its data
 #[serde(tag = "event_type", content = "payload")]
 pub enum PlutomiEvent {
-    #[serde(rename = "totp.requested")]
+    #[serde(rename = "template-do-not-use.created")]
     TemplateDoNotUse(TemplatePayloadDoNotUse),
 }
 #[derive(Debug, Serialize, Deserialize)]
