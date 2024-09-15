@@ -15,7 +15,7 @@ services:
       - mongo_data:/data/mongodb
 
   kafka:
-    image: "bitnami/kafka:latest"
+    image: bitnami/kafka:latest
     networks:
       - kafka
     ports:
@@ -30,6 +30,28 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
     volumes:
       - kafka_data:/data/kafka
+
+  topic-creator:
+    image: bitnami/kafka:latest
+    networks:
+      - kafka
+    depends_on:
+      - kafka
+    entrypoint: >
+      /bin/bash -c " \
+      echo 'Waiting for Kafka to be reachable...'; \
+      while ! /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list > /dev/null 2>&1; do \
+        echo 'Kafka is not reachable yet, retrying...'; \
+        sleep 5; \
+      done; \
+      echo 'Kafka is reachable, creating topics...'; \
+      topics=(test test-retry test-dlq); \
+      for topic in $${topics[@]}; do \
+        /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 && echo \"Topic $${topic} created or already exists.\"; \
+      done; \
+      echo 'Successfully created all topics.' \
+      "
+    restart: "no"
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest

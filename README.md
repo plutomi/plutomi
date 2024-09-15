@@ -86,21 +86,21 @@ The system is configuration-driven, allowing easy adjustments to streams, consum
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
-Simply copy the `.env.example` file to `.env` and execute the `run.sh` script:
+To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MongoDB, Kafka with the required topics, and KafkaUI on ports 27017, 9092, and 9000 respectively.
+
+Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script to start the API, Web, and Consumer services.
 
 ```bash
 $ cp .env.example .env
 $ ./scripts/run.sh
 ```
 
-This will setup MongoDB, Web, API, Kafka, and KafkaUI on ports 27017, 3000, 8080, 9092, 9000 respectively. Consumers will run in the background as well.
-
 > Credentials for all datasources are `admin` and `password`.
 
 You can also run any stack individually:
 
 ```bash
-$ ./scripts/run.sh --stack <web|api|datasources|consumer> TODO consumer
+$ ./scripts/run.sh --stack <web|api|consumers> TODO consumer
 ```
 
 #### Deploying and Self-Hosting

@@ -168,10 +168,10 @@ impl PlutomiConsumer {
 
     pub fn get_next_topic(&self, topic: Topics) -> Option<Topics> {
         match topic {
-            Topics::Orders => Some(Topics::OrdersRetry),
-            Topics::OrdersRetry => Some(Topics::OrdersDLQ),
+            Topics::Test => Some(Topics::TestRetry),
+            Topics::TestRetry => Some(Topics::TestDLQ),
             // Don't retry DLQ messages
-            Topics::OrdersDLQ => None,
+            Topics::TestDLQ => None,
         }
     }
 
