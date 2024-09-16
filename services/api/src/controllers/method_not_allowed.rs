@@ -5,7 +5,6 @@ use axum::{
     response::IntoResponse,
     Extension,
 };
-use hyper::HeaderMap;
 use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
@@ -14,10 +13,7 @@ use shared::{
 use std::sync::Arc;
 use time::OffsetDateTime;
 
-use crate::{
-    structs::{api_error::ApiError, app_state::AppState},
-    utils::get_header_value::get_header_value,
-};
+use crate::structs::{api_error::ApiError, app_state::AppState};
 
 /**
  * 405 fallback handler. This is needed because of this:
@@ -25,11 +21,10 @@ use crate::{
  */
 pub async fn method_not_allowed(
     State(state): State<Arc<AppState>>,
-    headers: HeaderMap,
     OriginalUri(uri): OriginalUri,
+    Extension(request_id): Extension<String>,
     method: Method,
     req: Request,
-    Extension(request_id): Extension<String>,
     next: Next,
 ) -> impl IntoResponse {
     // Check the response on the way out
@@ -45,14 +40,16 @@ pub async fn method_not_allowed(
                 plutomi_code: None,
                 status_code: status.as_u16(),
                 docs_url: None,
-                request_id,
+                request_id: request_id.clone(),
             };
 
             state.logger.log(LogObject {
                 level: LogLevel::Error,
                 error: Some(json!(api_error)),
                 message,
-                data: None,
+                data: Some(json!({
+                    "request_id": &request_id,
+                })),
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 request: None,
                 response: None,

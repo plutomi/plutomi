@@ -29,9 +29,6 @@ struct OriginalRequest {
     request_id: String,
 }
 
-const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
-const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
-const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
 // const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
 
 /**
@@ -41,21 +38,14 @@ const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
 // Middleware to log request body and other details
 pub async fn log_request(
     state: State<Arc<AppState>>,
-    mut req: Request<Body>,
+    req: Request<Body>,
     next: Next,
-) -> Result<Response<Body>, axum::Error> {
+) -> Response<Body> {
     // Start a timer to see how long it takes us to process it
     let start_time = OffsetDateTime::now_utc();
-    let formatted_start_time = get_current_time(start_time);
 
     // Generate a request ID
     let request_id = PlutomiId::new(&start_time, Entities::Request);
-
-    // On the way in, add a timestamp header
-    req.headers_mut().insert(
-        REQUEST_TIMESTAMP_HEADER,
-        HeaderValue::from_str(&formatted_start_time).unwrap_or(UNKNOWN_HEADER),
-    );
 
     // Extract the request details
     let (incoming_parts, incoming_body) = req.into_parts();
@@ -138,10 +128,10 @@ pub async fn log_request(
             "request_id": request_id,
             "request": original_request,
             "response": json!({
-            "status": outgoing_status.as_u16(),
-            "headers": outgoing_headers,
-            // We don't know the format of the response so just log as string
-            "body": outgoing_body_string,
+                "status": outgoing_status.as_u16(),
+                "headers": outgoing_headers,
+                // We don't know the format of the response so just log as string
+                "body": outgoing_body_string,
             }),
         })),
         error: None,
@@ -149,5 +139,5 @@ pub async fn log_request(
         response: None,
     });
 
-    Ok(final_response)
+    final_response
 }

@@ -23,9 +23,9 @@ const MAX_REQUEST_DURATION: Duration = Duration::from_secs(10);
 
 pub async fn timeout(
     State(state): State<Arc<AppState>>,
+    Extension(request_id): Extension<String>,
     request: Request,
     next: Next,
-    Extension(request_id): Extension<String>,
 ) -> impl IntoResponse {
     // Call the next middleware and timeout after 10 seconds
     // Send a response if the timeout is hit
