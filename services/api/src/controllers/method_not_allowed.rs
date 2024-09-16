@@ -14,7 +14,6 @@ use std::sync::Arc;
 use time::OffsetDateTime;
 
 use crate::{
-    constants::REQUEST_ID_HEADER,
     structs::{api_error::ApiError, app_state::AppState},
     utils::get_header_value::get_header_value,
 };

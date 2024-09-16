@@ -1,7 +1,6 @@
 /**
  * For reusable consts throughout the app
  */
-pub const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 
 // WIP
 pub const RESERVED_WORKSPACE_IDS: &[&str; 246] = &[

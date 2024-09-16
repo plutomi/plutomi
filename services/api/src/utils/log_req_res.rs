@@ -1,8 +1,4 @@
-use crate::{
-    constants::{self, REQUEST_ID_HEADER},
-    utils::headers_to_hashmap::headers_to_hashmap,
-    AppState,
-};
+use crate::{utils::headers_to_hashmap::headers_to_hashmap, AppState};
 use axum::{
     body::{Body, Bytes},
     extract::{Request, State},
@@ -10,9 +6,8 @@ use axum::{
     middleware::Next,
 };
 use http_body_util::BodyExt;
-use hyper::HeaderMap;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::json;
 use shared::{
     entities::Entities,
     generate_id::PlutomiId,
@@ -31,6 +26,7 @@ struct OriginalRequest {
     headers: HashMap<String, String>,
     query: String,
     body: String,
+    request_id: String,
 }
 
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
@@ -52,16 +48,14 @@ pub async fn log_request(
     let start_time = OffsetDateTime::now_utc();
     let formatted_start_time = get_current_time(start_time);
 
+    // Generate a request ID
+    let request_id = PlutomiId::new(&start_time, Entities::Request);
+
     // On the way in, add a timestamp header
     req.headers_mut().insert(
         REQUEST_TIMESTAMP_HEADER,
         HeaderValue::from_str(&formatted_start_time).unwrap_or(UNKNOWN_HEADER),
     );
-
-    let request_id = PlutomiId::new(&start_time, Entities::Request);
-    let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);
-    req.headers_mut()
-        .insert(REQUEST_ID_HEADER, request_id_value);
 
     // Extract the request details
     let (incoming_parts, incoming_body) = req.into_parts();
@@ -75,20 +69,24 @@ pub async fn log_request(
 
     let incoming_body_string = String::from_utf8_lossy(&incoming_body_as_bytes);
 
-    // Save a copy of it, and pass it along to other handlers
+    // Log incoming request
     let original_request = OriginalRequest {
+        request_id: request_id.clone(),
         method: incoming_parts.method.to_string(),
         path: incoming_uri.path().to_string(),
         query: incoming_uri.query().unwrap_or("").to_string(),
-        body: incoming_body_string.to_string(),
         headers: headers_to_hashmap(&incoming_parts.headers),
+        body: incoming_body_string.to_string(),
     };
 
     state.logger.log(LogObject {
         level: LogLevel::Debug,
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Incoming request".to_string(),
-        data: Some(json!(original_request)),
+        data: Some(json!({
+            "request_id": request_id.clone(),
+            "request": &original_request,
+        })),
         error: None,
         request: None,
         response: None,
@@ -98,9 +96,10 @@ pub async fn log_request(
     let new_incoming_body = Body::from(incoming_body_as_bytes);
     let mut reconstructed_request = Request::from_parts(incoming_parts, new_incoming_body);
 
+    // Add request ID to extensions for use in handler responses for easy lookups
     reconstructed_request
         .extensions_mut()
-        .insert(original_request);
+        .insert(request_id.clone());
 
     // Call the next middleware or handler
     let response = next.run(reconstructed_request).await;
@@ -133,10 +132,13 @@ pub async fn log_request(
         data: Some(json!({
             "duration_ms": duration_ms,
             "request_id": request_id,
+            "request": original_request,
+            "response": json!({
             "status": outgoing_status.as_u16(),
             "headers": outgoing_headers,
             // We don't know the format of the response so just log as string
             "body": outgoing_body_string,
+            }),
         })),
         error: None,
         request: None,
