@@ -1,47 +1,60 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{sync::Arc, time::Duration};
 
 use super::get_header_value::get_header_value;
 use crate::{constants::REQUEST_ID_HEADER, structs::api_error::ApiError, AppState};
 use axum::{
+    body,
     extract::{Request, State},
     http::StatusCode,
     middleware::Next,
     response::IntoResponse,
-    Extension,
 };
-use serde_json::{json, Value};
+use hyper::HeaderMap;
+use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
+
 use time::OffsetDateTime;
+
+const MAX_REQUEST_DURATION: Duration = Duration::from_secs(10);
+
 pub async fn timeout(
     State(state): State<Arc<AppState>>,
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     request: Request,
+    headers: HeaderMap,
     next: Next,
 ) -> impl IntoResponse {
+    let (parts, body) = request.into_parts();
+
     // Call the next middleware and timeout after 10 seconds
     // Send a response if the timeout is hit
-    match tokio::time::timeout(std::time::Duration::from_secs(10), next.run(request)).await {
+    match tokio::time::timeout(MAX_REQUEST_DURATION, next.run(request)).await {
         Ok(response) => response,
         Err(_) => {
             let status = StatusCode::REQUEST_TIMEOUT;
             let message = "Request took too long to process. Please try again.".to_string();
-            let log_object = LogObject {
+            state.logger.log(LogObject {
                 level: LogLevel::Error,
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 message: message.clone(),
-                data: None,
+                data: Some(json!({
+                    "request_id": get_header_value(REQUEST_ID_HEADER, headers),
+                    "method": parts.method.to_string(),
+                    "path": parts.uri.path(),
+                    "query": parts.uri.query().unwrap_or(""),
+                    "headers": headers,
+                    "body": body::to_bytes(body).await.unwrap_or_default(),
+                })),
                 error: None,
-                request: Some(json!(&request_as_hashmap)),
+                request: None,
                 response: None,
-            };
-            state.logger.log(log_object);
+            });
 
             let api_error = ApiError {
                 message,
-                request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
+                request_id: get_header_value(REQUEST_ID_HEADER, headers),
                 status_code: status.as_u16(),
                 docs_url: None,
                 plutomi_code: None,

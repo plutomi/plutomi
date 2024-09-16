@@ -2,67 +2,34 @@ use super::headers_to_hashmap::headers_to_hashmap;
 use axum::{
     body::{Body, Bytes},
     extract::Request,
-    http::Method,
+    http::request::Parts,
 };
 use http_body_util::BodyExt;
-use serde_json::{from_slice, json, Value};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ParsedRequest {
-    // We need to recreate the request since we consume the body to extract it as bytes
-    // The reason we do this is so that we can actually log it as a json serializable object
-    pub original_request: Request,
-    // For logging in middleware, we need the body as a json serializable object
-    pub request_as_hashmap: HashMap<String, Value>,
+    pub method: String,
+    pub path: String,
+    pub query: String,
+    pub headers: HashMap<String, String>,
+    pub body: String,
 }
 
-pub async fn parse_request(request: Request) -> Result<ParsedRequest, String> {
-    // Split the request into parts
-    let (parts, body) = request.into_parts();
+// Sometimes we need the request as a JSON object
+pub async fn parse_request(incoming_parts: &Parts, incoming_body_as_bytes: Bytes) -> ParsedRequest {
+    let incoming_uri = &incoming_parts.uri;
 
-    let mut request_as_hashmap = HashMap::<String, Value>::new();
+    // Buffer the body so we can log it
 
-    request_as_hashmap.insert("method".to_string(), json!(parts.method.to_string()));
+    let incoming_body_string = String::from_utf8_lossy(&incoming_body_as_bytes);
 
-    request_as_hashmap.insert("path".to_string(), json!(parts.uri.path().to_string()));
-    request_as_hashmap.insert(
-        "query".to_string(),
-        json!(parts.uri.query().map(|q| q.to_string())),
-    );
-
-    request_as_hashmap.insert("uri".to_string(), json!(parts.uri.to_string()));
-    request_as_hashmap.insert(
-        "headers".to_string(),
-        json!(headers_to_hashmap(&parts.headers)),
-    );
-
-    // Only parse the body if the request method is POST or PUT
-    let bytes = match parts.method {
-        Method::POST | Method::PUT => {
-            let bytes = body
-                .collect()
-                .await
-                .map_err(|_e| "Error collecting body into bytes".to_string())?
-                .to_bytes();
-
-            if !bytes.is_empty() {
-                // Only parse the body if it's not empty
-                let body_json = from_slice::<Value>(&bytes)
-                    .map_err(|_e| "Error parsing body into hash map".to_string())?;
-                request_as_hashmap.insert("body".to_string(), body_json);
-            }
-
-            bytes
-        }
-        // Empty body for GET, DELETE, etc
-        _ => Bytes::new(),
-    };
-
-    // Once you consume the body, you have to re-create the request
-    let original_request = Request::from_parts(parts.clone(), Body::from(bytes.clone()));
-
-    Ok(ParsedRequest {
-        original_request,
-        request_as_hashmap,
-    })
+    ParsedRequest {
+        method: incoming_parts.method.to_string(),
+        headers: headers_to_hashmap(&incoming_parts.headers),
+        query: incoming_uri.query().unwrap_or("").to_string(),
+        path: incoming_uri.path().to_string(),
+        body: incoming_body_string.to_string(),
+    }
 }

@@ -10,17 +10,37 @@ use axum::{
     middleware::Next,
 };
 use http_body_util::BodyExt;
-use serde_json::json;
+use serde_json::{json, Value};
 use shared::{
     entities::Entities,
     generate_id::PlutomiId,
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
-
-use std::sync::Arc;
 use time::OffsetDateTime;
 
+use std::sync::Arc;
+
+use super::parse_request::parse_request;
+
+// fn request_to_json(request: &Request<Body>) -> Value {
+//     let (parts, body) = request.into_parts();
+//     let method = parts.method.to_string();
+//     let uri = parts.uri.to_string();
+//     let headers = headers_to_hashmap(&parts.headers);
+//     let query = parts.uri.query().unwrap_or("");
+//     let path = parts.uri.path();
+//     let body_string = String::from_utf8_lossy(&body.to_bytes());
+
+//     json!({
+//         "method": method,
+//         "uri": uri,
+//         "headers": headers,
+//         "query": query,
+//         "path": path,
+//         "body": body_string,
+//     })
+// }
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
 const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
@@ -49,45 +69,29 @@ pub async fn log_request(
     let request_id = PlutomiId::new(&start_time, Entities::Request);
     let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);
     req.headers_mut()
-        .insert(REQUEST_ID_HEADER, request_id_value.clone());
+        .insert(REQUEST_ID_HEADER, request_id_value);
 
-    let (incoming_parts, body) = req.into_parts();
-
-    // Extract request details
-    let incoming_method = &incoming_parts.method.to_string();
-    let incoming_uri = &incoming_parts.uri;
-    let incoming_headers = headers_to_hashmap(&incoming_parts.headers);
-    let incoming_query = incoming_uri.query().unwrap_or("");
-    let incoming_path = incoming_uri.path();
-
-    // Buffer the body so we can log it
-    let incoming_body_bytes: Bytes = match body.collect().await {
+    let (incoming_parts, incoming_body) = req.into_parts();
+    let incoming_body_as_bytes: Bytes = match incoming_body.collect().await {
         Ok(collected) => collected.to_bytes(),
         Err(_) => Bytes::from(""),
     };
 
-    let incoming_body_string = String::from_utf8_lossy(&incoming_body_bytes);
+    // Consume the body once so we can log it
+    let incoming_request = parse_request(&incoming_parts, incoming_body_as_bytes.clone()).await;
 
     state.logger.log(LogObject {
         level: LogLevel::Debug,
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Incoming request".to_string(),
-        data: Some(json!({
-            "request_id": request_id,
-            "method": incoming_method,
-            "path": incoming_path,
-            "query": incoming_query,
-            "headers": incoming_headers,
-            // We don't know what the body is yet, so we'll log it formatted later
-            "body": incoming_body_string,
-        })),
+        data: Some(json!(&incoming_request)),
         error: None,
         request: None,
         response: None,
     });
 
     // Recreate the request with the buffered body
-    let new_incoming_body = Body::from(incoming_body_bytes.clone());
+    let new_incoming_body = Body::from(Bytes::from(incoming_body_as_bytes));
     let reconstructed_request = Request::from_parts(incoming_parts, new_incoming_body);
 
     // Call the next middleware or handler

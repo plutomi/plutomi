@@ -21,7 +21,7 @@ use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
 use tracing::info;
-use utils::{log_req_res::log_req_res, timeout::timeout};
+use utils::{log_req_res::log_request, timeout::timeout};
 
 mod constants;
 mod controllers;
@@ -104,7 +104,7 @@ async fn main() {
             ServiceBuilder::new()
                 .layer(middleware::from_fn_with_state(
                     Arc::clone(&state),
-                    log_req_res,
+                    log_request,
                 ))
                 .layer(middleware::from_fn_with_state(Arc::clone(&state), timeout))
                 .layer(middleware::from_fn_with_state(

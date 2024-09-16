@@ -20,7 +20,6 @@ pub struct HealthCheckResponse {
 
 pub async fn health_check<'a>(
     State(state): State<Arc<AppState>>,
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
     let options: FindOneOptions = {
         let mut options = FindOneOptions::default();
@@ -48,7 +47,7 @@ pub async fn health_check<'a>(
             message: "Failed to connect to database for health check".to_string(),
             data: None,
             error: Some(json!(e.to_string())),
-            request: Some(json!(request_as_hashmap)),
+            request: None,
             response: None,
         });
     }
@@ -68,8 +67,8 @@ pub async fn health_check<'a>(
         message: "Health check response".to_string(),
         data: None,
         error: None,
-        request: Some(json!(request_as_hashmap)),
-        response: Some(json!(&response)),
+        request: None,
+        response: None,
     });
 
     (StatusCode::OK, Json(response))

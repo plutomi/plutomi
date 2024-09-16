@@ -3,14 +3,14 @@ use axum::{
     http::{Method, StatusCode},
     middleware::Next,
     response::IntoResponse,
-    Extension,
 };
-use serde_json::{json, Value};
+use hyper::HeaderMap;
+use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
-use std::{collections::HashMap, sync::Arc};
+use std::sync::Arc;
 use time::OffsetDateTime;
 
 use crate::{
@@ -25,7 +25,7 @@ use crate::{
  */
 pub async fn method_not_allowed(
     State(state): State<Arc<AppState>>,
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
+    headers: HeaderMap,
     OriginalUri(uri): OriginalUri,
     method: Method,
     req: Request,
@@ -44,7 +44,7 @@ pub async fn method_not_allowed(
                 plutomi_code: None,
                 status_code: status.as_u16(),
                 docs_url: None,
-                request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
+                request_id: get_header_value(REQUEST_ID_HEADER, headers),
             };
 
             state.logger.log(LogObject {
@@ -53,7 +53,7 @@ pub async fn method_not_allowed(
                 message,
                 data: None,
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                request: Some(json!(request_as_hashmap)),
+                request: None,
                 response: None,
             });
 

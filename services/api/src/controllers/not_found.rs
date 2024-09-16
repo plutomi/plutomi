@@ -6,6 +6,7 @@ use axum::{
     response::IntoResponse,
     Extension,
 };
+use hyper::HeaderMap;
 use serde_json::{json, Value};
 use shared::{
     get_current_time::get_current_time,
@@ -19,9 +20,9 @@ use crate::{
 };
 
 pub async fn not_found(
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     OriginalUri(uri): OriginalUri,
     method: Method,
+    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     let not_found_message = format!("Route at: '{} {}' not found", method, uri.path());
@@ -32,7 +33,7 @@ pub async fn not_found(
         plutomi_code: None,
         status_code: status.as_u16(),
         docs_url: None,
-        request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
+        request_id: get_header_value(REQUEST_ID_HEADER, headers),
     };
 
     state.logger.log(LogObject {
@@ -41,8 +42,8 @@ pub async fn not_found(
         message: not_found_message,
         data: None,
         error: None,
-        request: Some(json!(request_as_hashmap)),
-        response: Some(json!(&api_error)),
+        request: None,
+        response: None,
     });
 
     api_error.into_response()
