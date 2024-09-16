@@ -56,7 +56,7 @@ pub async fn timeout(
 
             let api_error = ApiError {
                 message,
-                request_id: get_header_value(REQUEST_ID_HEADER, headers),
+                request_id,
                 status_code: status.as_u16(),
                 docs_url: None,
                 plutomi_code: None,

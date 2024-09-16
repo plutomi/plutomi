@@ -28,24 +28,28 @@ impl IntoResponse for ApiError {
      */
     fn into_response(self) -> Response<Body> {
         // Serialize your JSON value into a String
-        let json_string = json!({
+        let body = Body::from(json!({
             "message": self.message,
             "code": StatusCode::from_u16(self.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).canonical_reason().unwrap_or("unknown"),
             "status_code": self.status_code,
             "plutomi_code": self.plutomi_code, // null if not set
             "docs_url": self.docs_url.unwrap_or(format!("{}/docs/api", &get_env().BASE_WEB_URL).to_string()),
-            "request_id": self.request_id
         })
-        .to_string();
-
-        // Convert the String into a Body
-        let body = Body::from(json_string);
+        .to_string());
 
         // Build the response
         Response::builder()
             .status(self.status_code)
             .header(header::CONTENT_TYPE, "application/json")
+            .header("x-plutomi-request-id", self.request_id)
             .body(body)
-            .unwrap() // This unwrap is safe as long as the header and status code are valid
+            .unwrap_or_else(|e| {
+                // If we can't build the response, log the error and return a 500
+                eprintln!("Failed to build response: {}", e);
+                Response::builder()
+                    .status(StatusCode::INTERNAL_SERVER_ERROR)
+                    .body(Body::from("Internal Server Error"))
+                    .unwrap()
+            })
     }
 }
