@@ -3,6 +3,7 @@ use axum::{
     http::{Method, StatusCode},
     middleware::Next,
     response::IntoResponse,
+    Extension,
 };
 use hyper::HeaderMap;
 use serde_json::json;
@@ -28,6 +29,7 @@ pub async fn method_not_allowed(
     OriginalUri(uri): OriginalUri,
     method: Method,
     req: Request,
+    Extension(request_id): Extension<String>,
     next: Next,
 ) -> impl IntoResponse {
     // Check the response on the way out
@@ -43,7 +45,7 @@ pub async fn method_not_allowed(
                 plutomi_code: None,
                 status_code: status.as_u16(),
                 docs_url: None,
-                request_id: get_header_value(REQUEST_ID_HEADER, headers),
+                request_id,
             };
 
             state.logger.log(LogObject {

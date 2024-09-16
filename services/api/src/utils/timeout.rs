@@ -1,13 +1,14 @@
 use std::{sync::Arc, time::Duration};
 
 use super::get_header_value::get_header_value;
-use crate::{constants::REQUEST_ID_HEADER, structs::api_error::ApiError, AppState};
+use crate::{structs::api_error::ApiError, AppState};
 use axum::{
     body,
     extract::{Request, State},
     http::StatusCode,
     middleware::Next,
     response::IntoResponse,
+    Extension,
 };
 use hyper::HeaderMap;
 use serde_json::json;
@@ -25,6 +26,7 @@ pub async fn timeout(
     request: Request,
     headers: HeaderMap,
     next: Next,
+    Extension(request_id): Extension<String>,
 ) -> impl IntoResponse {
     let (parts, body) = request.into_parts();
 
@@ -40,7 +42,7 @@ pub async fn timeout(
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 message: message.clone(),
                 data: Some(json!({
-                    "request_id": get_header_value(REQUEST_ID_HEADER, headers),
+                    "request_id": request_id,
                     "method": parts.method.to_string(),
                     "path": parts.uri.path(),
                     "query": parts.uri.query().unwrap_or(""),

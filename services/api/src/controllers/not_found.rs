@@ -1,4 +1,4 @@
-use std::{ sync::Arc};
+use std::sync::Arc;
 
 use axum::{
     extract::{OriginalUri, State},
@@ -22,6 +22,7 @@ pub async fn not_found(
     OriginalUri(uri): OriginalUri,
     method: Method,
     headers: HeaderMap,
+    Extension(request_id): Extension<String>,
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     let not_found_message = format!("Route at: '{} {}' not found", method, uri.path());
@@ -32,7 +33,7 @@ pub async fn not_found(
         plutomi_code: None,
         status_code: status.as_u16(),
         docs_url: None,
-        request_id: get_header_value(REQUEST_ID_HEADER, headers),
+        request_id: request_id,
     };
 
     state.logger.log(LogObject {
