@@ -7,14 +7,14 @@
 - [Sealed Secrets](#sealed-secrets)
 - [Datasources](#create-our-data-sources)
   - [MongoDB](#mongodb-replication)
-  - [NATS + Jetstream](#NATS-Jetstream)
+  - [Kafka](#Kafka) TODO
 - [Monitoring (Axiom)](#monitoring)
 
 ## Prerequisites
 
 Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
-For the datastores, we use [MongoDB](https://mongodb.com/) and [NATS](https://nats.io/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet as we don't have faith on the open source K8s operator from reading various reviews. For NATS, we are using the [official Helm chart directly](https://docs.nats.io/running-a-nats-service/nats-kubernetes).
+For the datastores, we use [MongoDB](https://mongodb.com/) and [Kafka](https://kafka.apache.org/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet as we don't have faith on the open source K8s operator from reading various reviews. TODO kafka strimzi
 
 Plutomi has _not_ been tested to run on a VPS with networked storage like EC2, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
 
@@ -344,15 +344,7 @@ db.createUser({
 })
 ```
 
-### NATS Jetstream
-
-Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file.
-
-```bash
-helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-helm repo update
-helm upgrade --install nats nats/nats -f values/nats.yaml
-```
+### TODO kafka strimzi
 
 ## Deploy the Services
 

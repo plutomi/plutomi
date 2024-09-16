@@ -13,7 +13,7 @@ use shared::{
 use std::sync::Arc;
 use time::OffsetDateTime;
 
-use crate::structs::{api_error::ApiError, app_state::AppState};
+use crate::structs::{api_response::ApiError, app_state::AppState};
 
 /**
  * 405 fallback handler. This is needed because of this:

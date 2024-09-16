@@ -1,4 +1,4 @@
-use crate::structs::{api_error::ApiError, app_state::AppState};
+use crate::structs::{api_response::ApiError, app_state::AppState};
 use axum::{
     extract::{OriginalUri, State},
     http::{Method, StatusCode},
