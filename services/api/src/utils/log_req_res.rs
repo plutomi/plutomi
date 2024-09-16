@@ -21,26 +21,6 @@ use time::OffsetDateTime;
 
 use std::sync::Arc;
 
-use super::parse_request::parse_request;
-
-// fn request_to_json(request: &Request<Body>) -> Value {
-//     let (parts, body) = request.into_parts();
-//     let method = parts.method.to_string();
-//     let uri = parts.uri.to_string();
-//     let headers = headers_to_hashmap(&parts.headers);
-//     let query = parts.uri.query().unwrap_or("");
-//     let path = parts.uri.path();
-//     let body_string = String::from_utf8_lossy(&body.to_bytes());
-
-//     json!({
-//         "method": method,
-//         "uri": uri,
-//         "headers": headers,
-//         "query": query,
-//         "path": path,
-//         "body": body_string,
-//     })
-// }
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
 const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
@@ -72,26 +52,42 @@ pub async fn log_request(
         .insert(REQUEST_ID_HEADER, request_id_value);
 
     let (incoming_parts, incoming_body) = req.into_parts();
+    let incoming_uri = &incoming_parts.uri;
+
+    //  Extract the body as a string so we can log it
     let incoming_body_as_bytes: Bytes = match incoming_body.collect().await {
         Ok(collected) => collected.to_bytes(),
         Err(_) => Bytes::from(""),
     };
 
-    // Consume the body once so we can log it
-    let incoming_request = parse_request(&incoming_parts, incoming_body_as_bytes.clone()).await;
+    let incoming_body_string = String::from_utf8_lossy(&incoming_body_as_bytes);
+
+    // Extract the request details
+    let incoming_method = incoming_parts.method.to_string();
+    let incoming_headers = headers_to_hashmap(&incoming_parts.headers);
+    let incoming_query = incoming_uri.query().unwrap_or("").to_string();
+    let incoming_path = incoming_uri.path().to_string();
+    let incoming_body = incoming_body_string.to_string();
 
     state.logger.log(LogObject {
         level: LogLevel::Debug,
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Incoming request".to_string(),
-        data: Some(json!(&incoming_request)),
+        data: Some(json!({
+            "method": incoming_method,
+            "uri": incoming_uri.to_string(),
+            "headers": incoming_headers,
+            "query": incoming_query,
+            "path": incoming_path,
+            "body": incoming_body,
+        })),
         error: None,
         request: None,
         response: None,
     });
 
     // Recreate the request with the buffered body
-    let new_incoming_body = Body::from(Bytes::from(incoming_body_as_bytes));
+    let new_incoming_body = Body::from(incoming_body_as_bytes);
     let reconstructed_request = Request::from_parts(incoming_parts, new_incoming_body);
 
     // Call the next middleware or handler
