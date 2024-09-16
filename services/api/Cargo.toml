@@ -30,6 +30,7 @@ openssl = { version = "0.10.66", features = ["vendored"] }
 shared = { path = "../shared" }
 mongodb = "3.0.0"
 rdkafka = { version = "0.36.2", features = ["cmake-build"] }
+hyper = "1.4.1"
 
 [profile.release]
 # https://github.com/johnthagen/min-sized-rust

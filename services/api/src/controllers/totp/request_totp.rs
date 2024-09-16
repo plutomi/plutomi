@@ -4,7 +4,6 @@ use serde::Serialize;
 use shared::{
     events::{PlutomiEvent, TemplatePayloadDoNotUse},
     get_env::get_env,
-    mongodb::MongoDB,
 };
 use std::sync::Arc;
 
@@ -33,7 +32,7 @@ pub async fn request_totp(
     // Serialize the event to JSON
     let event_json = serde_json::to_string(&event).unwrap(); // TODO
 
-    let produceResult = state
+    let produce_result = state
         .producer
         .send(
             rdkafka::producer::FutureRecord::to("test")
@@ -43,7 +42,7 @@ pub async fn request_totp(
         )
         .await;
 
-    match produceResult {
+    match produce_result {
         Ok(_) => {
             println!("Message produced");
         }
