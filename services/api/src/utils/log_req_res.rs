@@ -115,7 +115,11 @@ pub async fn log_request(
     let outgoing_headers = headers_to_hashmap(&outgoing_parts.headers);
 
     // Buffer the body so we can log it
-    let outgoing_body_bytes: Bytes = outgoing_body.collect().await?.to_bytes();
+    let outgoing_body_bytes: Bytes = match outgoing_body.collect().await {
+        Ok(collected) => collected.to_bytes(),
+        Err(_) => Bytes::from(""),
+    };
+
     let outgoing_body_string = String::from_utf8_lossy(&outgoing_body_bytes);
 
     let new_outgoing_body = Body::from(outgoing_body_bytes.clone());
