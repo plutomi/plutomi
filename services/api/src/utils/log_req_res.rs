@@ -10,6 +10,8 @@ use axum::{
     middleware::Next,
 };
 use http_body_util::BodyExt;
+use hyper::HeaderMap;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use shared::{
     entities::Entities,
@@ -19,7 +21,17 @@ use shared::{
 };
 use time::OffsetDateTime;
 
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
+
+// A deconstructed request that we can log
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct OriginalRequest {
+    method: String,
+    path: String,
+    headers: HashMap<String, String>,
+    query: String,
+    body: String,
+}
 
 const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
 const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
@@ -51,6 +63,7 @@ pub async fn log_request(
     req.headers_mut()
         .insert(REQUEST_ID_HEADER, request_id_value);
 
+    // Extract the request details
     let (incoming_parts, incoming_body) = req.into_parts();
     let incoming_uri = &incoming_parts.uri;
 
@@ -62,25 +75,20 @@ pub async fn log_request(
 
     let incoming_body_string = String::from_utf8_lossy(&incoming_body_as_bytes);
 
-    // Extract the request details
-    let incoming_method = incoming_parts.method.to_string();
-    let incoming_headers = headers_to_hashmap(&incoming_parts.headers);
-    let incoming_query = incoming_uri.query().unwrap_or("").to_string();
-    let incoming_path = incoming_uri.path().to_string();
-    let incoming_body = incoming_body_string.to_string();
+    // Save a copy of it, and pass it along to other handlers
+    let original_request = OriginalRequest {
+        method: incoming_parts.method.to_string(),
+        path: incoming_uri.path().to_string(),
+        query: incoming_uri.query().unwrap_or("").to_string(),
+        body: incoming_body_string.to_string(),
+        headers: headers_to_hashmap(&incoming_parts.headers),
+    };
 
     state.logger.log(LogObject {
         level: LogLevel::Debug,
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Incoming request".to_string(),
-        data: Some(json!({
-            "method": incoming_method,
-            "uri": incoming_uri.to_string(),
-            "headers": incoming_headers,
-            "query": incoming_query,
-            "path": incoming_path,
-            "body": incoming_body,
-        })),
+        data: Some(json!(original_request)),
         error: None,
         request: None,
         response: None,
@@ -88,10 +96,19 @@ pub async fn log_request(
 
     // Recreate the request with the buffered body
     let new_incoming_body = Body::from(incoming_body_as_bytes);
-    let reconstructed_request = Request::from_parts(incoming_parts, new_incoming_body);
+    let mut reconstructed_request = Request::from_parts(incoming_parts, new_incoming_body);
+
+    reconstructed_request
+        .extensions_mut()
+        .insert(original_request);
 
     // Call the next middleware or handler
     let response = next.run(reconstructed_request).await;
+
+    ////////////////////////////////
+    ////////////////////////////////
+    ////////////////////////////////
+    ////////////////////////////////
 
     // Log the response on the way out
     let (outgoing_parts, outgoing_body) = response.into_parts();
