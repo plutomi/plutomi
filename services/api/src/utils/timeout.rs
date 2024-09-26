@@ -41,17 +41,15 @@ pub async fn timeout(
                 response: None,
             });
 
-            let api_error_response = ApiResponse::error(
+            ApiResponse::error(
                 message,
                 StatusCode::REQUEST_TIMEOUT,
                 request_id.clone(),
                 Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
                 None,
                 json!({}),
-            );
-
-            // Return the error response
-            api_error_response.into_response()
+            )
+            .into_response()
         }
     }
 }
