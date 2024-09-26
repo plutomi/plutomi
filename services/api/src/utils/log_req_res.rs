@@ -2,7 +2,7 @@ use crate::{utils::headers_to_hashmap::headers_to_hashmap, AppState};
 use axum::{
     body::{Body, Bytes},
     extract::{Request, State},
-    http::{HeaderValue, Response},
+    http::Response,
     middleware::Next,
 };
 use http_body_util::BodyExt;
@@ -29,7 +29,7 @@ struct OriginalRequest {
     request_id: String,
 }
 
-// const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
+// const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip"; TODO
 
 /**
  * Logs the incoming request and outgoing response.

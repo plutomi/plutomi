@@ -13,7 +13,7 @@ use shared::{
 use std::sync::Arc;
 use time::OffsetDateTime;
 
-use crate::structs::{api_response::ApiError, app_state::AppState};
+use crate::structs::{api_response::ApiResponse, app_state::AppState};
 
 /**
  * 405 fallback handler. This is needed because of this:
@@ -34,19 +34,12 @@ pub async fn method_not_allowed(
     match status {
         StatusCode::METHOD_NOT_ALLOWED => {
             // Overwrite the response with a custom message
-            let message = format!("Method '{}' not allowed at route '{}'", method, uri.path());
-            let api_error = ApiError {
-                message: message.clone(),
-                plutomi_code: None,
-                status_code: status.as_u16(),
-                docs_url: None,
-                request_id: request_id.clone(),
-            };
-
+            let message: String =
+                format!("Method '{}' not allowed at route '{}'", method, uri.path());
             state.logger.log(LogObject {
                 level: LogLevel::Error,
-                error: Some(json!(api_error)),
-                message,
+                error: None,
+                message: message.clone(),
                 data: Some(json!({
                     "request_id": &request_id,
                 })),
@@ -55,9 +48,16 @@ pub async fn method_not_allowed(
                 response: None,
             });
 
-            api_error.into_response()
+            ApiResponse::error(
+                message,
+                status,
+                request_id.clone(),
+                Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
+                None,
+                json!({}),
+            )
+            .into_response()
         }
-
         _ => original_response,
     }
 }

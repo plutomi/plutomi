@@ -1,4 +1,4 @@
-use crate::structs::{api_response::ApiError, app_state::AppState};
+use crate::structs::{api_response::ApiResponse, app_state::AppState};
 use axum::{
     extract::{OriginalUri, State},
     http::{Method, StatusCode},
@@ -18,14 +18,12 @@ pub async fn not_found(
     Extension(request_id): Extension<String>,
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
-    let not_found_message = format!("Route at: '{} {}' not found", method, uri.path());
-
-    let status = StatusCode::NOT_FOUND;
+    let message = format!("Route at: '{} {}' not found", method, uri.path());
 
     state.logger.log(LogObject {
         level: LogLevel::Error,
         _time: get_current_time(time::OffsetDateTime::now_utc()),
-        message: not_found_message.clone(),
+        message: message.clone(),
         data: Some(json!({
             "request_id": request_id,
         })),
@@ -34,13 +32,13 @@ pub async fn not_found(
         response: None,
     });
 
-    let api_error = ApiError {
-        message: not_found_message.clone(),
-        plutomi_code: None,
-        status_code: status.as_u16(),
-        docs_url: None,
-        request_id,
-    };
-
-    api_error.into_response()
+    ApiResponse::error(
+        message,
+        StatusCode::NOT_FOUND,
+        request_id.clone(),
+        Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
+        None,
+        json!({}),
+    )
+    .into_response()
 }
