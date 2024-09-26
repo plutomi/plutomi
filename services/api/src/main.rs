@@ -97,7 +97,7 @@ async fn main() {
         .route("/api/health", get(health_check))
         // All of these should redirect to the web app
         .merge(docs_routes)
-        .route("/api/request-totp", post(request_totp))
+        .route("/api/totp", post(request_totp))
         .fallback(not_found)
         .layer(
             // Middleware that is applied to all routes
@@ -147,16 +147,6 @@ async fn main() {
             });
             std::process::exit(1);
         });
-
-    logger.log(LogObject {
-        level: LogLevel::Info,
-        _time: get_current_time(OffsetDateTime::now_utc()),
-        message: "API starting on http://localhost:8080".to_string(),
-        data: None,
-        error: None,
-        request: None,
-        response: None,
-    });
 
     // Start the server
     axum::serve(listener, app).await.unwrap_or_else(|e| {

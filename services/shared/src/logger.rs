@@ -120,7 +120,7 @@ impl Logger {
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
             .pretty()
-            .with_max_level(tracing::Level::INFO) // Adjust this level as needed
+            .with_max_level(tracing::Level::DEBUG) // Adjust this level as needed
             .with_target(false)
             .finish();
 
@@ -204,7 +204,7 @@ impl Logger {
 
         logger.log(LogObject {
             level: LogLevel::Info,
-            message: format!("Logger initialized in {}", context.caller),
+            message: format!("{} initialized", context.caller),
             _time: get_current_time(OffsetDateTime::now_utc()),
             data: None,
             error: None,
