@@ -2,9 +2,16 @@
 
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
-![infra](./images/infra.png)
+### Table of Contents
 
-TODO Add table of contents
+- [Introduction](#introduction)
+- [Summary](#summary)
+- [Architecture](#Architecture)
+- [Running Locally](#running-locally)
+- [Deploying](#deploying)
+- [Troubleshooting](#Troubleshooting)
+
+![infra](./images/infra.png)
 
 ## Introduction
 
@@ -20,13 +27,17 @@ Plutomi allows you to create `applications` for anything from jobs to program en
 4. **Final Review** - Manually review the license for compliance.
 5. **Ready to Drive** - Applicants who have completed all stages and are approved.
 
-## Tech Stack
+## Infrastructure
 
-The frontend is built with [Remix](https://remix.run/) and [Express](https://expressjs.com/), while the API is written in Rust using the [Axum framework](https://github.com/tokio-rs/axum). All data is stored [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094) inside [MongoDB](https://mongodb.com/), and we use [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. The event-driven architecture is powered by [Kafka](https://kafka.apache.org/), and we use [Valkey](https://valkey.io/) for rate limiting mostly. We send emails with SES, and setup SNS and SQS for email events. We have a handful of consumers all written in Rust which do all asynchronous work. We use [Axiom](https://axiom.co/) for logging and use [Kubernetes with K3S](https://k3s.io/) for orchestration. We plan to add [OpenSearch](https://opensearch.org/) for search and [ClickHouse](https://clickhouse.tech/) for analytics.
+As shown in the diagram above, Plutomi follows a modular monolith architecture. The core components include a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API. All data is stored in MongoDB [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094), with [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. Features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.tech/), with [Valkey](https://valkey.io/) for caching.
 
-### Event Streaming Pipeline
+The system relies primarily on a single datastore, with asynchronous work handled by independent consumers written in Rust. These consumers process events without communicating directly with each other _or_ the API.
 
-We have a typical setup of three streams per _entity_ if you will: a main stream, a retry stream, and a DLQ stream, loosely based off of [Uber's Kafka Architecture](https://www.uber.com/en-JP/blog/reliable-reprocessing/).
+The event-driven architecture, inspired by [Uber's Kafka Architecture](https://www.uber.com/en-JP/blog/reliable-reprocessing/), uses three topics per entity: a `main` topic, a `retry` topic, and a `dlq` (Dead Letter Queue) topic for handling failures. This allows us to replay events, retry failed events, and handle errors gracefully.
+
+For an in-depth overview of the Kafka topics and consumers, refer to the [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md)
+
+We run on Kubernetes with [K3S](https://k3s.io/) and manage our infrastructure with AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). For emails, we use [SES](https://aws.amazon.com/ses/) and normalize those those events into our Kafka topics. We also use [Linkerd](https://linkerd.io/) for service mesh and [Axiom](https://axiom.co/) for logging, but this is optional.
 
 ## Running Locally
 
@@ -40,6 +51,8 @@ We have a typical setup of three streams per _entity_ if you will: a main stream
 
 To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MongoDB, Kafka with the required topics, and KafkaUI on ports 27017, 9092, and 9000 respectively.
 
+> Credentials for all datasources are `admin` and `password`.
+
 Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script to start the API, Web, and Consumer services.
 
 ```bash
@@ -47,18 +60,18 @@ $ cp .env.example .env
 $ ./scripts/run.sh
 ```
 
-> Credentials for all datasources are `admin` and `password`.
-
 You can also run any service individually:
 
 ```bash
 $ ./scripts/run.sh --stack <web|api|consumers>
 ```
 
-#### Deploying and Self-Hosting
+## Deploying
 
-Plutomi is designed to be flexible and can be deployed on any environment and it is highly recommended to have three nodes. All Docker images are available on [Docker Hub](https://hub.docker.com/u/plutomi). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
+Plutomi is designed to be flexible and can be deployed anywhere you can get your hands on a server, we recommend at least 3. All Docker images are available on [Docker Hub](https://hub.docker.com/u/plutomi). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
-#### Questions / Troubleshooting
+## Questions / Troubleshooting
 
-Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there. If you have other questions, feel free to open a discussion or issue, or [contact me on X @notjoswayski](https://twitter.com/notjoswayski) or via email at jose@plutomi.com.
+Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there.
+
+If you have other questions, feel free to open a discussion or issue, or contact me on [X @notjoswayski](https://twitter.com/notjoswayski) or via email at jose@plutomi.com.
