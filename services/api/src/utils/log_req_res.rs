@@ -14,9 +14,8 @@ use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
-use time::OffsetDateTime;
-
 use std::{collections::HashMap, sync::Arc};
+use time::OffsetDateTime;
 
 // A deconstructed request that we can log
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -35,7 +34,6 @@ struct OriginalRequest {
  * Logs the incoming request and outgoing response.
  * This should be the first AND last middleware every time.
  */
-// Middleware to log request body and other details
 pub async fn log_request(
     state: State<Arc<AppState>>,
     req: Request<Body>,
@@ -56,7 +54,6 @@ pub async fn log_request(
         Ok(collected) => collected.to_bytes(),
         Err(_) => Bytes::from(""),
     };
-
     let incoming_body_string = String::from_utf8_lossy(&incoming_body_as_bytes);
 
     // Log incoming request
@@ -86,7 +83,7 @@ pub async fn log_request(
     let new_incoming_body = Body::from(incoming_body_as_bytes);
     let mut reconstructed_request = Request::from_parts(incoming_parts, new_incoming_body);
 
-    // Add request ID to extensions for use in handler responses for easy lookups
+    // Add request ID to extensions for use in handler loggers for easy lookups
     reconstructed_request
         .extensions_mut()
         .insert(request_id.clone());
@@ -109,7 +106,6 @@ pub async fn log_request(
         Ok(collected) => collected.to_bytes(),
         Err(_) => Bytes::from(""),
     };
-
     let outgoing_body_string = String::from_utf8_lossy(&outgoing_body_bytes);
 
     let new_outgoing_body = Body::from(outgoing_body_bytes.clone());
