@@ -51,7 +51,7 @@ pub struct LogObject {
      * Axiom uses `_time` so we can use it as well
      */
     pub _time: String,
-    pub message: String, // TODO make this a reference?
+    pub message: String, // TODO make this a reference? https://github.com/plutomi/plutomi/issues/996
     /**
      * Used for adding additional data to the log object
      */
@@ -170,7 +170,7 @@ impl Logger {
                         // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
                             if let Some(ref client) = axiom_client {
-                                // TODO remove expect / clean this up
+                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
                                  send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
                             }
                             // Clear the batch for the next batch
@@ -186,7 +186,7 @@ impl Logger {
                         if !log_batch.is_empty() {
                            // Send whatever is in the batch
                             if let Some(ref client) = axiom_client {
-                                // TODO remove expect / clean this up
+                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
                                 send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
                             }
 
@@ -221,7 +221,7 @@ impl Logger {
         // Send the log message to the channel
         if let Err(e) = self.sender.send(log) {
             error!("Failed to enqueue log message: {}", e);
-            // TODO log to Axiom / alerting
+            // TODO Alert if no logs in a specified amount of time
         }
     }
 }
@@ -234,6 +234,7 @@ async fn sleep_until(deadline: Instant) {
     }
 }
 
+// https://github.com/plutomi/plutomi/issues/996
 // impl Default for LogObject {
 //     fn default() -> LogObject {
 //         LogObject {
