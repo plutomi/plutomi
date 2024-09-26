@@ -2,15 +2,6 @@
 
 Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
-### Table of Contents
-
-- [Introduction](#introduction)
-- [Summary](#summary)
-- [Architecture](#Architecture)
-- [Running Locally](#running-locally)
-- [Deploying](#deploying)
-- [Troubleshooting](#Troubleshooting)
-
 ![infra](./images/infra.png)
 
 ## Introduction
@@ -27,7 +18,7 @@ Plutomi allows you to create `applications` for anything from jobs to program en
 4. **Final Review** - Manually review the license for compliance.
 5. **Ready to Drive** - Applicants who have completed all stages and are approved.
 
-## Infrastructure
+## Architecture
 
 As shown in the diagram above, Plutomi follows a modular monolith architecture. The core components include a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API. All data is stored in MongoDB [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094), with [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. Features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.tech/), with [Valkey](https://valkey.io/) for caching.
 
