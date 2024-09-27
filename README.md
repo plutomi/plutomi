@@ -8,7 +8,7 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 
 Plutomi was inspired by my experience at [Grubhub](grubhub.com), where managing the recruitment, screening, and onboarding of thousands of contractors every month was a significant challenge. Many of these processes were manual, making it difficult to adapt to our constantly changing business needs. I set out to create an open, flexible, and customizable platform that could automate and streamline these workflows.
 
-Plutomi allows you to create applications for anything from jobs to program enrollments, each with customizable stages, where you can setup rules and automated workflows based on applicant responses after a certain time period. Here's an example of how a delivery driver application might look:
+Plutomi allows you to create applications for anything from jobs to program enrollments, each with customizable stages, where you can setup rules and automated workflows based on applicant responses or after a certain time period. Here's an example of how a delivery driver application might look like:
 
 1. **Questionnaire** - Collects basic applicant info. Applicants move to the waiting list if not completed in 30 days.
 2. **Waiting List** - Pool of idle applicants.
