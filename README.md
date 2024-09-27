@@ -8,27 +8,24 @@ Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org
 
 Plutomi was inspired by my experience at [Grubhub](grubhub.com), where managing the recruitment, screening, and onboarding of thousands of contractors every month was a significant challenge. Many of these processes were manual, making it difficult to adapt to our constantly changing business needs. I set out to create an open, flexible, and customizable platform that could automate and streamline these workflows.
 
-## Summary
+Plutomi allows you to create applications for anything from jobs to program enrollments, each with customizable stages, where you can setup rules and automated workflows based on applicant responses after a certain time period. Here's an example of how a delivery driver application might look:
 
-Plutomi allows you to create `applications` for anything from jobs to program enrollments, each with customizable `stages`. These stages represent individual steps in the application process, where you can add `questions` and set up automated `rules` to guide applicants based on their responses or after a certain time period. Here's what a typical setup might look like for a delivery driver application:
-
-1. **Questionnaire** - Collect basic applicant information. Automatically move applicants to the _Waiting List_ if not completed within 30 days.
-2. **Waiting List** - An idle pool of applicants.
-3. **Document Upload** - Collect the applicant's license.
-4. **Final Review** - Manually review the license for compliance.
-5. **Ready to Drive** - Applicants who have completed all stages and are approved.
+1. **Questionnaire** - Collects basic applicant info. Applicants move to the waiting list if not completed in 30 days.
+2. **Waiting List** - Pool of idle applicants.
+3. **Document Upload** - Collects required documents like licenses.
+4. **Final Review** - Manual compliance check.
+5. **Ready to Drive** - Applicants who have completed all stages and are approved. Automatically move to Onboarding after 2 hours.
+6. **Onboarding** - Sends onboarding emails and schedules training sessions.
 
 ## Architecture
 
-As shown in the diagram above, Plutomi follows a modular monolith architecture. The core components include a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API. All data is stored in MongoDB [in a single collection](https://youtu.be/IYlWOk9Hu5g?t=1094), with [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) for blob storage. Features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.tech/), with [Valkey](https://valkey.io/) for caching.
+Plutomi follows a modular monolith architecture, with a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to move to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is managed via [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), and features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.tech/), with [Valkey](https://valkey.io/) providing caching & rate limiting.
 
-The system relies primarily on a single datastore, with asynchronous work handled by independent consumers written in Rust. These consumers process events without communicating directly with each other _or_ the API.
+Event-driven processing is powered by Kafka, based on [an architecture used at Uber](https://www.uber.com/en-JP/blog/reliable-reprocessing/). For each entity, we maintain a main Kafka topic along with corresponding retry and dead letter queue (DLQ) topics to handle failures gracefully. Messages that fail in the main topic can be rerouted to the retry topic, and if necessary, moved to the DLQ for further processing. This ensures smooth message flow without disrupting live traffic. All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
 
-The event-driven architecture, inspired by [Uber's Kafka Architecture](https://www.uber.com/en-JP/blog/reliable-reprocessing/), uses three topics per entity: a `main` topic, a `retry` topic, and a `dlq` (Dead Letter Queue) topic for handling failures. This allows us to replay events, retry failed events, and handle errors gracefully.
+> For more details on the event streaming pipeline, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md)
 
-For an in-depth overview of the Kafka topics and consumers, refer to the [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md)
-
-We run on Kubernetes with [K3S](https://k3s.io/) and manage our infrastructure with AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). For emails, we use [SES](https://aws.amazon.com/ses/) and normalize those those events into our Kafka topics. We also use [Linkerd](https://linkerd.io/) for service mesh and [Axiom](https://axiom.co/) for logging, but this is optional.
+We run on Kubernetes with [K3S](https://k3s.io/) and manage our infrastructure with AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. We also use [Linkerd](https://linkerd.io/) for service mesh and [Axiom](https://axiom.co/) for logging, but this is optional.
 
 ## Running Locally
 
