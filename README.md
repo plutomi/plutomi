@@ -17,15 +17,27 @@ Plutomi allows you to create applications for anything from jobs to program enro
 5. **Ready to Drive** - Applicants who have completed all stages and are approved. Automatically move to Onboarding after 2 hours.
 6. **Onboarding** - Sends onboarding emails and schedules training sessions.
 
-## Architecture
+## Architecture Overview
 
-Plutomi follows a modular monolith architecture, with a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to move to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is managed via [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), and features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/), with [Valkey](https://valkey.io/) providing caching & rate limiting.
+Plutomi follows a modular monolith architecture, with a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to move to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is stored in [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), and features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/), with [Valkey](https://valkey.io/) providing caching & rate limiting.
 
-Event-driven processing is powered by Kafka, based on [an architecture used at Uber](https://www.uber.com/en-JP/blog/reliable-reprocessing/). For each entity, we maintain a main Kafka topic along with corresponding retry and dead letter queue (DLQ) topics to handle failures gracefully. Messages that fail in the main topic can be rerouted to the retry topic, and if necessary, moved to the DLQ for further processing. This ensures smooth message flow without disrupting live traffic. All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
+## Infrastructure and Third-Party Tools
 
-> For more details on the event streaming pipeline, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md)
+We run on Kubernetes with [K3S](https://k3s.io/) and manage our infrastructure with AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
 
-We run on Kubernetes with [K3S](https://k3s.io/) and manage our infrastructure with AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. We also use [Linkerd](https://linkerd.io/) for service mesh and [Axiom](https://axiom.co/) for logging, but this is optional.
+## Event Streaming Pipeline
+
+The event streaming pipeline is powered by Kafka, based on [an architecture used at Uber](https://www.uber.com/en-JP/blog/reliable-reprocessing/). All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
+
+For each entity, we maintain a main Kafka topic along with corresponding retry and dead letter queue (DLQ) topics to handle failures gracefully:
+
+- **Main Topic**: The initial destination for all events.
+
+- **Retry Topic**: Messages that fail processing in the main topic are rerouted here. Retries implement exponential backoff to prevent overwhelming the system.
+
+- **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Messages in the DLQ are not processed directly to avoid impacting live traffic. When underlying issues are resolved (e.g., code fixes, service restoration), DLQ messages are reprocessed by publishing them back into the retry topic using a Kubernetes job. This ensures controlled reprocessing without affecting the main processing pipeline.
+
+For more details on the event streaming pipeline and to view the event schemas, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
 
 ## Running Locally
 
