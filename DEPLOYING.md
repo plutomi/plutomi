@@ -7,7 +7,7 @@
 - [Sealed Secrets](#sealed-secrets)
 - [Datasources](#create-our-data-sources)
   - [MongoDB](#mongodb-replication)
-  - [Kafka](#Kafka) TODO
+  - [Kafka](#kafka)
 - [Monitoring (Axiom)](#monitoring)
 
 ## Prerequisites
@@ -16,7 +16,7 @@ Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API 
 
 For the datastores, we use [MongoDB](https://mongodb.com/) and [Kafka](https://kafka.apache.org/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet as we don't have faith on the open source K8s operator from reading various reviews. TODO kafka strimzi
 
-Plutomi has _not_ been tested to run on a VPS with networked storage like EC2, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
+Plutomi has _not_ been tested to run on a VPS with networked storage like EC2 & EBS, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
 
 ### Prerequisites
 
@@ -344,7 +344,37 @@ db.createUser({
 })
 ```
 
-### TODO kafka strimzi
+### Kafka
+
+We use the [Strimzi operator](https://strimzi.io/) to manage our Kafka cluster.
+
+```bash
+# Create the namespace
+kubectl create namespace kafka
+
+# Install the Strimzi operator
+kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
+
+
+# Apply the `Kafka` Cluster CR file
+kubectl apply -f https://strimzi.io/examples/latest/kafka/kraft/kafka-with-dual-role-nodes.yaml -n kafka
+# Or or a single node: kafka-single-node.yaml
+
+
+# Create a sample topic
+kubectl apply -f https://strimzi.io/examples/latest/topic/kafka-topic.yaml -n kafka
+
+# Send a message into the topic we just created
+kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic my-topic
+
+
+# Receive a message from the topic we just created
+kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic my-topic --from-beginning
+
+
+> Custom topics will be added soon! :D
+
+```
 
 ## Deploy the Services
 
