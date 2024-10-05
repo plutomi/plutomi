@@ -17,15 +17,15 @@ Plutomi allows you to create applications for anything from jobs to program enro
 5. **Ready to Drive** - Applicants who have completed all stages and are approved. Automatically move to Onboarding after 2 hours.
 6. **Onboarding** - Sends onboarding emails and schedules training sessions.
 
-## Architecture Overview
+## Architecture
 
 Plutomi follows a modular monolith architecture, with a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to move to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is stored in [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), and features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/), with [Valkey](https://valkey.io/) providing caching & rate limiting.
 
-## Infrastructure and Third-Party Tools
+### Infrastructure and Third-Party Tools
 
 We run on Kubernetes with [K3S](https://k3s.io/) and manage our infrastructure with AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
 
-## Event Streaming Pipeline
+### Event Streaming Pipeline
 
 The event streaming pipeline is powered by Kafka, based on [an architecture used at Uber](https://www.uber.com/en-JP/blog/reliable-reprocessing/). All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
 
