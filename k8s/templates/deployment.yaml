@@ -38,15 +38,17 @@ spec:
               memory: {{ .resources.requests.memory }}
               {{- end }}
             {{- end }}
-            {{- if .resources.limits }}
-            limits:
-              {{- if .resources.limits.cpu }}
-              cpu: {{ .resources.limits.cpu }}
-              {{- end }}
-              {{- if .resources.limits.memory }}
-              memory: {{ .resources.limits.memory }}
-              {{- end }}
-            {{- end }}
+            # {{- if .resources.limits }}
+            # # Don't use this..
+            # # https://home.robusta.dev/blog/stop-using-cpu-limits
+            # limits:
+            #   {{- if .resources.limits.cpu }}
+            #   cpu: {{ .resources.limits.cpu }}
+            #   {{- end }}
+            #   {{- if .resources.limits.memory }}
+            #   memory: {{ .resources.limits.memory }}
+            #   {{- end }}
+            # {{- end }}
           {{- end }}
           ports:
             # - name: metrics
