@@ -11,8 +11,6 @@ service:
 deployment:
   metadata:
     name: kafka-ui
-    # annotations:
-    #   config.linkerd.io/skip-outbound-ports: "9092"
   spec:
     replicas: 1
     template:
@@ -24,13 +22,12 @@ deployment:
             port: 8080
             resources:
               requests:
-                cpu: "100m"    # Reduce this as needed
+                cpu: "100m"    
                 memory: "128Mi"
               limits:
                 cpu: "500m"
                 memory: "256Mi"
             env:
-              # TODO: add more nodes :D
               KAFKA_CLUSTERS_0_NAME: 
                 value: "local"
               KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS:
