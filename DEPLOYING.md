@@ -357,19 +357,19 @@ kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 
 
 # Apply the `Kafka` Cluster CR file
-helm upgrade --install kafka-cluster-deploy . -f values/values.yaml -f values/kafka-cluster.yaml -f values/production.yaml
+helm upgrade --install kafka-cluster-deploy . -f values/values.yaml -f values/kafka-cluster.yaml -f values/production.yaml -n kafka
 
 
 # Create the topics
-helm upgrade --install kafka-topics-deploy . -f values/values.yaml -f values/kafka-topics.yaml -f values/production.yaml
+helm upgrade --install kafka-topics-deploy . -f values/values.yaml -f values/kafka-topics.yaml -f values/production.yaml -n kafka
 
 
 # Send a message into the topic we just created
-kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic my-topic
+kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test
 
 
 # Receive a message from the topic we just created
-kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic my-topic --from-beginning
+kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test --from-beginning
 
 
 ```

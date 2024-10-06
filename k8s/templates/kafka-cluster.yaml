@@ -1,34 +1,36 @@
+{{- if .Values.kafkaCluster }}
+{{- with .Values.kafkaCluster }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
 metadata:
-  name: {{ .Values.kafka.nodePoolName }}
+  name: {{ .nodePoolName }}
   labels:
-    strimzi.io/cluster: {{ .Values.kafka.clusterName }}
+    strimzi.io/cluster: {{ .clusterName }}
 spec:
-  replicas: {{ .Values.kafka.replicas }}
+  replicas: {{ .replicas }}
   roles:
     - controller
     - broker
   storage:
-    type: persistent-claim
+    type: jbod
     volumes:
       - id: 0
         type: persistent-claim
-        size: {{ .Values.kafka.storageSize }}
-        deleteClaim: {{ .Values.kafka.deleteClaim }}
+        size: {{ .storageSize }}
+        deleteClaim: {{ .deleteClaim }}
         kraftMetadata: shared
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
-  name: {{ .Values.kafka.clusterName }}
+  name: {{ .clusterName }}
   annotations:
     strimzi.io/node-pools: enabled
     strimzi.io/kraft: enabled
 spec:
   kafka:
-    version: {{ .Values.kafka.version }}
-    metadataVersion: {{ .Values.kafka.metadataVersion }}
+    version: {{ .version }}
+    metadataVersion: {{ .metadataVersion }}
     listeners:
       - name: plain
         port: 9092
@@ -39,11 +41,13 @@ spec:
         type: internal
         tls: true
     config:
-      offsets.topic.replication.factor: {{ .Values.kafka.config.offsetsTopicReplicationFactor }}
-      transaction.state.log.replication.factor: {{ .Values.kafka.config.transactionStateLogReplicationFactor }}
-      transaction.state.log.min.isr: {{ .Values.kafka.config.transactionStateLogMinISR }}
-      default.replication.factor: {{ .Values.kafka.config.defaultReplicationFactor }}
-      min.insync.replicas: {{ .Values.kafka.config.minInsyncReplicas }}
+      offsets.topic.replication.factor: {{ .config.offsetsTopicReplicationFactor }}
+      transaction.state.log.replication.factor: {{ .config.transactionStateLogReplicationFactor }}
+      transaction.state.log.min.isr: {{ .config.transactionStateLogMinISR }}
+      default.replication.factor: {{ .config.defaultReplicationFactor }}
+      min.insync.replicas: {{ .config.minInsyncReplicas }}
   entityOperator:
     topicOperator: {}
     userOperator: {}
+{{- end }}
+{{- end }}

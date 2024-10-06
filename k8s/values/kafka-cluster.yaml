@@ -1,4 +1,4 @@
-kafka:
+kafkaCluster:
   clusterName: kafka                        # Name of the Kafka cluster
   nodePoolName: kafka-node-pool             # Name of the Kafka node pool
   replicas: 1                               # Number of replicas (nodes)

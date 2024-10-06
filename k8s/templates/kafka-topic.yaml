@@ -1,3 +1,4 @@
+{{- if .Values.kafkaTopics }}
 {{- range .Values.kafkaTopics }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
@@ -13,4 +14,5 @@ spec:
     retention.bytes: {{ .retentionBytes }}
     segment.bytes: {{ .segmentBytes }}
 ---
+{{- end }}
 {{- end }}
