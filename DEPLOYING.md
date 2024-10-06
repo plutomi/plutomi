@@ -371,7 +371,7 @@ kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.43.0-kaf
 # Receive a message from the topic we just created
 kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test --from-beginning
 
-
+#### TODO linkerd / move to default namespace
 ```
 
 ## Deploy the Services
@@ -382,6 +382,9 @@ helm upgrade --install web-deploy . -f values/values.yaml -f values/web.yaml -f 
 
 # API
 helm upgrade --install api-deploy . -f values/values.yaml  -f values/api.yaml -f values/production.yaml
+
+# Kafka UI
+helm upgrade --install kafka-ui-deploy . -f values/values.yaml -f values/kafka-ui.yaml -f values/production.yaml ## namespace -kafka ?
 ```
 
 ### Traefik
