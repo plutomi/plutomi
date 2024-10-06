@@ -12,9 +12,8 @@ service:
 deployment:
   metadata:
     name: web
-
   spec:
-    replicas: 2
+    replicas: 1
     template:
       spec:
         terminationGracePeriodSeconds: 10
@@ -24,11 +23,8 @@ deployment:
             port: 3000
             resources:
               requests:
-                cpu: "50m"
+                cpu: "20m"
                 memory: "128Mi"
-              limits:
-                cpu: "100m"
-                memory: "160Mi"
             env:
             readinessProbe:
               periodSeconds: 10

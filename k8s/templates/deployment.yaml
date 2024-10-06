@@ -20,10 +20,6 @@ spec:
     metadata:
       labels:
         app: {{ .metadata.name }}
-      # # Disabled for now. Was using too many resources for my little cluster :3
-      # annotations:
-      #   prometheus.io/scrape: "true"
-      #   prometheus.io/port: "9100"
     spec:
       terminationGracePeriodSeconds: {{ .spec.template.spec.terminationGracePeriodSeconds }}
       containers:
