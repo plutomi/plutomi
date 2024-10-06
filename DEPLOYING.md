@@ -353,25 +353,30 @@ We use the [Strimzi operator](https://strimzi.io/) to manage our Kafka cluster.
 kubectl create namespace kafka
 
 # Install the Strimzi operator
-kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
+kubectl create -f 'https://strimzi.io/install/latest?namespace=default'
 
 
-# Apply the `Kafka` Cluster CR file
-helm upgrade --install kafka-cluster-deploy . -f values/values.yaml -f values/kafka-cluster.yaml -f values/production.yaml -n kafka
+# Apply the `Kafka` Cluster CR file - this might take a minute
+helm upgrade --install kafka-cluster-deploy . -f values/values.yaml -f values/kafka-cluster.yaml -f values/production.yaml
 
 
 # Create the topics
-helm upgrade --install kafka-topics-deploy . -f values/values.yaml -f values/kafka-topics.yaml -f values/production.yaml -n kafka
+helm upgrade --install kafka-topics-deploy . -f values/values.yaml -f values/kafka-topics.yaml -f values/production.yaml
 
 
-# Send a message into the topic we just created
-kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test
+# Create a test producer pod
+kubectl run kafka-producer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --requests=cpu=10m,memory=16Mi --limits=cpu=20m,memory=32Mi --command -- /bin/sh -c "sleep infinity"
 
 
-# Receive a message from the topic we just created
-kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test --from-beginning
+# Exec into it and produce a message, you'll be greeted with a terminal just type and press enter
+kubectl exec -it kafka-producer -c kafka-producer -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test
 
-#### TODO linkerd / move to default namespace
+# Create a test consumer pod
+kubectl run kafka-consumer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --requests=cpu=10m,memory=16Mi --limits=cpu=20m,memory=32Mi --command -- /bin/sh -c "sleep infinity"
+
+# Exec into it and read from that topic, you should see the previous message
+kubectl exec -it kafka-consumer -c kafka-consumer -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test --from-beginning
+
 ```
 
 ## Deploy the Services
@@ -384,7 +389,7 @@ helm upgrade --install web-deploy . -f values/values.yaml -f values/web.yaml -f 
 helm upgrade --install api-deploy . -f values/values.yaml  -f values/api.yaml -f values/production.yaml
 
 # Kafka UI
-helm upgrade --install kafka-ui-deploy . -f values/values.yaml -f values/kafka-ui.yaml -f values/production.yaml ## namespace -kafka ?
+helm upgrade --install kafka-ui-deploy . -f values/values.yaml -f values/kafka-ui.yaml -f values/production.yaml
 ```
 
 ### Traefik
