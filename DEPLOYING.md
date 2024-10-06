@@ -365,14 +365,14 @@ helm upgrade --install kafka-topics-deploy . -f values/values.yaml -f values/kaf
 
 
 # Create a test producer pod
-kubectl run kafka-producer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --requests=cpu=10m,memory=16Mi --limits=cpu=20m,memory=32Mi --command -- /bin/sh -c "sleep infinity"
+kubectl run kafka-producer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --command -- /bin/sh -c "sleep infinity"
 
 
 # Exec into it and produce a message, you'll be greeted with a terminal just type and press enter
 kubectl exec -it kafka-producer -c kafka-producer -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test
 
 # Create a test consumer pod
-kubectl run kafka-consumer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --requests=cpu=10m,memory=16Mi --limits=cpu=20m,memory=32Mi --command -- /bin/sh -c "sleep infinity"
+kubectl run kafka-consumer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --command -- /bin/sh -c "sleep infinity"
 
 # Exec into it and read from that topic, you should see the previous message
 kubectl exec -it kafka-consumer -c kafka-consumer -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test --from-beginning
