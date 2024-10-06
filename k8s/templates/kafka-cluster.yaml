@@ -6,6 +6,8 @@ metadata:
   name: {{ .nodePoolName }}
   labels:
     strimzi.io/cluster: {{ .clusterName }}
+  annotations:
+    config.linkerd.io/skip-inbound-ports: "9092"
 spec:
   replicas: {{ .replicas }}
   roles:
@@ -27,6 +29,7 @@ metadata:
   annotations:
     strimzi.io/node-pools: enabled
     strimzi.io/kraft: enabled
+    config.linkerd.io/skip-inbound-ports: "9092"
 spec:
   kafka:
     version: {{ .version }}
