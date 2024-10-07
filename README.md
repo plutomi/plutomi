@@ -27,7 +27,7 @@ We run on Kubernetes ([K3S](https://k3s.io/)) and manage our infrastructure usin
 
 ### Event Streaming Pipeline
 
-Our event streaming pipeline, modeled after [Uber's architecture](https://www.uber.com/en-JP/blog/reliable-reprocessing/), is powered by Kafka, based on . All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
+Our event streaming pipeline, modeled after [Uber's architecture](https://www.uber.com/en-JP/blog/reliable-reprocessing/), is powered by Kafka. All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
 
 For each entity, we maintain a main Kafka topic along with corresponding retry and dead letter queue (DLQ) topics to handle failures gracefully:
 
