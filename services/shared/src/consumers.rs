@@ -72,6 +72,12 @@ impl PlutomiConsumer {
             error: None,
         });
 
+        let offset_reset = if topic.as_str().contains("-retry") || topic.as_str().contains("-dlq") {
+            "earliest"
+        } else {
+            "latest"
+        };
+
         let consumer: StreamConsumer = ClientConfig::new()
             .set("group.id", group_id.as_str())
             .set("client.id", name)
@@ -79,7 +85,7 @@ impl PlutomiConsumer {
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "true")
-            .set("auto.offset.reset", "earliest")
+            .set("auto.offset.reset", offset_reset)
             .set("auto.commit.interval.ms", "1000")
             .create()
             .map_err(|e| {
