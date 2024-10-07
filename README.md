@@ -35,7 +35,7 @@ For each entity, we maintain a main Kafka topic along with corresponding retry a
 
 - **Retry Topic**: Messages that fail processing in the main topic are rerouted here. Retries implement exponential backoff to prevent overwhelming the system.
 
-- **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Messages in the DLQ are not processed directly to avoid impacting live traffic. Once underlying issues are resolved (e.g., code fixes, service restoration), DLQ messages are reprocessed by publishing them back into the retry topic via a Kubernetes job. This ensures controlled reprocessing without disrupting the main processing pipeline.
+- **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Messages in the DLQ are not processed directly to avoid impacting live traffic. Once underlying issues are resolved (e.g., code fixes, service restoration), the messages are reprocessed by moving them back into the retry topic in a controlled manner, ensuring they do not disrupt live traffic.
 
 For more details on the event streaming pipeline and to view the event schemas, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
 
