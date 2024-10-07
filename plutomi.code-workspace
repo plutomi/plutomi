@@ -11,13 +11,17 @@
     {
       "path": "services/web",
       "name": "web"
+    },
+    {
+      "path": "services/consumers/template",
+      "name": "template-consumer"
     }
   ],
   "settings": {
     "eslint.workingDirectories": [
       { "directory": "services/api", "changeProcessCWD": true },
       { "directory": "services/web", "changeProcessCWD": true },
-      { "directory": "services/events-consumer", "changeProcessCWD": true }
+      { "directory": "services/consumers/template", "changeProcessCWD": true }
     ],
     "search.exclude": {
       "**/node_modules": true,

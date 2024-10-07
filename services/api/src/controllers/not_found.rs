@@ -1,46 +1,44 @@
-use std::collections::HashMap;
-
+use crate::structs::{api_response::ApiResponse, app_state::AppState};
 use axum::{
     extract::{OriginalUri, State},
     http::{Method, StatusCode},
     response::IntoResponse,
     Extension,
 };
-use serde_json::{json, Value};
-use shared::{get_current_time::get_current_time, logger::{LogLevel, LogObject}};
-
-use crate::{
-    consts::REQUEST_ID_HEADER,
-    structs::{api_error::ApiError, app_state::AppState},
-    utils::get_header_value::get_header_value,
+use serde_json::json;
+use shared::{
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
 };
+use std::sync::Arc;
 
 pub async fn not_found(
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
     OriginalUri(uri): OriginalUri,
     method: Method,
-    State(state): State<AppState>,
+    Extension(request_id): Extension<String>,
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
-    let not_found_message = format!("Route at: '{} {}' not found", method, uri.path());
-
-    let status = StatusCode::NOT_FOUND;
-    let api_error = ApiError {
-        message: not_found_message.clone(),
-        plutomi_code: None,
-        status_code: status.as_u16(),
-        docs_url: None,
-        request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
-    };
+    let message = format!("Route at: '{} {}' not found", method, uri.path());
 
     state.logger.log(LogObject {
         level: LogLevel::Error,
         _time: get_current_time(time::OffsetDateTime::now_utc()),
-        message: not_found_message,
-        data: None,
+        message: message.clone(),
+        data: Some(json!({
+            "request_id": request_id,
+        })),
         error: None,
-        request: Some(json!(request_as_hashmap)),
-        response: Some(json!(&api_error)),
+        request: None,
+        response: None,
     });
 
-    api_error.into_response()
+    ApiResponse::error(
+        message,
+        StatusCode::NOT_FOUND,
+        request_id.clone(),
+        Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
+        None,
+        json!({}),
+    )
+    .into_response()
 }

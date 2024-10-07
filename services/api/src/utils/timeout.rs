@@ -1,50 +1,55 @@
-use std::collections::HashMap;
-
-use super::get_header_value::get_header_value;
-use crate::{consts::REQUEST_ID_HEADER, structs::api_error::ApiError, AppState};
+use crate::{structs::api_response::ApiResponse, AppState};
 use axum::{
     extract::{Request, State},
-    http::StatusCode,
     middleware::Next,
     response::IntoResponse,
     Extension,
 };
-use serde_json::{json, Value};
-use shared::{get_current_time::get_current_time, logger::{LogLevel, LogObject}};
+use hyper::StatusCode;
+use serde_json::json;
+use shared::{
+    get_current_time::get_current_time,
+    logger::{LogLevel, LogObject},
+};
+use std::{sync::Arc, time::Duration};
+
 use time::OffsetDateTime;
+
+const MAX_REQUEST_DURATION: Duration = Duration::from_secs(10);
+
 pub async fn timeout(
-    State(state): State<AppState>,
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
+    State(state): State<Arc<AppState>>,
+    Extension(request_id): Extension<String>,
     request: Request,
     next: Next,
 ) -> impl IntoResponse {
     // Call the next middleware and timeout after 10 seconds
     // Send a response if the timeout is hit
-    match tokio::time::timeout(std::time::Duration::from_secs(10), next.run(request)).await {
+    match tokio::time::timeout(MAX_REQUEST_DURATION, next.run(request)).await {
         Ok(response) => response,
         Err(_) => {
-            let status = StatusCode::REQUEST_TIMEOUT;
             let message = "Request took too long to process. Please try again.".to_string();
-            let log_object = LogObject {
+            state.logger.log(LogObject {
                 level: LogLevel::Error,
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 message: message.clone(),
-                data: None,
+                data: Some(json!({
+                    "request_id": request_id.clone(),
+                })),
                 error: None,
-                request: Some(json!(&request_as_hashmap)),
+                request: None,
                 response: None,
-            };
-            state.logger.log(log_object);
+            });
 
-            let api_error = ApiError {
+            ApiResponse::error(
                 message,
-                request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
-                status_code: status.as_u16(),
-                docs_url: None,
-                plutomi_code: None,
-            };
-
-            api_error.into_response()
+                StatusCode::REQUEST_TIMEOUT,
+                request_id.clone(),
+                Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
+                None,
+                json!({}),
+            )
+            .into_response()
         }
     }
 }

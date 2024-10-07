@@ -1,22 +1,9 @@
-# This is for running things locally.
-# While yes, we could use K3S and simulate a real cluster,
-# this isn't needed for most development as you'll typically be working on one section at a time.
-# Also, because we're using Rust, compile times are.. uhh. So yeah this is just for datasources.
+networks:
+  kafka:
+    driver: bridge
 
 services:
-  nats:
-    image: nats:2.9.25
-    container_name: nats
-    ports:
-      - "4222:4222" # Client connections
-      - "6222:6222" # Route connections
-      - "8222:8222" # HTTP management - web UI
-    volumes:
-      - nats_data:/data/nats # Jetstream storage
-      - ./nats-config.conf:/etc/nats/nats.conf # NATS configuration file
-    command: -c /etc/nats/nats.conf
   mongodb:
-    # Make sure this matches the value in k8s/values/mongodb.yaml
     image: mongo:7.0.8
     container_name: mongodb
     ports:
@@ -26,8 +13,61 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo_data:/data/mongodb
+
+  kafka:
+    image: bitnami/kafka:latest
+    networks:
+      - kafka
+    ports:
+      - "9094:9094"
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    volumes:
+      - kafka_data:/data/kafka
+
+  topic-creator:
+    image: bitnami/kafka:latest
+    networks:
+      - kafka
+    depends_on:
+      - kafka
+    entrypoint: >
+      /bin/bash -c " \
+      echo 'Waiting for Kafka to be reachable...'; \
+      while ! /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list > /dev/null 2>&1; do \
+        echo 'Kafka is not reachable yet, retrying...'; \
+        sleep 5; \
+      done; \
+      echo 'Kafka is reachable, creating topics...'; \
+      topics=(test test-retry test-dlq); \
+      for topic in $${topics[@]}; do \
+        /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 && echo \"Topic $${topic} created or already exists.\"; \
+      done; \
+      echo 'Successfully created all topics.' \
+      "
+    restart: "no"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    networks:
+      - kafka
+    ports:
+      - "9000:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT"
+    depends_on:
+      - kafka
 volumes:
   mongo_data:
     driver: local
-  nats_data:
+  kafka_data:
     driver: local

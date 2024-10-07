@@ -7,16 +7,17 @@
 - [Sealed Secrets](#sealed-secrets)
 - [Datasources](#create-our-data-sources)
   - [MongoDB](#mongodb-replication)
-  - [NATS + Jetstream](#NATS-Jetstream)
-- [Monitoring (Axiom)](#monitoring)
+  - [Kafka](#kafka)
+- [Services](#deploy-the-services)
+- [Monitoring (Axiom - Optional)](#monitoring)
 
 ## Prerequisites
 
 Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
-For the datastores, we use [MongoDB](https://mongodb.com/) and [NATS](https://nats.io/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet as we don't have faith on the open source K8s operator from reading various reviews. For NATS, we are using the [official Helm chart directly](https://docs.nats.io/running-a-nats-service/nats-kubernetes).
+For the datastores, we use [MongoDB](https://mongodb.com/) and [Kafka](https://kafka.apache.org/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet as we don't have faith on the open source K8s operator from reading various reviews.
 
-Plutomi has _not_ been tested to run on a VPS with networked storage like EC2, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
+Plutomi has _not_ been tested to run on a VPS with networked storage like EC2 & EBS, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
 
 ### Prerequisites
 
@@ -344,14 +345,39 @@ db.createUser({
 })
 ```
 
-### NATS Jetstream
+### Kafka
 
-Because we are using the official NATS Helm chart, installation is pretty easy. However, [Linkerd needs a small workaround](https://github.com/linkerd/linkerd2/issues/1715#issuecomment-760311524) to work with NATS which is setting port 4222 as opaque. This is already handled in the [k8s/values/nats.yaml](k8s/values/nats.yaml) file.
+We use the [Strimzi operator](https://strimzi.io/) to manage our Kafka cluster.
 
 ```bash
-helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-helm repo update
-helm upgrade --install nats nats/nats -f values/nats.yaml
+# Create the namespace
+kubectl create namespace kafka
+
+# Install the Strimzi operator
+kubectl create -f 'https://strimzi.io/install/latest?namespace=default'
+
+
+# Apply the `Kafka` Cluster CR file - this might take a minute
+helm upgrade --install kafka-cluster-deploy . -f values/values.yaml -f values/kafka-cluster.yaml -f values/production.yaml
+
+
+# Create the topics
+helm upgrade --install kafka-topics-deploy . -f values/values.yaml -f values/kafka-topics.yaml -f values/production.yaml
+
+
+# Create a test producer pod
+kubectl run kafka-producer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --command -- /bin/sh -c "sleep infinity"
+
+
+# Exec into it and produce a message, you'll be greeted with a terminal just type and press enter
+kubectl exec -it kafka-producer -c kafka-producer -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test
+
+# Create a test consumer pod
+kubectl run kafka-consumer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --command -- /bin/sh -c "sleep infinity"
+
+# Exec into it and read from that topic, you should see the previous message
+kubectl exec -it kafka-consumer -c kafka-consumer -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test --from-beginning
+
 ```
 
 ## Deploy the Services
@@ -362,6 +388,9 @@ helm upgrade --install web-deploy . -f values/values.yaml -f values/web.yaml -f 
 
 # API
 helm upgrade --install api-deploy . -f values/values.yaml  -f values/api.yaml -f values/production.yaml
+
+# Kafka UI
+helm upgrade --install kafka-ui-deploy . -f values/values.yaml -f values/kafka-ui.yaml -f values/production.yaml
 ```
 
 ### Traefik
@@ -374,7 +403,7 @@ helm upgrade --install traefik-deploy . -f values/ingress.yaml
 
 ### Monitoring
 
-We use the [Axiom](https://axiom.co/) for logging instead of keeping everything in the cluster. You can sign up and add your secrets like normal. This merges the secrets into the global.yaml file if you already created it previously:
+We use [Axiom](https://axiom.co/) for logging instead of keeping everything in the cluster. You can sign up and add your secrets like normal. This merges the secrets into the global.yaml file if you already created it previously:
 
 ```bash
 kubectl create secret generic global-config-secret --dry-run=client --from-literal=AXIOM_DATASET=DATASET_NAME_HERE --from-literal=AXIOM_ORG_ID=ORG_ID_HERE --from-literal=AXIOM_TOKEN=TOKEN_HERE -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml --merge-into ./k8s/secrets/global.yaml

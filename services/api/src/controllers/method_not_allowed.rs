@@ -5,28 +5,24 @@ use axum::{
     response::IntoResponse,
     Extension,
 };
-use serde_json::{json, Value};
+use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
-use std::collections::HashMap;
+use std::sync::Arc;
 use time::OffsetDateTime;
 
-use crate::{
-    consts::REQUEST_ID_HEADER,
-    structs::{api_error::ApiError, app_state::AppState},
-    utils::get_header_value::get_header_value,
-};
+use crate::structs::{api_response::ApiResponse, app_state::AppState};
 
 /**
  * 405 fallback handler. This is needed because of this:
  * https://github.com/tokio-rs/axum/discussions/932#discussioncomment-2559645
  */
 pub async fn method_not_allowed(
-    State(state): State<AppState>,
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
+    State(state): State<Arc<AppState>>,
     OriginalUri(uri): OriginalUri,
+    Extension(request_id): Extension<String>,
     method: Method,
     req: Request,
     next: Next,
@@ -38,28 +34,30 @@ pub async fn method_not_allowed(
     match status {
         StatusCode::METHOD_NOT_ALLOWED => {
             // Overwrite the response with a custom message
-            let message = format!("Method '{}' not allowed at route '{}'", method, uri.path());
-            let api_error = ApiError {
-                message: message.clone(),
-                plutomi_code: None,
-                status_code: status.as_u16(),
-                docs_url: None,
-                request_id: get_header_value(REQUEST_ID_HEADER, &request_as_hashmap),
-            };
-
+            let message: String =
+                format!("Method '{}' not allowed at route '{}'", method, uri.path());
             state.logger.log(LogObject {
                 level: LogLevel::Error,
-                error: Some(json!(api_error)),
-                message,
-                data: None,
+                error: None,
+                message: message.clone(),
+                data: Some(json!({
+                    "request_id": &request_id,
+                })),
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                request: Some(json!(request_as_hashmap)),
+                request: None,
                 response: None,
             });
 
-            api_error.into_response()
+            ApiResponse::error(
+                message,
+                status,
+                request_id.clone(),
+                Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
+                None,
+                json!({}),
+            )
+            .into_response()
         }
-
         _ => original_response,
     }
 }

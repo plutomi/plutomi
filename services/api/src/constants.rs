@@ -1,10 +1,9 @@
 /**
  * For reusable consts throughout the app
  */
-pub const REQUEST_ID_HEADER: &str = "x-plutomi-request-id";
 
 // WIP
-pub const RESERVED_WORKSPACE_IDS: &[&str; 245] = &[
+pub const RESERVED_WORKSPACE_IDS: &[&str; 246] = &[
     // Plutomi reserved
     "plutomi",
     "plutomiinc",
@@ -18,6 +17,7 @@ pub const RESERVED_WORKSPACE_IDS: &[&str; 245] = &[
     "signups",
     "sign-in",
     "metrics",
+    "updates",
     // https://resend.com/customers/turso
     "customers",
     "careers",

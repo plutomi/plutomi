@@ -1,0 +1,18 @@
+{{- if .Values.kafkaTopics }}
+{{- range .Values.kafkaTopics }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: {{ .name }}
+  labels:
+    strimzi.io/cluster: {{ $.Values.kafka.clusterName }}
+spec:
+  partitions: {{ .partitions }}
+  replicas: {{ .replicas }}
+  config:
+    retention.ms: {{ .retentionMs }}
+    retention.bytes: {{ .retentionBytes }}
+    segment.bytes: {{ .segmentBytes }}
+---
+{{- end }}
+{{- end }}

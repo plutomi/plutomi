@@ -23,6 +23,10 @@ deployment:
           - name: api
             image: plutomi/api:latest
             port: 8080
+            resources:
+              requests:
+                cpu: "50m"
+                memory: "64Mi"
             env:
               MONGODB_URL:
                 secretKeyRef:

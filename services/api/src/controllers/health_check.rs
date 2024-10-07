@@ -2,12 +2,12 @@ use crate::AppState;
 use axum::{extract::State, http::StatusCode, Extension, Json};
 use mongodb::{bson::doc, options::FindOneOptions};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
-use std::collections::HashMap;
+use std::sync::Arc;
 use time::OffsetDateTime;
 
 #[derive(Serialize, Deserialize)]
@@ -18,9 +18,9 @@ pub struct HealthCheckResponse {
     docs_url: String,
 }
 
-pub async fn health_check(
-    State(state): State<AppState>,
-    Extension(request_as_hashmap): Extension<HashMap<String, Value>>,
+pub async fn health_check<'a>(
+    State(state): State<Arc<AppState>>,
+    Extension(request_id): Extension<String>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
     let options: FindOneOptions = {
         let mut options = FindOneOptions::default();
@@ -46,30 +46,33 @@ pub async fn health_check(
             level: LogLevel::Error,
             _time: get_current_time(OffsetDateTime::now_utc()),
             message: "Failed to connect to database for health check".to_string(),
-            data: None,
+            data: Some(json!({
+                "request_id": request_id,
+            })),
             error: Some(json!(e.to_string())),
-            request: Some(json!(request_as_hashmap)),
+            request: None,
             response: None,
         });
     }
+
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
         database,
-        environment: state.env.ENVIRONMENT,
+        environment: state.env.ENVIRONMENT.clone(),
         docs_url: format!("{}/docs/api", state.env.BASE_WEB_URL),
     };
 
     state.logger.log(LogObject {
-        level: match database {
-            true => LogLevel::Info,
-            false => LogLevel::Error,
-        },
+        level: LogLevel::Info,
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Health check response".to_string(),
-        data: None,
+        data: Some(json!({
+            "request_id": request_id,
+            "response": &response,
+        })),
         error: None,
-        request: Some(json!(request_as_hashmap)),
-        response: Some(json!(&response)),
+        request: None,
+        response: None,
     });
 
     (StatusCode::OK, Json(response))

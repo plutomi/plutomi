@@ -30,12 +30,6 @@ cleanup() {
     echo "Done."
 }
 
-datasources() {
-    echo -e "Creating datasources... $PROJECT_ROOT/docker-compose.yaml"
-    docker-compose -f "$PROJECT_ROOT/docker-compose.yaml" up -d
-}
-
-
 print_error_and_usage() {
     echo -e "\n-- ERROR: $1 --\n"
     echo -e "Usage: $0 [--stack <component>]\n"
@@ -43,11 +37,9 @@ print_error_and_usage() {
     exit 1
 }
 
-api_warning() {
-    for i in {1..3}; do
-        echo -e "${BIYELLOW}The API might take a minute to start but once it's up you won't have to wait so long due to hot reloading!${NC}"
-        sleep 5 
-    done
+rust_warning() {
+    local service_name=$1
+    echo -e "${BIYELLOW}This $service_name might take a minute to start but once it's up you won't have to wait so long due to hot reloading!${NC}"
 }
 
 trap cleanup SIGINT SIGTERM
@@ -55,7 +47,17 @@ trap cleanup SIGINT SIGTERM
 run_api() {
     cd "$PROJECT_ROOT/services/api"
     echo -e "\nStarting API..."
-    api_warning &
+    rust_warning "API" &
+    WARNING_PID=$!
+    cargo install cargo-watch
+    cargo watch -x run &
+    API_PID=$!
+}
+
+run_consumers() {
+    cd "$PROJECT_ROOT/services/consumers/template"
+    echo -e "\nStarting template consumer..."
+    rust_warning "template-consumer" &
     WARNING_PID=$!
     cargo install cargo-watch
     cargo watch -x run &
@@ -83,20 +85,18 @@ done
 # Run based on stack argument
 case "$stack" in
     "all")
-        datasources
         run_api
         run_web
-        ;;
-    "datasources")
-        datasources
+        run_consumers
         ;;
     "api")
-        datasources
         run_api
         ;;
     "web")
-        datasources
         run_web
+        ;;
+    "consumers")
+        run_consumers
         ;;
     *)
         print_error_and_usage "Invalid stack: $stack"

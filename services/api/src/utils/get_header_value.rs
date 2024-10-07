@@ -1,14 +1,13 @@
-use serde_json::Value;
-use std::collections::HashMap;
+use hyper::HeaderMap;
 
 /**
- * Given a set of headers from a request / response hash map, return the value of the header with a safe default
+ * Given a set of headers from a request / response,
+ * return the value of the header with a safe default
  */
-pub fn get_header_value(header: &str,hashmap: &HashMap<String, Value>) -> String {
-    hashmap
-        .get("headers")
-        .and_then(|headers| headers.get(header))
-        .and_then(|value| value.as_str())
-        .unwrap_or("unknown")
+pub fn get_header_value(header: &str, headers: HeaderMap) -> String {
+    headers
+        .get(header)
+        .and_then(|val| val.to_str().ok()) //
+        .unwrap_or("")
         .to_string()
 }

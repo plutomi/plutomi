@@ -1,26 +1,29 @@
+use std::sync::Arc;
+
 use axum::{
     middleware,
     response::Redirect,
     routing::{get, post},
     Router,
 };
-use consts::{DOCS_ROUTES, PORT};
+use constants::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use dotenv::dotenv;
+use rdkafka::{producer::FutureProducer, ClientConfig};
 use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     get_env::get_env,
-    logger::{LogLevel, LogObject, Logger},
+    logger::{LogLevel, LogObject, Logger, LoggerContext},
     mongodb::connect_to_mongodb,
 };
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
-use tracing::{info, warn};
-use utils::{log_req_res::log_req_res, timeout::timeout};
+use tracing::info;
+use utils::{log_req_res::log_request, timeout::timeout};
 
-mod consts;
+mod constants;
 mod controllers;
 mod structs;
 mod utils;
@@ -32,57 +35,86 @@ async fn main() {
     dotenv().ok(); // Load .env if available (used in development)
     let env = get_env();
 
-    info!("Environment variables loaded");
-    // Setup logging
-    let logger = Logger::new();
-    info!("Logger initialized");
+    let logger = Logger::init(LoggerContext { caller: "api" });
 
     // Connect to database - TODO update res/option
     let mongodb = connect_to_mongodb(&logger).await;
-    info!("Connected to MongoDB");
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
+    // For publishing
+    let producer: FutureProducer = ClientConfig::new()
+        .set("bootstrap.servers", &env.KAFKA_URL)
+        .set("acks", "all")
+        .set("retries", "10")
+        .set("message.timeout.ms", "10000")
+        .set("retry.backoff.ms", "500")
+        .create()
+        .map_err(|e| {
+            let err = format!("Failed to create producer: {}", e);
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                message: err.clone(),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                request: None,
+                response: None,
+                data: None,
+                error: None,
+            });
+            err
+        })
+        .unwrap_or_else(|e| {
+            logger.log(LogObject {
+                level: LogLevel::Error,
+                message: format!("Failed to create producer: {}", e),
+                _time: get_current_time(OffsetDateTime::now_utc()),
+                request: None,
+                response: None,
+                data: None,
+                error: None,
+            });
+            std::process::exit(1);
+        });
+
     // Create an instance of AppState to be shared with all routes
-    let state = AppState {
-        logger: logger.clone(),
+    let state = Arc::new(AppState {
+        logger: Arc::clone(&logger),
         mongodb,
         env,
-    };
-    // Grouping of middleware that should be applied
-    // Under a ServiceBuilder, it is applied from top to bottom
-    let required_middleware = ServiceBuilder::new()
-        .layer(middleware::from_fn_with_state(state.clone(), log_req_res))
-        .layer(middleware::from_fn_with_state(state.clone(), timeout))
-        .layer(middleware::from_fn_with_state(
-            state.clone(),
-            method_not_allowed,
-        ));
+        producer: Arc::new(producer),
+    });
 
     // Redirect to web app routes
     let docs_routes = DOCS_ROUTES.iter().fold(Router::new(), |router, route| {
         router.route(route, get(Redirect::temporary(&docs_redirect_url)))
     });
 
-    // Combine all other routes under /api/* */
-    let main_routes = Router::new()
-        .route("/request-totp", post(request_totp))
-        // Public health check route
-        .route("/health", get(health_check));
-
     let app = Router::new()
-        // These are applied backwards, so bottom to top gets precedence
-        .fallback(not_found) //
-        .nest("/api", main_routes) //  / ⬆️
-        .merge(docs_routes) // redirect / ⬆️
-        // This is the internal health check route, public health check goes to docs route
-        // Or probably a status page in the future
-        .route("/health", get(health_check)) // ⬆️
-        .layer(required_middleware) // / ⬆️
-        .with_state(state); //         / ⬆️
+        // This is the internal kubernetes health check route
+        .route("/health", get(health_check))
+        // Public health check route
+        .route("/api/health", get(health_check))
+        // All of these should redirect to the web app
+        .merge(docs_routes)
+        .route("/api/totp", post(request_totp))
+        .fallback(not_found)
+        .layer(
+            // Middleware that is applied to all routes
+            ServiceBuilder::new()
+                .layer(middleware::from_fn_with_state(
+                    Arc::clone(&state),
+                    log_request,
+                ))
+                .layer(middleware::from_fn_with_state(Arc::clone(&state), timeout))
+                .layer(middleware::from_fn_with_state(
+                    Arc::clone(&state),
+                    method_not_allowed,
+                )),
+        )
+        // Add app state like logger, DB connections, etc.
+        .with_state(Arc::clone(&state));
 
-    // Bind address
     let addr = PORT.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {
         let message = format!("Failed to parse address on startup '{}': {}", PORT, e);
         let error_json = json!({ "message": &message });
@@ -116,20 +148,9 @@ async fn main() {
             std::process::exit(1);
         });
 
-    logger.log(LogObject {
-        level: LogLevel::Info,
-        _time: get_current_time(OffsetDateTime::now_utc()),
-        message: "API starting on http://localhost:8080".to_string(),
-        data: None,
-        error: None,
-        request: None,
-        response: None,
-    });
-
     // Start the server
     axum::serve(listener, app).await.unwrap_or_else(|e| {
-        let logger = logger.clone();
-        let message = format!("Server failed to start: {}", e);
+        let message = format!("Failed to start server: {}", e);
         let error_json = json!({ "message": &message });
         logger.log(LogObject {
             level: LogLevel::Error,
@@ -141,5 +162,5 @@ async fn main() {
             response: None,
         });
         std::process::exit(1);
-    })
+    });
 }

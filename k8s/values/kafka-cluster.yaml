@@ -1,0 +1,15 @@
+kafkaCluster:
+  clusterName: kafka                        # Name of the Kafka cluster
+  nodePoolName: kafka-node-pool             # Name of the Kafka node pool
+  replicas: 1                               # Number of replicas (nodes)
+  storageSize: 20Gi                         # Size of the persistent volume for each node
+  deleteClaim: false                        # Whether to delete the PVC when the pod is deleted
+  version: 3.8.0                            # Kafka version
+  metadataVersion: 3.8-IV0                  # Kafka metadata version
+
+  config:
+    offsetsTopicReplicationFactor: 1        # Replication factor for offsets topic
+    transactionStateLogReplicationFactor: 1 # Replication factor for transaction logs
+    transactionStateLogMinISR: 1            # Minimum ISR for transaction state log
+    defaultReplicationFactor: 1             # Default replication factor for topics
+    minInsyncReplicas: 1                    # Minimum in-sync replicas for committing writes

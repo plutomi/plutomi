@@ -1,13 +1,12 @@
-use super::{parse_request::parse_request, parse_response::parse_response};
-
-use crate::{consts, structs::api_error::ApiError, AppState};
+use crate::{utils::headers_to_hashmap::headers_to_hashmap, AppState};
 use axum::{
-    body::Body,
+    body::{Body, Bytes},
     extract::{Request, State},
-    http::{HeaderValue, Response, StatusCode},
+    http::Response,
     middleware::Next,
-    response::IntoResponse,
 };
+use http_body_util::BodyExt;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use shared::{
     entities::Entities,
@@ -15,156 +14,126 @@ use shared::{
     get_current_time::get_current_time,
     logger::{LogLevel, LogObject},
 };
+use std::{collections::HashMap, sync::Arc};
 use time::OffsetDateTime;
 
-const REQUEST_TIMESTAMP_HEADER: &str = "x-plutomi-request-timestamp";
-const RESPONSE_TIMESTAMP_HEADER: &str = "x-plutomi-response-timestamp";
-const UNKNOWN_HEADER: HeaderValue = HeaderValue::from_static("unknown");
-// const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip";
-use consts::REQUEST_ID_HEADER;
+// A deconstructed request that we can log
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct OriginalRequest {
+    method: String,
+    path: String,
+    headers: HashMap<String, String>,
+    query: String,
+    body: String,
+    request_id: String,
+}
+
+// const CLOUDFLARE_IP_HEADER: &str = "cf-connecting-ip"; TODO
 
 /**
- * Logs the incoming request and outgoing response. This should be the first AND last middleware every time.
- *
+ * Logs the incoming request and outgoing response.
+ * This should be the first AND last middleware every time.
  */
-pub async fn log_req_res(
-    State(state): State<AppState>,
-    mut request: Request,
+pub async fn log_request(
+    state: State<Arc<AppState>>,
+    req: Request<Body>,
     next: Next,
 ) -> Response<Body> {
     // Start a timer to see how long it takes us to process it
     let start_time = OffsetDateTime::now_utc();
-    let formatted_start_time = get_current_time(start_time);
 
-    // On the way in, add a timestamp header
-    request.headers_mut().insert(
-        REQUEST_TIMESTAMP_HEADER,
-        HeaderValue::from_str(&formatted_start_time).unwrap_or(UNKNOWN_HEADER),
-    );
-
-    // Add a request ID header
+    // Generate a request ID
     let request_id = PlutomiId::new(&start_time, Entities::Request);
-    let request_id_value = HeaderValue::from_str(&request_id).unwrap_or(UNKNOWN_HEADER);
-    request
-        .headers_mut()
-        .insert(REQUEST_ID_HEADER, request_id_value.clone());
 
-    // Attempt to parse the request
-    let all_request_data = parse_request(request).await;
+    // Extract the request details
+    let (incoming_parts, incoming_body) = req.into_parts();
+    let incoming_uri = &incoming_parts.uri;
 
-    match all_request_data {
-        Err(message) => {
-            // If the incoming request failed to parse, log it and return a 400
-            let end_time = OffsetDateTime::now_utc();
-            let formatted_end_time = get_current_time(end_time);
-            let duration_ms: i128 = (end_time - start_time).whole_milliseconds();
+    //  Extract the body as a string so we can log it
+    let incoming_body_as_bytes: Bytes = match incoming_body.collect().await {
+        Ok(collected) => collected.to_bytes(),
+        Err(_) => Bytes::from(""),
+    };
+    let incoming_body_string = String::from_utf8_lossy(&incoming_body_as_bytes);
 
-            let status = StatusCode::BAD_REQUEST;
-            let api_error = ApiError {
-                message: message.clone(),
-                plutomi_code: None,
-                status_code: status.as_u16(),
-                docs_url: None,
-                request_id,
-            };
+    // Log incoming request
+    let original_request = OriginalRequest {
+        request_id: request_id.clone(),
+        method: incoming_parts.method.to_string(),
+        path: incoming_uri.path().to_string(),
+        query: incoming_uri.query().unwrap_or("").to_string(),
+        headers: headers_to_hashmap(&incoming_parts.headers),
+        body: incoming_body_string.to_string(),
+    };
 
-            // Create a response
-            let response = api_error.clone().into_response();
-            let mut parsed_response = parse_response(response).await.unwrap();
+    state.logger.log(LogObject {
+        level: LogLevel::Debug,
+        _time: get_current_time(OffsetDateTime::now_utc()),
+        message: "Incoming request".to_string(),
+        data: Some(json!({
+            "request_id": request_id.clone(),
+            "request": &original_request,
+        })),
+        error: None,
+        request: None,
+        response: None,
+    });
 
-            // On the way out, add a timestamp header
-            parsed_response.original_response.headers_mut().insert(
-                RESPONSE_TIMESTAMP_HEADER,
-                HeaderValue::from_str(&formatted_end_time).unwrap(),
-            );
+    // Recreate the request with the buffered body
+    let new_incoming_body = Body::from(incoming_body_as_bytes);
+    let mut reconstructed_request = Request::from_parts(incoming_parts, new_incoming_body);
 
-            // Log the error
-            state.logger.log(LogObject {
-                data: Some(json!({ "duration": duration_ms })),
-                message,
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                level: LogLevel::Error,
-                error: Some(json!(api_error)),
-                request: None,
-                response: Some(json!(parsed_response.response_as_hashmap)),
-            });
+    // Add request ID to extensions for use in handler loggers for easy lookups
+    reconstructed_request
+        .extensions_mut()
+        .insert(request_id.clone());
 
-            parsed_response.original_response
-        }
-        Ok(mut request_data) => {
-            // If we successfully parsed the request, log it
-            state.logger.log(LogObject {
-                level: LogLevel::Debug,
-                error: None,
-                message: "Request received".to_string(),
-                data: None,
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                request: Some(json!(request_data.request_as_hashmap)),
-                response: None,
-            });
+    // Call the next middleware or handler
+    let response = next.run(reconstructed_request).await;
 
-            // Add the request data as an Axum extension so we can access it later if needed
-            request_data
-                .original_request
-                .extensions_mut()
-                .insert(request_data.request_as_hashmap.clone());
+    ////////////////////////////////
+    ////////////////////////////////
+    ////////////////////////////////
+    ////////////////////////////////
 
-            // Call the next middleware and await the response
-            let mut response = next.run(request_data.original_request).await;
+    // Log the response on the way out
+    let (outgoing_parts, outgoing_body) = response.into_parts();
+    let outgoing_status = outgoing_parts.status;
+    let outgoing_headers = headers_to_hashmap(&outgoing_parts.headers);
 
-            // Note how long the req -> res took
-            let end_time = OffsetDateTime::now_utc();
-            let formatted_end_time = get_current_time(end_time);
-            let duration_ms = (end_time - start_time).whole_milliseconds();
+    // Buffer the body so we can log it
+    let outgoing_body_bytes: Bytes = match outgoing_body.collect().await {
+        Ok(collected) => collected.to_bytes(),
+        Err(_) => Bytes::from(""),
+    };
+    let outgoing_body_string = String::from_utf8_lossy(&outgoing_body_bytes);
 
-            // Add a timestamp header on the way out
-            response.headers_mut().insert(
-                RESPONSE_TIMESTAMP_HEADER,
-                HeaderValue::from_str(&formatted_end_time).unwrap(),
-            );
+    let new_outgoing_body = Body::from(outgoing_body_bytes.clone());
+    let final_response = Response::from_parts(outgoing_parts, new_outgoing_body);
 
-            // Add the request ID header on the way out to help with debugging if needed
-            response
-                .headers_mut()
-                .insert(REQUEST_ID_HEADER, request_id_value);
+    // Note how long the req -> res took
+    let end_time = OffsetDateTime::now_utc();
+    let duration_ms = (end_time - start_time).whole_milliseconds();
 
-            let is_redirect = (300..=399).contains(&response.status().as_u16());
+    state.logger.log(LogObject {
+        level: LogLevel::Debug,
+        _time: get_current_time(OffsetDateTime::now_utc()),
+        message: "Outgoing request".to_string(),
+        data: Some(json!({
+            "duration_ms": duration_ms,
+            "request_id": request_id,
+            "request": original_request,
+            "response": json!({
+                "status": outgoing_status.as_u16(),
+                "headers": outgoing_headers,
+                // We don't know the format of the response so just log as string
+                "body": outgoing_body_string,
+            }),
+        })),
+        error: None,
+        request: None,
+        response: None,
+    });
 
-            if is_redirect {
-                // Don't try to parse the response as it'll just be an error
-                // Log the response
-                // TODO: What happens if 502?
-                state.logger.log(LogObject {
-                    level: LogLevel::Warn,
-                    error: None,
-                    message: "Redirect sent".to_string(),
-                    data: Some(json!({ "duration": duration_ms })),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    request: Some(json!(&request_data.request_as_hashmap)),
-                    response: Some(json!({ "status": response.status().as_u16() })),
-                });
-
-                return response;
-            }
-
-            // Everything here should be ok
-            let parsed_response = parse_response(response).await.unwrap();
-
-            // Log the response
-            state.logger.log(LogObject {
-                level: match parsed_response.original_response.status().as_u16() {
-                    400..=599 => LogLevel::Error,
-                    _ => LogLevel::Debug,
-                },
-                error: None,
-                message: "Response sent".to_string(),
-                data: Some(json!({ "duration": duration_ms })),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                request: Some(json!(&request_data.request_as_hashmap)),
-                response: Some(json!(parsed_response.response_as_hashmap)),
-            });
-
-            parsed_response.original_response
-        }
-    }
+    final_response
 }

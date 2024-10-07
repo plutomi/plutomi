@@ -1,0 +1,53 @@
+{{- if .Values.kafkaCluster }}
+{{- with .Values.kafkaCluster }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: {{ .nodePoolName }}
+  labels:
+    strimzi.io/cluster: {{ .clusterName }}
+spec:
+  replicas: {{ .replicas }}
+  roles:
+    - controller
+    - broker
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: {{ .storageSize }}
+        deleteClaim: {{ .deleteClaim }}
+        kraftMetadata: shared
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ .clusterName }}
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
+spec:
+  kafka:
+    version: {{ .version }}
+    metadataVersion: {{ .metadataVersion }}
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+    config:
+      offsets.topic.replication.factor: {{ .config.offsetsTopicReplicationFactor }}
+      transaction.state.log.replication.factor: {{ .config.transactionStateLogReplicationFactor }}
+      transaction.state.log.min.isr: {{ .config.transactionStateLogMinISR }}
+      default.replication.factor: {{ .config.defaultReplicationFactor }}
+      min.insync.replicas: {{ .config.minInsyncReplicas }}
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+{{- end }}
+{{- end }}

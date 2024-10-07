@@ -4,7 +4,7 @@ use serde::Serialize;
 use std::{fmt, sync::Arc};
 use time::OffsetDateTime;
 use tokio::{
-    sync::mpsc::{self, Sender},
+    sync::mpsc::{self, UnboundedSender},
     time::{sleep, Duration, Instant},
 };
 use tracing::{debug, error, info, warn};
@@ -13,8 +13,6 @@ use tracing_subscriber::{
     FmtSubscriber,
 };
 
-// Max number of logs to buffer in a channel before overflowing
-const MAX_LOG_BUFFER_LENGTH: usize = 10000;
 // Max number of logs to send in a batch
 const LOG_BATCH_SIZE: usize = 100;
 // Time to wait before sending the batch of logs
@@ -53,7 +51,7 @@ pub struct LogObject {
      * Axiom uses `_time` so we can use it as well
      */
     pub _time: String,
-    pub message: String,
+    pub message: String, // TODO make this a reference? https://github.com/plutomi/plutomi/issues/996
     /**
      * Used for adding additional data to the log object
      */
@@ -87,7 +85,7 @@ impl fmt::Display for LogObject {
 }
 
 pub struct Logger {
-    sender: Sender<LogObject>,
+    sender: UnboundedSender<LogObject>,
 }
 
 struct CustomTimeFormat;
@@ -109,15 +107,19 @@ async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client, axiom_datase
     }
 }
 
+pub struct LoggerContext {
+    pub caller: &'static str,
+}
+
 impl Logger {
     /**
      * Create a new logger instance.
      * This also spawns a long lived thread that will handle logging.
      */
-    pub fn new() -> Arc<Logger> {
+    pub fn init(context: LoggerContext) -> Arc<Logger> {
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
-            // .pretty()
+            .pretty()
             .with_max_level(tracing::Level::DEBUG) // Adjust this level as needed
             .with_target(false)
             .finish();
@@ -140,7 +142,7 @@ impl Logger {
             None
         };
 
-        let (sender, mut receiver) = mpsc::channel::<LogObject>(MAX_LOG_BUFFER_LENGTH);
+        let (sender, mut receiver) = mpsc::unbounded_channel::<LogObject>();
 
         // Spawn the logging thread
         tokio::spawn(async move {
@@ -168,6 +170,7 @@ impl Logger {
                         // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
                             if let Some(ref client) = axiom_client {
+                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
                                  send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
                             }
                             // Clear the batch for the next batch
@@ -183,6 +186,7 @@ impl Logger {
                         if !log_batch.is_empty() {
                            // Send whatever is in the batch
                             if let Some(ref client) = axiom_client {
+                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
                                 send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
                             }
 
@@ -196,7 +200,18 @@ impl Logger {
             }
         });
 
-        return Arc::new(Logger { sender });
+        let logger = Arc::new(Logger { sender });
+
+        logger.log(LogObject {
+            level: LogLevel::Info,
+            message: format!("{} initialized", context.caller),
+            _time: get_current_time(OffsetDateTime::now_utc()),
+            data: None,
+            error: None,
+            request: None,
+            response: None,
+        });
+        return logger;
     }
 
     /**
@@ -204,8 +219,9 @@ impl Logger {
      */
     pub fn log(&self, log: LogObject) {
         // Send the log message to the channel
-        if let Err(e) = self.sender.try_send(log) {
+        if let Err(e) = self.sender.send(log) {
             error!("Failed to enqueue log message: {}", e);
+            // TODO Alert if no logs in a specified amount of time
         }
     }
 }
@@ -217,3 +233,18 @@ async fn sleep_until(deadline: Instant) {
         sleep(deadline - now).await;
     }
 }
+
+// https://github.com/plutomi/plutomi/issues/996
+// impl Default for LogObject {
+//     fn default() -> LogObject {
+//         LogObject {
+//             data: None,
+//             error: None,
+//             level: LogLevel::Info,
+//             message: "".to_string(),
+//             request: None,
+//             response: None,
+//             _time: "".to_string(),
+//         }
+//     }
+// }

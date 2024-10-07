@@ -12,9 +12,8 @@ service:
 deployment:
   metadata:
     name: web
-
   spec:
-    replicas: 2
+    replicas: 1
     template:
       spec:
         terminationGracePeriodSeconds: 10
@@ -22,6 +21,10 @@ deployment:
           - name: web
             image: plutomi/web:latest
             port: 3000
+            resources:
+              requests:
+                cpu: "20m"
+                memory: "128Mi"
             env:
             readinessProbe:
               periodSeconds: 10

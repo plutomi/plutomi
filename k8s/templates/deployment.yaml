@@ -18,10 +18,6 @@ spec:
       maxSurge: {{ .spec.strategy.rollingUpdate.maxSurge }}
   template:
     metadata:
-      # # Disabled for now. Was using too many resources for my little cluster :3
-      # annotations:
-      #   prometheus.io/scrape: "true"
-      #   prometheus.io/port: "9100"
       labels:
         app: {{ .metadata.name }}
     spec:
@@ -31,6 +27,29 @@ spec:
         - name: {{ .name }}
           image: {{ .image }}
           imagePullPolicy: Always
+          {{- if .resources }}
+          resources:
+            {{- if .resources.requests }}
+            requests:
+              {{- if .resources.requests.cpu }}
+              cpu: {{ .resources.requests.cpu }}
+              {{- end }}
+              {{- if .resources.requests.memory }}
+              memory: {{ .resources.requests.memory }}
+              {{- end }}
+            {{- end }}
+            # {{- if .resources.limits }}
+            # # Don't use this..
+            # # https://home.robusta.dev/blog/stop-using-cpu-limits
+            # limits:
+            #   {{- if .resources.limits.cpu }}
+            #   cpu: {{ .resources.limits.cpu }}
+            #   {{- end }}
+            #   {{- if .resources.limits.memory }}
+            #   memory: {{ .resources.limits.memory }}
+            #   {{- end }}
+            # {{- end }}
+          {{- end }}
           ports:
             # - name: metrics
             #   containerPort: {{ .port }}
