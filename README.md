@@ -10,7 +10,7 @@ Plutomi was inspired by my experience at [Grubhub](grubhub.com), where managing 
 
 Plutomi allows you to create applications for anything from jobs to program enrollments, each with customizable stages, where you can setup rules and automated workflows based on applicant responses or after a certain time period. Here's an example of how a delivery driver application might look like:
 
-1. **Questionnaire** - Collects basic applicant info. Applicants move to the waiting list if not completed in 30 days.
+1. **Questionnaire** - Collects basic applicant info. Applicants are moved to the waiting list if not completed in 30 days.
 2. **Waiting List** - Pool of idle applicants.
 3. **Document Upload** - Collects required documents like licenses and insurance.
 4. **Final Review** - Manual compliance check.
