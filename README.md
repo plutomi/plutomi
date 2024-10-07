@@ -12,10 +12,10 @@ Plutomi allows you to create applications for anything from jobs to program enro
 
 1. **Questionnaire** - Collects basic applicant info. Applicants move to the waiting list if not completed in 30 days.
 2. **Waiting List** - Pool of idle applicants.
-3. **Document Upload** - Collects required documents like licenses.
+3. **Document Upload** - Collects required documents like licenses and insurance.
 4. **Final Review** - Manual compliance check.
-5. **Ready to Drive** - Applicants who have completed all stages and are approved. Automatically move to Onboarding after 2 hours.
-6. **Onboarding** - Sends onboarding emails and schedules training sessions.
+5. **Ready to Drive** - Applicants who have completed all stages and are approved. Triggers account creation in an external system via webhook.
+6. **Account Creation Failures** - Holds applicants whose account creation failed, allowing for troubleshooting and resolution.
 
 ## Architecture
 
