@@ -19,7 +19,7 @@ Plutomi allows you to create applications for anything from jobs to program enro
 
 ## Architecture
 
-Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to transition to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is managed by [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) providing caching & rate limiting.
+Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to transition to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is managed by [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) provides caching & rate limiting.
 
 ### Infrastructure and Third-Party Tools
 
