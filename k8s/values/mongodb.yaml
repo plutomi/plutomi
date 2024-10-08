@@ -9,8 +9,6 @@ service:
       - port: 27017
         targetPort: 27017
 
-
-
 statefulSet:
   metadata:
     name: mongodb

@@ -13,10 +13,12 @@ service:
 deployment:
   metadata:
     name: api
-
   spec:
     replicas: 3
     template:
+      metadata:
+        labels:
+          app: api
       spec:
         terminationGracePeriodSeconds: 10
         containers:
