@@ -1,5 +1,3 @@
-import React from "react";
-
 export type SpinnerColors = {
   fillColor: `fill-${string}-${number}`;
   bgColor: `text-${string}-${number}` | `text-${string}`;

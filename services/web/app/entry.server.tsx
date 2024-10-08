@@ -9,7 +9,7 @@ import { PassThrough } from "node:stream";
 import type { AppLoadContext, EntryContext } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
-   import { isbot } from "isbot";
+import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 
 const ABORT_DELAY = 5_000;
@@ -21,7 +21,7 @@ export default function handleRequest(
   remixContext: EntryContext,
   // This is ignored so we can keep it in the template for visibility.  Feel
   // free to delete this parameter in your app if you're not using it!
-   loadContext: AppLoadContext
+  loadContext: AppLoadContext
 ) {
   return isbot(request.headers.get("user-agent") || "")
     ? handleBotRequest(
@@ -63,7 +63,7 @@ function handleBotRequest(
           resolve(
             new Response(stream, {
               headers: responseHeaders,
-              status: responseStatusCode,
+              status: responseStatusCode
             })
           );
 
@@ -80,7 +80,7 @@ function handleBotRequest(
           if (shellRendered) {
             console.error(error);
           }
-        },
+        }
       }
     );
 
@@ -113,7 +113,7 @@ function handleBrowserRequest(
           resolve(
             new Response(stream, {
               headers: responseHeaders,
-              status: responseStatusCode,
+              status: responseStatusCode
             })
           );
 
@@ -130,7 +130,7 @@ function handleBrowserRequest(
           if (shellRendered) {
             console.error(error);
           }
-        },
+        }
       }
     );
 
