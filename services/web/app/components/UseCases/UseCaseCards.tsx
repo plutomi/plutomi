@@ -28,7 +28,7 @@ type UseCaseCard = {
 const hiringUseCase: UseCaseCard[] = [
   {
     title: "Resume Upload",
-        icon: IconFileUpload,
+    icon: IconFileUpload,
     color: "text-slate-400",
     amount: 6
   },

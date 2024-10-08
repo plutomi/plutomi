@@ -12,10 +12,6 @@ export async function loader() {
 
   if (!response.ok) {
     console.error(
-
-
-
-  
       `Failed to fetch commits from Github API: ${response.statusText}`
     );
     return null;
