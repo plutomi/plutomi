@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 #[allow(non_snake_case)]
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Env {
-    pub MONGODB_URL: String,
+    pub MYSQL_URL: String,
     pub BASE_WEB_URL: String,
     pub ENVIRONMENT: String,
     pub KAFKA_URL: String,
@@ -41,7 +41,7 @@ fn get_optional_key_from_env(key: &str) -> Option<String> {
 pub fn get_env() -> Env {
     Env {
         // Required
-        MONGODB_URL: get_key_from_env("MONGODB_URL", None),
+        MYSQL_URL: get_key_from_env("MYSQL_URL", None),
         KAFKA_URL: get_key_from_env("KAFKA_URL", None),
         ENVIRONMENT: get_key_from_env("ENVIRONMENT", Some("development")),
         BASE_WEB_URL: get_key_from_env("BASE_WEB_URL", Some("http://localhost:3000")),

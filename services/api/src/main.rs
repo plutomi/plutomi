@@ -15,7 +15,6 @@ use shared::{
     get_current_time::get_current_time,
     get_env::get_env,
     logger::{LogLevel, LogObject, Logger, LoggerContext},
-    mongodb::connect_to_mongodb,
 };
 use structs::app_state::AppState;
 use time::OffsetDateTime;
@@ -36,9 +35,6 @@ async fn main() {
     let env = get_env();
 
     let logger = Logger::init(LoggerContext { caller: "api" });
-
-    // Connect to database - TODO update res/option
-    let mongodb = connect_to_mongodb(&logger).await;
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
@@ -80,7 +76,6 @@ async fn main() {
     // Create an instance of AppState to be shared with all routes
     let state = Arc::new(AppState {
         logger: Arc::clone(&logger),
-        mongodb,
         env,
         producer: Arc::new(producer),
     });

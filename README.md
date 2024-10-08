@@ -19,7 +19,7 @@ Plutomi allows you to create applications for anything from jobs to program enro
 
 ## Architecture
 
-Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to transition to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is managed by [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) provides caching & rate limiting.
+Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database, MySQL, which handles all operational data rather than splitting data between consumers or services. Blob storage is managed by [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) provides caching & rate limiting.
 
 ### Infrastructure and Third-Party Tools
 
@@ -49,7 +49,7 @@ For more details on the event streaming pipeline and to view the event schemas, 
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
-To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MongoDB, Kafka with the required topics, and KafkaUI on ports 27017, 9092, and 9000 respectively.
+To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MySQL, Kafka with the required topics, and KafkaUI on ports 3306, 9092, and 9000 respectively.
 
 > Credentials for all datasources are `admin` and `password`.
 

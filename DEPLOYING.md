@@ -6,7 +6,7 @@
 - [Linkerd (Optional)](#install-linkerd)
 - [Sealed Secrets](#sealed-secrets)
 - [Datasources](#create-our-data-sources)
-  - [MongoDB](#mongodb-replication)
+  - [MySQL](#mysql)
   - [Kafka](#kafka)
 - [Services](#deploy-the-services)
 - [Monitoring (Axiom - Optional)](#monitoring)
@@ -15,7 +15,7 @@
 
 Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
-For the datastores, we use [MongoDB](https://mongodb.com/) and [Kafka](https://kafka.apache.org/). We use the official [MongoDB docker image](https://hub.docker.com/_/mongo/tags?page=&page_size=&ordering=&name=7.0.8) with our own StatefulSet as we don't have faith on the open source K8s operator from reading various reviews.
+For the datastores, we use [MySQL](https://www.mysql.com/) as our primary OLTP store and [Kafka](https://kafka.apache.org/) for asynchronous event processing. We use [Strimzi](https://strimzi.io/) to manage our Kafka cluster.
 
 Plutomi has _not_ been tested to run on a VPS with networked storage like EC2 & EBS, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
 
@@ -151,12 +151,6 @@ Then, ensure you're using it:
 export KUBECONFIG=~/.kube/YOUR_CONFIG_NAME
 ```
 
-Then on your own PC, create the secrets. First the MongoDB init credentials:
-
-```bash
-kubectl create secret generic mongodb-init-secret --dry-run=client --from-literal=MONGO_INITDB_ROOT_USERNAME=LONG_USERNAME  --from-literal=MONGO_INITDB_ROOT_PASSWORD=LONG_PASSWORD -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/mongodb.yaml
-```
-
 If using Cloudflare for DNS, we need a token for cert-manager to use. We need to store it in a secret as well:
 
 ```bash
@@ -165,8 +159,10 @@ kubectl create secret generic cloudflare-token --dry-run=client --from-literal=C
 
 Create other global secrets shared by most of the backend:
 
+# TODO
+
 ```bash
-kubectl create secret generic global-config-secret --dry-run=client --from-literal=MONGODB_URL=mongodb://USERNAMEdifferentfromINITDB_ROOT:PASSWORDdifferentfromINITDB_ROOT@mongodb.default.svc.cluster.local:27017/plutomi -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/global.yaml
+kubectl create secret generic global-config-secret --dry-run=client --from-literal=MYSQL_URL=mysql://USERNAMEdifferentfromINITDB_ROOT:PASSWORDdifferentfromINITDB_ROOT@lTODOTODOTODOTODOTODOTODO.default.svc.cluster.local:27017/plutomi -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/global.yaml
 ```
 
 Transfer the files over to your server in the `/k8s` directory and apply the secrets:
@@ -281,69 +277,9 @@ Then after all of that is done, make sure to beg aws to get you out of sandbox s
 
 Since other services depend on these, we will deploy them first.
 
-### MongoDB
+### MySQL
 
-```bash
-helm upgrade --install mongodb-service . -f values/mongodb.yaml
-```
-
-Exec into one of the pods:
-
-```bash
-kubectl exec -it mongodb-0 -c mongodb -- mongosh "mongodb://mongodb.default.svc.cluster.local:27017/test"
-```
-
-...and let's link them up! Make sure this matches the values in the StatefulSet:
-
-```bash
-rs.initiate({ _id: "rs0", version: 1, members: [ { _id: 0, host : "mongodb-0.mongodb.default.svc.cluster.local:27017" }, { _id: 1, host : "mongodb-1.mongodb.default.svc.cluster.local:27017" },{ _id: 2, host : "mongodb-2.mongodb.default.svc.cluster.local:27017" }]})
-```
-
-> NOTE: `rs.status()` will show 3 SECONDARY nodes until they reach a quorum and elect one as primary. This takes ~10 seconds. If deploying a single replica, you can remove the other nodes. It's still a good idea to initialize the replica set incase you add more pods in the future.
-
-Test that replication is working:
-
-```bash
-db.test.insertOne({ name: "Jose"});
-```
-
-Exec into another pod, and see the item there hopefully :D
-
-```bash
-kubectl exec -it mongodb-1 -c mongodb -- mongosh
-db.test.findOne()
-```
-
-Ok back to the other pod, create an admin user:
-
-```bash
-kubectl exec -it mongodb-0 -c mongodb -- sh
-
-mongosh admin --eval "db.createUser({ user: '$MONGO_INITDB_ROOT_USERNAME', pwd: '$MONGO_INITDB_ROOT_PASSWORD', roles: [{ role: 'root', db: 'admin' }] })"
-```
-
-Then, login to the DB with the new user:
-
-```bash
-mongosh --username ACTUAL_ADMIN_USERNAME_VALUE --password ACTUAL_ADMIN_PASSWORD_VALUE
-```
-
-> If you need to get the credentials again you can back out and run:
->
-> ```bash
-> kubectl get secret mongodb-init-secret -n default -o jsonpath="{.data.MONGO_INITDB_ROOT_PASSWORD}" | base64 --decode
-> ```
-
-Use the `plutomi` database and create a user for the app. Make sure it has _readWrite_ permissions on the `plutomi` database AND that the credentials match what you put in the MONGODB_URL secret.
-
-```bash
-use plutomi
-db.createUser({
-  user: "USERNAME_USED_TO_CREATE_URL_SECRET",
-  pwd: "PASSWORD_USED_TO_CREATE_URL_SECRET",
-  roles: [{ role: "readWrite", db: "plutomi" }]
-})
-```
+# TODO
 
 ### Kafka
 
