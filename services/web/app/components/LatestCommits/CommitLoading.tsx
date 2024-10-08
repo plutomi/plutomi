@@ -9,7 +9,7 @@ export default function CommitLoading() {
           <div className="px-3 max-w-2xl grid grid-cols-6">
             <div
               id="date"
-              className="h-3 bg-slate-200 rounded col-span-1"
+                   className="h-3 bg-slate-200 rounded col-span-1"
             ></div>
           </div>
           <div className="px-3 max-w-2xl grid grid-cols-12 space-x-2">

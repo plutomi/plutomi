@@ -6,10 +6,11 @@ import {
   ScrollRestoration
 } from "@remix-run/react";
 import "./tailwind.css";
+import React from "react";
 
 const rootBg = "bg-white";
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout() {
   return (
     <html
       lang="en"

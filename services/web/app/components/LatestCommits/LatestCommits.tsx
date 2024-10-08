@@ -2,7 +2,6 @@ import { useLoaderData } from "@remix-run/react";
 import { Commit, CommitType } from "./Commit";
 
 const numOfCommits = 3;
-const revalidateHours = 24;
 
 export async function loader() {
   const allCommits: CommitType[] = [];
@@ -13,6 +12,10 @@ export async function loader() {
 
   if (!response.ok) {
     console.error(
+
+
+
+  
       `Failed to fetch commits from Github API: ${response.statusText}`
     );
     return null;

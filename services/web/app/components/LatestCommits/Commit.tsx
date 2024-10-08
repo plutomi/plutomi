@@ -7,6 +7,8 @@ export type CommitType = {
   email: string;
   message: string;
 };
+import React from "react";
+
 export const Commit: React.FC<CommitType> = ({
   url,
   username,
