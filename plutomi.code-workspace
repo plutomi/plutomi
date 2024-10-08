@@ -9,6 +9,10 @@
       "name": "api"
     },
     {
+      "path": "services/shared",
+      "name": "shared"
+    },
+    {
       "path": "services/web",
       "name": "web"
     },
@@ -21,6 +25,7 @@
     "eslint.workingDirectories": [
       { "directory": "services/api", "changeProcessCWD": true },
       { "directory": "services/web", "changeProcessCWD": true },
+      { "directory": "services/shared", "changeProcessCWD": true },
       { "directory": "services/consumers/template", "changeProcessCWD": true }
     ],
     "search.exclude": {
