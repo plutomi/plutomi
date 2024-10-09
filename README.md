@@ -48,6 +48,7 @@ For more details on the event streaming pipeline and to view the event schemas, 
 - [cmake](https://cmake.org/download/) - for [rdkafka dependency](https://github.com/fede1024/rust-rdkafka?tab=readme-ov-file#installation)
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
+- It is recommended to use the vscode workspace file for development
 
 To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MySQL, Kafka with the required topics, and KafkaUI on ports 3306, 9092, and 9000 respectively.
 
