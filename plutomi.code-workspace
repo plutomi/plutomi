@@ -25,12 +25,14 @@
     "rust-analyzer.linkedProjects": [
       "services/api/Cargo.toml",
       "services/consumers/template/Cargo.toml",
-      "services/shared/Cargo.toml"
+      "services/shared/Cargo.toml",
+      "services/migrator/Cargo.toml"
     ],
     "eslint.workingDirectories": [
       { "directory": "services/api", "changeProcessCWD": true },
       { "directory": "services/web", "changeProcessCWD": true },
       { "directory": "services/shared", "changeProcessCWD": true },
+      { "directory": "services/migrator", "changeProcessCWD": true },
       { "directory": "services/consumers/template", "changeProcessCWD": true }
     ],
     "search.exclude": {
