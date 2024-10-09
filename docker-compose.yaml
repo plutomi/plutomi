@@ -3,16 +3,18 @@ networks:
     driver: bridge
 
 services:
-  mongodb:
-    image: mongo:7.0.8
-    container_name: mongodb
+  mysql:
+    image: mysql:8.0.39
+    container_name: mysql
     ports:
-      - "27017:27017"
+      - "3306:3306"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: plutomi
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
     volumes:
-      - mongo_data:/data/mongodb
+      - mysql_data:/data/mysql
 
   kafka:
     image: bitnami/kafka:latest
@@ -67,7 +69,7 @@ services:
     depends_on:
       - kafka
 volumes:
-  mongo_data:
+  mysql_data:
     driver: local
   kafka_data:
     driver: local

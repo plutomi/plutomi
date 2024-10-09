@@ -1,5 +1,4 @@
 use axum::{extract::State, http::StatusCode, Json};
-use mongodb::bson::doc;
 use serde::Serialize;
 use shared::{
     events::{PlutomiEvent, TemplatePayloadDoNotUse},
@@ -21,7 +20,7 @@ pub async fn request_totp(
 ) -> (StatusCode, Json<CreateTotpResponse>) {
     let response: CreateTotpResponse = CreateTotpResponse {
         message: "TOTP",
-        database: state.mongodb.collection.find_one(doc! {}).await.is_ok(),
+        database: false,
         environment: get_env().ENVIRONMENT,
     };
 

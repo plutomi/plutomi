@@ -3,7 +3,6 @@ use crate::events::PlutomiEvent;
 use crate::get_current_time::get_current_time;
 use crate::get_env::get_env;
 use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
-use dotenv::dotenv;
 use futures::future::BoxFuture;
 use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::message::BorrowedMessage;
@@ -57,7 +56,7 @@ impl PlutomiConsumer {
         topic: Topics,
         message_handler: MessageHandler,
     ) -> Result<Self, String> {
-        dotenv().ok();
+        dotenvy::dotenv().ok();
 
         let env = get_env();
         let logger = Logger::init(LoggerContext { caller: &name });
@@ -72,6 +71,12 @@ impl PlutomiConsumer {
             error: None,
         });
 
+        let offset_reset = if topic.as_str().contains("-retry") || topic.as_str().contains("-dlq") {
+            "earliest"
+        } else {
+            "latest"
+        };
+
         let consumer: StreamConsumer = ClientConfig::new()
             .set("group.id", group_id.as_str())
             .set("client.id", name)
@@ -79,7 +84,7 @@ impl PlutomiConsumer {
             .set("enable.partition.eof", "false")
             .set("session.timeout.ms", "6000")
             .set("enable.auto.commit", "true")
-            .set("auto.offset.reset", "earliest")
+            .set("auto.offset.reset", offset_reset)
             .set("auto.commit.interval.ms", "1000")
             .create()
             .map_err(|e| {

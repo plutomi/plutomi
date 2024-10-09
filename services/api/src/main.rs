@@ -8,19 +8,16 @@ use axum::{
 };
 use constants::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
-use dotenv::dotenv;
 use rdkafka::{producer::FutureProducer, ClientConfig};
 use serde_json::json;
 use shared::{
     get_current_time::get_current_time,
     get_env::get_env,
     logger::{LogLevel, LogObject, Logger, LoggerContext},
-    mongodb::connect_to_mongodb,
 };
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
-use tracing::info;
 use utils::{log_req_res::log_request, timeout::timeout};
 
 mod constants;
@@ -30,15 +27,11 @@ mod utils;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
-    info!("API starting...");
-    // Get environment variables
-    dotenv().ok(); // Load .env if available (used in development)
+    dotenvy::dotenv().ok();
+
     let env = get_env();
 
     let logger = Logger::init(LoggerContext { caller: "api" });
-
-    // Connect to database - TODO update res/option
-    let mongodb = connect_to_mongodb(&logger).await;
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
@@ -80,7 +73,6 @@ async fn main() {
     // Create an instance of AppState to be shared with all routes
     let state = Arc::new(AppState {
         logger: Arc::clone(&logger),
-        mongodb,
         env,
         producer: Arc::new(producer),
     });

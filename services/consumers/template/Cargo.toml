@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-dotenv = "0.15.0"
+dotenvy = "0.15.7"
 futures = "0.3.30"
 rdkafka = { version = "0.36.2", features = ["cmake-build"] }
 serde = "1.0.210"
