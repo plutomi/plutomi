@@ -44,6 +44,7 @@
     "DMARC",
     "dockerized",
     "dotenv",
+    "dotenvy",
     "embla",
     "falso",
     "fargate",

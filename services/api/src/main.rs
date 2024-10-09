@@ -8,7 +8,6 @@ use axum::{
 };
 use constants::{DOCS_ROUTES, PORT};
 use controllers::{health_check, method_not_allowed, not_found, request_totp};
-use dotenv::dotenv;
 use rdkafka::{producer::FutureProducer, ClientConfig};
 use serde_json::json;
 use shared::{
@@ -19,7 +18,6 @@ use shared::{
 use structs::app_state::AppState;
 use time::OffsetDateTime;
 use tower::ServiceBuilder;
-use tracing::info;
 use utils::{log_req_res::log_request, timeout::timeout};
 
 mod constants;
@@ -29,9 +27,8 @@ mod utils;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
-    info!("API starting...");
-    // Get environment variables
-    dotenv().ok(); // Load .env if available (used in development)
+    dotenvy::dotenv().ok();
+
     let env = get_env();
 
     let logger = Logger::init(LoggerContext { caller: "api" });
