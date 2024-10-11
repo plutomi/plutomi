@@ -8,3 +8,5 @@ dotenvy = "0.15.7"
 # Shared utils
 shared = { path = "../shared" }
 sqlx = { version = "0.8.2", features = [ "runtime-tokio", "tls-native-tls" ] }
+time = "0.3.36"
+tokio = "1.40.0"
