@@ -11,8 +11,7 @@ async fn main() {
 
     let logger = Logger::init(LoggerContext { caller: "migrator" });
 
-    logger.log(LogObject {
-        level: LogLevel::Info,
+    logger.info(LogObject {
         message: "Running migrations!".to_string(),
         _time: get_current_time(OffsetDateTime::now_utc()),
         data: None,

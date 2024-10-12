@@ -66,8 +66,7 @@ pub async fn log_request(
         body: incoming_body_string.to_string(),
     };
 
-    state.logger.log(LogObject {
-        level: LogLevel::Debug,
+    state.logger.debug(LogObject {
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Incoming request".to_string(),
         data: Some(json!({
@@ -115,8 +114,7 @@ pub async fn log_request(
     let end_time = OffsetDateTime::now_utc();
     let duration_ms = (end_time - start_time).whole_milliseconds();
 
-    state.logger.log(LogObject {
-        level: LogLevel::Debug,
+    state.logger.info(LogObject {
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Outgoing request".to_string(),
         data: Some(json!({

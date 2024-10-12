@@ -29,8 +29,7 @@ pub async fn timeout(
         Ok(response) => response,
         Err(_) => {
             let message = "Request took too long to process. Please try again.".to_string();
-            state.logger.log(LogObject {
-                level: LogLevel::Error,
+            state.logger.thispropertydoesntexist(LogObject {
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 message: message.clone(),
                 data: Some(json!({

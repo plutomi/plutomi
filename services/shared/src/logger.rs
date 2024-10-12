@@ -43,7 +43,6 @@ impl fmt::Display for LogLevel {
 
 #[derive(Serialize, Debug)]
 pub struct LogObject {
-    pub level: LogLevel,
     /**
      * ISO 8601 timestamp
      * use iso_format()
@@ -67,6 +66,13 @@ pub struct LogObject {
     pub response: Option<serde_json::Value>,
 }
 
+#[derive(Serialize, Debug)]
+pub struct LogObjectWithLevel {
+    pub level: LogLevel,
+    // TODO rename this
+    pub log: LogObject,
+}
+
 impl fmt::Display for LogObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Note: Not logging here timestamp or level because the tracing library already does it for us locally
@@ -84,8 +90,25 @@ impl fmt::Display for LogObject {
     }
 }
 
+impl fmt::Display for LogObjectWithLevel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Note: Not logging here timestamp or level because the tracing library already does it for us locally
+        let mut components = vec![format!("{}", self.log.message)];
+
+        if let Some(data) = &self.log.data {
+            components.push(format!("\nData: {}", data));
+        }
+
+        if let Some(error) = &self.log.error {
+            components.push(format!("\nError: {}", error));
+        }
+
+        write!(f, "{}", components.join(", "))
+    }
+}
+
 pub struct Logger {
-    sender: UnboundedSender<LogObject>,
+    sender: UnboundedSender<LogObjectWithLevel>,
 }
 
 struct CustomTimeFormat;
@@ -101,7 +124,11 @@ impl FormatTime for CustomTimeFormat {
     }
 }
 // Send logs to axiom
-async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client, axiom_dataset: &String) {
+async fn send_to_axiom(
+    log_batch: &Vec<LogObjectWithLevel>,
+    client: &Client,
+    axiom_dataset: &String,
+) {
     if let Err(e) = client.ingest(axiom_dataset, log_batch).await {
         error!("Failed to send log to Axiom: {}", e);
     }
@@ -142,11 +169,11 @@ impl Logger {
             None
         };
 
-        let (sender, mut receiver) = mpsc::unbounded_channel::<LogObject>();
+        let (sender, mut receiver) = mpsc::unbounded_channel::<LogObjectWithLevel>();
 
         // Spawn the logging thread
         tokio::spawn(async move {
-            let mut log_batch: Vec<LogObject> = Vec::new();
+            let mut log_batch: Vec<LogObjectWithLevel> = Vec::new();
             let mut timer = Instant::now() + LOG_BATCH_TIME;
 
             loop {
@@ -154,6 +181,8 @@ impl Logger {
                 tokio::select! {
                     // Receive log messages
                     Some(log) = receiver.recv() => {
+
+
                         // Local logging based on the level
                             match log.level {
                                 LogLevel::Info => info!("{}", &log),
@@ -202,8 +231,7 @@ impl Logger {
 
         let logger = Arc::new(Logger { sender });
 
-        logger.log(LogObject {
-            level: LogLevel::Info,
+        logger.info(LogObject {
             message: format!("{} initialized", context.caller),
             _time: get_current_time(OffsetDateTime::now_utc()),
             data: None,
@@ -217,12 +245,41 @@ impl Logger {
     /**
      * Log a message asynchronously.
      */
-    pub fn log(&self, log: LogObject) {
+    fn log(&self, log: LogObjectWithLevel) {
         // Send the log message to the channel
         if let Err(e) = self.sender.send(log) {
             error!("Failed to enqueue log message: {}", e);
             // TODO Alert if no logs in a specified amount of time
         }
+    }
+
+    /// Convenience methods for each log level.
+    pub fn info(&self, log: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Info,
+            log,
+        });
+    }
+
+    pub fn warn(&self, log: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Warn,
+            log,
+        });
+    }
+
+    pub fn error(&self, log: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Error,
+            log,
+        });
+    }
+
+    pub fn debug(&self, log: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Debug,
+            log,
+        });
     }
 }
 

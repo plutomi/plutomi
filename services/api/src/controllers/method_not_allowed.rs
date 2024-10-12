@@ -36,8 +36,7 @@ pub async fn method_not_allowed(
             // Overwrite the response with a custom message
             let message: String =
                 format!("Method '{}' not allowed at route '{}'", method, uri.path());
-            state.logger.log(LogObject {
-                level: LogLevel::Error,
+            state.logger.error(LogObject {
                 error: None,
                 message: message.clone(),
                 data: Some(json!({

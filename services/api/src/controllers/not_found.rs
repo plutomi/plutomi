@@ -20,8 +20,7 @@ pub async fn not_found(
 ) -> impl IntoResponse {
     let message = format!("Route at: '{} {}' not found", method, uri.path());
 
-    state.logger.log(LogObject {
-        level: LogLevel::Error,
+    state.logger.error(LogObject {
         _time: get_current_time(time::OffsetDateTime::now_utc()),
         message: message.clone(),
         data: Some(json!({

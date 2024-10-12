@@ -46,8 +46,7 @@ async fn main() {
         .create()
         .map_err(|e| {
             let err = format!("Failed to create producer: {}", e);
-            logger.log(LogObject {
-                level: LogLevel::Error,
+            logger.error(LogObject {
                 message: err.clone(),
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 request: None,
@@ -58,8 +57,7 @@ async fn main() {
             err
         })
         .unwrap_or_else(|e| {
-            logger.log(LogObject {
-                level: LogLevel::Error,
+            logger.error(LogObject {
                 message: format!("Failed to create producer: {}", e),
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 request: None,
@@ -110,8 +108,7 @@ async fn main() {
     let addr = PORT.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {
         let message = format!("Failed to parse address on startup '{}': {}", PORT, e);
         let error_json = json!({ "message": &message });
-        logger.log(LogObject {
-            level: LogLevel::Error,
+        logger.error(LogObject {
             _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: Some(json!({ "port": PORT })),
@@ -128,8 +125,7 @@ async fn main() {
         .unwrap_or_else(|e| {
             let message = format!("Failed to bind to address on startup '{}': {}", addr, e);
             let error_json = json!({ "message": &message });
-            logger.log(LogObject {
-                level: LogLevel::Error,
+            logger.error(LogObject {
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 message,
                 data: Some(json!({ "addr": addr })),
@@ -144,8 +140,7 @@ async fn main() {
     axum::serve(listener, app).await.unwrap_or_else(|e| {
         let message = format!("Failed to start server: {}", e);
         let error_json = json!({ "message": &message });
-        logger.log(LogObject {
-            level: LogLevel::Error,
+        logger.error(LogObject {
             _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: None,

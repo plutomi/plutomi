@@ -28,8 +28,7 @@ pub async fn health_check<'a>(
         docs_url: format!("{}/docs/api", state.env.BASE_WEB_URL),
     };
 
-    state.logger.log(LogObject {
-        level: LogLevel::Info,
+    state.logger.info(LogObject {
         _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Health check response".to_string(),
         data: Some(json!({

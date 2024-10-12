@@ -35,8 +35,7 @@ fn send_email(
 
         match payload {
             PlutomiEvent::TemplateDoNotUse(template_payload) => {
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Info,
+                plutomi_consumer.logger.info(LogObject {
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     message: format!("Processing order created event"),
                     data: Some(json!(template_payload)),
@@ -48,8 +47,7 @@ fn send_email(
                 if template_payload.email.contains("crash me") && !message.topic().contains("dlq") {
                     return Err(ConsumerError::KafkaError("Crashing on purpose".to_string()));
                 }
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Info,
+                plutomi_consumer.logger.info(LogObject {
                     message: format!("Processed order created event"),
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     data: Some(json!(template_payload)),
@@ -59,8 +57,7 @@ fn send_email(
                 });
             }
             _ => {
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Warn,
+                plutomi_consumer.logger.warn(LogObject {
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     message: "Invalid event type".to_string(),
                     data: None,
