@@ -5,7 +5,7 @@ use axum::{
     Router,
 };
 use constants::{DOCS_ROUTES, PORT};
-use controllers::{health_check, method_not_allowed, not_found, request_totp};
+use controllers::{health_check, method_not_allowed, not_found, post_users, request_totp};
 use rdkafka::{producer::FutureProducer, ClientConfig};
 use serde_json::json;
 use shared::{
@@ -92,6 +92,7 @@ async fn main() {
         // All of these should redirect to the web app
         .merge(docs_routes)
         .route("/api/totp", post(request_totp))
+        .route("/api/users", post(post_users))
         .fallback(not_found)
         .layer(
             // Middleware that is applied to all routes

@@ -1,25 +1,25 @@
 use crate::structs::{api_response::ApiResponse, app_state::AppState};
-use axum::{response::IntoResponse, Extension, Json};
-use hyper::StatusCode;
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::sync::Arc;
 
 #[derive(Deserialize, Serialize, Debug)]
-struct NewUser {
+pub struct NewUser {
     first_name: String,
     last_name: String,
     email: String,
 }
 
 pub async fn post_users(
-    state: AppState,
-    Json(user): Json<NewUser>,
+    State(state): State<Arc<AppState>>,
+    Json(new_user): Json<NewUser>,
     Extension(request_id): Extension<String>,
 ) -> impl IntoResponse {
     match sqlx::query!(
         r#"
         INSERT INTO users (first_name, last_name, email) 
-        VALUES ($1, $2, $3)
+        VALUES (?, ?, ?)
         "#,
         new_user.first_name,
         new_user.last_name,
