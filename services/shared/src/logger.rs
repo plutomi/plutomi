@@ -69,8 +69,7 @@ pub struct AxiomLog<'a> {
 #[derive(Serialize, Debug)]
 pub struct LogObjectWithLevel {
     pub level: LogLevel,
-    // TODO rename this
-    pub log: LogObject,
+    pub log_object: LogObject,
 }
 
 impl fmt::Display for LogObject {
@@ -93,13 +92,13 @@ impl fmt::Display for LogObject {
 impl fmt::Display for LogObjectWithLevel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Note: Not logging here timestamp or level because the tracing library already does it for us locally
-        let mut components = vec![format!("{}", self.log.message)];
+        let mut components = vec![format!("{}", self.log_object.message)];
 
-        if let Some(data) = &self.log.data {
+        if let Some(data) = &self.log_object.data {
             components.push(format!("\nData: {}", data));
         }
 
-        if let Some(error) = &self.log.error {
+        if let Some(error) = &self.log_object.error {
             components.push(format!("\nError: {}", error));
         }
 
@@ -131,12 +130,12 @@ async fn send_to_axiom(
 ) {
     let prepared_batch: Vec<AxiomLog> = log_batch
         .iter()
-        .map(|log_obj| AxiomLog {
+        .map(|obj| AxiomLog {
             // Overwrite time -> _time
-            _time: &log_obj.log.time,
-            message: &log_obj.log.message,
-            data: log_obj.log.data.as_ref(),
-            error: log_obj.log.error.as_ref(),
+            _time: &obj.log_object.time,
+            message: &obj.log_object.message,
+            data: obj.log_object.data.as_ref(),
+            error: obj.log_object.error.as_ref(),
         })
         .collect();
 
@@ -261,31 +260,31 @@ impl Logger {
     }
 
     /// Convenience methods for each log level.
-    pub fn info(&self, log: LogObject) {
+    pub fn info(&self, log_object: LogObject) {
         self.log(LogObjectWithLevel {
             level: LogLevel::Info,
-            log,
+            log_object,
         });
     }
 
-    pub fn warn(&self, log: LogObject) {
+    pub fn warn(&self, log_object: LogObject) {
         self.log(LogObjectWithLevel {
             level: LogLevel::Warn,
-            log,
+            log_object,
         });
     }
 
-    pub fn error(&self, log: LogObject) {
+    pub fn error(&self, log_object: LogObject) {
         self.log(LogObjectWithLevel {
             level: LogLevel::Error,
-            log,
+            log_object,
         });
     }
 
-    pub fn debug(&self, log: LogObject) {
+    pub fn debug(&self, log_object: LogObject) {
         self.log(LogObjectWithLevel {
             level: LogLevel::Debug,
-            log,
+            log_object,
         });
     }
 }
