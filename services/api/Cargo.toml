@@ -31,7 +31,7 @@ shared = { path = "../shared" }
 rdkafka = { version = "0.36.2", features = ["cmake-build"] }
 hyper = "1.4.1"
 dotenvy = "0.15.7"
-sqlx = "0.8.2"
+sqlx = { version = "0.8.2", features = [ "runtime-tokio", "tls-native-tls", "mysql" ] }
 
 [profile.release]
 # https://github.com/johnthagen/min-sized-rust
