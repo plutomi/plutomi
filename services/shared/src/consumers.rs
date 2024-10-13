@@ -1,8 +1,7 @@
 use crate::constants::{ConsumerGroups, Topics};
 use crate::events::PlutomiEvent;
-use crate::get_current_time::get_current_time;
 use crate::get_env::get_env;
-use crate::logger::{LogLevel, LogObject, Logger, LoggerContext};
+use crate::logger::{LogObject, Logger, LoggerContext};
 use futures::future::BoxFuture;
 use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::message::BorrowedMessage;
@@ -12,7 +11,6 @@ use serde_json::json;
 use std::sync::Arc;
 use std::time::Duration;
 use thiserror::Error;
-use time::OffsetDateTime;
 
 pub struct MessageHandlerOptions<'a> {
     pub message: &'a BorrowedMessage<'a>,
@@ -63,10 +61,7 @@ impl PlutomiConsumer {
 
         logger.info(LogObject {
             message: format!("Creating {}", name),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-
-            data: None,
-            error: None,
+            ..Default::default()
         });
 
         let offset_reset = if topic.as_str().contains("-retry") || topic.as_str().contains("-dlq") {
@@ -89,9 +84,7 @@ impl PlutomiConsumer {
                 let err = format!("Failed to create consumer {}: {}", name, e);
                 logger.error(LogObject {
                     message: err.clone(),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    data: None,
-                    error: None,
+                    ..Default::default()
                 });
                 err
             })?;
@@ -108,18 +101,14 @@ impl PlutomiConsumer {
                 let err = format!("Failed to create producer: {}", e);
                 logger.error(LogObject {
                     message: err.clone(),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    data: None,
-                    error: None,
+                    ..Default::default()
                 });
                 err
             })?;
 
         logger.info(LogObject {
             message: format!("{} created!", name),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            data: None,
-            error: None,
+            ..Default::default()
         });
         consumer.subscribe(&[&topic.as_str()]).map_err(|e| {
             let err = format!(
@@ -130,9 +119,7 @@ impl PlutomiConsumer {
             );
             logger.error(LogObject {
                 message: err.clone(),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                data: None,
-                error: None,
+                ..Default::default()
             });
 
             err
@@ -140,9 +127,7 @@ impl PlutomiConsumer {
 
         logger.info(LogObject {
             message: format!("{} subscribed to {} topic", name, topic.as_str()),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            data: None,
-            error: None,
+            ..Default::default()
         });
 
         Ok(PlutomiConsumer {
@@ -175,9 +160,7 @@ impl PlutomiConsumer {
         if payload.is_empty() {
             self.logger.warn(LogObject {
                 message: format!("Message payload is empty when producing a message"),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                data: None,
-                error: None,
+                ..Default::default()
             });
             return Err("Message payload is empty when producing a message".to_string());
         }
@@ -188,9 +171,7 @@ impl PlutomiConsumer {
             Ok(_) => {
                 self.logger.info(LogObject {
                     message: format!("Message successfully published to topic {}", topic_name),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    data: None,
-                    error: None,
+                    ..Default::default()
                 });
                 Ok(())
             }
@@ -200,9 +181,8 @@ impl PlutomiConsumer {
                         "Failed to publish message to topic {}: {:?}",
                         topic_name, err
                     ),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    data: None,
                     error: Some(json!(err.to_string())),
+                    ..Default::default()
                 });
                 Err(err.to_string())
             }
@@ -216,18 +196,15 @@ impl PlutomiConsumer {
                 let err = format!("Failed to commit message: {:?}", e);
                 self.logger.error(LogObject {
                     message: err.clone(),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    data: None,
                     error: Some(json!(e.to_string())),
+                    ..Default::default()
                 });
                 err
             })?;
 
         self.logger.info(LogObject {
             message: format!("Message successfully committed"),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            data: None,
-            error: None,
+            ..Default::default()
         });
 
         Ok(())
@@ -236,9 +213,7 @@ impl PlutomiConsumer {
     pub async fn run(&self) -> Result<(), String> {
         self.logger.info(LogObject {
             message: format!("{} running...", &self.name),
-            error: None,
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            data: None,
+            ..Default::default()
         });
 
         loop {
@@ -251,9 +226,8 @@ impl PlutomiConsumer {
 
                     self.logger.info(LogObject {
                         message: format!("{} received message", &self.name),
-                        error: None,
-                        _time: get_current_time(OffsetDateTime::now_utc()),
                         data: Some(json!({ "message": message_payload })),
+                        ..Default::default()
                     });
 
                     // Handle the message results
@@ -266,9 +240,8 @@ impl PlutomiConsumer {
                         Ok(_) => {
                             self.logger.info(LogObject {
                                 message: format!("{} successfully handled message", &self.name),
-                                _time: get_current_time(OffsetDateTime::now_utc()),
                                 data: Some(json!({ "message": message_payload })),
-                                error: None,
+                                ..Default::default()
                             });
                             self.commit_message(&message).await?;
                         }
@@ -289,9 +262,9 @@ impl PlutomiConsumer {
                             "{} encountered an error handling message: {}, publishing into {:?}",
                             &self.name, error_message, next_topic
                         ),
-                                _time: get_current_time(OffsetDateTime::now_utc()),
                                 data: Some(json!({ "message": message_payload })),
                                 error: Some(json!(error_message)),
+                                ..Default::default()
                             });
 
                             // Publish to the next topic (retry or DLQ)
@@ -304,9 +277,8 @@ impl PlutomiConsumer {
                                         "{} TODO add message will no longer be retried",
                                         &self.name
                                     ),
-                                    _time: get_current_time(OffsetDateTime::now_utc()),
                                     data: Some(json!({ "message": message_payload })),
-                                    error: None,
+                                    ..Default::default()
                                 })
                             }
 
@@ -323,8 +295,7 @@ impl PlutomiConsumer {
                             &self.name
                         ),
                         error: Some(json!(error_string)),
-                        _time: get_current_time(OffsetDateTime::now_utc()),
-                        data: None,
+                        ..Default::default()
                     });
                 }
             }
@@ -341,9 +312,7 @@ impl PlutomiConsumer {
         if payload.is_empty() {
             self.logger.error(LogObject {
                 message: "Message payload is empty when parsing message".to_string(),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                data: None,
-                error: None,
+                ..Default::default()
             });
             return Err(ConsumerError::ParseError(
                 "Message payload is empty when parsing message".to_string(),
@@ -357,9 +326,9 @@ impl PlutomiConsumer {
 
             self.logger.error(LogObject {
                 message: format!("Failed to parse event: {}", e),
-                _time: get_current_time(OffsetDateTime::now_utc()),
                 data: Some(json!({ "message": payload_str })),
                 error: Some(json!(e.to_string())),
+                ..Default::default()
             });
             ConsumerError::ParseError(format!("Failed to parse event: {}", e))
         })

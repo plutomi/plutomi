@@ -6,10 +6,7 @@ use axum::{
     Extension,
 };
 use serde_json::json;
-use shared::{
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
-};
+use shared::logger::LogObject;
 use std::sync::Arc;
 
 pub async fn not_found(
@@ -21,12 +18,11 @@ pub async fn not_found(
     let message = format!("Route at: '{} {}' not found", method, uri.path());
 
     state.logger.error(LogObject {
-        _time: get_current_time(time::OffsetDateTime::now_utc()),
         message: message.clone(),
         data: Some(json!({
             "request_id": request_id,
         })),
-        error: None,
+        ..Default::default()
     });
 
     ApiResponse::error(

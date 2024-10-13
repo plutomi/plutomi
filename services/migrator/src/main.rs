@@ -1,9 +1,4 @@
-use shared::{
-    get_current_time::get_current_time,
-    get_env::get_env,
-    logger::{LogLevel, LogObject, Logger, LoggerContext},
-};
-use time::OffsetDateTime;
+use shared::logger::{LogObject, Logger, LoggerContext};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
@@ -13,8 +8,6 @@ async fn main() {
 
     logger.info(LogObject {
         message: "Running migrations!".to_string(),
-        _time: get_current_time(OffsetDateTime::now_utc()),
-        data: None,
-        error: None,
+        ..Default::default()
     });
 }

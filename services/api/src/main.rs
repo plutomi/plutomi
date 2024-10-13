@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use axum::{
     middleware,
     response::Redirect,
@@ -11,12 +9,11 @@ use controllers::{health_check, method_not_allowed, not_found, request_totp};
 use rdkafka::{producer::FutureProducer, ClientConfig};
 use serde_json::json;
 use shared::{
-    get_current_time::get_current_time,
     get_env::get_env,
-    logger::{LogLevel, LogObject, Logger, LoggerContext},
+    logger::{LogObject, Logger, LoggerContext},
 };
+use std::sync::Arc;
 use structs::app_state::AppState;
-use time::OffsetDateTime;
 use tower::ServiceBuilder;
 use utils::{log_req_res::log_request, timeout::timeout};
 
@@ -48,19 +45,14 @@ async fn main() {
             let err = format!("Failed to create producer: {}", e);
             logger.error(LogObject {
                 message: err.clone(),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-
-                data: None,
-                error: None,
+                ..Default::default()
             });
             err
         })
         .unwrap_or_else(|e| {
             logger.error(LogObject {
                 message: format!("Failed to create producer: {}", e),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                data: None,
-                error: None,
+                ..Default::default()
             });
             std::process::exit(1);
         });
@@ -106,10 +98,10 @@ async fn main() {
         let message = format!("Failed to parse address on startup '{}': {}", PORT, e);
         let error_json = json!({ "message": &message });
         logger.error(LogObject {
-            _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: Some(json!({ "port": PORT })),
             error: Some(error_json),
+            ..Default::default()
         });
         std::process::exit(1);
     });
@@ -121,10 +113,10 @@ async fn main() {
             let message = format!("Failed to bind to address on startup '{}': {}", addr, e);
             let error_json = json!({ "message": &message });
             logger.error(LogObject {
-                _time: get_current_time(OffsetDateTime::now_utc()),
                 message,
                 data: Some(json!({ "addr": addr })),
                 error: Some(error_json),
+                ..Default::default()
             });
             std::process::exit(1);
         });
@@ -134,10 +126,10 @@ async fn main() {
         let message = format!("Failed to start server: {}", e);
         let error_json = json!({ "message": &message });
         logger.error(LogObject {
-            _time: get_current_time(OffsetDateTime::now_utc()),
             message,
             data: None,
             error: Some(error_json),
+            ..Default::default()
         });
         std::process::exit(1);
     });

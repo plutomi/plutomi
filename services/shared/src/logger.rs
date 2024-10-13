@@ -225,9 +225,7 @@ impl Logger {
 
         logger.info(LogObject {
             message: format!("{} initialized", context.caller),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            data: None,
-            error: None,
+            ..Default::default()
         });
         return logger;
     }
@@ -287,7 +285,7 @@ impl Default for LogObject {
             data: None,
             error: None,
             message: "".to_string(),
-            _time: "".to_string(),
+            _time: get_current_time(OffsetDateTime::now_utc()),
         }
     }
 }

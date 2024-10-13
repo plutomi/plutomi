@@ -6,9 +6,8 @@ use axum::{
     Extension,
 };
 use serde_json::json;
-use shared::{get_current_time::get_current_time, logger::LogObject};
+use shared::logger::LogObject;
 use std::sync::Arc;
-use time::OffsetDateTime;
 
 use crate::structs::{api_response::ApiResponse, app_state::AppState};
 
@@ -34,12 +33,11 @@ pub async fn method_not_allowed(
             let message: String =
                 format!("Method '{}' not allowed at route '{}'", method, uri.path());
             state.logger.error(LogObject {
-                error: None,
                 message: message.clone(),
                 data: Some(json!({
                     "request_id": &request_id,
                 })),
-                _time: get_current_time(OffsetDateTime::now_utc()),
+                ..Default::default()
             });
 
             ApiResponse::error(

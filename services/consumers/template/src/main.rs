@@ -5,11 +5,9 @@ use shared::{
     constants::{ConsumerGroups, Topics},
     consumers::{ConsumerError, MessageHandlerOptions, PlutomiConsumer},
     events::PlutomiEvent,
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
+    logger::LogObject,
 };
 use std::sync::Arc;
-use time::OffsetDateTime;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
@@ -36,10 +34,9 @@ fn send_email(
         match payload {
             PlutomiEvent::TemplateDoNotUse(template_payload) => {
                 plutomi_consumer.logger.info(LogObject {
-                    _time: get_current_time(OffsetDateTime::now_utc()),
                     message: format!("Processing order created event"),
                     data: Some(json!(template_payload)),
-                    error: None,
+                    ..Default::default()
                 });
 
                 if template_payload.email.contains("crash me") && !message.topic().contains("dlq") {
@@ -47,17 +44,14 @@ fn send_email(
                 }
                 plutomi_consumer.logger.info(LogObject {
                     message: format!("Processed order created event"),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
                     data: Some(json!(template_payload)),
-                    error: None,
+                    ..Default::default()
                 });
             }
             _ => {
                 plutomi_consumer.logger.warn(LogObject {
-                    _time: get_current_time(OffsetDateTime::now_utc()),
                     message: "Invalid event type".to_string(),
-                    data: None,
-                    error: None,
+                    ..Default::default()
                 });
             }
         }

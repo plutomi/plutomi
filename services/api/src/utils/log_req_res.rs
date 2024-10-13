@@ -8,12 +8,7 @@ use axum::{
 use http_body_util::BodyExt;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::{
-    entities::Entities,
-    generate_id::PlutomiId,
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
-};
+use shared::{entities::Entities, generate_id::PlutomiId, logger::LogObject};
 use std::{collections::HashMap, sync::Arc};
 use time::OffsetDateTime;
 
@@ -67,13 +62,12 @@ pub async fn log_request(
     };
 
     state.logger.debug(LogObject {
-        _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Incoming request".to_string(),
         data: Some(json!({
             "request_id": request_id.clone(),
             "request": &original_request,
         })),
-        error: None,
+        ..Default::default()
     });
 
     // Recreate the request with the buffered body
@@ -113,7 +107,6 @@ pub async fn log_request(
     let duration_ms = (end_time - start_time).whole_milliseconds();
 
     state.logger.info(LogObject {
-        _time: get_current_time(OffsetDateTime::now_utc()),
         message: "Outgoing request".to_string(),
         data: Some(json!({
             "duration_ms": duration_ms,
@@ -126,7 +119,7 @@ pub async fn log_request(
                 "body": outgoing_body_string,
             }),
         })),
-        error: None,
+        ..Default::default()
     });
 
     final_response
