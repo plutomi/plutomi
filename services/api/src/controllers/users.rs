@@ -21,8 +21,8 @@ pub struct User {
     first_name: String,
     last_name: String,
     email: String,
-    created_at: NaiveDateTime,
-    updated_at: NaiveDateTime,
+    created_at: DateTime<Utc>,
+    updated_at: DateTime<Utc>,
 }
 
 pub async fn post_users(
@@ -30,7 +30,7 @@ pub async fn post_users(
     Extension(request_id): Extension<String>,
     Json(new_user): Json<NewUser>,
 ) -> impl IntoResponse {
-    let now: NaiveDateTime = Utc::now().naive_utc(); // Use NaiveDateTime
+    let now = Utc::now(); // Use NaiveDateTime
     let mut transaction: Transaction<'_, MySql> = match state.db.begin().await {
         Ok(tx) => tx,
         Err(e) => {
@@ -62,8 +62,7 @@ pub async fn post_users(
         Ok(result) => {
             let last_insert_id = result.last_insert_id();
             let message = "User created successfully".to_string();
-            match sqlx::query_as!(
-                User,
+            match sqlx::query!(
                 r#"
                 SELECT *
                 FROM users
@@ -86,6 +85,21 @@ pub async fn post_users(
                             json!({}),
                         );
                     }
+
+                    let user = User {
+                        id: user.id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        created_at: DateTime::<Utc>::from_naive_utc_and_offset(
+                            user.created_at,
+                            Utc,
+                        ),
+                        updated_at: DateTime::<Utc>::from_naive_utc_and_offset(
+                            user.updated_at,
+                            Utc,
+                        ),
+                    };
 
                     ApiResponse::success(
                         json!({ "message": "User created successfully", "user": user }),
