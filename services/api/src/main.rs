@@ -127,7 +127,6 @@ async fn main() {
         let error_json = json!({ "message": &message });
         logger.error(LogObject {
             message,
-            data: None,
             error: Some(error_json),
             ..Default::default()
         });
