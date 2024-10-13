@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS users (
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   -- https://bugs.mysql.com/bug.php?id=103228
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL
+  created_at DATETIME(3) NOT NULL,
+  updated_at DATETIME(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

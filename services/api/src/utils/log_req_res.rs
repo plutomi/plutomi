@@ -106,7 +106,7 @@ pub async fn log_request(
     let end_time = OffsetDateTime::now_utc();
     let duration_ms = (end_time - start_time).whole_milliseconds();
 
-    state.logger.info(LogObject {
+    state.logger.debug(LogObject {
         message: "Outgoing request".to_string(),
         data: Some(json!({
             "duration_ms": duration_ms,
