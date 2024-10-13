@@ -34,7 +34,7 @@ cleanup() {
 
 print_error_and_usage() {
     echo -e "\n-- ERROR: $1 --\n"
-    echo -e "Usage: $0 [--stack <component>]\n"
+    echo -e "Usage: $0 [--service <component>]\n"
     echo -e "Component (optional): 'api', 'web'\n"
     exit 1
 }
@@ -59,7 +59,6 @@ run_api() {
 run_migrator() {
     cd "$PROJECT_ROOT/services/migrator"
     echo -e "\nStarting migrator..."
-    rust_warning "MIGRATOR" &
     WARNING_PID=$!
     cargo run &
     MIGRATOR_PID=$!
@@ -82,19 +81,19 @@ run_web() {
     WEB_PID=$!
 }
 
-stack="all"
+service="all"
 
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --stack) stack="$2"; shift ;;
+        --service) service="$2"; shift ;;
         *) print_error_and_usage "Invalid argument: $1" ;;
     esac
     shift
 done
 
-# Run based on stack argument
-case "$stack" in
+# Run based on service argument
+case "$service" in
     "all")
         run_migrator
         run_api
@@ -114,7 +113,7 @@ case "$stack" in
         run_consumers
         ;;
     *)
-        print_error_and_usage "Invalid stack: $stack"
+        print_error_and_usage "Invalid service: $service"
         ;;
 esac
 
