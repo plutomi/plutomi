@@ -1580,6 +1580,7 @@ dependencies = [
  "rdkafka",
  "serde",
  "serde_json",
+ "sqlx",
  "strum",
  "strum_macros",
  "thiserror",

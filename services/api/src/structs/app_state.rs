@@ -8,4 +8,5 @@ pub struct AppState {
     pub logger: Arc<Logger>,
     pub env: Env,
     pub producer: Arc<FutureProducer>,
+    pub db: sqlx::mysql::MySqlPool,
 }

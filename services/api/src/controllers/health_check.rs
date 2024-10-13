@@ -13,7 +13,7 @@ pub struct HealthCheckResponse {
     docs_url: String,
 }
 
-pub async fn health_check<'a>(
+pub async fn health_check(
     State(state): State<Arc<AppState>>,
     Extension(request_id): Extension<String>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {

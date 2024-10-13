@@ -1,30 +1,10 @@
 use shared::{
     get_env::get_env,
     logger::{LogObject, Logger, LoggerContext},
+    mysql::connect_to_database,
+    sleep_and_exit::sleep_and_exit,
 };
 use sqlx::mysql::MySqlPool;
-use tokio::time::{sleep, Duration};
-
-async fn sleep_and_exit(seconds: u64) -> ! {
-    sleep(Duration::from_secs(seconds)).await;
-    std::process::exit(1);
-}
-
-async fn connect_to_database(url: &str, logger: &Logger) -> Result<MySqlPool, sqlx::Error> {
-    logger.info(LogObject {
-        message: "Connecting to database...".into(),
-        ..Default::default()
-    });
-
-    let pool = MySqlPool::connect(url).await?;
-
-    logger.info(LogObject {
-        message: "Connected to database!".into(),
-        ..Default::default()
-    });
-
-    Ok(pool)
-}
 
 async fn run_migrations(pool: &MySqlPool, logger: &Logger) -> Result<(), sqlx::Error> {
     logger.info(LogObject {
@@ -33,11 +13,6 @@ async fn run_migrations(pool: &MySqlPool, logger: &Logger) -> Result<(), sqlx::E
     });
 
     sqlx::migrate!("./migrations").run(pool).await?;
-
-    logger.info(LogObject {
-        message: "Migrations ran successfully!".into(),
-        ..Default::default()
-    });
 
     Ok(())
 }
@@ -52,7 +27,14 @@ async fn main() {
 
     let env = get_env();
 
-    let pool = match connect_to_database(&env.MYSQL_URL, &logger).await {
+    let pool = match connect_to_database(&env.MYSQL_URL, &logger, {
+        Some(shared::mysql::DBConfig {
+            min_connections: 1,
+            max_connections: 1,
+        })
+    })
+    .await
+    {
         Ok(pool) => pool,
         Err(e) => {
             logger.error(LogObject {
@@ -63,11 +45,20 @@ async fn main() {
         }
     };
 
-    if let Err(e) = run_migrations(&pool, &logger).await {
-        logger.error(LogObject {
-            message: format!("Failed to run migrations: {:?}", e),
-            ..Default::default()
-        });
-        sleep_and_exit(1).await;
+    match run_migrations(&pool, &logger).await {
+        Ok(_) => {
+            logger.info(LogObject {
+                message: "Migrations ran successfully!".into(),
+                ..Default::default()
+            });
+            sleep_and_exit(1).await;
+        }
+        Err(e) => {
+            logger.error(LogObject {
+                message: format!("Failed to run migrations: {:?}", e),
+                ..Default::default()
+            });
+            sleep_and_exit(1).await;
+        }
     }
 }

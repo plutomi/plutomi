@@ -57,10 +57,25 @@ async fn main() {
             std::process::exit(1);
         });
 
+    // Connect to MySQL
+    let db = shared::mysql::connect_to_database(&env.MYSQL_URL, &logger, None)
+        .await
+        .unwrap_or_else(|e| {
+            let message = format!("Failed to connect to database: {}", e);
+            let error_json = json!({ "message": &message });
+            logger.error(LogObject {
+                message,
+                error: Some(error_json),
+                ..Default::default()
+            });
+            std::process::exit(1);
+        });
+
     // Create an instance of AppState to be shared with all routes
     let state = Arc::new(AppState {
         logger: Arc::clone(&logger),
         env,
+        db,
         producer: Arc::new(producer),
     });
 
