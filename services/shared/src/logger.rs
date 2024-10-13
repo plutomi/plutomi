@@ -47,15 +47,23 @@ pub struct LogObject {
      * ISO 8601 timestamp
      * use iso_format()
      *
-     * Axiom uses `_time` so we can use it as well
+     * Axiom uses `_time` FYI
      */
-    pub _time: String,
+    pub time: String,
     pub message: String,
     /**
      * Used for adding additional data to the log object
      */
     pub data: Option<serde_json::Value>,
     pub error: Option<serde_json::Value>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct AxiomLog<'a> {
+    pub _time: &'a str,
+    pub message: &'a str,
+    pub data: Option<&'a serde_json::Value>,
+    pub error: Option<&'a serde_json::Value>,
 }
 
 #[derive(Serialize, Debug)]
@@ -115,13 +123,24 @@ impl FormatTime for CustomTimeFormat {
         write!(writer, "{}", formatted_time)
     }
 }
-// Send logs to axiom
+
 async fn send_to_axiom(
     log_batch: &Vec<LogObjectWithLevel>,
     client: &Client,
     axiom_dataset: &String,
 ) {
-    if let Err(e) = client.ingest(axiom_dataset, log_batch).await {
+    let prepared_batch: Vec<AxiomLog> = log_batch
+        .iter()
+        .map(|log_obj| AxiomLog {
+            // Overwrite time -> _time
+            _time: &log_obj.log.time,
+            message: &log_obj.log.message,
+            data: log_obj.log.data.as_ref(),
+            error: log_obj.log.error.as_ref(),
+        })
+        .collect();
+
+    if let Err(e) = client.ingest(axiom_dataset, prepared_batch).await {
         error!("Failed to send log to Axiom: {}", e);
     }
 }
@@ -285,7 +304,7 @@ impl Default for LogObject {
             data: None,
             error: None,
             message: "".to_string(),
-            _time: get_current_time(OffsetDateTime::now_utc()),
+            time: get_current_time(OffsetDateTime::now_utc()),
         }
     }
 }
