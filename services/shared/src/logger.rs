@@ -64,6 +64,7 @@ pub struct AxiomLog<'a> {
     pub message: &'a str,
     pub data: Option<&'a serde_json::Value>,
     pub error: Option<&'a serde_json::Value>,
+    pub application: &'a str,
 }
 
 #[derive(Serialize, Debug)]
@@ -108,6 +109,8 @@ impl fmt::Display for LogObjectWithLevel {
 
 pub struct Logger {
     sender: UnboundedSender<LogObjectWithLevel>,
+    // The name of the caller
+    application: &'static str,
 }
 
 struct CustomTimeFormat;
@@ -126,8 +129,17 @@ impl FormatTime for CustomTimeFormat {
 async fn send_to_axiom(
     log_batch: &Vec<LogObjectWithLevel>,
     client: &Client,
-    axiom_dataset: &String,
+    axiom_dataset: Option<&String>,
+    context: &Arc<LoggerContext>,
 ) {
+    let dataset = match axiom_dataset {
+        Some(ds) => ds,
+        None => {
+            warn!("AXIOM_DATASET is not configured.");
+            return;
+        }
+    };
+
     let prepared_batch: Vec<AxiomLog> = log_batch
         .iter()
         .map(|obj| AxiomLog {
@@ -136,16 +148,17 @@ async fn send_to_axiom(
             message: &obj.log_object.message,
             data: obj.log_object.data.as_ref(),
             error: obj.log_object.error.as_ref(),
+            application: &context.application,
         })
         .collect();
 
-    if let Err(e) = client.ingest(axiom_dataset, prepared_batch).await {
+    if let Err(e) = client.ingest(dataset, prepared_batch).await {
         error!("Failed to send log to Axiom: {}", e);
     }
 }
 
 pub struct LoggerContext {
-    pub caller: &'static str,
+    pub application: &'static str,
 }
 
 impl Logger {
@@ -154,6 +167,9 @@ impl Logger {
      * This also spawns a long lived thread that will handle logging.
      */
     pub fn init(context: LoggerContext) -> Arc<Logger> {
+        // Make the context available to the logging thread
+        let context = Arc::new(context);
+
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
             .pretty()
@@ -180,6 +196,8 @@ impl Logger {
         };
 
         let (sender, mut receiver) = mpsc::unbounded_channel::<LogObjectWithLevel>();
+
+        let context_clone = Arc::clone(&context);
 
         // Spawn the logging thread
         tokio::spawn(async move {
@@ -208,10 +226,11 @@ impl Logger {
 
                         // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
+
                             if let Some(ref client) = axiom_client {
-                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
-                                 send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
+                                send_to_axiom(&log_batch, client, env.AXIOM_DATASET.as_ref(), &context_clone).await;
                             }
+
                             // Clear the batch for the next batch
                             log_batch.clear();
 
@@ -225,8 +244,7 @@ impl Logger {
                         if !log_batch.is_empty() {
                            // Send whatever is in the batch
                             if let Some(ref client) = axiom_client {
-                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
-                                send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
+                                send_to_axiom(&log_batch, &client, env.AXIOM_DATASET.as_ref(), &context_clone ).await;
                             }
 
                             // Clear the batch for the next batch
@@ -239,10 +257,13 @@ impl Logger {
             }
         });
 
-        let logger = Arc::new(Logger { sender });
+        let logger = Arc::new(Logger {
+            sender,
+            application: context.application,
+        });
 
         logger.info(LogObject {
-            message: format!("{} initialized", context.caller),
+            message: format!("{} initialized", &context.application),
             ..Default::default()
         });
         return logger;

@@ -26,6 +26,8 @@ cleanup() {
     echo "Stopping services..."
     [ ! -z "$API_PID" ] && kill $API_PID
     [ ! -z "$WEB_PID" ] && kill $WEB_PID
+    [ ! -z "$MIGRATOR_PID" ] && kill $MIGRATOR_PID
+    [ ! -z "$CONSUMERS_PID" ] && kill $CONSUMERS_PID
     [ ! -z "$WARNING_PID" ] && kill $WARNING_PID
     echo "Done."
 }
@@ -54,6 +56,15 @@ run_api() {
     API_PID=$!
 }
 
+run_migrator() {
+    cd "$PROJECT_ROOT/services/migrator"
+    echo -e "\nStarting migrator..."
+    rust_warning "MIGRATOR" &
+    WARNING_PID=$!
+    cargo run &
+    MIGRATOR_PID=$!
+}
+
 run_consumers() {
     cd "$PROJECT_ROOT/services/consumers/template"
     echo -e "\nStarting template consumer..."
@@ -61,7 +72,7 @@ run_consumers() {
     WARNING_PID=$!
     cargo install cargo-watch
     cargo watch -x run &
-    API_PID=$!
+    CONSUMERS_PID=$!
 }
 
 run_web() {
@@ -85,9 +96,13 @@ done
 # Run based on stack argument
 case "$stack" in
     "all")
+        run_migrator
         run_api
         run_web
         run_consumers
+        ;;
+    "migrator")
+        run_migrator
         ;;
     "api")
         run_api

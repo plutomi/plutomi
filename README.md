@@ -64,7 +64,7 @@ $ ./scripts/run.sh
 You can also run any service individually:
 
 ```bash
-$ ./scripts/run.sh --stack <web|api|consumers>
+$ ./scripts/run.sh --stack <web|api|migrator|consumers>
 ```
 
 ## Deploying

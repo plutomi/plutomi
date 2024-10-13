@@ -17,6 +17,10 @@
       "name": "web"
     },
     {
+      "path": "services/migrator",
+      "name": "migrator"
+    },
+    {
       "path": "services/consumers/template",
       "name": "template-consumer"
     }

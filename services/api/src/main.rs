@@ -28,7 +28,7 @@ async fn main() {
 
     let env = get_env();
 
-    let logger = Logger::init(LoggerContext { caller: "api" });
+    let logger = Logger::init(LoggerContext { application: "api" });
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);

@@ -57,7 +57,7 @@ impl PlutomiConsumer {
         dotenvy::dotenv().ok();
 
         let env = get_env();
-        let logger = Logger::init(LoggerContext { caller: &name });
+        let logger = Logger::init(LoggerContext { application: &name });
 
         logger.info(LogObject {
             message: format!("Creating {}", name),
