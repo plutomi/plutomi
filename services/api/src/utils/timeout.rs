@@ -29,15 +29,13 @@ pub async fn timeout(
         Ok(response) => response,
         Err(_) => {
             let message = "Request took too long to process. Please try again.".to_string();
-            state.logger.thispropertydoesntexist(LogObject {
+            state.logger.error(LogObject {
                 _time: get_current_time(OffsetDateTime::now_utc()),
                 message: message.clone(),
                 data: Some(json!({
                     "request_id": request_id.clone(),
                 })),
                 error: None,
-                request: None,
-                response: None,
             });
 
             ApiResponse::error(

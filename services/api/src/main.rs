@@ -49,8 +49,7 @@ async fn main() {
             logger.error(LogObject {
                 message: err.clone(),
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                request: None,
-                response: None,
+
                 data: None,
                 error: None,
             });
@@ -60,8 +59,6 @@ async fn main() {
             logger.error(LogObject {
                 message: format!("Failed to create producer: {}", e),
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                request: None,
-                response: None,
                 data: None,
                 error: None,
             });
@@ -113,8 +110,6 @@ async fn main() {
             message,
             data: Some(json!({ "port": PORT })),
             error: Some(error_json),
-            request: None,
-            response: None,
         });
         std::process::exit(1);
     });
@@ -130,8 +125,6 @@ async fn main() {
                 message,
                 data: Some(json!({ "addr": addr })),
                 error: Some(error_json),
-                request: None,
-                response: None,
             });
             std::process::exit(1);
         });
@@ -145,8 +138,6 @@ async fn main() {
             message,
             data: None,
             error: Some(error_json),
-            request: None,
-            response: None,
         });
         std::process::exit(1);
     });

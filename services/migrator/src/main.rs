@@ -16,7 +16,5 @@ async fn main() {
         _time: get_current_time(OffsetDateTime::now_utc()),
         data: None,
         error: None,
-        request: None,
-        response: None,
     });
 }

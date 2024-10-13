@@ -36,8 +36,6 @@ pub async fn health_check<'a>(
             "response": &response,
         })),
         error: None,
-        request: None,
-        response: None,
     });
 
     (StatusCode::OK, Json(response))

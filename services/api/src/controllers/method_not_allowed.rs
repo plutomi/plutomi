@@ -6,10 +6,7 @@ use axum::{
     Extension,
 };
 use serde_json::json;
-use shared::{
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
-};
+use shared::{get_current_time::get_current_time, logger::LogObject};
 use std::sync::Arc;
 use time::OffsetDateTime;
 
@@ -43,14 +40,12 @@ pub async fn method_not_allowed(
                     "request_id": &request_id,
                 })),
                 _time: get_current_time(OffsetDateTime::now_utc()),
-                request: None,
-                response: None,
             });
 
             ApiResponse::error(
                 message,
                 status,
-                request_id.clone(),
+                request_id,
                 Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
                 None,
                 json!({}),

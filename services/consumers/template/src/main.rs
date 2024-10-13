@@ -40,8 +40,6 @@ fn send_email(
                     message: format!("Processing order created event"),
                     data: Some(json!(template_payload)),
                     error: None,
-                    request: None,
-                    response: None,
                 });
 
                 if template_payload.email.contains("crash me") && !message.topic().contains("dlq") {
@@ -52,8 +50,6 @@ fn send_email(
                     _time: get_current_time(OffsetDateTime::now_utc()),
                     data: Some(json!(template_payload)),
                     error: None,
-                    request: None,
-                    response: None,
                 });
             }
             _ => {
@@ -62,8 +58,6 @@ fn send_email(
                     message: "Invalid event type".to_string(),
                     data: None,
                     error: None,
-                    request: None,
-                    response: None,
                 });
             }
         }

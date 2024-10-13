@@ -50,20 +50,12 @@ pub struct LogObject {
      * Axiom uses `_time` so we can use it as well
      */
     pub _time: String,
-    pub message: String, // TODO make this a reference? https://github.com/plutomi/plutomi/issues/996
+    pub message: String,
     /**
      * Used for adding additional data to the log object
      */
     pub data: Option<serde_json::Value>,
     pub error: Option<serde_json::Value>,
-    /**
-     * Used for logging the request
-     */
-    pub request: Option<serde_json::Value>,
-    /**
-     * Used for logging the response
-     */
-    pub response: Option<serde_json::Value>,
 }
 
 #[derive(Serialize, Debug)]
@@ -236,8 +228,6 @@ impl Logger {
             _time: get_current_time(OffsetDateTime::now_utc()),
             data: None,
             error: None,
-            request: None,
-            response: None,
         });
         return logger;
     }
@@ -291,17 +281,13 @@ async fn sleep_until(deadline: Instant) {
     }
 }
 
-// https://github.com/plutomi/plutomi/issues/996
-// impl Default for LogObject {
-//     fn default() -> LogObject {
-//         LogObject {
-//             data: None,
-//             error: None,
-//             level: LogLevel::Info,
-//             message: "".to_string(),
-//             request: None,
-//             response: None,
-//             _time: "".to_string(),
-//         }
-//     }
-// }
+impl Default for LogObject {
+    fn default() -> LogObject {
+        LogObject {
+            data: None,
+            error: None,
+            message: "".to_string(),
+            _time: "".to_string(),
+        }
+    }
+}

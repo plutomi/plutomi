@@ -27,8 +27,6 @@ pub async fn not_found(
             "request_id": request_id,
         })),
         error: None,
-        request: None,
-        response: None,
     });
 
     ApiResponse::error(

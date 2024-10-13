@@ -74,8 +74,6 @@ pub async fn log_request(
             "request": &original_request,
         })),
         error: None,
-        request: None,
-        response: None,
     });
 
     // Recreate the request with the buffered body
@@ -129,8 +127,6 @@ pub async fn log_request(
             }),
         })),
         error: None,
-        request: None,
-        response: None,
     });
 
     final_response
