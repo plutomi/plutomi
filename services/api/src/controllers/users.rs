@@ -1,12 +1,15 @@
 use crate::structs::{api_response::ApiResponse, app_state::AppState};
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::{get_current_time::get_current_time, logger::LogObject};
 use sqlx::{MySql, Transaction};
 use std::sync::Arc;
-use time::OffsetDateTime;
+
+const ALPHABET: [char; 36] = [
+    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+    'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+];
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct NewUser {
@@ -23,6 +26,7 @@ pub struct User {
     email: String,
     created_at: DateTime<Utc>,
     updated_at: DateTime<Utc>,
+    public_id: String,
 }
 
 pub async fn post_users(
@@ -45,7 +49,8 @@ pub async fn post_users(
         }
     };
 
-    match sqlx::query!(
+    let insert_result = match sqlx::query_as!(
+        User,
         r#"
         INSERT INTO users (first_name, last_name, email, created_at, updated_at) 
         VALUES (?, ?, ?, ?, ?)
@@ -59,93 +64,68 @@ pub async fn post_users(
     .execute(&mut *transaction)
     .await
     {
-        Ok(result) => {
-            let last_insert_id = result.last_insert_id();
-            let message = "User created successfully".to_string();
-            match sqlx::query!(
-                r#"
-                SELECT *
-                FROM users
-                WHERE id = ?
-                "#,
-                last_insert_id
-            )
-            .fetch_one(&mut *transaction)
-            .await
-            {
-                Ok(user) => {
-                    // Commit the transaction if everything succeeds
-                    if let Err(e) = transaction.commit().await {
-                        return ApiResponse::error(
-                            format!("Failed to commit transaction: {}", e),
-                            StatusCode::INTERNAL_SERVER_ERROR,
-                            request_id.clone(),
-                            None,
-                            None,
-                            json!({}),
-                        );
-                    }
-
-                    let user = User {
-                        id: user.id,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                        email: user.email,
-                        created_at: DateTime::<Utc>::from_naive_utc_and_offset(
-                            user.created_at,
-                            Utc,
-                        ),
-                        updated_at: DateTime::<Utc>::from_naive_utc_and_offset(
-                            user.updated_at,
-                            Utc,
-                        ),
-                    };
-
-                    ApiResponse::success(
-                        json!({ "message": "User created successfully", "user": user }),
-                        request_id,
-                        StatusCode::CREATED,
-                    )
-                }
-                Err(e) => {
-                    let message = format!("Failed to fetch user: {}", e);
-                    state.logger.error(LogObject {
-                        message: message.clone(),
-                        data: Some(json!({
-                            "request_id": request_id.clone(),
-                        })),
-                        ..Default::default()
-                    });
-
-                    ApiResponse::error(
-                        message,
-                        StatusCode::INTERNAL_SERVER_ERROR,
-                        request_id.clone(),
-                        Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
-                        None,
-                        json!({}),
-                    )
-                }
-            }
-        }
+        Ok(result) => result,
         Err(e) => {
-            let message = format!("Failed to insert user: {}", e);
-            state.logger.error(LogObject {
-                message: message.clone(),
-                data: Some(json!({
-                    "request_id": request_id.clone(),
-                })),
-                ..Default::default()
-            });
-
-            ApiResponse::error(
-                message,
+            return ApiResponse::error(
+                format!("Failed to insert user: {}", e),
                 StatusCode::INTERNAL_SERVER_ERROR,
                 request_id.clone(),
-                Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
+                None,
                 None,
                 json!({}),
             )
         }
+    };
+
+    let user_id = insert_result.last_insert_id();
+
+    let get_user_result = match sqlx::query_as!(
+        User,
+        r#"
+        SELECT *
+        FROM users
+        WHERE id = ?
+        LIMIT 1
+        "#,
+        user_id
+    )
+    .fetch_one(&mut *transaction)
+    .await
+    {
+        Ok(user) => user,
+        Err(e) => {
+            return ApiResponse::error(
+                format!("Failed to create user {}", e),
+                StatusCode::INTERNAL_SERVER_ERROR,
+                request_id.clone(),
+                None,
+                None,
+                json!({}),
+            )
+        }
+    };
+
+    // Commit the transaction if everything succeeds
+    if let Err(e) = transaction.commit().await {
+        return ApiResponse::error(
+            format!("Failed to create user: {}", e),
+            StatusCode::INTERNAL_SERVER_ERROR,
+            request_id.clone(),
+            None,
+            None,
+            json!({}),
+        );
     }
+
+    let user = User {
+        id: get_user_result.id,
+        first_name: get_user_result.first_name,
+        last_name: get_user_result.last_name,
+        email: get_user_result.email,
+        created_at: DateTime::<Utc>::from_naive_utc_and_offset(get_user_result.created_at, Utc),
+        updated_at: DateTime::<Utc>::from_naive_utc_and_offset(get_user_result.updated_at, Utc),
+        public_id: nanoid::nanoid!(12, &ALPHABET),
+    };
+
+    ApiResponse::success(json!(user), request_id, StatusCode::CREATED)
 }
