@@ -31,6 +31,9 @@ Make sure your `.vscode/.settings.json` file has the correct path to your worksp
 }
 ```
 
+#### SQLX not recongizing schema
+cargo sqlx prepare
+
 ### proc-macro crate is missing it's build data
 
 TBD

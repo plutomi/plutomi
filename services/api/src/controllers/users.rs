@@ -1,40 +1,15 @@
 use crate::structs::{api_response::ApiResponse, app_state::AppState};
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
 use serde_json::json;
+use shared::entities::user::{CreateUserOptions, User};
 use sqlx::{MySql, Transaction};
 use std::sync::Arc;
-
-const ALPHABET: [char; 36] = [
-    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-    'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-];
-
-#[derive(Deserialize, Serialize, Debug)]
-pub struct NewUser {
-    first_name: String,
-    last_name: String,
-    email: String,
-}
-
-#[derive(Serialize, Debug)]
-pub struct User {
-    id: i64,
-    first_name: String,
-    last_name: String,
-    email: String,
-    created_at: DateTime<Utc>,
-    updated_at: DateTime<Utc>,
-    public_id: String,
-}
 
 pub async fn post_users(
     State(state): State<Arc<AppState>>,
     Extension(request_id): Extension<String>,
-    Json(new_user): Json<NewUser>,
+    Json(body): Json<CreateUserOptions>,
 ) -> impl IntoResponse {
-    let now = Utc::now(); // Use NaiveDateTime
     let mut transaction: Transaction<'_, MySql> = match state.db.begin().await {
         Ok(tx) => tx,
         Err(e) => {
@@ -49,17 +24,20 @@ pub async fn post_users(
         }
     };
 
+    let user = User::new(body);
+
     let insert_result = match sqlx::query_as!(
         User,
         r#"
-        INSERT INTO users (first_name, last_name, email, created_at, updated_at) 
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users (first_name, last_name, email, created_at, updated_at, public_id) 
+        VALUES (?, ?, ?, ?, ?, ?)
         "#,
-        new_user.first_name,
-        new_user.last_name,
-        new_user.email,
-        now,
-        now
+        user.first_name,
+        user.last_name,
+        user.email,
+        user.created_at,
+        user.updated_at,
+        user.public_id
     )
     .execute(&mut *transaction)
     .await
@@ -82,7 +60,7 @@ pub async fn post_users(
     let get_user_result = match sqlx::query_as!(
         User,
         r#"
-        SELECT *
+        SELECT * 
         FROM users
         WHERE id = ?
         LIMIT 1
@@ -117,15 +95,5 @@ pub async fn post_users(
         );
     }
 
-    let user = User {
-        id: get_user_result.id,
-        first_name: get_user_result.first_name,
-        last_name: get_user_result.last_name,
-        email: get_user_result.email,
-        created_at: DateTime::<Utc>::from_naive_utc_and_offset(get_user_result.created_at, Utc),
-        updated_at: DateTime::<Utc>::from_naive_utc_and_offset(get_user_result.updated_at, Utc),
-        public_id: nanoid::nanoid!(12, &ALPHABET),
-    };
-
-    ApiResponse::success(json!(user), request_id, StatusCode::CREATED)
+    ApiResponse::success(json!(get_user_result), request_id, StatusCode::CREATED)
 }
