@@ -23,6 +23,20 @@ pub struct User {
     pub email: String,
 }
 
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct KafkaUser {
+    // keep ID
+    pub id: i64,
+    // Don't rename
+    pub public_id: String,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
+
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+}
+
 #[derive(Deserialize, Serialize, Debug)]
 pub struct CreateUserOptions {
     first_name: String,

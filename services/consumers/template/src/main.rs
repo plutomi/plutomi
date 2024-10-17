@@ -48,6 +48,19 @@ fn send_email(
                     ..Default::default()
                 });
             }
+            PlutomiEvent::UserCreated(user) => {
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Processing USER.created event"),
+                    data: Some(json!(user)),
+                    ..Default::default()
+                });
+
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Processed USER.created event"),
+                    data: Some(json!(user)),
+                    ..Default::default()
+                });
+            }
             _ => {
                 plutomi_consumer.logger.warn(LogObject {
                     message: "Invalid event type".to_string(),
