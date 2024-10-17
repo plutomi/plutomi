@@ -1,22 +1,20 @@
-use rdkafka::consumer::{self, Consumer, StreamConsumer};
+use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::{
     producer::{FutureProducer, FutureRecord},
     ClientConfig,
 };
-use serde_json::Value;
 use shared::{
     constants::{ConsumerGroups, Topics},
-    consumers::MessageHandler,
     events::PlutomiEvent,
     get_env::get_env,
-    logger::{LogObject, Logger, LoggerContext},
+    logger::{LogObject, Logger},
 };
 use std::sync::Arc;
-use time::Duration;
 
 pub struct KafkaClient {
     producer: Option<Arc<FutureProducer>>,
     consumer: Option<Arc<StreamConsumer>>,
+    logger: Arc<Logger>,
 }
 
 impl KafkaClient {
@@ -35,13 +33,13 @@ impl KafkaClient {
         let mut consumer = None;
 
         if create_producer {
-            producer = Some(KafkaClient::new_producer(logger)?);
+            producer = Some(KafkaClient::new_producer(&logger)?);
         }
 
         if create_consumer {
             match (consumer_group, consumer_topic) {
                 (Some(group), Some(topic)) => {
-                    consumer = Some(KafkaClient::new_consumer(name, logger, group, topic)?);
+                    consumer = Some(KafkaClient::new_consumer(name, &logger, group, topic)?);
                 }
                 _ => {
                     let msg =
@@ -54,7 +52,11 @@ impl KafkaClient {
                 }
             }
         }
-        Ok(Arc::new(KafkaClient { producer, consumer }))
+        Ok(Arc::new(KafkaClient {
+            producer,
+            consumer,
+            logger: Arc::clone(logger),
+        }))
     }
     pub fn new_producer(logger: &Arc<Logger>) -> Result<Arc<FutureProducer>, String> {
         dotenvy::dotenv().ok();
@@ -140,28 +142,52 @@ impl KafkaClient {
         key: &str,
         payload: &PlutomiEvent,
     ) -> Result<(), String> {
-        
-        let event_json = serde_json::to_string(payload)
-            .map_err(|e| format!("Failed to serialize payload: {}", e))?;
+        let event_json = serde_json::to_string(payload).map_err(|e| {
+            let message = format!("Failed to serialize event: {:?}", e);
+            self.logger.error(LogObject {
+                message: message.clone(),
+                ..Default::default()
+            });
+            message
+        })?;
 
-        let produce_result = self
-            .producer
-            .send(
-                FutureRecord::to(topic).payload(&event_json).key(key),
-                std::time::Duration::from_secs(0),
-            )
-            .await;
+        if self.producer.is_none() {
+            let message = "Producer is not initialized".to_string();
+            self.logger.error(LogObject {
+                message: message.clone(),
+                ..Default::default()
+            });
+            return Err(message);
+        }
 
-        match produce_result {
-            Ok(_) => Ok(()),
-            Err((e, _)) => {
+        if let Some(producer) = &self.producer {
+            let produce_result = producer
+                .send(
+                    FutureRecord::to(topic.as_str())
+                        .payload(&event_json)
+                        .key(key),
+                    std::time::Duration::from_secs(0),
+                )
+                .await;
+
+            if let Err(e) = produce_result {
                 let message = format!("Failed to produce message: {:?}", e);
                 self.logger.error(LogObject {
                     message: message.clone(),
                     ..Default::default()
                 });
-                Err(message)
+                return Err(message);
             }
+
+            Ok(())
+            // Handle produce_result here
+        } else {
+            let message = "Producer is not initialized".to_string();
+            self.logger.error(LogObject {
+                message: message.clone(),
+                ..Default::default()
+            });
+            return Err(message);
         }
     }
 }
