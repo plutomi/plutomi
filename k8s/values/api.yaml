@@ -13,10 +13,12 @@ service:
 deployment:
   metadata:
     name: api
-
   spec:
-    replicas: 3
+    replicas: 1
     template:
+      metadata:
+        labels:
+          app: api
       spec:
         terminationGracePeriodSeconds: 10
         containers:
@@ -28,10 +30,10 @@ deployment:
                 cpu: "50m"
                 memory: "64Mi"
             env:
-              MONGODB_URL:
+              MYSQL_URL:
                 secretKeyRef:
                   name: global-config-secret
-                  key: MONGODB_URL
+                  key: MYSQL_URL
               AXIOM_DATASET:
                 secretKeyRef:
                   name: global-config-secret

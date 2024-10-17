@@ -5,11 +5,9 @@ use shared::{
     constants::{ConsumerGroups, Topics},
     consumers::{ConsumerError, MessageHandlerOptions, PlutomiConsumer},
     events::PlutomiEvent,
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
+    logger::LogObject,
 };
 use std::sync::Arc;
-use time::OffsetDateTime;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
@@ -35,38 +33,38 @@ fn send_email(
 
         match payload {
             PlutomiEvent::TemplateDoNotUse(template_payload) => {
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Info,
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    message: format!("Processing order created event"),
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Processing TEMPLATE.created event"),
                     data: Some(json!(template_payload)),
-                    error: None,
-                    request: None,
-                    response: None,
+                    ..Default::default()
                 });
 
                 if template_payload.email.contains("crash me") && !message.topic().contains("dlq") {
                     return Err(ConsumerError::KafkaError("Crashing on purpose".to_string()));
                 }
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Info,
-                    message: format!("Processed order created event"),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Processed TEMPLATE.created event"),
                     data: Some(json!(template_payload)),
-                    error: None,
-                    request: None,
-                    response: None,
+                    ..Default::default()
+                });
+            }
+            PlutomiEvent::UserCreated(user) => {
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Processing USER.created event"),
+                    data: Some(json!(user)),
+                    ..Default::default()
+                });
+
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Processed USER.created event"),
+                    data: Some(json!(user)),
+                    ..Default::default()
                 });
             }
             _ => {
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Warn,
-                    _time: get_current_time(OffsetDateTime::now_utc()),
+                plutomi_consumer.logger.warn(LogObject {
                     message: "Invalid event type".to_string(),
-                    data: None,
-                    error: None,
-                    request: None,
-                    response: None,
+                    ..Default::default()
                 });
             }
         }

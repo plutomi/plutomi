@@ -35,3 +35,5 @@ impl Entities {
         prefix.to_string()
     }
 }
+
+pub mod user;

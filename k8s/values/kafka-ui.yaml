@@ -28,7 +28,7 @@ deployment:
               KAFKA_CLUSTERS_0_NAME: 
                 value: "local"
               KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS:
-                value: "kafka-kafka-bootstrap.default.svc.cluster.local:9092"
+                value: {{ $.Values.shared.env.KAFKA_BROKERS_URL | quote }}
               KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL:
                 value: "PLAINTEXT"
 

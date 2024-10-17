@@ -6,12 +6,8 @@ use axum::{
     Extension,
 };
 use serde_json::json;
-use shared::{
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
-};
+use shared::logger::LogObject;
 use std::sync::Arc;
-use time::OffsetDateTime;
 
 use crate::structs::{api_response::ApiResponse, app_state::AppState};
 
@@ -36,22 +32,18 @@ pub async fn method_not_allowed(
             // Overwrite the response with a custom message
             let message: String =
                 format!("Method '{}' not allowed at route '{}'", method, uri.path());
-            state.logger.log(LogObject {
-                level: LogLevel::Error,
-                error: None,
+            state.logger.error(LogObject {
                 message: message.clone(),
                 data: Some(json!({
                     "request_id": &request_id,
                 })),
-                _time: get_current_time(OffsetDateTime::now_utc()),
-                request: None,
-                response: None,
+                ..Default::default()
             });
 
             ApiResponse::error(
                 message,
                 status,
-                request_id.clone(),
+                request_id,
                 Some("TODO add docs. Maybe submit a PR? >.<".to_string()),
                 None,
                 json!({}),

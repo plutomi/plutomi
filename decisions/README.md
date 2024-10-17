@@ -13,5 +13,3 @@ This folder is to document why certain architectural decisions were made so when
 [Why SES? Why not other providers?](why-ses.md "Why SES? Why not other providers?")
 
 [Why not send SES/SNS events directly to an endpoint?](why-not-sns-direct.md "Why not send SES/SNS events directly to our endpoint?")
-
-[Why not the MongoDB Operator?](why-not-mongo-operator.md "Why not the MongoDB Operator?")

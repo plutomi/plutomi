@@ -2,7 +2,6 @@ import { useLoaderData } from "@remix-run/react";
 import { Commit, CommitType } from "./Commit";
 
 const numOfCommits = 3;
-const revalidateHours = 24;
 
 export async function loader() {
   const allCommits: CommitType[] = [];

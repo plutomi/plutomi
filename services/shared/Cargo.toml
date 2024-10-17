@@ -10,13 +10,15 @@ axiom-rs = "0.10.0"
 base-encode = "0.3.1"
 byteorder = "1.5.0"
 bytes = "1.6.1"
-dotenv = "0.15.0"
+chrono = { version = "0.4.38", features = ["serde"] }
+dotenvy = "0.15.7"
 futures = "0.3.30"
-mongodb = "3.0.0"
+nanoid = "0.4.0"
 rand = "0.8.5"
 rdkafka = { version = "0.36.2", features = ["cmake-build"] }
-serde = { version = "1.0.204", features = ["derive"] }
+serde =  { version = "1.0.204", features = ["derive"] }
 serde_json = "1.0.120"
+sqlx = { version = "0.8.2", features = ["runtime-tokio", "tls-native-tls", "mysql", "chrono"] }
 strum = "0.26.3"
 strum_macros = "0.26.4"
 thiserror = "1.0.63"
