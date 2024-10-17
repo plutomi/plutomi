@@ -10,7 +10,7 @@ pub async fn create_user(
     request_id: String,
     body: CreateUserOptions,
 ) -> impl IntoResponse {
-    let mut transaction: Transaction<'_, MySql> = match state.db.begin().await {
+    let mut transaction: Transaction<'_, MySql> = match state.mysql.begin().await {
         Ok(tx) => tx,
         Err(e) => {
             return ApiResponse::error(
@@ -29,15 +29,14 @@ pub async fn create_user(
     let insert_result = match sqlx::query_as!(
         User,
         r#"
-        INSERT INTO users (first_name, last_name, email, created_at, updated_at, public_id) 
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO users (first_name, last_name, email, created_at, updated_at) 
+        VALUES (?, ?, ?, ?, ?)
         "#,
         user.first_name,
         user.last_name,
         user.email,
         user.created_at,
         user.updated_at,
-        user.public_id
     )
     .execute(&mut *transaction)
     .await

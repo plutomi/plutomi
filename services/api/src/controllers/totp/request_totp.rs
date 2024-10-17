@@ -1,7 +1,8 @@
 use axum::{extract::State, http::StatusCode, Json};
 use serde::Serialize;
 use shared::{
-    events::{PlutomiEvent, TemplatePayloadDoNotUse},
+    constants::Topics,
+    events::{PlutomiEvent, TemplatePayloadDoNotUse, ToKafka},
     get_env::get_env,
 };
 use std::sync::Arc;
@@ -28,17 +29,9 @@ pub async fn request_totp(
         email: "test".to_string(),
     });
 
-    // Serialize the event to JSON
-    let event_json = serde_json::to_string(&event).unwrap(); // TODO
-
     let produce_result = state
-        .producer
-        .send(
-            rdkafka::producer::FutureRecord::to("test")
-                .payload(&event_json)
-                .key("key"),
-            std::time::Duration::from_secs(0),
-        )
+        .kafka
+        .send(Topics::Test, nanoid::nanoid!().as_str(), &event)
         .await;
 
     match produce_result {

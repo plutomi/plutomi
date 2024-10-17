@@ -26,7 +26,7 @@ pub type MessageHandler = Arc<
 pub struct PlutomiConsumer {
     pub name: &'static str,
     pub consumer: StreamConsumer,
-    pub producer: Arc<FutureProducer>,
+    pub producer: FutureProducer,
     pub logger: Arc<Logger>,
     pub message_handler: MessageHandler,
 }
@@ -134,7 +134,7 @@ impl PlutomiConsumer {
             name,
             consumer,
             logger,
-            producer: Arc::new(producer),
+            producer,
             message_handler,
         })
     }

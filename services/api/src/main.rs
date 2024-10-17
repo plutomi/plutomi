@@ -34,7 +34,6 @@ async fn main() {
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
-    // For publishing
     let producer: FutureProducer = ClientConfig::new()
         .set("bootstrap.servers", &env.KAFKA_URL)
         .set("acks", "all")
@@ -58,8 +57,7 @@ async fn main() {
             std::process::exit(1);
         });
 
-    // Connect to MySQL
-    let db = shared::mysql::connect_to_database(&env.MYSQL_URL, &logger, None)
+    let mysql = shared::mysql::connect_to_database(&env.MYSQL_URL, &logger, None)
         .await
         .unwrap_or_else(|e| {
             let message = format!("Failed to connect to database: {}", e);
@@ -76,7 +74,7 @@ async fn main() {
     let state = Arc::new(AppState {
         logger: Arc::clone(&logger),
         env,
-        db,
+        mysql,
         producer: Arc::new(producer),
     });
 
