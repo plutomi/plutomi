@@ -5,11 +5,11 @@ use axum::{
     Router,
 };
 use constants::{DOCS_ROUTES, PORT};
-use controllers::{health_check, method_not_allowed, not_found, post_users, request_totp};
-use rdkafka::{producer::FutureProducer, ClientConfig};
+use controllers::{health_check, method_not_allowed, not_found, post_users};
 use serde_json::json;
 use shared::{
     get_env::get_env,
+    kafka::KafkaClient,
     logger::{LogObject, Logger, LoggerContext},
 };
 use std::sync::Arc;
@@ -34,28 +34,7 @@ async fn main() {
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
-    let producer: FutureProducer = ClientConfig::new()
-        .set("bootstrap.servers", &env.KAFKA_URL)
-        .set("acks", "all")
-        .set("retries", "10")
-        .set("message.timeout.ms", "10000")
-        .set("retry.backoff.ms", "500")
-        .create()
-        .map_err(|e| {
-            let err = format!("Failed to create producer: {}", e);
-            logger.error(LogObject {
-                message: err.clone(),
-                ..Default::default()
-            });
-            err
-        })
-        .unwrap_or_else(|e| {
-            logger.error(LogObject {
-                message: format!("Failed to create producer: {}", e),
-                ..Default::default()
-            });
-            std::process::exit(1);
-        });
+    let kafka = KafkaClient::new("api", &Arc::clone(&logger), true, false, None, None);
 
     let mysql = shared::mysql::connect_to_database(&env.MYSQL_URL, &logger, None)
         .await
@@ -75,7 +54,7 @@ async fn main() {
         logger: Arc::clone(&logger),
         env,
         mysql,
-        producer: Arc::new(producer),
+        kafka,
     });
 
     // Redirect to web app routes
@@ -90,7 +69,6 @@ async fn main() {
         .route("/api/health", get(health_check))
         // All of these should redirect to the web app
         .merge(docs_routes)
-        .route("/api/totp", post(request_totp))
         .route("/api/users", post(post_users))
         .fallback(not_found)
         .layer(

@@ -34,7 +34,7 @@ fn send_email(
         match payload {
             PlutomiEvent::TemplateDoNotUse(template_payload) => {
                 plutomi_consumer.logger.info(LogObject {
-                    message: format!("Processing order created event"),
+                    message: format!("Processing TEMPLATE.created event"),
                     data: Some(json!(template_payload)),
                     ..Default::default()
                 });
@@ -43,7 +43,7 @@ fn send_email(
                     return Err(ConsumerError::KafkaError("Crashing on purpose".to_string()));
                 }
                 plutomi_consumer.logger.info(LogObject {
-                    message: format!("Processed order created event"),
+                    message: format!("Processed TEMPLATE.created event"),
                     data: Some(json!(template_payload)),
                     ..Default::default()
                 });

@@ -1,7 +1,12 @@
 use crate::structs::{api_response::ApiResponse, app_state::AppState};
 use axum::{http::StatusCode, response::IntoResponse};
 use serde_json::json;
-use shared::entities::user::{CreateUserOptions, User};
+use shared::{
+    constants::Topics,
+    entities::user::{CreateUserOptions, User},
+    events::{PlutomiEvent, TemplatePayloadDoNotUse},
+    logger::LogObject,
+};
 use sqlx::{MySql, Transaction};
 use std::sync::Arc;
 
@@ -29,14 +34,15 @@ pub async fn create_user(
     let insert_result = match sqlx::query_as!(
         User,
         r#"
-        INSERT INTO users (first_name, last_name, email, created_at, updated_at) 
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users (first_name, last_name, email, created_at, updated_at, public_id) 
+        VALUES (?, ?, ?, ?, ?, ?)
         "#,
         user.first_name,
         user.last_name,
         user.email,
         user.created_at,
         user.updated_at,
+        user.public_id
     )
     .execute(&mut *transaction)
     .await
@@ -81,6 +87,13 @@ pub async fn create_user(
             )
         }
     };
+    state.logger.info(LogObject {
+        message: "User created".to_string(),
+        data: Some(json!({
+            "user": get_user_result
+        })),
+        ..Default::default()
+    });
 
     if let Err(e) = transaction.commit().await {
         return ApiResponse::error(
@@ -92,6 +105,16 @@ pub async fn create_user(
             json!({}),
         );
     }
+
+    state
+        .kafka
+        .send(
+            Topics::Test,
+            "random",
+            &PlutomiEvent::UserCreated(get_user_result.clone()),
+        )
+        .await
+        .unwrap(); // ???
 
     ApiResponse::success(json!(get_user_result), request_id, StatusCode::CREATED)
 }

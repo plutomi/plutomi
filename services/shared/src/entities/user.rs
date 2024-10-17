@@ -5,14 +5,14 @@ use chrono::{NaiveDateTime, Utc};
 use nanoid::nanoid;
 use serde::Deserialize;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct User {
     // Hide on the way out
     #[serde(skip_serializing)]
     pub id: i64,
 
-    // #[serde(rename = "id")]
-    // pub public_id: String,
+    #[serde(rename = "id")]
+    pub public_id: String,
     #[serde(serialize_with = "serialize_naive_datetime_as_utc")]
     pub created_at: NaiveDateTime,
     #[serde(serialize_with = "serialize_naive_datetime_as_utc")]
@@ -39,7 +39,7 @@ impl User {
             first_name: options.first_name,
             last_name: options.last_name,
             email: options.email,
-            // public_id: nanoid!(12, &ID_ALPHABET),
+            public_id: nanoid!(12, &ID_ALPHABET),
             created_at: now,
             updated_at: now,
         }

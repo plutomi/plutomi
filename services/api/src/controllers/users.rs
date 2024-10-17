@@ -9,5 +9,5 @@ pub async fn post_users(
     Extension(request_id): Extension<String>,
     Json(body): Json<CreateUserOptions>,
 ) -> impl IntoResponse {
-    create_user(state, request_id, body).await;
+    return create_user(state, request_id, body).await;
 }

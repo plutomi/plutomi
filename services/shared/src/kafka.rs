@@ -3,13 +3,14 @@ use rdkafka::{
     producer::{FutureProducer, FutureRecord},
     ClientConfig,
 };
-use shared::{
-    constants::{ConsumerGroups, Topics},
-    events::PlutomiEvent,
-    get_env::get_env,
-    logger::{LogObject, Logger},
-};
+
+use core::panic;
 use std::sync::Arc;
+
+use crate::constants::{ConsumerGroups, Topics};
+use crate::events::PlutomiEvent;
+use crate::get_env::get_env;
+use crate::logger::{LogObject, Logger};
 
 pub struct KafkaClient {
     producer: Option<Arc<FutureProducer>>,
@@ -28,18 +29,36 @@ impl KafkaClient {
         create_consumer: bool,
         consumer_group: Option<ConsumerGroups>,
         consumer_topic: Option<Topics>,
-    ) -> Result<Arc<KafkaClient>, String> {
+    ) -> Arc<KafkaClient> {
         let mut producer = None;
         let mut consumer = None;
 
         if create_producer {
-            producer = Some(KafkaClient::new_producer(&logger)?);
+            producer = Some(KafkaClient::new_producer(&logger).unwrap_or_else(|e| {
+                let msg = format!("Failed to create producer in {}: {}", &name, e);
+                logger.error(LogObject {
+                    message: msg.clone(),
+                    ..Default::default()
+                });
+                panic!("{}", msg);
+            }))
         }
 
         if create_consumer {
             match (consumer_group, consumer_topic) {
                 (Some(group), Some(topic)) => {
-                    consumer = Some(KafkaClient::new_consumer(name, &logger, group, topic)?);
+                    consumer = Some(
+                        KafkaClient::new_consumer(name, &logger, group, topic).unwrap_or_else(
+                            |e| {
+                                let msg = format!("Failed to create consumer in {}: {}", &name, e);
+                                logger.error(LogObject {
+                                    message: msg.clone(),
+                                    ..Default::default()
+                                });
+                                panic!("{}", msg);
+                            },
+                        ),
+                    );
                 }
                 _ => {
                     let msg =
@@ -48,15 +67,22 @@ impl KafkaClient {
                         message: msg.into(),
                         ..Default::default()
                     });
-                    return Err(msg.into());
+
+                    panic!("{}", msg);
                 }
             }
         }
-        Ok(Arc::new(KafkaClient {
+
+        logger.info(LogObject {
+            message: format!("Created Kafka client in {:?}", &name),
+            ..Default::default()
+        });
+
+        Arc::new(KafkaClient {
             producer,
             consumer,
             logger: Arc::clone(logger),
-        }))
+        })
     }
     pub fn new_producer(logger: &Arc<Logger>) -> Result<Arc<FutureProducer>, String> {
         dotenvy::dotenv().ok();
@@ -142,6 +168,10 @@ impl KafkaClient {
         key: &str,
         payload: &PlutomiEvent,
     ) -> Result<(), String> {
+        self.logger.info(LogObject {
+            message: "Producing message...".to_string(),
+            ..Default::default()
+        });
         let event_json = serde_json::to_string(payload).map_err(|e| {
             let message = format!("Failed to serialize event: {:?}", e);
             self.logger.error(LogObject {
@@ -179,6 +209,16 @@ impl KafkaClient {
                 return Err(message);
             }
 
+            self.logger.info(LogObject {
+                message: "Message produced".to_string(),
+                // ! TODO: See what were doing
+                data: Some(serde_json::json!({
+                    "topic": topic.as_str(),
+                    "key": key,
+                    "payload": payload,
+                })),
+                ..Default::default()
+            });
             Ok(())
             // Handle produce_result here
         } else {

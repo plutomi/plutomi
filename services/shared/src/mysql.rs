@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::logger::{LogObject, Logger};
 use sqlx::mysql::{MySqlPool, MySqlPoolOptions};
 
@@ -9,7 +10,7 @@ pub async fn connect_to_database(
     url: &str,
     logger: &Logger,
     db_config: Option<DBConfig>,
-) -> Result<MySqlPool, sqlx::Error> {
+) -> Result<Arc<MySqlPool>, sqlx::Error> {
     logger.info(LogObject {
         message: "Connecting to database...".into(),
         ..Default::default()
@@ -31,5 +32,5 @@ pub async fn connect_to_database(
         ..Default::default()
     });
 
-    Ok(pool)
+    Ok(Arc::new(pool))
 }
