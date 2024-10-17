@@ -19,6 +19,7 @@ use utils::{log_req_res::log_request, timeout::timeout};
 
 mod constants;
 mod controllers;
+mod handlers;
 mod structs;
 mod utils;
 
