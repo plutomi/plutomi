@@ -1,8 +1,9 @@
+use crate::constants::ID_ALPHABET;
+use crate::serializers::serialize_naive_datetime_as_utc;
 use ::serde::Serialize;
 use chrono::{NaiveDateTime, Utc};
 use nanoid::nanoid;
 use serde::Deserialize;
-use crate::constants::ID_ALPHABET;
 
 #[derive(Serialize, Debug)]
 pub struct User {
@@ -13,7 +14,9 @@ pub struct User {
     #[serde(rename = "id")]
     pub public_id: String,
 
+    #[serde(serialize_with = "serialize_naive_datetime_as_utc")]
     pub created_at: NaiveDateTime,
+    #[serde(serialize_with = "serialize_naive_datetime_as_utc")]
     pub updated_at: NaiveDateTime,
 
     pub first_name: String,

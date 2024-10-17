@@ -1705,6 +1705,7 @@ dependencies = [
  "atoi",
  "byteorder",
  "bytes",
+ "chrono",
  "crc",
  "crossbeam-queue",
  "either",
@@ -1786,6 +1787,7 @@ dependencies = [
  "bitflags",
  "byteorder",
  "bytes",
+ "chrono",
  "crc",
  "digest",
  "dotenvy",
@@ -1827,6 +1829,7 @@ dependencies = [
  "base64",
  "bitflags",
  "byteorder",
+ "chrono",
  "crc",
  "dotenvy",
  "etcetera",
@@ -1862,6 +1865,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d5b2cf34a45953bfd3daaf3db0f7a7878ab9b7a6b91b422d24a7a9e4c857b680"
 dependencies = [
  "atoi",
+ "chrono",
  "flume",
  "futures-channel",
  "futures-core",

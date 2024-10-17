@@ -7,4 +7,5 @@ pub mod get_env;
 pub mod id_generation;
 pub mod logger;
 pub mod mysql;
+pub mod serializers;
 pub mod sleep_and_exit;
