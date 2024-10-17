@@ -15,9 +15,8 @@ pub async fn connect_to_database(
         ..Default::default()
     });
 
-    // Set default values for db_config
     let db_config = db_config.unwrap_or(DBConfig {
-        min_connections: 1,
+        min_connections: 2,
         max_connections: 5,
     });
 
