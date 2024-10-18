@@ -34,7 +34,7 @@ async fn main() {
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
-    let kafka = KafkaClient::new("api", &Arc::clone(&logger), true, false, None, None);
+    let kafka = KafkaClient::new("api", &Arc::clone(&logger), false, None, None);
 
     let mysql = shared::mysql::connect_to_database(&env.MYSQL_URL, &logger, None)
         .await

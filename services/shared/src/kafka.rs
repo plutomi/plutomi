@@ -1,11 +1,15 @@
 use rdkafka::consumer::{Consumer, StreamConsumer};
+use rdkafka::message::BorrowedMessage;
+use rdkafka::Message;
 use rdkafka::{
     producer::{FutureProducer, FutureRecord},
     ClientConfig,
 };
+use serde_json::json;
 
 use core::panic;
 use std::sync::Arc;
+use std::time::Duration;
 
 use crate::constants::{ConsumerGroups, Topics};
 use crate::events::PlutomiEvent;
@@ -13,36 +17,37 @@ use crate::get_env::get_env;
 use crate::logger::{LogObject, Logger};
 
 pub struct KafkaClient {
-    producer: Option<Arc<FutureProducer>>,
-    consumer: Option<Arc<StreamConsumer>>,
+    // Will always have a producer
+    pub producer: Arc<FutureProducer>,
+    // Some services, like API, will never consume messages
+    pub consumer: Option<Arc<StreamConsumer>>,
     logger: Arc<Logger>,
 }
 
+/**
+ * These are all wrapper functions so that the caller never has to care about them.
+ * Simply call self.kaka.publish/commit/receive() and it will handle the rest.
+ */
 impl KafkaClient {
     pub fn new(
         name: &'static str,
         logger: &Arc<Logger>,
-
-        create_producer: bool,
 
         // If create_consumer is true, you must pass in the other values
         create_consumer: bool,
         consumer_group: Option<ConsumerGroups>,
         consumer_topic: Option<Topics>,
     ) -> Arc<KafkaClient> {
-        let mut producer = None;
         let mut consumer = None;
 
-        if create_producer {
-            producer = Some(KafkaClient::new_producer(&logger).unwrap_or_else(|e| {
-                let msg = format!("Failed to create producer in {}: {}", &name, e);
-                logger.error(LogObject {
-                    message: msg.clone(),
-                    ..Default::default()
-                });
-                panic!("{}", msg);
-            }))
-        }
+        let producer = KafkaClient::new_producer(&logger).unwrap_or_else(|e| {
+            let msg = format!("Failed to create producer in {}: {}", &name, e);
+            logger.error(LogObject {
+                message: msg.clone(),
+                ..Default::default()
+            });
+            panic!("{}", msg);
+        });
 
         if create_consumer {
             match (consumer_group, consumer_topic) {
@@ -161,8 +166,8 @@ impl KafkaClient {
         Ok(Arc::new(consumer))
     }
 
-    // Shorthand for sending a message to a topic
-    pub async fn send(
+    // Shorthand for sending a formatted PlutomiEvent message to a topic
+    pub async fn publish(
         &self,
         topic: Topics,
         key: &str,
@@ -181,8 +186,18 @@ impl KafkaClient {
             message
         })?;
 
-        if self.producer.is_none() {
-            let message = "Producer is not initialized".to_string();
+        let produce_result = self
+            .producer
+            .send(
+                FutureRecord::to(topic.as_str())
+                    .payload(&event_json)
+                    .key(key),
+                std::time::Duration::from_secs(0),
+            )
+            .await;
+
+        if let Err(e) = produce_result {
+            let message = format!("Failed to produce message: {:?}", e);
             self.logger.error(LogObject {
                 message: message.clone(),
                 ..Default::default()
@@ -190,44 +205,109 @@ impl KafkaClient {
             return Err(message);
         }
 
-        if let Some(producer) = &self.producer {
-            let produce_result = producer
-                .send(
-                    FutureRecord::to(topic.as_str())
-                        .payload(&event_json)
-                        .key(key),
-                    std::time::Duration::from_secs(0),
-                )
-                .await;
+        self.logger.info(LogObject {
+            message: "Message produced".to_string(),
+            // ! TODO: See what were doing
+            data: Some(serde_json::json!({
+                "topic": topic.as_str(),
+                "key": key,
+                "payload": payload,
+            })),
+            ..Default::default()
+        });
+        Ok(())
+        // Handle produce_result here
+    }
 
-            if let Err(e) = produce_result {
-                let message = format!("Failed to produce message: {:?}", e);
-                self.logger.error(LogObject {
-                    message: message.clone(),
-                    ..Default::default()
-                });
-                return Err(message);
-            }
-
-            self.logger.info(LogObject {
-                message: "Message produced".to_string(),
-                // ! TODO: See what were doing
-                data: Some(serde_json::json!({
-                    "topic": topic.as_str(),
-                    "key": key,
-                    "payload": payload,
-                })),
+    // Publish a message to the specified topic, specifically when we don't know the type of the message
+    pub async fn publish_generic<'a>(
+        &self,
+        topic: Topics,
+        message: &'a BorrowedMessage<'a>,
+    ) -> Result<(), String> {
+        let topic_name = topic.as_str();
+        let key = message.key().unwrap_or(&[]);
+        let payload = message.payload().unwrap_or(&[]);
+        if payload.is_empty() {
+            self.logger.warn(LogObject {
+                message: format!("Message payload is empty when producing a message"),
                 ..Default::default()
             });
+            return Err("Message payload is empty when producing a message".to_string());
+        }
+
+        let record = FutureRecord::to(topic_name).payload(payload).key(key);
+
+        match self.producer.send(record, Duration::from_secs(0)).await {
+            Ok(_) => {
+                self.logger.info(LogObject {
+                    message: format!("Message successfully published to topic {}", topic_name),
+                    ..Default::default()
+                });
+                Ok(())
+            }
+            Err((err, _)) => {
+                self.logger.error(LogObject {
+                    message: format!(
+                        "Failed to publish message to topic {}: {:?}",
+                        topic_name, err
+                    ),
+                    error: Some(json!(err.to_string())),
+                    ..Default::default()
+                });
+                Err(err.to_string())
+            }
+        }
+    }
+
+    pub async fn commit<'a>(&self, message: &'a BorrowedMessage<'a>) -> Result<(), String> {
+        if let Some(consumer) = &self.consumer {
+            consumer
+                .commit_message(message, rdkafka::consumer::CommitMode::Async)
+                .map_err(|e| {
+                    let err = format!("Failed to commit message: {:?}", e);
+                    self.logger.error(LogObject {
+                        message: err.clone(),
+                        error: Some(json!(e.to_string())),
+                        ..Default::default()
+                    });
+                    err
+                })?;
+
+            self.logger.info(LogObject {
+                message: format!("Message successfully committed"),
+                ..Default::default()
+            });
+
             Ok(())
-            // Handle produce_result here
         } else {
-            let message = "Producer is not initialized".to_string();
+            let message = "Consumer is not initialized".to_string();
             self.logger.error(LogObject {
                 message: message.clone(),
                 ..Default::default()
             });
-            return Err(message);
+            Err(message)
+        }
+    }
+
+    pub async fn receive(&self) -> Result<BorrowedMessage, String> {
+        if let Some(consumer) = &self.consumer {
+            consumer.recv().await.map_err(|e| {
+                let err = format!("Failed to receive message: {:?}", e);
+                self.logger.error(LogObject {
+                    message: err.clone(),
+                    error: Some(json!(e.to_string())),
+                    ..Default::default()
+                });
+                err
+            })
+        } else {
+            let message = "Consumer is not initialized".to_string();
+            self.logger.error(LogObject {
+                message: message.clone(),
+                ..Default::default()
+            });
+            Err(message)
         }
     }
 }
