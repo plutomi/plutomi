@@ -166,7 +166,7 @@ impl Logger {
      * Create a new logger instance.
      * This also spawns a long lived thread that will handle logging.
      */
-    pub fn init(context: LoggerContext) -> Arc<Logger> {
+    pub fn init(context: LoggerContext) -> Result<Arc<Logger>, String> {
         // Make the context available to the logging thread
         let context = Arc::new(context);
 
@@ -266,7 +266,7 @@ impl Logger {
             message: format!("{} initialized", &context.application),
             ..Default::default()
         });
-        return logger;
+        return Ok(logger);
     }
 
     /**

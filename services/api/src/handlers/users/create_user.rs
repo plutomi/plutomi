@@ -4,7 +4,7 @@ use serde_json::json;
 use shared::{
     constants::Topics,
     entities::user::{CreateUserOptions, KafkaUser, User},
-    events::{PlutomiEvent, TemplatePayloadDoNotUse},
+    events::PlutomiEvent,
     logger::LogObject,
 };
 use sqlx::{MySql, Transaction};
@@ -34,9 +34,9 @@ pub async fn create_user(
     let insert_result = match sqlx::query_as!(
         User,
         r#"
-        INSERT INTO users (first_name, last_name, email, created_at, updated_at, public_id) 
-        VALUES (?, ?, ?, ?, ?, ?)
-        "#,
+            INSERT INTO users (first_name, last_name, email, created_at, updated_at, public_id) 
+            VALUES (?, ?, ?, ?, ?, ?)
+            "#,
         user.first_name,
         user.last_name,
         user.email,
@@ -65,11 +65,11 @@ pub async fn create_user(
     let get_user_result = match sqlx::query_as!(
         User,
         r#"
-        SELECT * 
-        FROM users
-        WHERE id = ?
-        LIMIT 1
-        "#,
+            SELECT * 
+            FROM users
+            WHERE id = ?
+            LIMIT 1
+            "#,
         user_id
     )
     .fetch_one(&mut *transaction)
@@ -108,7 +108,7 @@ pub async fn create_user(
 
     state
         .kafka
-        .send(
+        .publish(
             Topics::Test,
             "random",
             &PlutomiEvent::UserCreated(KafkaUser {

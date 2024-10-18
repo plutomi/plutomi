@@ -11,6 +11,7 @@ use shared::{
     get_env::get_env,
     kafka::KafkaClient,
     logger::{LogObject, Logger, LoggerContext},
+    mysql::MySQLClient,
 };
 use std::sync::Arc;
 use structs::app_state::AppState;
@@ -24,30 +25,19 @@ mod structs;
 mod utils;
 
 #[tokio::main(flavor = "multi_thread")]
-async fn main() {
+async fn main() -> Result<(), String> {
     dotenvy::dotenv().ok();
 
     let env = get_env();
 
-    let logger = Logger::init(LoggerContext { application: "api" });
+    let logger = Logger::init(LoggerContext { application: "api" })?;
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
     let kafka = KafkaClient::new("api", &Arc::clone(&logger), false, None, None);
 
-    let mysql = shared::mysql::connect_to_database(&env.MYSQL_URL, &logger, None)
-        .await
-        .unwrap_or_else(|e| {
-            let message = format!("Failed to connect to database: {}", e);
-            let error_json = json!({ "message": &message });
-            logger.error(LogObject {
-                message,
-                error: Some(error_json),
-                ..Default::default()
-            });
-            std::process::exit(1);
-        });
+    let mysql = MySQLClient::new("api", &logger, None).await?;
 
     // Create an instance of AppState to be shared with all routes
     let state = Arc::new(AppState {
@@ -125,4 +115,6 @@ async fn main() {
         });
         std::process::exit(1);
     });
+
+    Ok(())
 }

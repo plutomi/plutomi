@@ -10,5 +10,6 @@ rdkafka = { version = "0.36.2", features = ["cmake-build"] }
 serde = "1.0.210"
 serde_json = "1.0.128"
 shared = { path = "../../shared" }
+sqlx = { version = "0.8.2", features = ["runtime-tokio", "tls-native-tls", "mysql", "chrono"] }
 time = "0.3.36"
 tokio = { version = "1.40.0", features = ["full"] }

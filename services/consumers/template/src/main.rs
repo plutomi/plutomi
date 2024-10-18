@@ -15,7 +15,8 @@ async fn main() -> Result<(), String> {
         ConsumerGroups::TemplateDoNotUse,
         Topics::Test,
         Arc::new(send_email),
-    )?;
+    )
+    .await?;
 
     plutomi_consumer.run().await?;
 
@@ -54,6 +55,45 @@ fn send_email(
                     data: Some(json!(user)),
                     ..Default::default()
                 });
+
+                let mut transaction = plutomi_consumer.mysql.begin().await.unwrap_or_else(|e| {
+                    let message = format!("Failed to start transaction: {}", e);
+                    plutomi_consumer.logger.error(LogObject {
+                        message: message.clone(),
+                        ..Default::default()
+                    });
+                    panic!("ahh");
+                });
+
+                // Update the first_name of the user to 'updated in consumer'
+                let update_result = sqlx::query!(
+                    r#"
+                        UPDATE users
+                        SET first_name = 'updated in consumer'
+                        WHERE public_id = ?
+                    "#,
+                    user.public_id
+                )
+                .execute(&mut *transaction)
+                .await
+                .unwrap_or_else(|e| {
+                    let message = format!("Failed to update user: {}", e);
+                    plutomi_consumer.logger.error(LogObject {
+                        message: message.clone(),
+                        ..Default::default()
+                    });
+                    panic!("ahh");
+                });
+
+                // Commit the transaction
+                if let Err(e) = transaction.commit().await {
+                    let message = format!("Failed to commit transaction: {}", e);
+                    plutomi_consumer.logger.error(LogObject {
+                        message: message.clone(),
+                        ..Default::default()
+                    });
+                    panic!("ahh");
+                }
 
                 plutomi_consumer.logger.info(LogObject {
                     message: format!("Processed USER.created event"),

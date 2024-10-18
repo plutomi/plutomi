@@ -1,16 +1,14 @@
 use crate::constants::{ConsumerGroups, Topics};
 use crate::events::PlutomiEvent;
-use crate::get_env::get_env;
 use crate::kafka::KafkaClient;
 use crate::logger::{LogObject, Logger, LoggerContext};
+use crate::mysql::MySQLClient;
 use futures::future::BoxFuture;
-use rdkafka::consumer::{Consumer, StreamConsumer};
 use rdkafka::message::BorrowedMessage;
-use rdkafka::producer::{FutureProducer, FutureRecord};
-use rdkafka::{ClientConfig, Message};
+use rdkafka::Message;
 use serde_json::json;
+use sqlx::MySqlPool;
 use std::sync::Arc;
-use std::time::Duration;
 use thiserror::Error;
 
 pub struct MessageHandlerOptions<'a> {
@@ -27,6 +25,7 @@ pub type MessageHandler = Arc<
 pub struct PlutomiConsumer {
     pub name: &'static str,
     pub kafka: Arc<KafkaClient>,
+    pub mysql: Arc<MySqlPool>,
     pub logger: Arc<Logger>,
     pub message_handler: MessageHandler,
 }
@@ -48,7 +47,7 @@ impl PlutomiConsumer {
     /**
      * Creates a consumer and subscribes it to the given topic
      */
-    pub fn new(
+    pub async fn new(
         name: &'static str,
         group_id: ConsumerGroups,
         topic: Topics,
@@ -56,7 +55,7 @@ impl PlutomiConsumer {
     ) -> Result<Self, String> {
         dotenvy::dotenv().ok();
 
-        let logger = Logger::init(LoggerContext { application: &name });
+        let logger = Logger::init(LoggerContext { application: &name })?;
 
         let kafka = KafkaClient::new(
             name,
@@ -66,11 +65,14 @@ impl PlutomiConsumer {
             Some(topic),
         );
 
+        let mysql = MySQLClient::new(name, &Arc::clone(&logger), None).await?;
+
         Ok(PlutomiConsumer {
             name,
             logger,
             message_handler,
             kafka,
+            mysql,
         })
     }
 
