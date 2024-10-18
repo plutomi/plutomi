@@ -11,6 +11,9 @@ pub enum PlutomiEvent {
 
     #[serde(rename = "user.created")]
     UserCreated(KafkaUser),
+
+    #[serde(rename = "user.updated")]
+    UserUpdated(KafkaUser),
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TemplatePayloadDoNotUse {

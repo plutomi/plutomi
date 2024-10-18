@@ -15,12 +15,8 @@ pub struct MessageHandlerOptions<'a> {
     pub message: &'a BorrowedMessage<'a>,
     pub plutomi_consumer: &'a PlutomiConsumer,
 }
-pub type MessageHandler = Arc<
-    dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), ConsumerError>>
-        + Send
-        + Sync
-        + 'static,
->;
+pub type MessageHandler =
+    Arc<dyn Fn(MessageHandlerOptions) -> BoxFuture<'_, Result<(), String>> + Send + Sync + 'static>;
 // Wrapper around StreamConsumer to add extra functionality
 pub struct PlutomiConsumer {
     pub name: &'static str,
@@ -28,28 +24,6 @@ pub struct PlutomiConsumer {
     pub mysql: Arc<MySqlPool>,
     pub logger: Arc<Logger>,
     pub message_handler: MessageHandler,
-}
-
-// Custom error enum to represent different error types
-#[derive(Debug, Error)]
-pub enum ConsumerError {
-    #[error("Parse error: {0}")]
-    ParseError(String), // Represent a parse failure with an error message
-
-    #[error("Kafka error: {0}")]
-    KafkaError(String), // Represent a Kafka-specific failure with an error message
-
-    #[error("MySQL error: {0}")]
-    MySQLError(String), // Represent a Kafka-specific failure with an error message
-
-    #[error("Unknown error: {0}")]
-    UnknownError(String), // Catch-all for other types of errors
-}
-
-impl From<sqlx::Error> for ConsumerError {
-    fn from(err: sqlx::Error) -> Self {
-        ConsumerError::MySQLError(format!("SQLx Error: {}", err))
-    }
 }
 
 impl PlutomiConsumer {
@@ -198,7 +172,7 @@ impl PlutomiConsumer {
     pub fn parse_message<'a>(
         &self,
         message: &'a BorrowedMessage<'a>,
-    ) -> Result<PlutomiEvent, ConsumerError> {
+    ) -> Result<PlutomiEvent, String> {
         let payload = message.payload().unwrap_or(&[]);
 
         // Check if the payload is empty before attempting to deserialize
@@ -207,23 +181,22 @@ impl PlutomiConsumer {
                 message: "Message payload is empty when parsing message".to_string(),
                 ..Default::default()
             });
-            return Err(ConsumerError::ParseError(
-                "Message payload is empty when parsing message".to_string(),
-            ));
+            return Err("Message payload is empty when parsing message".to_string());
         }
 
         // Deserialize directly into `PlutomiEvent`, which handles both event type and payload
         serde_json::from_slice::<PlutomiEvent>(payload).map_err(|e| {
             // If parsing fails, convert the payload to a readable string for logging
             let payload_str = String::from_utf8_lossy(payload).to_string();
-
+            let msg = format!("Failed to parse event: {}", e);
             self.logger.error(LogObject {
-                message: format!("Failed to parse event: {}", e),
+                message: msg.clone(),
                 data: Some(json!({ "message": payload_str })),
                 error: Some(json!(e.to_string())),
                 ..Default::default()
             });
-            ConsumerError::ParseError(format!("Failed to parse event: {}", e))
+
+            msg
         })
     }
 }
