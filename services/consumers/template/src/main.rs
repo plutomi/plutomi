@@ -1,9 +1,9 @@
 use futures::future::BoxFuture;
-use rdkafka::Message;
 use serde_json::json;
 use shared::{
     constants::{ConsumerGroups, Topics},
     consumers::{ConsumerError, MessageHandlerOptions, PlutomiConsumer},
+    entities::user::User,
     events::PlutomiEvent,
     logger::LogObject,
 };
@@ -31,24 +31,7 @@ fn send_email(
 ) -> BoxFuture<'_, Result<(), ConsumerError>> {
     Box::pin(async move {
         let payload = plutomi_consumer.parse_message(message)?;
-
         match payload {
-            PlutomiEvent::TemplateDoNotUse(template_payload) => {
-                plutomi_consumer.logger.info(LogObject {
-                    message: format!("Processing TEMPLATE.created event"),
-                    data: Some(json!(template_payload)),
-                    ..Default::default()
-                });
-
-                if template_payload.email.contains("crash me") && !message.topic().contains("dlq") {
-                    return Err(ConsumerError::KafkaError("Crashing on purpose".to_string()));
-                }
-                plutomi_consumer.logger.info(LogObject {
-                    message: format!("Processed TEMPLATE.created event"),
-                    data: Some(json!(template_payload)),
-                    ..Default::default()
-                });
-            }
             PlutomiEvent::UserCreated(user) => {
                 plutomi_consumer.logger.info(LogObject {
                     message: format!("Processing USER.created event"),
@@ -56,54 +39,86 @@ fn send_email(
                     ..Default::default()
                 });
 
-                let mut transaction = plutomi_consumer.mysql.begin().await.unwrap_or_else(|e| {
-                    let message = format!("Failed to start transaction: {}", e);
-                    plutomi_consumer.logger.error(LogObject {
-                        message: message.clone(),
-                        ..Default::default()
-                    });
-                    panic!("ahh");
-                });
+                let mut transaction = plutomi_consumer.mysql.begin().await?;
 
                 // Update the first_name of the user to 'updated in consumer'
-                let update_result = sqlx::query!(
+                let update_result = match sqlx::query!(
                     r#"
                         UPDATE users
                         SET first_name = 'updated in consumer'
-                        WHERE public_id = ?
+                        WHERE id = ?
                     "#,
-                    user.public_id
+                    user.id
                 )
                 .execute(&mut *transaction)
                 .await
-                .unwrap_or_else(|e| {
-                    let message = format!("Failed to update user: {}", e);
-                    plutomi_consumer.logger.error(LogObject {
-                        message: message.clone(),
-                        ..Default::default()
-                    });
-                    panic!("ahh");
-                });
+                {
+                    Ok(result) => result,
+                    Err(e) => {
+                        let message = format!("Failed to update user: {}", e);
+                        plutomi_consumer.logger.error(LogObject {
+                            message: message.clone(),
+                            ..Default::default()
+                        });
+                        return Err(ConsumerError::MySQLError(message));
+                    }
+                };
 
-                // Commit the transaction
-                if let Err(e) = transaction.commit().await {
-                    let message = format!("Failed to commit transaction: {}", e);
-                    plutomi_consumer.logger.error(LogObject {
-                        message: message.clone(),
-                        ..Default::default()
-                    });
-                    panic!("ahh");
-                }
+                let updated_user = match sqlx::query_as!(
+                    User,
+                    r#"
+                        SELECT * 
+                        FROM users
+                        WHERE id = ?
+                        LIMIT 1
+                    "#,
+                    user.id
+                )
+                .fetch_one(&mut *transaction)
+                .await
+                {
+                    Ok(user) => user,
+                    Err(e) => {
+                        let message = format!("Failed to fetch updated user: {}", e);
+                        plutomi_consumer.logger.error(LogObject {
+                            message: message.clone(),
+                            ..Default::default()
+                        });
+                        return Err(ConsumerError::MySQLError(message));
+                    }
+                };
 
-                plutomi_consumer.logger.info(LogObject {
-                    message: format!("Processed USER.created event"),
-                    data: Some(json!(user)),
-                    ..Default::default()
-                });
+                match transaction.commit().await {
+                    Ok(_) => {
+                        plutomi_consumer.logger.info(LogObject {
+                            message: format!("Processed USER.created event"),
+                            data: Some(json!({ "updated_user": {
+                                "id": updated_user.id,
+                                "first_name": updated_user.first_name,
+                                "last_name": updated_user.last_name,
+                                "email": updated_user.email,
+                                "created_at": updated_user.created_at,
+                                "updated_at": updated_user.updated_at,
+                                "public_id": updated_user.public_id
+                            } })),
+                            ..Default::default()
+                        });
+                    }
+                    Err(e) => {
+                        let message = format!("Failed to commit transaction: {}", e);
+                        plutomi_consumer.logger.error(LogObject {
+                            message: message.clone(),
+                            ..Default::default()
+                        });
+                        return Err(ConsumerError::MySQLError(message));
+                    }
+                };
             }
-            _ => {
+            all_other_events => {
+                let message = format!("Ignoring event {:?}", all_other_events);
                 plutomi_consumer.logger.warn(LogObject {
-                    message: "Invalid event type".to_string(),
+                    message,
+                    data: Some(json!({ "payload": all_other_events })),
                     ..Default::default()
                 });
             }

@@ -39,8 +39,17 @@ pub enum ConsumerError {
     #[error("Kafka error: {0}")]
     KafkaError(String), // Represent a Kafka-specific failure with an error message
 
+    #[error("MySQL error: {0}")]
+    MySQLError(String), // Represent a Kafka-specific failure with an error message
+
     #[error("Unknown error: {0}")]
     UnknownError(String), // Catch-all for other types of errors
+}
+
+impl From<sqlx::Error> for ConsumerError {
+    fn from(err: sqlx::Error) -> Self {
+        ConsumerError::MySQLError(format!("SQLx Error: {}", err))
+    }
 }
 
 impl PlutomiConsumer {
