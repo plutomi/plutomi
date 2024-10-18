@@ -1,15 +1,13 @@
 use futures::future::BoxFuture;
-use rdkafka::Message;
 use serde_json::json;
 use shared::{
     constants::{ConsumerGroups, Topics},
-    consumers::{ConsumerError, MessageHandlerOptions, PlutomiConsumer},
+    consumers::{MessageHandlerOptions, PlutomiConsumer},
+    entities::user::{KafkaUser, User},
     events::PlutomiEvent,
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
+    logger::LogObject,
 };
 use std::sync::Arc;
-use time::OffsetDateTime;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let plutomi_consumer = PlutomiConsumer::new(
@@ -17,7 +15,8 @@ async fn main() -> Result<(), String> {
         ConsumerGroups::TemplateDoNotUse,
         Topics::Test,
         Arc::new(send_email),
-    )?;
+    )
+    .await?;
 
     plutomi_consumer.run().await?;
 
@@ -29,44 +28,122 @@ fn send_email(
         message,
         plutomi_consumer,
     }: MessageHandlerOptions,
-) -> BoxFuture<'_, Result<(), ConsumerError>> {
+) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
         let payload = plutomi_consumer.parse_message(message)?;
-
         match payload {
-            PlutomiEvent::TemplateDoNotUse(template_payload) => {
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Info,
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    message: format!("Processing order created event"),
-                    data: Some(json!(template_payload)),
-                    error: None,
-                    request: None,
-                    response: None,
+            PlutomiEvent::UserCreated(user) => {
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Processing USER.created event"),
+                    data: Some(json!(user)),
+                    ..Default::default()
                 });
 
-                if template_payload.email.contains("crash me") && !message.topic().contains("dlq") {
-                    return Err(ConsumerError::KafkaError("Crashing on purpose".to_string()));
-                }
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Info,
-                    message: format!("Processed order created event"),
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    data: Some(json!(template_payload)),
-                    error: None,
-                    request: None,
-                    response: None,
+                let mut transaction = plutomi_consumer.mysql.begin().await.map_err(|e| {
+                    let message = format!("Failed to start transaction: {}", e);
+                    plutomi_consumer.logger.error(LogObject {
+                        message: message.clone(),
+                        ..Default::default()
+                    });
+                    message
+                })?;
+
+                // Update the first_name of the user to 'updated in consumer'
+                let update_result = match sqlx::query!(
+                    r#"
+                        UPDATE users
+                        SET first_name = 'updated in consumer'
+                        WHERE id = ?
+                    "#,
+                    user.id
+                )
+                .execute(&mut *transaction)
+                .await
+                {
+                    Ok(result) => result,
+                    Err(e) => {
+                        let message = format!("Failed to update user: {}", e);
+                        plutomi_consumer.logger.error(LogObject {
+                            message: message.clone(),
+                            ..Default::default()
+                        });
+                        return Err(message);
+                    }
+                };
+
+                let updated_user = match sqlx::query_as!(
+                    User,
+                    r#"
+                        SELECT * 
+                        FROM users
+                        WHERE id = ?
+                        LIMIT 1
+                    "#,
+                    user.id
+                )
+                .fetch_one(&mut *transaction)
+                .await
+                {
+                    Ok(user) => user,
+                    Err(e) => {
+                        let message = format!("Failed to fetch updated user: {}", e);
+                        plutomi_consumer.logger.error(LogObject {
+                            message: message.clone(),
+                            ..Default::default()
+                        });
+                        return Err(message);
+                    }
+                };
+
+                match transaction.commit().await {
+                    Ok(_) => {
+                        plutomi_consumer.logger.info(LogObject {
+                            message: format!("Processed USER.created event"),
+                            data: Some(json!({ "updated_user": &updated_user })),
+                            ..Default::default()
+                        });
+
+                        plutomi_consumer
+                            .kafka
+                            .publish(
+                                Topics::Test,
+                                &&updated_user.public_id.to_string(),
+                                &PlutomiEvent::UserUpdated(KafkaUser {
+                                    first_name: updated_user.first_name.clone(),
+                                    last_name: updated_user.last_name.clone(),
+                                    email: updated_user.email.clone(),
+                                    public_id: updated_user.public_id.clone(),
+                                    id: updated_user.id,
+                                    created_at: updated_user.created_at,
+                                    updated_at: updated_user.updated_at,
+                                }),
+                            )
+                            .await?;
+                    }
+                    Err(e) => {
+                        let message = format!("Failed to commit transaction: {}", e);
+                        plutomi_consumer.logger.error(LogObject {
+                            message: message.clone(),
+                            ..Default::default()
+                        });
+                        return Err(message);
+                    }
+                };
+            }
+
+            PlutomiEvent::UserUpdated(user) => {
+                plutomi_consumer.logger.info(LogObject {
+                    message: format!("Received USER.updated event"),
+                    data: Some(json!(user)),
+                    ..Default::default()
                 });
             }
-            _ => {
-                plutomi_consumer.logger.log(LogObject {
-                    level: LogLevel::Warn,
-                    _time: get_current_time(OffsetDateTime::now_utc()),
-                    message: "Invalid event type".to_string(),
-                    data: None,
-                    error: None,
-                    request: None,
-                    response: None,
+            all_other_events => {
+                let message = format!("Ignoring event {:?}", all_other_events);
+                plutomi_consumer.logger.warn(LogObject {
+                    message,
+                    data: Some(json!({ "payload": all_other_events })),
+                    ..Default::default()
                 });
             }
         }

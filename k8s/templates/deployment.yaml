@@ -19,7 +19,9 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .metadata.name }}
+        {{- range $key, $value := .spec.template.metadata.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
     spec:
       terminationGracePeriodSeconds: {{ .spec.template.spec.terminationGracePeriodSeconds }}
       containers:
@@ -62,7 +64,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
               # Add any shared secrets
-            {{- range $key, $value := $.Values.env }}
+            {{- range $key, $value := $.Values.shared.env }}
             - name: {{ $key }}
               {{- if $value.value }}
               value: {{ $value.value | quote }}

@@ -13,3 +13,8 @@ kafkaCluster:
     transactionStateLogMinISR: 1            # Minimum ISR for transaction state log
     defaultReplicationFactor: 1             # Default replication factor for topics
     minInsyncReplicas: 1                    # Minimum in-sync replicas for committing writes
+
+    # Global Topic Defaults
+    log.retention.hours: 720                 # Default retention period (1 week)
+    log.retention.bytes: 1073741824          # Default retention size (1 GB)
+    log.segment.bytes: 1073741824            # Default segment size (1 GB)
