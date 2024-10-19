@@ -8,7 +8,7 @@ use axum::{
 use http_body_util::BodyExt;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::{constants::ID_ALPHABET, logger::LogObject};
+use shared::logger::LogObject;
 use std::{collections::HashMap, sync::Arc};
 use time::OffsetDateTime;
 
