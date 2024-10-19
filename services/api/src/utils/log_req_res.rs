@@ -8,9 +8,11 @@ use axum::{
 use http_body_util::BodyExt;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::{entities::Entities, id_generation::PlutomiId, logger::LogObject};
+use shared::{constants::ID_ALPHABET, logger::LogObject};
 use std::{collections::HashMap, sync::Arc};
 use time::OffsetDateTime;
+
+use nanoid::nanoid;
 
 // A deconstructed request that we can log
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,7 +40,7 @@ pub async fn log_request(
     let start_time = OffsetDateTime::now_utc();
 
     // Generate a request ID
-    let request_id = PlutomiId::new(&start_time, Entities::Request);
+    let request_id = nanoid!(36);
 
     // Extract the request details
     let (incoming_parts, incoming_body) = req.into_parts();

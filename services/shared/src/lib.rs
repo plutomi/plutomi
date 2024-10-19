@@ -4,7 +4,6 @@ pub mod entities;
 pub mod events;
 pub mod get_current_time;
 pub mod get_env;
-pub mod id_generation;
 pub mod kafka;
 pub mod logger;
 pub mod mysql;
