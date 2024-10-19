@@ -13,7 +13,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${rootBg} tabular-nums font-customFont h-full min-h-full`}
+      className={`${rootBg} tabular-nums font-customFont h-full min-h-full text-balance`}
     >
       <head>
         <meta charSet="utf-8" />
