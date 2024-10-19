@@ -31,12 +31,13 @@ Make sure your `.vscode/.settings.json` file has the correct path to your worksp
 }
 ```
 
-#### SQLX not recongizing schema
+### SQLX not recongizing schema
+
 cargo sqlx prepare
 
 ### proc-macro crate is missing it's build data
 
-TBD
+I believe I fixed this by a combination of `cargo clean` + `cargo build` and ensuring `rust-analyzer` was working correctly and discovering directories correctly.
 
 ### "You have not agreed to the Xcode license agreements. Please run 'sudo xcodebuild -license' from within a Terminal window to review and agree to the Xcode and Apple SDKs license"
 
