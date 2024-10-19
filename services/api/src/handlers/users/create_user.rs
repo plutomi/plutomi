@@ -111,15 +111,7 @@ pub async fn create_user(
         .publish(
             Topics::Test,
             "random",
-            &PlutomiEvent::UserCreated(KafkaUser {
-                first_name: get_user_result.first_name.clone(),
-                last_name: get_user_result.last_name.clone(),
-                email: get_user_result.email.clone(),
-                public_id: get_user_result.public_id.clone(),
-                id: get_user_result.id,
-                created_at: get_user_result.created_at,
-                updated_at: get_user_result.updated_at,
-            }),
+            &PlutomiEvent::UserCreated(get_user_result.to_kafka()),
         )
         .await
         .unwrap(); // ???

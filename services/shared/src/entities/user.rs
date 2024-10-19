@@ -58,4 +58,16 @@ impl User {
             updated_at: now,
         }
     }
+
+    pub fn to_kafka(&self) -> KafkaUser {
+        KafkaUser {
+            id: self.id,
+            public_id: self.public_id.clone(),
+            created_at: self.created_at,
+            updated_at: self.updated_at,
+            first_name: self.first_name.clone(),
+            last_name: self.last_name.clone(),
+            email: self.email.clone(),
+        }
+    }
 }
