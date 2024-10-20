@@ -157,9 +157,9 @@ If using Cloudflare for DNS, we need a token for cert-manager to use. We need to
 kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
 ```
 
-Create other global secrets shared by most of the backend:
+<!-- Create other global secrets shared by most of the backend: -->
 
-# TODO
+<!-- # TODO MYSQL
 
 ```bash
 kubectl create secret generic global-config-secret --dry-run=client --from-literal=MYSQL_URL=mysql://USERNAMEdifferentfromINITDB_ROOT:PASSWORDdifferentfromINITDB_ROOT@lTODOTODOTODOTODOTODOTODO.default.svc.cluster.local:27017/plutomi -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/global.yaml
@@ -169,7 +169,9 @@ Transfer the files over to your server in the `/k8s` directory and apply the sec
 
 ```bash
 cd k8s && kubectl apply -f secrets/
-```
+``` -->
+
+For MySQL, we are still deciding on how to handle this. We are considering using [Vitess](https://vitess.io/) to manage our MySQL cluster.
 
 Install the Cluster Issuer for cert-manager:
 
@@ -279,7 +281,7 @@ Since other services depend on these, we will deploy them first.
 
 ### MySQL
 
-# TODO
+TBD - we are still deciding on how to handle this. We are considering using [Vitess](https://vitess.io/) to manage our MySQL cluster.
 
 ### Kafka
 
