@@ -12,7 +12,7 @@ use time::format_description::parse;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let notifications_consumer = PlutomiConsumer::new(
-        "notifications-consumer",
+        "notifications-auth-consumer",
         ConsumerGroups::Notifications,
         Topics::Auth,
         Arc::new(send_email),
