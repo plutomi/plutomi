@@ -37,7 +37,7 @@ For each entity, we maintain a main Kafka topic along with corresponding retry a
 
 - **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Once underlying issues are resolved (e.g., code fixes, service restoration), the messages are reprocessed by moving them back into the retry topic in a controlled manner, ensuring they do not disrupt live traffic.
 
-For more details on the event streaming pipeline and to view the event schemas, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
+For more details on the event streaming pipeline and to view the events, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
 
 ## Running Locally
 
