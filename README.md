@@ -55,7 +55,7 @@ To setup your datasources, simply run `docker compose up -d` to run the [docker-
 
 > Credentials for all datasources are `admin` and `password`.
 
-Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script which will run migrations for MySQL (using the `migrator` service) and start the API, Web, and Consumer services.
+Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script which will run migrations for MySQL (using the `migrator` service) and start the API and Web services, along with the kafka consumers.
 
 ```bash
 $ cp .env.example .env
