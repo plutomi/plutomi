@@ -39,6 +39,10 @@ cargo sqlx prepare
 
 I believe I fixed this by a combination of `cargo clean` + `cargo build` and ensuring `rust-analyzer` was working correctly and discovering directories correctly.
 
+### error returned from database: 4031 (HY000): The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior
+
+Make sure that Docker is running ;)
+
 ### "You have not agreed to the Xcode license agreements. Please run 'sudo xcodebuild -license' from within a Terminal window to review and agree to the Xcode and Apple SDKs license"
 
 ```

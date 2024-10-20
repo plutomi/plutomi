@@ -1,4 +1,6 @@
-use rdkafka::consumer::{Consumer, StreamConsumer};
+use rdkafka::admin::AdminClient;
+use rdkafka::client::DefaultClientContext;
+use rdkafka::consumer::{Consumer, DefaultConsumerContext, StreamConsumer};
 use rdkafka::message::BorrowedMessage;
 use rdkafka::Message;
 use rdkafka::{
@@ -18,9 +20,11 @@ use crate::logger::{LogObject, Logger};
 
 pub struct KafkaClient {
     // Will always have a producer
-    pub producer: Arc<FutureProducer>,
+    pub producer: Arc<FutureProducer<DefaultClientContext>>,
     // Some services, like API, will never consume messages
-    pub consumer: Option<Arc<StreamConsumer>>,
+    pub consumer: Option<Arc<StreamConsumer<DefaultConsumerContext>>>,
+
+    pub admin_client: AdminClient<DefaultClientContext>,
     logger: Arc<Logger>,
 }
 
@@ -42,6 +46,15 @@ impl KafkaClient {
 
         let producer = KafkaClient::new_producer(&logger).unwrap_or_else(|e| {
             let msg = format!("Failed to create producer in {}: {}", &name, e);
+            logger.error(LogObject {
+                message: msg.clone(),
+                ..Default::default()
+            });
+            panic!("{}", msg);
+        });
+
+        let admin_client = KafkaClient::new_admin_client(&logger).unwrap_or_else(|e| {
+            let msg = format!("Failed to create admin client in {}: {}", &name, e);
             logger.error(LogObject {
                 message: msg.clone(),
                 ..Default::default()
@@ -86,6 +99,7 @@ impl KafkaClient {
         Arc::new(KafkaClient {
             producer,
             consumer,
+            admin_client,
             logger: Arc::clone(logger),
         })
     }
@@ -111,6 +125,27 @@ impl KafkaClient {
             })?;
 
         Ok(Arc::new(producer))
+    }
+
+    pub fn new_admin_client(
+        logger: &Arc<Logger>,
+    ) -> Result<AdminClient<DefaultClientContext>, String> {
+        dotenvy::dotenv().ok();
+        let env = get_env();
+
+        let admin_client: AdminClient<DefaultClientContext> = ClientConfig::new()
+            .set("bootstrap.servers", env.KAFKA_URL)
+            .create()
+            .map_err(|e| {
+                let err = format!("Failed to create admin client: {}", e);
+                logger.error(LogObject {
+                    message: err.clone(),
+                    ..Default::default()
+                });
+                err
+            })?;
+
+        Ok(admin_client)
     }
 
     pub fn new_consumer(

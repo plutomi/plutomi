@@ -48,8 +48,7 @@ fn send_email(
                     message
                 })?;
 
-                // Update the first_name of the user to 'updated in consumer'
-                let update_result = match sqlx::query!(
+                match sqlx::query!(
                     r#"
                         UPDATE users
                         SET first_name = 'updated in consumer'
