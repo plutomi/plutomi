@@ -1,11 +1,14 @@
+/**
+ * Sample file for an endpoint
+ */
 use crate::structs::{api_response::ApiResponse, app_state::AppState};
 use axum::{http::StatusCode, response::IntoResponse};
 use serde_json::json;
 use shared::{
     constants::Topics,
-    entities::user::{CreateUserOptions, KafkaUser, User},
+    entities::user::{CreateUserOptions, User},
     events::PlutomiEvent,
-    logger::{self, LogObject},
+    logger::LogObject,
 };
 use sqlx::{MySql, Transaction};
 use std::sync::Arc;
