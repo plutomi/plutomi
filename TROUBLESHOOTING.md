@@ -37,7 +37,7 @@ cargo sqlx prepare
 
 ### proc-macro crate is missing it's build data
 
-I believe I fixed this by a combination of `cargo clean` + `cargo build` and ensuring `rust-analyzer` was working correctly and discovering directories correctly.
+I believe I fixed this by a combination of `cargo clean` + `cargo build` and ensuring `rust-analyzer` was working and discovering directories correctly.
 
 ### error returned from database: 4031 (HY000): The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior
 
