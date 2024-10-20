@@ -67,7 +67,7 @@ run_migrator() {
 run_consumers() {
     cd "$PROJECT_ROOT/services/consumers/notifications-auth"
     echo -e "\nStarting notifications-auth-consumer..."
-    rust_warning "notifications-auth" &
+    rust_warning "notifications-auth-consumer" &
     WARNING_PID=$!
     cargo install cargo-watch
     cargo watch -x run &
