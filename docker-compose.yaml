@@ -39,6 +39,7 @@ services:
       - kafka
     depends_on:
       - kafka
+    # MODIFY BELOW TO ADD NEW TOPICS
     entrypoint: >
       /bin/bash -c " \
       echo 'Waiting for Kafka to be reachable...'; \
@@ -47,7 +48,7 @@ services:
         sleep 5; \
       done; \
       echo 'Kafka is reachable, creating topics...'; \
-      topics=(test test-retry test-dlq); \
+      topics=(auth auth-retry auth-dlq); \
       for topic in $${topics[@]}; do \
         /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 && echo \"Topic $${topic} created or already exists.\"; \
       done; \

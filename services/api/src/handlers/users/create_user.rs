@@ -7,7 +7,7 @@ use serde_json::json;
 use shared::{
     constants::Topics,
     entities::user::{CreateUserOptions, User},
-    events::PlutomiEvent,
+    events::{PlutomiPayload, TOTPRequestedPayload},
     logger::LogObject,
 };
 use sqlx::{MySql, Transaction};
@@ -112,9 +112,11 @@ pub async fn create_user(
     let publish_create_user_result = state
         .kafka
         .publish(
-            Topics::Test,
-            "random",
-            &PlutomiEvent::UserCreated(get_user_result.to_kafka()),
+            Topics::Auth,
+            &user.public_id,
+            &PlutomiPayload::TOTPRequested(TOTPRequestedPayload {
+                email: user.email.clone(),
+            }),
         )
         .await;
 

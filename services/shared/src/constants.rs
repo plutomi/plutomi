@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Topics {
     // Used for debugging
-    Test,
-    TestRetry,
-    TestDLQ,
+    Auth,
+    AuthRetry,
+    AuthDLQ,
 }
 
 impl Topics {
@@ -16,9 +16,9 @@ impl Topics {
     pub fn as_str(&self) -> &'static str {
         match self {
             // Used for debugging
-            Topics::Test => "test",
-            Topics::TestRetry => "test-retry",
-            Topics::TestDLQ => "test-dlq",
+            Topics::Auth => "auth",
+            Topics::AuthRetry => "auth-retry",
+            Topics::AuthDLQ => "auth-dlq",
         }
     }
 }
@@ -27,26 +27,25 @@ impl From<&str> for Topics {
     fn from(topic: &str) -> Self {
         match topic {
             // Used for debugging
-            "test" => Topics::Test,
-            "test-retry" => Topics::TestRetry,
-            "test-dlq" => Topics::TestDLQ,
+            "auth" => Topics::Auth,
+            "auth-retry" => Topics::AuthRetry,
+            "auth-dlq" => Topics::AuthDLQ,
             _ => panic!("Invalid topic: {}", topic),
         }
     }
 }
 
 pub enum ConsumerGroups {
-    TemplateDoNotUse,
+    Notifications,
 }
 
 impl ConsumerGroups {
     pub fn as_str(&self) -> &'static str {
         match self {
-            ConsumerGroups::TemplateDoNotUse => "template-do-not-use",
+            ConsumerGroups::Notifications => "notifications",
         }
     }
 }
-
 
 pub const ID_ALPHABET: [char; 62] = [
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',

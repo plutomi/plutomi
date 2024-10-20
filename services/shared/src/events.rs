@@ -1,25 +1,25 @@
 use serde::{Deserialize, Serialize};
 
-use crate::entities::user::KafkaUser;
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PlutomiMessage {
+    pub event_type: String,
+    pub version: String,
+    pub payload: PlutomiPayload,
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 // Use `event_type` field to store the variant name and `payload` to store its data
 #[serde(tag = "event_type", content = "payload")]
-pub enum PlutomiEvent {
-    #[serde(rename = "template-do-not-use.created")]
-    TemplateDoNotUse(TemplatePayloadDoNotUse),
-
-    #[serde(rename = "user.created")]
-    UserCreated(KafkaUser),
-
-    #[serde(rename = "user.updated")]
-    UserUpdated(KafkaUser),
+pub enum PlutomiPayload {
+    #[serde(rename = "totp-request.created")]
+    TOTPRequested(TOTPRequestedPayload),
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TemplatePayloadDoNotUse {
+pub struct TOTPRequestedPayload {
     pub email: String,
 }
 
+// TODO: Placeholder
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserCreated {
     pub email: String,

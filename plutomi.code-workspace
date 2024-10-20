@@ -21,14 +21,14 @@
       "name": "migrator"
     },
     {
-      "path": "services/consumers/template",
-      "name": "template-consumer"
+      "path": "services/consumers/notifications",
+      "name": "notifications-consumer"
     }
   ],
   "settings": {
     "rust-analyzer.linkedProjects": [
       "services/api/Cargo.toml",
-      "services/consumers/template/Cargo.toml",
+      "services/consumers/notifications/Cargo.toml",
       "services/shared/Cargo.toml",
       "services/migrator/Cargo.toml"
     ],
