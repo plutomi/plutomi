@@ -49,7 +49,6 @@ impl User {
         let now = Utc::now().naive_utc();
         User {
             id: 0, // Placeholder
-
             first_name: options.first_name,
             last_name: options.last_name,
             email: options.email,
