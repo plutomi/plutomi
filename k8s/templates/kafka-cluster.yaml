@@ -46,6 +46,12 @@ spec:
       transaction.state.log.min.isr: {{ .config.transactionStateLogMinISR }}
       default.replication.factor: {{ .config.defaultReplicationFactor }}
       min.insync.replicas: {{ .config.minInsyncReplicas }}
+
+      # Global Topic Defaults
+      log.retention.hours: {{ .config.logRetentionHours }}            # Default retention period
+      log.retention.bytes: {{ .config.logRetentionBytes }}            # Default retention size
+      log.segment.bytes: {{ .config.logSegmentBytes }}                # Default segment size
+      
   entityOperator:
     topicOperator: {}
     userOperator: {}

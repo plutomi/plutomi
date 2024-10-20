@@ -43,28 +43,34 @@ impl fmt::Display for LogLevel {
 
 #[derive(Serialize, Debug)]
 pub struct LogObject {
-    pub level: LogLevel,
     /**
      * ISO 8601 timestamp
      * use iso_format()
      *
-     * Axiom uses `_time` so we can use it as well
+     * Axiom uses `_time` FYI
      */
-    pub _time: String,
-    pub message: String, // TODO make this a reference? https://github.com/plutomi/plutomi/issues/996
+    pub time: String,
+    pub message: String,
     /**
      * Used for adding additional data to the log object
      */
     pub data: Option<serde_json::Value>,
     pub error: Option<serde_json::Value>,
-    /**
-     * Used for logging the request
-     */
-    pub request: Option<serde_json::Value>,
-    /**
-     * Used for logging the response
-     */
-    pub response: Option<serde_json::Value>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct AxiomLog<'a> {
+    pub _time: &'a str,
+    pub message: &'a str,
+    pub data: Option<&'a serde_json::Value>,
+    pub error: Option<&'a serde_json::Value>,
+    pub application: &'a str,
+}
+
+#[derive(Serialize, Debug)]
+pub struct LogObjectWithLevel {
+    pub level: LogLevel,
+    pub log_object: LogObject,
 }
 
 impl fmt::Display for LogObject {
@@ -84,8 +90,27 @@ impl fmt::Display for LogObject {
     }
 }
 
+impl fmt::Display for LogObjectWithLevel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Note: Not logging here timestamp or level because the tracing library already does it for us locally
+        let mut components = vec![format!("{}", self.log_object.message)];
+
+        if let Some(data) = &self.log_object.data {
+            components.push(format!("\nData: {}", data));
+        }
+
+        if let Some(error) = &self.log_object.error {
+            components.push(format!("\nError: {}", error));
+        }
+
+        write!(f, "{}", components.join(", "))
+    }
+}
+
 pub struct Logger {
-    sender: UnboundedSender<LogObject>,
+    sender: UnboundedSender<LogObjectWithLevel>,
+    // The name of the caller
+    application: &'static str,
 }
 
 struct CustomTimeFormat;
@@ -100,15 +125,40 @@ impl FormatTime for CustomTimeFormat {
         write!(writer, "{}", formatted_time)
     }
 }
-// Send logs to axiom
-async fn send_to_axiom(log_batch: &Vec<LogObject>, client: &Client, axiom_dataset: &String) {
-    if let Err(e) = client.ingest(axiom_dataset, log_batch).await {
+
+async fn send_to_axiom(
+    log_batch: &Vec<LogObjectWithLevel>,
+    client: &Client,
+    axiom_dataset: Option<&String>,
+    context: &Arc<LoggerContext>,
+) {
+    let dataset = match axiom_dataset {
+        Some(ds) => ds,
+        None => {
+            warn!("AXIOM_DATASET is not configured.");
+            return;
+        }
+    };
+
+    let prepared_batch: Vec<AxiomLog> = log_batch
+        .iter()
+        .map(|obj| AxiomLog {
+            // Overwrite time -> _time
+            _time: &obj.log_object.time,
+            message: &obj.log_object.message,
+            data: obj.log_object.data.as_ref(),
+            error: obj.log_object.error.as_ref(),
+            application: &context.application,
+        })
+        .collect();
+
+    if let Err(e) = client.ingest(dataset, prepared_batch).await {
         error!("Failed to send log to Axiom: {}", e);
     }
 }
 
 pub struct LoggerContext {
-    pub caller: &'static str,
+    pub application: &'static str,
 }
 
 impl Logger {
@@ -116,7 +166,10 @@ impl Logger {
      * Create a new logger instance.
      * This also spawns a long lived thread that will handle logging.
      */
-    pub fn init(context: LoggerContext) -> Arc<Logger> {
+    pub fn init(context: LoggerContext) -> Result<Arc<Logger>, String> {
+        // Make the context available to the logging thread
+        let context = Arc::new(context);
+
         let subscriber = FmtSubscriber::builder()
             .with_timer(CustomTimeFormat)
             .pretty()
@@ -142,11 +195,13 @@ impl Logger {
             None
         };
 
-        let (sender, mut receiver) = mpsc::unbounded_channel::<LogObject>();
+        let (sender, mut receiver) = mpsc::unbounded_channel::<LogObjectWithLevel>();
+
+        let context_clone = Arc::clone(&context);
 
         // Spawn the logging thread
         tokio::spawn(async move {
-            let mut log_batch: Vec<LogObject> = Vec::new();
+            let mut log_batch: Vec<LogObjectWithLevel> = Vec::new();
             let mut timer = Instant::now() + LOG_BATCH_TIME;
 
             loop {
@@ -154,6 +209,8 @@ impl Logger {
                 tokio::select! {
                     // Receive log messages
                     Some(log) = receiver.recv() => {
+
+
                         // Local logging based on the level
                             match log.level {
                                 LogLevel::Info => info!("{}", &log),
@@ -169,10 +226,11 @@ impl Logger {
 
                         // Check if the batch is full and send it to Axiom if so
                         if log_batch.len() >= LOG_BATCH_SIZE {
+
                             if let Some(ref client) = axiom_client {
-                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
-                                 send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
+                                send_to_axiom(&log_batch, client, env.AXIOM_DATASET.as_ref(), &context_clone).await;
                             }
+
                             // Clear the batch for the next batch
                             log_batch.clear();
 
@@ -186,8 +244,7 @@ impl Logger {
                         if !log_batch.is_empty() {
                            // Send whatever is in the batch
                             if let Some(ref client) = axiom_client {
-                                // TODO remove expect / clean this up https://github.com/plutomi/plutomi/issues/996
-                                send_to_axiom(&log_batch, &client, &env.AXIOM_DATASET.as_ref().expect("AXIOM_DATASET not found") ).await;
+                                send_to_axiom(&log_batch, &client, env.AXIOM_DATASET.as_ref(), &context_clone ).await;
                             }
 
                             // Clear the batch for the next batch
@@ -200,29 +257,56 @@ impl Logger {
             }
         });
 
-        let logger = Arc::new(Logger { sender });
-
-        logger.log(LogObject {
-            level: LogLevel::Info,
-            message: format!("{} initialized", context.caller),
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            data: None,
-            error: None,
-            request: None,
-            response: None,
+        let logger = Arc::new(Logger {
+            sender,
+            application: context.application,
         });
-        return logger;
+
+        logger.info(LogObject {
+            message: format!("{} initialized", &context.application),
+            ..Default::default()
+        });
+        return Ok(logger);
     }
 
     /**
      * Log a message asynchronously.
      */
-    pub fn log(&self, log: LogObject) {
+    fn log(&self, log: LogObjectWithLevel) {
         // Send the log message to the channel
         if let Err(e) = self.sender.send(log) {
             error!("Failed to enqueue log message: {}", e);
             // TODO Alert if no logs in a specified amount of time
         }
+    }
+
+    /// Convenience methods for each log level.
+    pub fn info(&self, log_object: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Info,
+            log_object,
+        });
+    }
+
+    pub fn warn(&self, log_object: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Warn,
+            log_object,
+        });
+    }
+
+    pub fn error(&self, log_object: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Error,
+            log_object,
+        });
+    }
+
+    pub fn debug(&self, log_object: LogObject) {
+        self.log(LogObjectWithLevel {
+            level: LogLevel::Debug,
+            log_object,
+        });
     }
 }
 
@@ -234,17 +318,13 @@ async fn sleep_until(deadline: Instant) {
     }
 }
 
-// https://github.com/plutomi/plutomi/issues/996
-// impl Default for LogObject {
-//     fn default() -> LogObject {
-//         LogObject {
-//             data: None,
-//             error: None,
-//             level: LogLevel::Info,
-//             message: "".to_string(),
-//             request: None,
-//             response: None,
-//             _time: "".to_string(),
-//         }
-//     }
-// }
+impl Default for LogObject {
+    fn default() -> LogObject {
+        LogObject {
+            data: None,
+            error: None,
+            message: "".to_string(),
+            time: get_current_time(OffsetDateTime::now_utc()),
+        }
+    }
+}

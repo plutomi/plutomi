@@ -1,12 +1,10 @@
-use axiom_rs::datasets::Stat;
 use axum::{
     body::Body,
-    http::{header, status, Response, StatusCode},
+    http::{header, Response, StatusCode},
     response::IntoResponse,
 };
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
-use shared::get_env::get_env;
+use serde_json::Value;
 
 // Internal error codes
 #[derive(Serialize, Clone, Deserialize)]

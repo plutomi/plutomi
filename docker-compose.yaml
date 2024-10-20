@@ -3,16 +3,18 @@ networks:
     driver: bridge
 
 services:
-  mongodb:
-    image: mongo:7.0.8
-    container_name: mongodb
+  mysql:
+    image: mysql:8.0.39
+    container_name: mysql
     ports:
-      - "27017:27017"
+      - "3306:3306"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: plutomi
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
     volumes:
-      - mongo_data:/data/mongodb
+      - mysql_data:/data/mysql
 
   kafka:
     image: bitnami/kafka:latest
@@ -37,6 +39,7 @@ services:
       - kafka
     depends_on:
       - kafka
+    # MODIFY BELOW TO ADD NEW TOPICS
     entrypoint: >
       /bin/bash -c " \
       echo 'Waiting for Kafka to be reachable...'; \
@@ -45,7 +48,7 @@ services:
         sleep 5; \
       done; \
       echo 'Kafka is reachable, creating topics...'; \
-      topics=(test test-retry test-dlq); \
+      topics=(auth auth-retry auth-dlq); \
       for topic in $${topics[@]}; do \
         /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 && echo \"Topic $${topic} created or already exists.\"; \
       done; \
@@ -67,7 +70,7 @@ services:
     depends_on:
       - kafka
 volumes:
-  mongo_data:
+  mysql_data:
     driver: local
   kafka_data:
     driver: local

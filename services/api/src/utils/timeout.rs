@@ -7,13 +7,8 @@ use axum::{
 };
 use hyper::StatusCode;
 use serde_json::json;
-use shared::{
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
-};
+use shared::logger::LogObject;
 use std::{sync::Arc, time::Duration};
-
-use time::OffsetDateTime;
 
 const MAX_REQUEST_DURATION: Duration = Duration::from_secs(10);
 
@@ -29,16 +24,12 @@ pub async fn timeout(
         Ok(response) => response,
         Err(_) => {
             let message = "Request took too long to process. Please try again.".to_string();
-            state.logger.log(LogObject {
-                level: LogLevel::Error,
-                _time: get_current_time(OffsetDateTime::now_utc()),
+            state.logger.error(LogObject {
                 message: message.clone(),
                 data: Some(json!({
                     "request_id": request_id.clone(),
                 })),
-                error: None,
-                request: None,
-                response: None,
+                ..Default::default()
             });
 
             ApiResponse::error(

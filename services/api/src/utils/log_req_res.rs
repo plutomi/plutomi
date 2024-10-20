@@ -8,14 +8,11 @@ use axum::{
 use http_body_util::BodyExt;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::{
-    entities::Entities,
-    generate_id::PlutomiId,
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
-};
+use shared::logger::LogObject;
 use std::{collections::HashMap, sync::Arc};
 use time::OffsetDateTime;
+
+use nanoid::nanoid;
 
 // A deconstructed request that we can log
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -43,7 +40,7 @@ pub async fn log_request(
     let start_time = OffsetDateTime::now_utc();
 
     // Generate a request ID
-    let request_id = PlutomiId::new(&start_time, Entities::Request);
+    let request_id = nanoid!(36);
 
     // Extract the request details
     let (incoming_parts, incoming_body) = req.into_parts();
@@ -66,17 +63,13 @@ pub async fn log_request(
         body: incoming_body_string.to_string(),
     };
 
-    state.logger.log(LogObject {
-        level: LogLevel::Debug,
-        _time: get_current_time(OffsetDateTime::now_utc()),
+    state.logger.debug(LogObject {
         message: "Incoming request".to_string(),
         data: Some(json!({
             "request_id": request_id.clone(),
             "request": &original_request,
         })),
-        error: None,
-        request: None,
-        response: None,
+        ..Default::default()
     });
 
     // Recreate the request with the buffered body
@@ -115,9 +108,7 @@ pub async fn log_request(
     let end_time = OffsetDateTime::now_utc();
     let duration_ms = (end_time - start_time).whole_milliseconds();
 
-    state.logger.log(LogObject {
-        level: LogLevel::Debug,
-        _time: get_current_time(OffsetDateTime::now_utc()),
+    state.logger.debug(LogObject {
         message: "Outgoing request".to_string(),
         data: Some(json!({
             "duration_ms": duration_ms,
@@ -130,9 +121,7 @@ pub async fn log_request(
                 "body": outgoing_body_string,
             }),
         })),
-        error: None,
-        request: None,
-        response: None,
+        ..Default::default()
     });
 
     final_response

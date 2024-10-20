@@ -19,7 +19,7 @@ Plutomi allows you to create applications for anything from jobs to program enro
 
 ## Architecture
 
-Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database—currently MongoDB, with plans to transition to MySQL in the future. This database handles all operational data, rather than splitting data between consumers or services. Blob storage is managed by [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) provides caching & rate limiting.
+Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database, MySQL, which handles all operational data rather than splitting data between consumers or services. Blob storage is managed by [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) provides caching & rate limiting.
 
 ### Infrastructure and Third-Party Tools
 
@@ -37,7 +37,7 @@ For each entity, we maintain a main Kafka topic along with corresponding retry a
 
 - **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Once underlying issues are resolved (e.g., code fixes, service restoration), the messages are reprocessed by moving them back into the retry topic in a controlled manner, ensuring they do not disrupt live traffic.
 
-For more details on the event streaming pipeline and to view the event schemas, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
+For more details on the event streaming pipeline and to view the events, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
 
 ## Running Locally
 
@@ -49,11 +49,11 @@ For more details on the event streaming pipeline and to view the event schemas, 
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
-To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MongoDB, Kafka with the required topics, and KafkaUI on ports 27017, 9092, and 9000 respectively.
+To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MySQL, Kafka with the required topics, and KafkaUI on ports 3306, 9092, and 9000 respectively.
 
 > Credentials for all datasources are `admin` and `password`.
 
-Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script to start the API, Web, and Consumer services.
+Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script which will run migrations for MySQL (using the `migrator` service) and start the `api` and `web` services, along with the kafka consumers.
 
 ```bash
 $ cp .env.example .env
@@ -63,7 +63,7 @@ $ ./scripts/run.sh
 You can also run any service individually:
 
 ```bash
-$ ./scripts/run.sh --stack <web|api|consumers>
+$ ./scripts/run.sh --service <web|api|migrator|consumers>
 ```
 
 ## Deploying

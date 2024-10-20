@@ -1,13 +1,28 @@
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-// Use `event_type` field to store the variant name and `payload` to store its data
-#[serde(tag = "event_type", content = "payload")]
-pub enum PlutomiEvent {
-    #[serde(rename = "template-do-not-use.created")]
-    TemplateDoNotUse(TemplatePayloadDoNotUse),
+pub struct PlutomiEvent {
+    pub event_type: String,
+    pub version: String,
+    pub payload: PlutomiPayload,
+}
+
+impl PlutomiEvent {
+    pub fn new(payload: PlutomiPayload) -> Self {
+        match payload {
+            PlutomiPayload::TOTPRequested { email, created_at } => Self {
+                event_type: "totp-request.created".to_string(),
+                version: "1".to_string(),
+                payload: PlutomiPayload::TOTPRequested { email, created_at },
+            },
+        }
+    }
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TemplatePayloadDoNotUse {
-    pub email: String,
+pub enum PlutomiPayload {
+    TOTPRequested {
+        email: String,
+        created_at: NaiveDateTime,
+    },
 }

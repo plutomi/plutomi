@@ -25,11 +25,23 @@ Make sure your `.vscode/.settings.json` file has the correct path to your worksp
 {
   "rust-analyzer.linkedProjects": [
     "services/api/Cargo.toml",
-    "services/consumers/template/Cargo.toml",
+    "services/consumers/notiications-auth/Cargo.toml",
     "services/shared/Cargo.toml"
   ]
 }
 ```
+
+### SQLX not recongizing schema
+
+cargo sqlx prepare
+
+### proc-macro crate is missing it's build data
+
+I believe I fixed this by a combination of `cargo clean` + `cargo build` and ensuring `rust-analyzer` was working and discovering directories correctly.
+
+### error returned from database: 4031 (HY000): The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior
+
+Make sure that Docker is running ;)
 
 ### "You have not agreed to the Xcode license agreements. Please run 'sudo xcodebuild -license' from within a Terminal window to review and agree to the Xcode and Apple SDKs license"
 

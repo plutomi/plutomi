@@ -1,78 +1,61 @@
 use crate::AppState;
 use axum::{extract::State, http::StatusCode, Extension, Json};
-use mongodb::{bson::doc, options::FindOneOptions};
+use rdkafka::producer::Producer;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use shared::{
-    get_current_time::get_current_time,
-    logger::{LogLevel, LogObject},
-};
-use std::sync::Arc;
-use time::OffsetDateTime;
+use shared::logger::LogObject;
+use std::{sync::Arc, time::Duration};
 
 #[derive(Serialize, Deserialize)]
 pub struct HealthCheckResponse {
     message: &'static str,
-    database: bool,
+    mysql: bool,
+    kafka: bool,
     environment: String,
     docs_url: String,
 }
 
-pub async fn health_check<'a>(
+pub async fn health_check(
     State(state): State<Arc<AppState>>,
     Extension(request_id): Extension<String>,
 ) -> (StatusCode, Json<HealthCheckResponse>) {
-    let options: FindOneOptions = {
-        let mut options = FindOneOptions::default();
-        // This should be less than health check or you can get into a weird state where the health check fails
-        // Because the DB is down but the health check is still running and expecting a response
-        options.max_time = Some(std::time::Duration::from_millis(1000));
-        options
-    };
-    // Attempt to perform a find_one operation to check database connectivity
-    let database_result = state
-        .mongodb
-        .collection
-        .find_one(doc! {})
-        .with_options(options)
-        .await;
-
-    // Check if the database operation was successful
-    let database = database_result.is_ok();
-
-    // If the database operation was not successful, log the error
-    if let Err(e) = database_result {
-        state.logger.log(LogObject {
-            level: LogLevel::Error,
-            _time: get_current_time(OffsetDateTime::now_utc()),
-            message: "Failed to connect to database for health check".to_string(),
-            data: Some(json!({
-                "request_id": request_id,
-            })),
-            error: Some(json!(e.to_string())),
-            request: None,
-            response: None,
-        });
-    }
+    let (mysql, kafka) = tokio::join!(
+        async {
+            sqlx::query!(
+                r#"
+                SELECT 1 as one
+            "#
+            )
+            .fetch_one(&*state.mysql)
+            .await
+            .is_ok()
+        },
+        async {
+            state
+                .kafka
+                .producer
+                .client()
+                .fetch_metadata(None, Duration::from_secs(2))
+                .ok()
+                .is_some()
+        }
+    );
 
     let response: HealthCheckResponse = HealthCheckResponse {
         message: "Saul Goodman",
-        database,
+        mysql,
+        kafka,
         environment: state.env.ENVIRONMENT.clone(),
         docs_url: format!("{}/docs/api", state.env.BASE_WEB_URL),
     };
 
-    state.logger.log(LogObject {
-        level: LogLevel::Info,
-        _time: get_current_time(OffsetDateTime::now_utc()),
+    state.logger.info(LogObject {
         message: "Health check response".to_string(),
         data: Some(json!({
             "request_id": request_id,
             "response": &response,
         })),
-        error: None,
-        request: None,
-        response: None,
+        ..Default::default()
     });
 
     (StatusCode::OK, Json(response))

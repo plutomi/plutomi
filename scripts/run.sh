@@ -26,13 +26,15 @@ cleanup() {
     echo "Stopping services..."
     [ ! -z "$API_PID" ] && kill $API_PID
     [ ! -z "$WEB_PID" ] && kill $WEB_PID
+    [ ! -z "$MIGRATOR_PID" ] && kill $MIGRATOR_PID
+    [ ! -z "$CONSUMERS_PID" ] && kill $CONSUMERS_PID
     [ ! -z "$WARNING_PID" ] && kill $WARNING_PID
     echo "Done."
 }
 
 print_error_and_usage() {
     echo -e "\n-- ERROR: $1 --\n"
-    echo -e "Usage: $0 [--stack <component>]\n"
+    echo -e "Usage: $0 [--service <component>]\n"
     echo -e "Component (optional): 'api', 'web'\n"
     exit 1
 }
@@ -54,14 +56,22 @@ run_api() {
     API_PID=$!
 }
 
+run_migrator() {
+    cd "$PROJECT_ROOT/services/migrator"
+    echo -e "\nStarting migrator..."
+    WARNING_PID=$!
+    cargo run &
+    MIGRATOR_PID=$!
+}
+
 run_consumers() {
-    cd "$PROJECT_ROOT/services/consumers/template"
-    echo -e "\nStarting template consumer..."
-    rust_warning "template-consumer" &
+    cd "$PROJECT_ROOT/services/consumers/notifications-auth"
+    echo -e "\nStarting notifications-auth-consumer..."
+    rust_warning "notifications-auth-consumer" &
     WARNING_PID=$!
     cargo install cargo-watch
     cargo watch -x run &
-    API_PID=$!
+    CONSUMERS_PID=$!
 }
 
 run_web() {
@@ -71,23 +81,27 @@ run_web() {
     WEB_PID=$!
 }
 
-stack="all"
+service="all"
 
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --stack) stack="$2"; shift ;;
+        --service) service="$2"; shift ;;
         *) print_error_and_usage "Invalid argument: $1" ;;
     esac
     shift
 done
 
-# Run based on stack argument
-case "$stack" in
+# Run based on service argument
+case "$service" in
     "all")
+        run_migrator
         run_api
         run_web
         run_consumers
+        ;;
+    "migrator")
+        run_migrator
         ;;
     "api")
         run_api
@@ -99,7 +113,7 @@ case "$stack" in
         run_consumers
         ;;
     *)
-        print_error_and_usage "Invalid stack: $stack"
+        print_error_and_usage "Invalid service: $service"
         ;;
 esac
 
