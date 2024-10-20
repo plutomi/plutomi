@@ -3,12 +3,10 @@ use serde_json::json;
 use shared::{
     constants::{ConsumerGroups, Topics},
     consumers::{MessageHandlerOptions, PlutomiConsumer},
-    entities::user::{KafkaUser, User},
     events::{PlutomiEvent, PlutomiPayload},
     logger::LogObject,
 };
 use std::sync::Arc;
-use time::format_description::parse;
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
     let notifications_consumer = PlutomiConsumer::new(
@@ -34,7 +32,10 @@ fn send_email(
         let plutomi_event: PlutomiEvent = plutomi_consumer.parse_message(message)?;
 
         plutomi_consumer.logger.info(LogObject {
-            message: format!("Processing  {:?} event", plutomi_event.event_type),
+            message: format!(
+                "Processing {:?} event inside of {}",
+                plutomi_event.event_type, &plutomi_consumer.name
+            ),
             data: Some(json!(&plutomi_event.payload)),
             ..Default::default()
         });
