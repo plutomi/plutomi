@@ -5,7 +5,7 @@ use shared::{
     constants::Topics,
     entities::user::{CreateUserOptions, KafkaUser, User},
     events::PlutomiEvent,
-    logger::LogObject,
+    logger::{self, LogObject},
 };
 use sqlx::{MySql, Transaction};
 use std::sync::Arc;
@@ -106,15 +106,24 @@ pub async fn create_user(
         );
     }
 
-    state
+    let publish_create_user_result = state
         .kafka
         .publish(
             Topics::Test,
             "random",
             &PlutomiEvent::UserCreated(get_user_result.to_kafka()),
         )
-        .await
-        .unwrap(); // ???
+        .await;
+
+    if let Err(e) = publish_create_user_result {
+        state.logger.error(LogObject {
+            message: format!("Failed to publish user created event: {}", e),
+            data: Some(json!({
+                "user": get_user_result
+            })),
+            ..Default::default()
+        });
+    }
 
     ApiResponse::success(json!(get_user_result), request_id, StatusCode::CREATED)
 }

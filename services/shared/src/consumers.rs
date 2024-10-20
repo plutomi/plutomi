@@ -9,7 +9,6 @@ use rdkafka::Message;
 use serde_json::json;
 use sqlx::MySqlPool;
 use std::sync::Arc;
-use thiserror::Error;
 
 pub struct MessageHandlerOptions<'a> {
     pub message: &'a BorrowedMessage<'a>,
