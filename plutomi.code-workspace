@@ -21,14 +21,14 @@
       "name": "migrator"
     },
     {
-      "path": "services/consumers/notifications",
-      "name": "notifications-consumer"
+      "path": "services/consumers/notifications-auth",
+      "name": "notifications-auth-consumer"
     }
   ],
   "settings": {
     "rust-analyzer.linkedProjects": [
       "services/api/Cargo.toml",
-      "services/consumers/notifications/Cargo.toml",
+      "services/consumers/notifications-auth/Cargo.toml",
       "services/shared/Cargo.toml",
       "services/migrator/Cargo.toml"
     ],
@@ -37,7 +37,10 @@
       { "directory": "services/web", "changeProcessCWD": true },
       { "directory": "services/shared", "changeProcessCWD": true },
       { "directory": "services/migrator", "changeProcessCWD": true },
-      { "directory": "services/consumers/template", "changeProcessCWD": true }
+      {
+        "directory": "services/consumers/notifications-auth",
+        "changeProcessCWD": true
+      }
     ],
     "search.exclude": {
       "**/node_modules": true,

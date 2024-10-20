@@ -25,7 +25,7 @@ Make sure your `.vscode/.settings.json` file has the correct path to your worksp
 {
   "rust-analyzer.linkedProjects": [
     "services/api/Cargo.toml",
-    "services/consumers/template/Cargo.toml",
+    "services/consumers/notiications-auth/Cargo.toml",
     "services/shared/Cargo.toml"
   ]
 }

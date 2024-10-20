@@ -4,7 +4,7 @@ use shared::{
     constants::{ConsumerGroups, Topics},
     consumers::{MessageHandlerOptions, PlutomiConsumer},
     entities::user::{KafkaUser, User},
-    events::{PlutomiMessage, PlutomiPayload},
+    events::{PlutomiEvent, PlutomiPayload},
     logger::LogObject,
 };
 use std::sync::Arc;
@@ -31,16 +31,21 @@ fn send_email(
     }: MessageHandlerOptions,
 ) -> BoxFuture<'_, Result<(), String>> {
     Box::pin(async move {
-        let parsed_message: PlutomiMessage = plutomi_consumer.parse_message(message)?;
+        let plutomi_event: PlutomiEvent = plutomi_consumer.parse_message(message)?;
 
         plutomi_consumer.logger.info(LogObject {
-            message: format!("Processing  {:?} event", parsed_message.event_type),
-            data: Some(json!(&parsed_message.payload)),
+            message: format!("Processing  {:?} event", plutomi_event.event_type),
+            data: Some(json!(&plutomi_event.payload)),
             ..Default::default()
         });
 
-        match parsed_message.payload {
-            PlutomiPayload::TOTPRequested(user) => {}
+        match plutomi_event.payload {
+            PlutomiPayload::TOTPRequested { email, created_at } => {
+                plutomi_consumer.logger.info(LogObject {
+                    message: "Sending TOTP Code to user".to_string(),
+                    ..Default::default()
+                });
+            }
             all_other_events => {
                 let message = format!("Ignoring event {:?}", all_other_events);
                 plutomi_consumer.logger.warn(LogObject {

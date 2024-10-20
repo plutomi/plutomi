@@ -14,7 +14,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use crate::constants::{ConsumerGroups, Topics};
-use crate::events::PlutomiPayload;
+use crate::events::PlutomiEvent;
 use crate::get_env::get_env;
 use crate::logger::{LogObject, Logger};
 
@@ -201,12 +201,12 @@ impl KafkaClient {
         Ok(Arc::new(consumer))
     }
 
-    // Shorthand for sending a formatted PlutomiPayload message to a topic
+    // Shorthand for sending a formatted PlutomiEvent message to a topic
     pub async fn publish(
         &self,
         topic: Topics,
         key: &str,
-        payload: &PlutomiPayload,
+        payload: &PlutomiEvent,
     ) -> Result<(), String> {
         self.logger.info(LogObject {
             message: "Producing message...".to_string(),

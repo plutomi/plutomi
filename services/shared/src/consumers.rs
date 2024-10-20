@@ -1,5 +1,5 @@
 use crate::constants::{ConsumerGroups, Topics};
-use crate::events::PlutomiMessage;
+use crate::events::PlutomiEvent;
 use crate::kafka::KafkaClient;
 use crate::logger::{LogObject, Logger, LoggerContext};
 use crate::mysql::MySQLClient;
@@ -171,7 +171,7 @@ impl PlutomiConsumer {
     pub fn parse_message<'a>(
         &self,
         message: &'a BorrowedMessage<'a>,
-    ) -> Result<PlutomiMessage, String> {
+    ) -> Result<PlutomiEvent, String> {
         let payload = message.payload().unwrap_or(&[]);
 
         // Check if the payload is empty before attempting to deserialize
@@ -183,8 +183,8 @@ impl PlutomiConsumer {
             return Err("Message payload is empty when parsing message".to_string());
         }
 
-        // Deserialize directly into `PlutomiPayload`, which handles both event type and payload
-        serde_json::from_slice::<PlutomiMessage>(payload).map_err(|e| {
+        // Deserialize directly into `PlutomiEvent`, which handles both event type and payload
+        serde_json::from_slice::<PlutomiEvent>(payload).map_err(|e| {
             // If parsing fails, convert the payload to a readable string for logging
             let payload_str = String::from_utf8_lossy(payload).to_string();
             let msg = format!("Failed to parse event: {}", e);
