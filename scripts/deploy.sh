@@ -98,7 +98,7 @@ deploy_aws() {
     echo -e "\n"
 
 
-    # Export the environment variable so it can be picked up by CDK
+    # Export the environment variable so it can be picked up by CDK # TODO remove
     export ENVIRONMENT=$environment
 
     cd ./aws

@@ -6,3 +6,5 @@ It also creates an SNS topic where email events are sent to. SNS publishes event
 
 TODO: Use Nodemailer (or rust alternative) + Ethereal for testing emails locally.
 https://nodemailer.com/about/
+
+TODO
