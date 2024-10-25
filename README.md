@@ -23,7 +23,7 @@ Plutomi follows a modular monolith architecture, featuring a [Remix](https://rem
 
 ### Infrastructure and Third-Party Tools
 
-We run on Kubernetes ([K3S](https://k3s.io/)) and manage our infrastructure using AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
+We run on Kubernetes ([K3S](https://k3s.io/)) and manage our infrastructure using [Terraform](https://terraform.com/). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
 
 ### Event Streaming Pipeline
 
@@ -76,3 +76,5 @@ Plutomi is designed to be flexible and can be deployed anywhere you can get your
 Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there.
 
 If you have other questions, feel free to open a discussion or issue, or contact me on [X @notjoswayski](https://twitter.com/notjoswayski) or via email at jose@plutomi.com.
+
+-- TODO see the terraform/ dir
