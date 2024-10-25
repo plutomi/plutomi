@@ -62,3 +62,10 @@ variable "cloudflare_bucket_region" {
 variable "cloudflare_account_id" {
     description = "The account ID for Cloudflare"
 }
+
+
+#### Axiom
+variable "axiom_admin_api_token" {
+    description = "The admin API token for Axiom to create datasets and api keys"
+}
+
