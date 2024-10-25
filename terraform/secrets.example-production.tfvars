@@ -7,6 +7,7 @@ aws_region = "us-east-1" # <-- Replace this with your AWS region
 environment = "production"
 
 cloudflare_account_id = "1234567890abcdef1234567890-production"
-cloudflare_r2_api_token = "your-cloudflare-api-token-production"
+# Used to create the bucket
+cloudflare_r2_admin_token = "your-cloudflare-r2-admin-token-production"
 cloudflare_bucket_name = "your-cloudflare-bucket-name-production"
 cloudflare_bucket_region = "your-cloudflare-bucket-region-production"

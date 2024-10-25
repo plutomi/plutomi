@@ -47,8 +47,8 @@ variable "ses_events_queue_name" {
 
 #### Cloudflare
 
-variable "cloudflare_r2_api_token" {
-  description = "The API token for Cloudflare"
+variable "cloudflare_r2_admin_token" {
+  description = "The R2 admin token for creating the bucket"
 }
 
 variable "cloudflare_bucket_name" {

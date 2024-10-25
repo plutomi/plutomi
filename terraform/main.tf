@@ -107,7 +107,7 @@ resource "aws_sns_topic_subscription" "ses_topic_subscription" {
 
 
 provider "cloudflare" {
-  api_token = var.cloudflare_r2_api_token
+  api_token = var.cloudflare_r2_admin_token
 }
 
 resource "cloudflare_r2_bucket" "cloudflare-bucket" {
