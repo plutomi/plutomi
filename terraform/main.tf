@@ -4,7 +4,13 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.16"
     }
+
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+      version = "~> 4"
+    }
   }
+  
 
   required_version = ">= 1.2.0"
 }
@@ -98,6 +104,17 @@ resource "aws_sns_topic_subscription" "ses_topic_subscription" {
 #######################################
 
 
+
+
+provider "cloudflare" {
+  api_token = var.cloudflare_r2_api_token
+}
+
+resource "cloudflare_r2_bucket" "cloudflare-bucket" {
+  account_id = var.cloudflare_account_id
+  name       = var.cloudflare_bucket_name
+  location   = var.cloudflare_bucket_region
+}
 
 
 #######################################

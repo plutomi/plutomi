@@ -2,6 +2,8 @@
 
 - [Prerequisites](#prerequisites)
 - [AWS / SES](#aws)
+- [CloudFlare](#cloudflare) - Make sure to create a CLOUDFLARE_DNS_TOKEN with the `Zone:Edit, DNS:Edit` permissions
+- TODO add CLOUDFLARE_R2_TOKEN - https://dash.cloudflare.com/?to=/:account/r2/api-tokens
 - [Initializing Nodes](#initialize-the-nodes)
 - [Linkerd (Optional)](#install-linkerd)
 - [Sealed Secrets](#sealed-secrets)
@@ -154,7 +156,7 @@ export KUBECONFIG=~/.kube/YOUR_CONFIG_NAME
 If using Cloudflare for DNS, we need a token for cert-manager to use. We need to store it in a secret as well:
 
 ```bash
-kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
+kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_DNS_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
 ```
 
 <!-- Create other global secrets shared by most of the backend: -->

@@ -43,3 +43,22 @@ variable "ses_events_queue_name" {
   description = "The name of the SQS events queue"
   default     = "ses-events-queue"
 }
+
+
+#### Cloudflare
+
+variable "cloudflare_r2_api_token" {
+  description = "The API token for Cloudflare"
+}
+
+variable "cloudflare_bucket_name" {
+    description = "The name of the bucket for Cloudflare"
+}
+
+variable "cloudflare_bucket_region" {
+    description = "The region of the bucket for Cloudflare"
+}
+
+variable "cloudflare_account_id" {
+    description = "The account ID for Cloudflare"
+}

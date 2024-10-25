@@ -5,3 +5,8 @@
 aws_profile = "plutomi-development" # <-- Replace this with your AWS profile
 aws_region = "us-east-1" # <-- Replace this with your AWS region
 environment = "development"
+
+cloudflare_account_id = "1234567890abcdef1234567890"
+cloudflare_r2_api_token = "your-cloudflare-api-token"
+cloudflare_bucket_name = "your-cloudflare-bucket-name"
+cloudflare_bucket_region = "your-cloudflare-bucket-region"

@@ -24,7 +24,7 @@ spec:
             email: {{ $.Values.issuer.spec.acme.email }}
             apiTokenSecretRef:
               name: cloudflare-token
-              key: CLOUDFLARE_TOKEN
+              key: CLOUDFLARE_DNS_TOKEN
       {{- end }}
 {{- end }}
 {{- end }}
