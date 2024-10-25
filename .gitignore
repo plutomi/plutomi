@@ -50,6 +50,7 @@ cdk.context.json
 # Built directories
 dist/
 
+.github/.DS_Store
 
 # Ignore any files accidentally copied to local dir
 root@*/*
@@ -68,3 +69,8 @@ secret.yaml
 !/terraform/secrets.example.tfvars
 !/terraform/secrets.example-production.tfvars
 !/terraform/variables.tf
+!/terraform/providers.tf
+!/terraform/aws.tf
+!/terraform/cloudflare.tf
+!/terraform/axiom.tf
+!/terraform/hetzner.tf
