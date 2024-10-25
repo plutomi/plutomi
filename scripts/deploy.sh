@@ -54,13 +54,13 @@ environment=$1
 deploy_aws() {
     # Set AWS_PROFILE based on the environment
     if [[ "$environment" == "production" ]]; then
-        AWS_PROFILE="plutomi-prod"
+        AWS_PROFILE="plutomi-production"
         COLOR=$BIRED
     elif [[ "$environment" == "staging" ]]; then
-        AWS_PROFILE="plutomi-stage"
+        AWS_PROFILE="plutomi-staging"
         COLOR=$BIYELLOW
     elif [[ "$environment" == "development" ]]; then
-        AWS_PROFILE="plutomi-dev"
+        AWS_PROFILE="plutomi-development"
         COLOR=$BIGREEN
     else
         print_error_and_exit "Invalid environment for AWS deployment."
@@ -102,6 +102,7 @@ deploy_aws() {
     export ENVIRONMENT=$environment
 
     cd ./aws
+    # TODO update htis for terraform? 
     npm run deploy -- --profile $AWS_PROFILE # Set the right profile for permissions
 }
 

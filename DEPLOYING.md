@@ -3,7 +3,7 @@
 - [Prerequisites](#prerequisites)
 - [AWS / SES](#aws)
 - [CloudFlare](#cloudflare) - Make sure to create a CLOUDFLARE_DNS_TOKEN with the `Zone:Edit, DNS:Edit` permissions
-- TODO add CLOUDFLARE_R2_TOKEN - https://dash.cloudflare.com/?to=/:account/r2/api-tokens
+- TODO add CLOUDFLARE_R2_ADMIN_TOKEN - https://dash.cloudflare.com/?to=/:account/r2/api-tokens
 - [Initializing Nodes](#initialize-the-nodes)
 - [Linkerd (Optional)](#install-linkerd)
 - [Sealed Secrets](#sealed-secrets)
@@ -245,6 +245,7 @@ linkerd viz dashboard &
 
 ## AWS / SES
 
+# TODO update for terraform
 To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configure-ses.ts](./services/aws/lib/configure-ses.ts).
 
 Change directories into `/aws`, install dependencies with `npm i` and set up the environment variables in the `.env`. There is an `.env.example` file that you can copy to get started.
