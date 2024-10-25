@@ -1,1 +1,1 @@
-Update to have tf logo no left
+Update to have tf logo on let, remove in progress for r2
