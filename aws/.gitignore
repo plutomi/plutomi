@@ -8,10 +8,9 @@ node_modules
 cdk.out
 
 terraform/terraform.tfvars
-terraform/terraform.tfvars
 terraform/*.tfvars
 /terraform/*.tfvars
-
+/terraform/terraform.tfvars
 *.tfvars
 */*.tfvars
 

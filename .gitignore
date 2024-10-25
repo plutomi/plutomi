@@ -57,3 +57,13 @@ root@*/*
 
 # Ignore the temporary secret file
 secret.yaml
+
+
+
+# Ignore everything inside of terraform unless explicitly added
+/terraform/**
+
+
+!/terraform/main.tf
+!/terraform/secrets.sample.tfvars
+!/terraform/variables.tf
