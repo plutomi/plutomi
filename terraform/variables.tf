@@ -1,8 +1,5 @@
-/**
-*
-* Secrets for AWS
-* See secrets.sample.tfvars
-*/
+#### AWS
+
 variable "aws_profile" {
   description = "The access key for AWS"
 }
