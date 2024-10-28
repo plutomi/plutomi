@@ -1,19 +1,5 @@
 ## This creates an SES identity, an SNS topic, and an SQS queue to be used for email notifications.
 
-
-# Creates a DynamoDB table for Terraform state locking
-# resource "aws_dynamodb_table" "terraform_locks" {
-#   name           = "terraform-lock-table"
-#   billing_mode   = "PAY_PER_REQUEST"
-#   hash_key       = "LockID"
-
-#   attribute {
-#     name = "LockID"
-#     type = "S"
-#   }
-# }
-
-
 # Queue for SES Events
 resource "aws_sqs_queue" "events_queue" {
   name = var.ses_events_queue_name

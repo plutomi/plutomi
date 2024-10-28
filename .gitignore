@@ -67,7 +67,7 @@ secret.yaml
 
 !/terraform/main.tf
 !/terraform/secrets.example.tfvars
-!/terraform/secrets.example-production.tfvars
+!/terraform/secrets-production.example.tfvars
 !/terraform/variables.tf
 !/terraform/providers.tf
 !/terraform/aws.tf

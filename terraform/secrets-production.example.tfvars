@@ -13,4 +13,6 @@ cloudflare_bucket_name = "your-cloudflare-bucket-name-production"
 cloudflare_bucket_region = "your-cloudflare-bucket-region-production"
 
 
+mail_from_subdomain = "notifications"
+
 # axiom_admin_api_token = "abcd-efghijkl-lmno-pqrs-tuvw-xyz1234567890-production"

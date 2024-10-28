@@ -5,16 +5,17 @@ You need to create a few things by hand before you can deploy the application, l
 ```bash
 # Login to AWS
 aws sso login --profile plutomi-development
+export AWS_PROFILE=plutomi-development
 
 # Create the S3 Bucket
+# Make sure this matches the terraform/*environment*.tfbackend file(s)
 aws s3api create-bucket \
-    # Make sure this matches the terraform/*environment*.tfbackend file(s)
-    --bucket plutomi-development-terraform-state \
+    --bucket plutomi-development-terraform \
     --region us-east-1
 
 # Enable versioning on the bucket
 aws s3api put-bucket-versioning \
-    --bucket plutomi-development-terraform-state \
+    --bucket plutomi-development-terraform \
     --versioning-configuration Status=Enabled
 
 # Create the DynamoDB Table
@@ -31,25 +32,42 @@ Once you've created the bucket and DynamoDB table, cd into terraform and initial
 ```bash
 cd terraform
 
-terraform init
+terraform init -backend-config=development.tfbackend -reconfigure
 ```
 
 Then, create a new workspace for the environment you want to deploy to:
 
 ```bash
-terraform workspace new development|staging|production
+terraform workspace new development
 ```
 
-Create a `secrets.tfvars` file in the [terraform](terraform) directory with the content from [terraform/secrets.tfvars.example](terraform/secrets.example.tfvars) and fill in the values.
+Create a `secrets.tfvars` file in the [terraform](terraform) directory with the content from [secrets.example.tfvars](terraform/secrets.example.tfvars) and fill in the values.
 
 Then, check the plan:
 
 ```bash
-terraform plan -backend-config="development.tfbackend" -var-file=secrets.tfvars
+terraform plan -var-file=secrets.tfvars -out=plantest
 ```
 
 If everything looks good, apply the changes:
 
 ```bash
-terraform apply -backend-config="development.tfbackend"  -var-file=secrets.tfvars
+terraform apply -var-file=secrets.tfvars
+```
+
+Repeat the steps above for each environment:
+
+1. Create the S3 bucket and DynamoDB table manually
+2. Initialize Terraform with the appropriate backend configuration (`ENVIRONMENT.tfbackend`)
+3. Create a new workspace for the environment
+4. Create a `secrets-ENVIRONMENT.tfvars` file with the appropriate **override** values
+5. Check the plan and apply as needed
+   > terraform plan -var-file=secrets.tfvars -var-file=secrets-ENVIRONMENT.tfvars
+
+```bash
+export AWS_PROFILE=plutomi-staging
+```
+
+```bash
+terraform init -backend-config=staging.tfbackend -reconfigure
 ```
