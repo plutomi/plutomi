@@ -10,9 +10,9 @@ terraform {
       version = "~> 4"
     }
 
-    axiom = {
-      source  = "axiomhq/axiom"
-    }
+    # axiom = {
+    #   source  = "axiomhq/axiom"
+    # }
 
   }
 
@@ -28,6 +28,6 @@ provider "cloudflare" {
 }
 
 
-provider "axiom" {
-  api_token = var.axiom_admin_api_token
-}
+# provider "axiom" {
+#   api_token = var.axiom_admin_api_token
+# }

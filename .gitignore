@@ -74,3 +74,4 @@ secret.yaml
 !/terraform/cloudflare.tf
 !/terraform/axiom.tf
 !/terraform/hetzner.tf
+!/terraform/*.tfbackend

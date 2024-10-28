@@ -13,4 +13,4 @@ cloudflare_bucket_name = "your-cloudflare-bucket-name-production"
 cloudflare_bucket_region = "your-cloudflare-bucket-region-production"
 
 
-axiom_admin_api_token = "abcd-efghijkl-lmno-pqrs-tuvw-xyz1234567890-production"
+# axiom_admin_api_token = "abcd-efghijkl-lmno-pqrs-tuvw-xyz1234567890-production"

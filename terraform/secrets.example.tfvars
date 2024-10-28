@@ -13,5 +13,6 @@ cloudflare_bucket_name = "your-cloudflare-bucket-name"
 cloudflare_bucket_region = "your-cloudflare-bucket-region"
 
 
-
-axiom_admin_api_token = "abcd-efghijkl-lmno-pqrs-tuvw-xyz1234567890"
+# Not used as it keeps causing issues
+# provider.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = error reading from server: EOF"
+# axiom_admin_api_token = "abcd-efghijkl-lmno-pqrs-tuvw-xyz1234567890"
