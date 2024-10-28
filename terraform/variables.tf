@@ -63,8 +63,6 @@ variable "cloudflare_account_id" {
 
 # #### Axiom
 # Not currently used as this provider has a few issues
-# variable "axiom_admin_api_token" {
-#     description = "The admin API token for Axiom to create datasets and api keys"
-# }
-
-
+variable "axiom_admin_api_token" {
+    description = "The admin API token for Axiom to create datasets and api keys"
+}
