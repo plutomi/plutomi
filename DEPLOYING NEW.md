@@ -109,7 +109,7 @@ If everything looks good, apply the changes:
 terraform apply -var-file=secrets.tfvars
 ```
 
-## Deploy to new environments
+## Deploy to other environments
 
 From here on out, each deploy will use the secrets variables and the appropriate aws profile.
 
@@ -135,5 +135,3 @@ terraform apply -var-file=secrets.tfvars -var-file=secrets-ENVIRONMENT.tfvars
 You should now see multiple state files in your S3 bucket, one for each environment:
 
 ![state](/images/state.png)
-
-## TODO Note about axiom - configure to not re-deploy based on dev and prod configs

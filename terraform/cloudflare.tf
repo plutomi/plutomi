@@ -1,4 +1,3 @@
-
 # This creates an R2 bucket for blob storage on Cloudflare.
 
 resource "cloudflare_r2_bucket" "cloudflare-bucket" {
