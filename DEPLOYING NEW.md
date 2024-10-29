@@ -1,6 +1,8 @@
 ### Prerequisites
 
-You need to create a few things by hand before you can deploy the application, like a storage bucket to store the Terraform state file(s) per environment and a DynamoDB table for locking the state file, and an IAM role. It is recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment.
+You need to create a few things by hand before you can deploy the application, like a storage bucket to store the Terraform state files per environment, a DynamoDB table for locking the state file, and an IAM role that can be accessed from your different AWS accounts. It is recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment.
+
+The deployment will create SES, SNS, SQS for emails, along with the DNS records required for SES on Cloudflare. It will also create an R2 storage bucket for files, setup Axiom for logging, and TODO others.
 
 ```bash
 # Login to AWS

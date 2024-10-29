@@ -4,6 +4,8 @@
 
 ### Global
 environment = "development"
+base_url = "yourdomain.com"
+contact_email = "you@yourdomain.com" # For DMARC reports
 
 
 ### AWS
@@ -16,6 +18,7 @@ cloudflare_account_id = "1234567890abcdef1234567890"
 # https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
 cloudflare_admin_token = "your-cloudflare-admin-token"
 cloudflare_bucket_name = "your-bucket-development-assets"
+cloudflare_zone_id = "your-cloudflare-account-id"
 
 ### Axiom
 # Deployed once in development mode

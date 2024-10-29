@@ -61,6 +61,8 @@ $ cp .env.example .env
 $ ./scripts/run.sh
 ```
 
+## TODO verify CF MAIL FROM works! Still validating
+
 You can also run any service individually:
 
 ```bash

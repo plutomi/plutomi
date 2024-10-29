@@ -20,6 +20,18 @@ resource "aws_ses_domain_identity" "ses_email_identity" {
   domain = var.base_url
 }
 
+
+# SES Domain DKIM
+resource "aws_ses_domain_dkim" "ses_dkim" {
+  domain = aws_ses_domain_identity.ses_email_identity.domain
+}
+
+# Output DKIM tokens for verification to be used in Cloudflare DNS
+output "dkim_tokens" {
+  value = aws_ses_domain_dkim.ses_dkim.dkim_tokens
+}
+
+
 # Mail From Domain
 resource "aws_ses_domain_mail_from" "mail_from_domain" {
   domain           = aws_ses_domain_identity.ses_email_identity.domain

@@ -4,7 +4,10 @@ variable "environment" {
 }
 variable "base_url" {
   description = "The hostname of the base URL"
-  default     = "plutomi.com"
+}
+
+variable "contact_email" {
+  description = "The contact email for the domain"
 }
 
 variable "ses_configuration_set_name" {
@@ -46,6 +49,10 @@ variable "cloudflare_admin_token" {
   description = "The admin token for creating the bucket storage bucket and managing SES DNS records"
 }
 
+variable "cloudflare_zone_id" {
+  # For MX, SPF, and DKIM records
+  description = "The zone ID for Cloudflare"
+}
 
 variable "cloudflare_account_id" {
     description = "The account ID for Cloudflare"
