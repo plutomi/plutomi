@@ -1,16 +1,3 @@
-locals {
-  aws_profile = {
-    development = "plutomi-development"
-    staging     = "plutomi-staging"
-    production  = "plutomi-production"
-  }
-  aws_region = {
-    development = "us-east-1"
-    staging     = "us-east-1"
-    production  = "us-east-1"
-  }
-}
-
 terraform {
   required_providers {
     aws = {
@@ -31,9 +18,23 @@ terraform {
 
 }
 
+locals {
+  aws_profile = {
+    development = "plutomi-development"
+    staging     = "plutomi-staging"
+    production  = "plutomi-production"
+  }
+  aws_region = {
+    development = "us-east-1"
+    staging     = "us-east-1"
+    production  = "us-east-1"
+  }
+}
+
+
 provider "aws" {
-  profile = locals.aws_profile[var.environment]
-  region  = locals.aws_region[var.environment]
+  profile = local.aws_profile[var.environment]
+  region  = local.aws_region[var.environment]
 }
 
 provider "cloudflare" {

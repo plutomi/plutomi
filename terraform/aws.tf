@@ -31,7 +31,7 @@ resource "aws_ses_domain_identity" "ses_email_identity" {
 # Mail From Domain
 resource "aws_ses_domain_mail_from" "mail_from_domain" {
   domain           = aws_ses_domain_identity.ses_email_identity.domain
-  mail_from_domain = "${locals.mail_from_subdomain[var.environment]}.${var.base_url}"
+  mail_from_domain = "${local.mail_from_subdomain[var.environment]}.${var.base_url}"
   behavior_on_mx_failure = "UseDefaultValue"
 }
 
