@@ -30,6 +30,8 @@ resource "cloudflare_record" "mail_from_spf_record" {
 
 # DMARC Record
 resource "cloudflare_record" "dmarc_record" {
+  # Don't redeploy on staging / production
+  count = var.environment == "development" ? 1 : 0
   zone_id = var.cloudflare_zone_id
   name    = "_dmarc.${var.base_url}"
   # Must be in quotes
