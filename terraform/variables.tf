@@ -1,24 +1,10 @@
 #### AWS
-
-variable "aws_profile" {
-  description = "The access key for AWS"
-}
-
-variable "aws_region" {
-  description = "The region for AWS"
-}
-
 variable "environment" {
   description = "The environment for the deployment"
 }
 variable "base_url" {
   description = "The hostname of the base URL"
   default     = "plutomi.com"
-}
-
-variable "mail_from_subdomain" {
-  description = "Subdomain for mail-from address for SES"
-  default     = "notifications"
 }
 
 variable "ses_configuration_set_name" {
@@ -44,17 +30,11 @@ variable "ses_events_queue_name" {
 
 #### Cloudflare
 
-variable "cloudflare_r2_admin_token" {
-  description = "The R2 admin token for creating the bucket"
+variable "cloudflare_admin_token" {
+  # This should have Zone.Zone, Zone.DNS, and Account.WorkersR2Storage edit permissions
+  description = "The admin token for creating the bucket storage bucket and managing SES DNS records"
 }
 
-variable "cloudflare_bucket_name" {
-    description = "The name of the bucket for Cloudflare"
-}
-
-variable "cloudflare_bucket_region" {
-    description = "The region of the bucket for Cloudflare"
-}
 
 variable "cloudflare_account_id" {
     description = "The account ID for Cloudflare"
