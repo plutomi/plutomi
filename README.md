@@ -73,6 +73,8 @@ $ ./scripts/run.sh --service <web|api|migrator|consumers>
 
 Plutomi is designed to be flexible and can be deployed anywhere you can get your hands on a server, we recommend at least 3. All Docker images are available on [Docker Hub](https://hub.docker.com/u/plutomi). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
+> For managing infrastructure through Terraform we do store that in S3 with DynamoDB. note TOD
+
 ## Questions / Troubleshooting
 
 Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there.

@@ -21,6 +21,7 @@ resource "cloudflare_record" "mail_from_mx_record" {
 resource "cloudflare_record" "mail_from_spf_record" {
   zone_id = var.cloudflare_zone_id
   name    = "${var.mail_from_subdomain}.${var.base_url}"
+  # Must be in quotes
   content = "\"v=spf1 include:amazonses.com ~all\""
   type    = "TXT"
   ttl     = 300
