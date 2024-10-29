@@ -1,13 +1,5 @@
 ## This creates an SES identity, an SNS topic, and an SQS queue to be used for email notifications.
 
-locals {
-  mail_from_subdomain = {
-    development = "notifications-development"
-    staging     = "notifications-staging"
-    production  = "notifications"
-  }
-}
-
 # Queue for SES Events
 resource "aws_sqs_queue" "events_queue" {
   name = var.ses_events_queue_name
@@ -31,7 +23,7 @@ resource "aws_ses_domain_identity" "ses_email_identity" {
 # Mail From Domain
 resource "aws_ses_domain_mail_from" "mail_from_domain" {
   domain           = aws_ses_domain_identity.ses_email_identity.domain
-  mail_from_domain = "${local.mail_from_subdomain[var.environment]}.${var.base_url}"
+  mail_from_domain = "${var.mail_from_subdomain}.${var.base_url}"
   behavior_on_mx_failure = "UseDefaultValue"
 }
 

@@ -5,10 +5,17 @@
 ### Global
 environment = "development"
 
+
+### AWS
+mail_from_subdomain = "notifications-development"
+aws_region = "us-east-1"
+aws_profile = "your-profile-development"
+
 ### Cloudflare
 cloudflare_account_id = "1234567890abcdef1234567890"
 # https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
 cloudflare_admin_token = "your-cloudflare-admin-token"
+cloudflare_bucket_name = "your-bucket-development-assets"
 
 ### Axiom
 # Deployed once in development mode
