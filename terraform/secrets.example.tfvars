@@ -10,6 +10,7 @@ contact_email = "you@yourdomain.com" # For DMARC reports
 
 ### AWS
 mail_from_subdomain = "notifications-development"
+ecr_repo_name = "your-app"
 aws_region = "us-east-1"
 aws_profile = "your-profile-development"
 

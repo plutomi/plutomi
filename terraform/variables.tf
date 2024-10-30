@@ -42,6 +42,10 @@ variable "aws_profile" {
   description = "The SSO profile for AWS"
 }
 
+variable "ecr_repo_name" {
+  description = "The name of the ECR repository"
+}
+
 #### Cloudflare
 
 variable "cloudflare_admin_token" {

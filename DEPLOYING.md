@@ -15,7 +15,7 @@
 
 ## Prerequisites
 
-Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
+Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API TODO consumer note are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
 For the datastores, we use [MySQL](https://www.mysql.com/) as our primary OLTP store and [Kafka](https://kafka.apache.org/) for asynchronous event processing. We use [Strimzi](https://strimzi.io/) to manage our Kafka cluster.
 

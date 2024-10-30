@@ -32,7 +32,8 @@ output "dkim_tokens" {
 }
 
 
-# Mail From Domain
+# Mail From Domain 
+## ! This might take 72 hours to propagate!
 resource "aws_ses_domain_mail_from" "mail_from_domain" {
   domain           = aws_ses_domain_identity.ses_email_identity.domain
   mail_from_domain = "${var.mail_from_subdomain}.${var.base_url}"
@@ -75,4 +76,20 @@ resource "aws_sns_topic_subscription" "ses_topic_subscription" {
   topic_arn = aws_sns_topic.ses_events_topic.arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.events_queue.arn
+}
+
+
+
+# Create ECR Repository
+resource "aws_ecr_repository" "plutomi_ecr_repo" {
+  name                 = var.ecr_repo_name
+  image_tag_mutability = "IMMUTABLE"
+  tags = {
+    environment = var.environment
+  }
+}
+
+# Output repository URL
+output "ecr_repo_url" {
+  value = aws_ecr_repository.plutomi_ecr_repo.repository_url
 }
