@@ -42,9 +42,11 @@ variable "aws_profile" {
   description = "The SSO profile for AWS"
 }
 
-variable "ecr_repo_name" {
-  description = "The name of the ECR repository"
+variable "ecr_repositories" {
+  type    = list(string)
+  default = ["plutomi-web", "plutomi-api", "plutomi-migrator"] # plutomi-notifications-user-consumer etc.
 }
+
 
 #### Cloudflare
 

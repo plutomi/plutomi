@@ -80,16 +80,19 @@ resource "aws_sns_topic_subscription" "ses_topic_subscription" {
 
 
 
-# Create ECR Repository
-resource "aws_ecr_repository" "plutomi_ecr_repo" {
-  name                 = var.ecr_repo_name
-  image_tag_mutability = "IMMUTABLE"
+# Create the ECR Repositories
+resource "aws_ecr_repository" "repositories" {
+  for_each             = toset(var.ecr_repositories)
+  name                 = each.value
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
   tags = {
     environment = var.environment
   }
 }
-
-# Output repository URL
-output "ecr_repo_url" {
-  value = aws_ecr_repository.plutomi_ecr_repo.repository_url
+# Output the repository URLs
+output "ecr_repo_urls" {
+  value = { for repo, details in aws_ecr_repository.repositories : repo => details.repository_url }
 }
