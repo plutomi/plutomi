@@ -2,7 +2,6 @@ import { createRequestHandler } from "@remix-run/express";
 import compression from "compression";
 import express from "express";
 import morgan from "morgan";
-import { env } from "app/utils/env.js";
 
 const viteDevServer =
   process.env.NODE_ENV === "production"
@@ -46,12 +45,8 @@ app.use(express.static("build/client", { maxAge: "12h" }));
 
 app.use(morgan("tiny"));
 
-app.use(async (req, res, next) => {
-  if (req.path === "/api/" || req.path === "/api") {
-    res.redirect(`${env.BASE_WEB_URL}/docs/api?from=web`);
-    return;
-  }
-  next();
+app.get("/health", (req, res) => {
+  res.send("OK");
 });
 
 // handle SSR requests
