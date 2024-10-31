@@ -53,15 +53,18 @@ variable "ecr_repositories" {
 variable "cloudflare_admin_token" {
   # This should have Zone.Zone, Zone.DNS, and Account.WorkersR2Storage edit permissions
   description = "The admin token for creating the bucket storage bucket and managing SES DNS records"
+  sensitive = true
 }
 
 variable "cloudflare_zone_id" {
   # For MX, SPF, and DKIM records
   description = "The zone ID for Cloudflare"
+  sensitive = true
 }
 
 variable "cloudflare_account_id" {
     description = "The account ID for Cloudflare"
+    sensitive = true
 }
 
 variable "cloudflare_region" {
@@ -77,5 +80,6 @@ variable "cloudflare_bucket_name" {
 # Not currently used as this provider has a few issues
 variable "axiom_admin_api_token" {
     description = "The admin API token for Axiom to create datasets and api keys"
+    sensitive = true
 }
 
