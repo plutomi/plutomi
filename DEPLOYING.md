@@ -175,12 +175,6 @@ cd k8s && kubectl apply -f secrets/
 
 For MySQL, we are still deciding on how to handle this. We are considering using [Vitess](https://vitess.io/) to manage our MySQL cluster.
 
-Install the Cluster Issuer for cert-manager:
-
-```bash
-helm upgrade --install cluster-issuer . -f values/issuer.yaml
-```
-
 ## [Linkerd](https://linkerd.io/)
 
 We're using linkerd for mTLS mostly. It allows us to encrypt traffic between services and also provides a nice dashboard for us to see what's going on.
@@ -246,6 +240,7 @@ linkerd viz dashboard &
 ## AWS / SES
 
 # TODO update for terraform
+
 To deploy to AWS, make sure you have [configured SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) correctly. Update the `AWS_PROFILE` variable in [deploy.sh](deploy.sh) to match the profile names you want to use. Update the subdomain you want to use for sending emails in [configure-ses.ts](./services/aws/lib/configure-ses.ts).
 
 Change directories into `/aws`, install dependencies with `npm i` and set up the environment variables in the `.env`. There is an `.env.example` file that you can copy to get started.

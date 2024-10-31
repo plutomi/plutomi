@@ -63,6 +63,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          envFrom:
+            - secretRef:
+                name: aws-credentials
               # Add any shared secrets
             {{- range $key, $value := $.Values.shared.env }}
             - name: {{ $key }}
