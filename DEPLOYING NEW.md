@@ -1,8 +1,20 @@
 ### Prerequisites
 
-You need to create a few things by hand before you can deploy the application, like a storage bucket to store the Terraform state files per environment, a DynamoDB table for locking the state file, and an IAM role that can be accessed from your different AWS accounts. It is recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment.
+Most of the Plutomi infrastructure is managed by Terraform. This creates a catch-22 situation where you need to create a few things by hand before you can deploy the application, like an S3 bucket to store the Terraform state files per environment and a DynamoDB table for locking the state file. It is highly recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment such as `plutomi-development`, `plutomi-staging`, and `plutomi-production`. We will create a role in the `plutomi-shared` account that can be assumed by the other accounts for managing the Terraform state.
 
-The deployment will create SES, SNS, SQS for emails, along with the DNS records required for SES on Cloudflare. It will also create an R2 storage bucket for files, setup Axiom for logging, and TODO others.
+The deployment will create the following:
+
+- SES identity for sending emails
+- SNS topic and SQS as a destination for emails
+- The DNS records that SES requires (DKIM, SPF) on Cloudflare
+- R2 storage bucket for application assets
+
+# TODO - create Cloudflare R2 keys and add to secrets
+
+- Two datasets and two API keys on Axiom for logging
+- An ECR repository for storing Docker images _for each service_
+- A [Secrets Manager](https://aws.amazon.com/secrets-manager/) secret with the application's secrets
+- In your plutomi-_environment_ account, a user with access to the ECR repository(TODO) to pull images on startup, access other AWS services like SQS and SES, and access the Secrets Manager secret for other credentials like the aforementioned Axiom API keys or R2 bucket keys
 
 ```bash
 # Login to AWS
