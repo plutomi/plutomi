@@ -113,7 +113,7 @@ resource "aws_secretsmanager_secret_version" "my_app_secret_version" {
   secret_id = aws_secretsmanager_secret.my_app_secret.id
 
   secret_string = jsonencode({
-    // Sample
+    // Sample TODO
     db_username = "my_db_username"
     db_password = "my_db_password"
     api_key     = "my_api_key"
@@ -139,11 +139,12 @@ resource "aws_iam_policy" "secrets_manager_ip_restricted" {
       {
         "Effect": "Allow",
         "Action": [
+          # Allows retrieving values from Secrets Manager for things like DB credentials and third party API keys
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ],
         "Resource": aws_secretsmanager_secret.my_app_secret.arn,
-        # "Condition": {
+        # "Condition": { TODO
         #   "IpAddress": {
         #     "aws:SourceIp": [
         #       "YOUR_SERVER_IP_1",
@@ -152,6 +153,27 @@ resource "aws_iam_policy" "secrets_manager_ip_restricted" {
         #     ]
         #   }
         # }
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          // Allows retrieving an ECR authorization token, which is necessary for logging in to ECR to pull images
+          "ecr:GetAuthorizationToken"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          // Allows checking the availability of ECR layers and getting image download URLs
+          // https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ],
+        "Resource": [
+          for repo in aws_ecr_repository.repositories : repo.arn
+        ]
       }
     ]
   })

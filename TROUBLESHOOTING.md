@@ -54,3 +54,9 @@ Then (if needed):
 ```
 sudo xcodebuild -license
 ```
+
+
+### Terraform plan / apply
+Cloudflare "exceeded available rate limit retries"
+Try rerolling your admin token, or waiting lol 
+
