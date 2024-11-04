@@ -174,4 +174,10 @@ kubectl create secret docker-registry ecr-credentials \
  --docker-username=AWS \
  --docker-password=$(aws ecr get-login-password --region $AWS_REGION)
 
-# Deploy with Helm, passing environment variables dynamically
+### Note about how third party credentials should be stored in Secrets Manager, generic config like environment or svc.local urls can be in shared values file
+
+### TODO move cloudlare token to here
+
+```bash
+kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_DNS_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
+```

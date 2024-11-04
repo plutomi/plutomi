@@ -25,12 +25,6 @@ Plutomi has _not_ been tested to run on a VPS with networked storage like EC2 & 
 
 - 3 nodes with Ubuntu 20.04 installed and SSH access
 
-- Install [SealedSecrets](https://sealed-secrets.netlify.app/) locally on your machine
-
-```bash
-brew install kubeseal
-```
-
 This is how we encrypt secrets in the cluster AND allows us to commit them into this repository.
 
 - Open these ports on each of the nodes so they can talk back and forth to each other:
@@ -38,7 +32,6 @@ This is how we encrypt secrets in the cluster AND allows us to commit them into 
   - 2379-2380 - Required for high availability etcd
   - 6443 - K3S Supervisor and for the API server
   - 10250 - Kubelet metrics
-  - 8080 - [Kubeseal port](https://github.com/bitnami-labs/sealed-secrets/issues/1447#issuecomment-2022217031)
 
   - 30000-32767 - NodePort Services
   - 8472 - Required for Flannel VXLAN
@@ -155,17 +148,10 @@ export KUBECONFIG=~/.kube/YOUR_CONFIG_NAME
 
 If using Cloudflare for DNS, we need a token for cert-manager to use. We need to store it in a secret as well:
 
-```bash
-kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_DNS_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
-```
-
 <!-- Create other global secrets shared by most of the backend: -->
 
 <!-- # TODO MYSQL
 
-```bash
-kubectl create secret generic global-config-secret --dry-run=client --from-literal=MYSQL_URL=mysql://USERNAMEdifferentfromINITDB_ROOT:PASSWORDdifferentfromINITDB_ROOT@lTODOTODOTODOTODOTODOTODO.default.svc.cluster.local:27017/plutomi -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/global.yaml
-```
 
 Transfer the files over to your server in the `/k8s` directory and apply the secrets:
 
@@ -340,7 +326,4 @@ helm upgrade --install traefik-deploy . -f values/ingress.yaml
 ### Monitoring
 
 We use [Axiom](https://axiom.co/) for logging instead of keeping everything in the cluster. You can sign up and add your secrets like normal. This merges the secrets into the global.yaml file if you already created it previously:
-
-```bash
-kubectl create secret generic global-config-secret --dry-run=client --from-literal=AXIOM_DATASET=DATASET_NAME_HERE --from-literal=AXIOM_ORG_ID=ORG_ID_HERE --from-literal=AXIOM_TOKEN=TOKEN_HERE -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml --merge-into ./k8s/secrets/global.yaml
-```
+TODO note about terraform creating this
