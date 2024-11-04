@@ -30,22 +30,6 @@ deployment:
                 cpu: "50m"
                 memory: "64Mi"
             env:
-              MYSQL_URL:
-                secretKeyRef:
-                  name: global-config-secret
-                  key: MYSQL_URL
-              AXIOM_DATASET:
-                secretKeyRef:
-                  name: global-config-secret
-                  key: AXIOM_DATASET
-              AXIOM_ORG_ID:
-                secretKeyRef:
-                  name: global-config-secret
-                  key: AXIOM_ORG_ID
-              AXIOM_TOKEN:
-                secretKeyRef:
-                  name: global-config-secret
-                  key: AXIOM_TOKEN
 
             readinessProbe:
               periodSeconds: 10
