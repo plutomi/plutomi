@@ -82,3 +82,6 @@ Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). I
 If you have other questions, feel free to open a discussion or issue, or contact me on [X @notjoswayski](https://twitter.com/notjoswayski) or via email at jose@plutomi.com.
 
 -- TODO see the terraform/ dir
+
+--
+TODO see runbooks for htings like how to add a new service etc.

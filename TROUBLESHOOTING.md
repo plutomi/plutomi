@@ -60,3 +60,4 @@ sudo xcodebuild -license
 Cloudflare "exceeded available rate limit retries"
 Try rerolling your admin token, or waiting lol 
 
+I had an IP limit on the API key so accidentally ran into this when switching locations.

@@ -149,3 +149,29 @@ terraform apply -var-file=secrets.tfvars -var-file=secrets-ENVIRONMENT.tfvars
 You should now see multiple state files in your S3 bucket, one for each environment:
 
 ![state](/images/state.png)
+
+### Add your AWS keys when deploying from the user created by terraform
+
+# Set up AWS IAM credentials in Kubernetes secret
+
+> The template/deployment.yaml file pulls this in for you
+
+export AWS_ACCESS_KEY_ID=your_access_key_id
+export AWS_SECRET_ACCESS_KEY=your_secret_access_key
+export AWS_ACCOUNT_ID=your_account_id
+export AWS_REGION=your_region
+
+kubectl create secret generic aws-credentials \
+ --from-literal=AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+  --from-literal=AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+ --from-literal=AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} \
+  --from-literal=AWS_REGION=${AWS_REGION}
+
+# Set up ECR Docker registry credentials in Kubernetes secret
+
+kubectl create secret docker-registry ecr-credentials \
+ --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
+ --docker-username=AWS \
+ --docker-password=$(aws ecr get-login-password --region $AWS_REGION)
+
+# Deploy with Helm, passing environment variables dynamically
