@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "\n        SELECT *\n        FROM users\n        WHERE id = ?\n        LIMIT 1\n        ",
+  "query": "\n            SELECT * \n            FROM users\n            WHERE id = ?\n            LIMIT 1\n            ",
   "describe": {
     "columns": [
       {
@@ -44,7 +44,7 @@
         "name": "public_id",
         "type_info": {
           "type": "VarString",
-          "flags": "NOT_NULL | UNIQUE_KEY | NO_DEFAULT_VALUE",
+          "flags": "NOT_NULL | NO_DEFAULT_VALUE",
           "max_size": 48
         }
       },
@@ -80,5 +80,5 @@
       false
     ]
   },
-  "hash": "b98f8d299747236cd13a9b2a5bff3762f8ca4cd50f33252b7dc6d19c3b770553"
+  "hash": "23842e0c6a9ba272a2b5f5e8d376c786791ae535b34293eb0c6599645c1f14b1"
 }

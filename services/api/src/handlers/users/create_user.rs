@@ -7,7 +7,7 @@ use serde_json::json;
 use shared::{
     constants::Topics,
     entities::user::{CreateUserOptions, User},
-    events::{PlutomiEvent, PlutomiPayload},
+    events::{PlutomiData, PlutomiEvent},
     logger::LogObject,
 };
 use sqlx::{MySql, Transaction};
@@ -114,7 +114,7 @@ pub async fn create_user(
         .publish(
             Topics::Auth,
             &user.public_id,
-            &PlutomiEvent::new(PlutomiPayload::TOTPRequested {
+            &PlutomiEvent::new(PlutomiData::TOTPRequested {
                 email: get_user_result.email.clone(),
                 created_at: get_user_result.created_at,
             }),

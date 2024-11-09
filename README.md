@@ -33,6 +33,8 @@ For each entity, we maintain a main Kafka topic along with corresponding retry a
 
 - **Main Topic**: The initial destination for all events.
 
+# TODO recommended self hosting specs? 4vcpu, 8gb ram, 100gb ssd? with no replication
+
 - **Retry Topic**: Messages that fail processing in the main topic are rerouted here. Retries implement exponential backoff to prevent overwhelming the system.
 
 - **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Once underlying issues are resolved (e.g., code fixes, service restoration), the messages are reprocessed by moving them back into the retry topic in a controlled manner, ensuring they do not disrupt live traffic.

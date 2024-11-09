@@ -3,7 +3,7 @@ use serde_json::json;
 use shared::{
     constants::{ConsumerGroups, Topics},
     consumers::{MessageHandlerOptions, PlutomiConsumer},
-    events::{PlutomiEvent, PlutomiPayload},
+    events::{PlutomiData, PlutomiEvent},
     logger::LogObject,
 };
 use std::sync::Arc;
@@ -34,14 +34,14 @@ fn send_email(
         plutomi_consumer.logger.info(LogObject {
             message: format!(
                 "Processing {:?} event inside of {}",
-                plutomi_event.event_type, &plutomi_consumer.name
+                plutomi_event.meta.event_type, &plutomi_consumer.name
             ),
-            data: Some(json!(&plutomi_event.payload)),
+            data: Some(json!(&plutomi_event.data)),
             ..Default::default()
         });
 
-        match plutomi_event.payload {
-            PlutomiPayload::TOTPRequested { email, created_at } => {
+        match plutomi_event.data {
+            PlutomiData::TOTPRequested { email, created_at } => {
                 plutomi_consumer.logger.info(LogObject {
                     message: "Sending TOTP Code to user".to_string(),
                     ..Default::default()

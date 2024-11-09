@@ -3,24 +3,31 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlutomiEvent {
+    pub meta: PlutomiMeta,
+    pub data: PlutomiData,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PlutomiMeta {
     pub event_type: String,
     pub version: String,
-    pub payload: PlutomiPayload,
 }
 
 impl PlutomiEvent {
-    pub fn new(payload: PlutomiPayload) -> Self {
+    pub fn new(payload: PlutomiData) -> Self {
         match payload {
-            PlutomiPayload::TOTPRequested { email, created_at } => Self {
-                event_type: "totp-request.created".to_string(),
-                version: "1".to_string(),
-                payload: PlutomiPayload::TOTPRequested { email, created_at },
+            PlutomiData::TOTPRequested { email, created_at } => Self {
+                meta: PlutomiMeta {
+                    event_type: "totp-request.created".to_string(),
+                    version: "1".to_string(),
+                },
+                data: PlutomiData::TOTPRequested { email, created_at },
             },
         }
     }
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub enum PlutomiPayload {
+pub enum PlutomiData {
     TOTPRequested {
         email: String,
         created_at: NaiveDateTime,

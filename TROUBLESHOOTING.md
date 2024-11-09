@@ -25,6 +25,7 @@ Make sure your `.vscode/.settings.json` file has the correct path to your worksp
 {
   "rust-analyzer.linkedProjects": [
     "services/api/Cargo.toml",
+    "services/migrator/Cargo.toml",
     "services/consumers/notiications-auth/Cargo.toml",
     "services/shared/Cargo.toml"
   ]
@@ -37,7 +38,7 @@ cargo sqlx prepare
 
 ### proc-macro crate is missing it's build data
 
-I believe I fixed this by a combination of `cargo clean` + `cargo build` and ensuring `rust-analyzer` was working and discovering directories correctly.
+I believe I fixed this by a combination of `cargo clean` + `cargo build` and ensuring `rust-analyzer` was working and discovering directories correctly in [plutomi.code-workspace](./plutomi.code-workspace). If you're using VSCode, you can try to open the workspace file and see if it's able to discover the directories correctly.
 
 ### error returned from database: 4031 (HY000): The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior
 
@@ -55,9 +56,9 @@ Then (if needed):
 sudo xcodebuild -license
 ```
 
-
 ### Terraform plan / apply
+
 Cloudflare "exceeded available rate limit retries"
-Try rerolling your admin token, or waiting lol 
+Try rerolling your admin token, or waiting lol
 
 I had an IP limit on the API key so accidentally ran into this when switching locations.

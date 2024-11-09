@@ -109,8 +109,8 @@ impl fmt::Display for LogObjectWithLevel {
 
 pub struct Logger {
     sender: UnboundedSender<LogObjectWithLevel>,
-    // The name of the caller
-    application: &'static str,
+    // // The name of the caller
+    // application: &'static str,
 }
 
 struct CustomTimeFormat;
@@ -259,7 +259,7 @@ impl Logger {
 
         let logger = Arc::new(Logger {
             sender,
-            application: context.application,
+            // application: context.application,
         });
 
         logger.info(LogObject {
