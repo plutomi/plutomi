@@ -15,7 +15,7 @@ Failed to run extensions checks: error configuring Kubernetes API client: invali
 
 Make sure to `export KUBECONFIG=/etc/rancher/k3s/k3s.yaml` in your node first.
 
-### rust-analyzer
+### rust-analyzer - TODO REMOVE
 
 "FetchWorkspaceError: rust-analyzer failed to load workspace: Failed to load the project at $DIRECTORY"
 
