@@ -44,8 +44,10 @@ fi
 # Authenticate Docker to AWS ECR
 aws ecr get-login-password --region $AWS_REGION --profile $AWS_PROFILE | docker login --username AWS --password-stdin $ECR_URL
 
+# TODO change to buildx
 # Build the Docker image for the specified service
-docker build -t $SERVICE_NAME ./services/$SERVICE_NAME
+# docker build -t $SERVICE_NAME ./services/$SERVICE_NAME/Dockerfile .
+docker build -t $SERVICE_NAME -f ./services/$SERVICE_NAME/Dockerfile .
 
 # Tag the Docker image
 docker tag $SERVICE_NAME:latest $ECR_URL:$IMAGE_TAG

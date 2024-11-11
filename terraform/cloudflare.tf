@@ -50,14 +50,14 @@ locals {
 
 # Add DNS A records in Cloudflare pointing to each EC2 instance's public IP
 resource "cloudflare_record" "control_plane_dns" {
-  count   = length(local.control_plane_ips)   # Create one record per instance
-  zone_id = var.cloudflare_zone_id            # Cloudflare Zone ID for your domain
-  name    = "node-${count.index}.${var.base_url}"  # Adjust the subdomain name as needed
+  count   = length(local.control_plane_ips)       # Create one record per instance
+  zone_id = var.cloudflare_zone_id                # Cloudflare Zone ID for your domain
+  name    = "node-${count.index}.${var.base_url}" # Adjust the subdomain name as needed
   type    = "A"
   ttl     = 300
-  content = local.control_plane_ips[count.index]   # Public IP for the instance
+  content = local.control_plane_ips[count.index] # Public IP for the instance
   tags    = ["ec2", "control-plane", var.environment]
-
+  proxied = true # Enable Cloudflare proxying
   # Ensure this resource depends on the EC2 instances being created
   depends_on = [aws_instance.control_plane_nodes]
 }

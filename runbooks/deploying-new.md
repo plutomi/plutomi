@@ -2,7 +2,7 @@
 
 Most of the Plutomi infrastructure is managed by Terraform. This creates a catch-22 situation where you need to create a few things by hand before you can deploy the application. We do not use Terraform Cloud, instead we manage our own Terraform state [using S3 and DynamoDB](https://developer.hashicorp.com/terraform/language/backend/s3). It is highly recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment such as `plutomi-development`, `plutomi-staging`, and `plutomi-production`. We will create a role in the `plutomi-shared` account that can be assumed by the other accounts for managing the Terraform state.
 
-The recommended resources for deploying Plutomi are 3 nodes with at least 2vCPU, 8GB RAM, and 100GB SSD each.
+The recommended resources for deploying Plutomi are 3 x86 nodes with at least 2vCPU, 8GB RAM, and 100GB SSD each.
 
 The deployment will create the following: # TODo update with nodtes from PR
 
@@ -132,12 +132,12 @@ Get your SSH key for the EC2 instances, you'll need it in a bit:
 terraform output -raw plutomi-development-ssh-key > plutomi-development-ssh-key.pem
 ```
 
-### Build the Docker images
+### Building the Docker images
 
-In the previous step, we created a new ECR repository for each service. Now, we need to build the Docker images and push them to ECR. There's a script to help you out, just tell it what service you want to build and it will push to ECR for you. You can do this by running the following commands:
+In the previous step, we created a new ECR repository for each service. Now, we need to build the Docker images and push them to ECR. There's a script to help you out, just tell it what service you want to build and with which account and it will push to ECR for you. You can do this by running the following command:
 
 ```bash
-./scripts/docker.sh api plutomi-development us-east-1
+./scripts/docker.sh api plutomi-development
 ```
 
 # TODO set this in k8s somehow :T
@@ -180,3 +180,13 @@ terraform apply -var-file=secrets.tfvars -var-file=secrets-ENVIRONMENT.tfvars
 You should now see multiple state files in your S3 bucket, one for each environment:
 
 ![state](/images/state.png)
+
+---
+
+## TODO note about
+
+For multi platform builds, you only have to do this once:
+docker buildx create --name multiarch --use --bootstrap
+
+Build the image and push it to the repository. This might take a while depending if cross compiling.
+docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/<api|web|consumer> . --push
