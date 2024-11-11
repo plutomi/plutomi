@@ -1,3 +1,5 @@
+# ! TODO: this needs ifle paths updated to run from root!
+
 # Use a small base image and multi-stage builds to reduce final image size
 FROM node:20.2.0-alpine3.18 as base
 
