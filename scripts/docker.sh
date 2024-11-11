@@ -27,7 +27,7 @@ fi
 SERVICE_NAME=$1
 AWS_PROFILE=$2
 AWS_REGION="us-east-1"
-IMAGE_TAG="latest"
+IMAGE_TAG="latest2"
 
 # Fetch the ECR repository URL from Terraform output for the specified service
 ECR_URL=$(cd ./terraform && terraform output -json ecr_repo_urls | jq -r ".\"$SERVICE_NAME\"")

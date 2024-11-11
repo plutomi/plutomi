@@ -1,5 +1,5 @@
-# Use the official Rust image as the base for the builder stage
-FROM rust:1.79 AS builder
+# Use the official Rust image based on Debian Bookworm for the builder stage
+FROM --platform=linux/amd64 rust:1.79-bookworm AS builder
 
 # Install necessary build dependencies
 RUN apt-get update && \
@@ -26,25 +26,28 @@ COPY ./services/shared /app/services/shared
 COPY ./services/api/Cargo.toml ./services/api/Cargo.lock ./services/api/
 
 # Create a dummy main file to compile dependencies only
-RUN mkdir -p ./services/api/src && echo "fn main() {}" > ./services/api/src/main.rs
+RUN mkdir -p ./services/api/src && \
+    echo "fn main() {}" > ./services/api/src/main.rs
 
 # Build dependencies
-RUN cd ./services/api && cargo build --release --locked
+RUN cd ./services/api && \
+    cargo build --release --locked
 
 # Copy the actual source code
 COPY ./services/api/src ./services/api/src
 
 # Build the actual application
-RUN cd ./services/api && cargo build --release --locked
+RUN cd ./services/api && \
+    cargo build --release --locked
 
-# Final stage: use a minimal Debian image
-FROM debian:bullseye-slim AS final
+# Final stage: use a minimal Debian Bookworm image
+FROM --platform=linux/amd64 debian:bookworm-slim AS final
 
 # Install necessary runtime dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
-        libssl1.1 \
+        libssl3 \
         liblz4-1 \
         zlib1g \
         libcurl4 && \

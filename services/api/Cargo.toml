@@ -34,8 +34,9 @@ dotenvy = "0.15.7"
 sqlx = { version = "0.8.2", features = [ "runtime-tokio", "tls-native-tls", "mysql", "chrono" ] }
 chrono = { version = "0.4.38" }
 nanoid = "0.4.0"
+anyhow = "1.0.93"
 
 [profile.release]
 # https://github.com/johnthagen/min-sized-rust
-strip = true # Automatically strip symbols from the binary.
-lto = true   # Enable link-time optimizations.
+strip = false # Automatically strip symbols from the binary.
+lto = false   # Enable link-time optimizations.

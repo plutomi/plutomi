@@ -26,18 +26,30 @@ mod utils;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
-    dotenvy::dotenv().ok();
+    println!("Getting environment variables INIT!!");
+
+    let envx = dotenvy::dotenv();
+
+    if envx.is_err() {
+        println!("Failed to load .env file");
+    }
+
+    println!("Getting environment variables!");
 
     let env = get_env();
 
+    println!("GOT environment variables! Getting logger");
     let logger = Logger::init(LoggerContext { application: "api" })?;
+    println!("GOTlogger! getting kafka client...");
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
 
     let kafka = KafkaClient::new("api", &Arc::clone(&logger), false, None, None);
+    println!("GOT KAFKA CLIENT! Getting mysql!");
 
     let mysql = MySQLClient::new("api", &logger, None).await?;
+    println!("GOT mysql!! Getting state...");
 
     // Create an instance of AppState to be shared with all routes
     let state = Arc::new(AppState {
@@ -46,6 +58,7 @@ async fn main() -> Result<(), String> {
         mysql,
         kafka,
     });
+    println!("GOT state! Getting routes...");
 
     // Redirect to web app routes
     let docs_routes = DOCS_ROUTES.iter().fold(Router::new(), |router, route| {
@@ -77,6 +90,7 @@ async fn main() -> Result<(), String> {
         // Add app state like logger, DB connections, etc.
         .with_state(Arc::clone(&state));
 
+    println!("GOT routes! Starting server...");
     let addr = PORT.parse::<std::net::SocketAddr>().unwrap_or_else(|e| {
         let message = format!("Failed to parse address on startup '{}': {}", PORT, e);
         let error_json = json!({ "message": &message });

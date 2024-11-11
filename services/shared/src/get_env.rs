@@ -25,6 +25,8 @@ impl Env {
 fn get_key_from_env(key: &str, default_value: Option<&str>) -> String {
     env::var(key).unwrap_or_else(|e| {
         default_value.map(|v| v.to_string()).unwrap_or_else(|| {
+            let x = format!("Error getting key '{}': {}", key, e);
+            println!("{}", x);
             panic!(
                 "Error getting key '{}' from env: {} and no default_value provided",
                 key, e
