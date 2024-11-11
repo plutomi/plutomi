@@ -61,8 +61,8 @@ variable "aws_profile" {
 }
 
 variable "ecr_repositories" {
-  type    = list(string)
-  default = ["plutomi-web", "plutomi-api", "plutomi-migrator"] # plutomi-notifications-user-consumer etc.
+  type    = list(string)# TODO add consumer
+  default = ["web", "api", "migrator"] # plutomi-notifications-user-consumer etc.
 }
 
 

@@ -1,8 +1,10 @@
 ### Prerequisites
 
-Most of the Plutomi infrastructure is managed by Terraform. This creates a catch-22 situation where you need to create a few things by hand before you can deploy the application. We do not use Terraform Cloud, instead we manage our own [Terraform state using S3 and DynamoDB](https://developer.hashicorp.com/terraform/language/backend/s3). It is highly recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment such as `plutomi-development`, `plutomi-staging`, and `plutomi-production`. We will create a role in the `plutomi-shared` account that can be assumed by the other accounts for managing the Terraform state.
+Most of the Plutomi infrastructure is managed by Terraform. This creates a catch-22 situation where you need to create a few things by hand before you can deploy the application. We do not use Terraform Cloud, instead we manage our own Terraform state [using S3 and DynamoDB](https://developer.hashicorp.com/terraform/language/backend/s3). It is highly recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment such as `plutomi-development`, `plutomi-staging`, and `plutomi-production`. We will create a role in the `plutomi-shared` account that can be assumed by the other accounts for managing the Terraform state.
 
-The deployment will create the following:
+The recommended resources for deploying Plutomi are 3 nodes with at least 2vCPU, 8GB RAM, and 100GB SSD each.
+
+The deployment will create the following: # TODo update with nodtes from PR
 
 - SES identity for sending emails
 - SNS topic and SQS as a destination for emails
@@ -124,20 +126,23 @@ If everything looks good, apply the changes:
 terraform apply -var-file=secrets.tfvars
 ```
 
-# Get your SSH key
+Get your SSH key for the EC2 instances, you'll need it in a bit:
 
-terraform output -raw plutomi-development-ssh-key > plutomi-development-ssh-key.pem # TODO rename
+```bash
+terraform output -raw plutomi-development-ssh-key > plutomi-development-ssh-key.pem
+```
 
-## TODO below is outdated now
+### Build the Docker images
 
-### Add your AWS keys when deploying from the user created by terraform
+In the previous step, we created a new ECR repository for each service. Now, we need to build the Docker images and push them to ECR. There's a script to help you out, just tell it what service you want to build and it will push to ECR for you. You can do this by running the following commands:
 
-# Set up AWS IAM credentials in Kubernetes secret
+```bash
+./scripts/docker.sh api plutomi-development us-east-1
+```
+
+# TODO set this in k8s somehow :T
 
 > The template/deployment.yaml file pulls this in for you
-
-export AWS_ACCOUNT_ID=your_account_id
-export AWS_REGION=your_region
 
 ### Note about how third party credentials should be stored in Secrets Manager, generic config like environment or svc.local urls can be in shared values file
 

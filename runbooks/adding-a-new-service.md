@@ -15,3 +15,5 @@ Update run.sh script
 update plutomi.code-workspace file
 
 Update the image name in the service deploy values
+
+Add it to the docker build script

@@ -20,7 +20,7 @@ deployment:
         terminationGracePeriodSeconds: 10
         containers:
           - name: web
-            image: plutomi-web:latest
+            image: web:latest
             port: 3000
             resources:
               requests:

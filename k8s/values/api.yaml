@@ -23,7 +23,7 @@ deployment:
         terminationGracePeriodSeconds: 10
         containers:
           - name: api
-            image: plutomi-api:latest
+            image: api:latest
             port: 8080
             resources:
               requests:
