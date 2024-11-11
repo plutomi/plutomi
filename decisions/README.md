@@ -6,8 +6,6 @@ This folder is to document why certain architectural decisions were made so when
 
 [Why Kafka?](why-kafka.md "Why Kafka?")
 
-[Why not AWS?](why-not-aws.md "Why not AWS?")
-
 [Why R2 instead of S3?](why-r2.md "Why R2 instead of S3?")
 
 [Why SES? Why not other providers?](why-ses.md "Why SES? Why not other providers?")

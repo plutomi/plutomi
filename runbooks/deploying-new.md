@@ -150,6 +150,12 @@ You should now see multiple state files in your S3 bucket, one for each environm
 
 ![state](/images/state.png)
 
+# Get your SSH key
+
+terraform output -raw ssh_private_key > k3s_key_pair.pem
+
+## TODO below is outdated now
+
 ### Add your AWS keys when deploying from the user created by terraform
 
 # Set up AWS IAM credentials in Kubernetes secret

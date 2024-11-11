@@ -61,24 +61,40 @@ openssl rand -base64 50 | tr -d '\n/=+'
 Install K3S with that token
 
 ```bash
-curl -sfL https://get.k3s.io | K3S_TOKEN=TOKEN_YOU_GENERATED K3S_KUBECONFIG_MODE="644" K3S_NODE_NAME=YOUR_APP-production-0 sh -s - server  --cluster-init  --node-ip PRIVATE_NETWORKING_PORT --advertise-address PRIVATE_NETWORKING_PORT --node-external-ip PUBLIC_IP --tls-san PRIVATE_NETWORKING_PORT --tls-san PUBLIC_IP
+curl -sfL https://get.k3s.io | K3S_TOKEN=TOKEN_YOU_GENERATED K3S_KUBECONFIG_MODE="644" K3S_NODE_NAME=plutomi-production-0 sh -s - server  --cluster-init  --node-ip PRIVATE_IP --advertise-address PRIVATE_IP  --tls-san PRIVATE_IP --tls-san PUBLIC_IP --node-external-ip PUBLIC_IP
 ```
 
 Copy the new secret token that was created
 
 ```bash
-cat /var/lib/rancher/k3s/server/node-token
+sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 
-Install the K3S agent on the second node
+K10bf4d85cb73b6f13390a516b9914a31cd3048ece4b58c3c02ec36e6b525955e6b::server:TOKEN_YOU_GENERATED
+Install the K3S agent on the second and third nodes:
+
+curl -sfL https://get.k3s.io | K3S_TOKEN=K10bf4d85cb73b6f13390a516b9914a31cd3048ece4b58c3c02ec36e6b525955e6b::server:TOKEN_YOU_GENERATED K3S_NODE_NAME=plutomi-production-1 K3S_KUBECONFIG_MODE="644" sh -s - server --server https://10.0.1.41:6443 --node-ip 10.0.1.26 --advertise-address 10.0.1.26 --tls-san 10.0.1.26 --node-external-ip 18.208.167.73 --tls-san 18.208.167.73
+
+curl -sfL https://get.k3s.io | K3S_TOKEN=K10bf4d85cb73b6f13390a516b9914a31cd3048ece4b58c3c02ec36e6b525955e6b::server:TOKEN_YOU_GENERATED K3S_NODE_NAME=plutomi-production-2 K3S_KUBECONFIG_MODE="644" sh -s - server --server https://10.0.1.41:6443 --node-ip 10.0.1.4 --advertise-address 10.0.1.4 --tls-san 10.0.1.4 --node-external-ip 44.200.118.19 --tls-san 44.200.118.19
 
 ```bash
-curl -sfL https://get.k3s.io | K3S_TOKEN=TOKEN_EXTRACTED_FROM_NODE_1 K3S_KUBECONFIG_MODE="644" K3S_NODE_NAME=YOUR_APP-production-1 sh -s - server  --server https://PRIVATE_IP_OF_NODE_1:6443 K3S_KUBECONFIG_MODE="644"   --node-ip PRIVATE_IP_OF_THE_SECOND_NODE--advertise-address PRIVATE_IP_OF_THE_SECOND_NODE--node-external-ip PUBLIC_IP_OF_THE_SECOND_NODE --tls-san PRIVATE_IP_OF_THE_SECOND_NODE --tls-san PUBLIC_IP_OF_THE_SECOND_NODE
+# Second Node
+curl -sfL https://get.k3s.io | K3S_TOKEN=TOKEN_EXTRACTED_FROM_NODE_1 K3S_NODE_NAME=plutomi-production-1 K3S_KUBECONFIG_MODE="644" sh -s - server  --server https://PRIVATE_IP_OF_NODE_1:6443  --node-ip PRIVATE_IP_OF_THE_SECOND_NODE --advertise-address PRIVATE_IP_OF_THE_SECOND_NODE --tls-san PRIVATE_IP_OF_THE_SECOND_NODE --node-external-ip PUBLIC_IP_OF_THE_SECOND_NODE  --tls-san PUBLIC_IP_OF_THE_SECOND_NODE
+
+# Third Node
+curl -sfL https://get.k3s.io | K3S_TOKEN=TOKEN_EXTRACTED_FROM_NODE_1 K3S_NODE_NAME=plutomi-production-2 K3S_KUBECONFIG_MODE="644" sh -s - server  --server https://PRIVATE_IP_OF_NODE_1:6443  --node-ip PRIVATE_IP_OF_THE_THIRD_NODE --advertise-address PRIVATE_IP_OF_THE_THIRD_NODE --tls-san PRIVATE_IP_OF_THE_THIRD_NODE --node-external-ip PUBLIC_IP_OF_THE_THIRD_NODE  --tls-san PUBLIC_IP_OF_THE_THIRD_NODE
+
 ```
 
-...and repeat the process for the third node.
+Your control plane is now set up!
 
-Veriy all the nodes are connected:
+You'd do the same thing for the agent/worker nodes, but you'd omit the `--cluster-init` and `--server` flags.
+
+```bash
+curl -sfL https://get.k3s.io | K3S_URL=https://PRIVATE_IP_OF_NODE_1:6443 K3S_TOKEN=TOKEN_EXTRACTED_FROM_NODE_1 K3S_NODE_NAME=plutomi-production-3 K3S_KUBECONFIG_MODE="644" sh -s - --node-ip PRIVATE_IP_OF_THE_FOURTH_NODE --advertise-address PRIVATE_IP_OF_THE_FOURTH_NODE --tls-san PRIVATE_IP_OF_THE_FOURTH_NODE --node-external-ip PUBLIC_IP_OF_THE_FOURTH_NODE  --tls-san PUBLIC_IP_OF_THE_FOURTH_NODE
+```
+
+Verify all the nodes are connected:
 
 ```bash
 sudo k3s kubectl get nodes

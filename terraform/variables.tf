@@ -1,4 +1,22 @@
 #### AWS
+
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  default     = "10.0.0.0/16"
+}
+
+variable "public_subnet_cidr" {
+  description = "CIDR block for the public subnet"
+  default     = "10.0.1.0/24"
+}
+
+
+variable "home_ip" {
+  description = "Your home IP address"
+}
+
+
+
 variable "environment" {
   description = "The environment for the deployment"
 }
@@ -53,33 +71,33 @@ variable "ecr_repositories" {
 variable "cloudflare_admin_token" {
   # This should have Zone.Zone, Zone.DNS, and Account.WorkersR2Storage edit permissions
   description = "The admin token for creating the bucket storage bucket and managing SES DNS records"
-  sensitive = true
+  sensitive   = true
 }
 
 variable "cloudflare_zone_id" {
   # For MX, SPF, and DKIM records
   description = "The zone ID for Cloudflare"
-  sensitive = true
+  sensitive   = true
 }
 
 variable "cloudflare_account_id" {
-    description = "The account ID for Cloudflare"
-    sensitive = true
+  description = "The account ID for Cloudflare"
+  sensitive   = true
 }
 
 variable "cloudflare_region" {
-    # https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/
-    description = "The region for the Cloudflare bucket"
+  # https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/
+  description = "The region for the Cloudflare bucket"
 }
 
 variable "cloudflare_bucket_name" {
-    description = "The name of the R2 bucket for Cloudflare"
+  description = "The name of the R2 bucket for Cloudflare"
 }
 
 # #### Axiom
 # Not currently used as this provider has a few issues
 variable "axiom_admin_api_token" {
-    description = "The admin API token for Axiom to create datasets and api keys"
-    sensitive = true
+  description = "The admin API token for Axiom to create datasets and api keys"
+  sensitive   = true
 }
 
