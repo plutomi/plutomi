@@ -1,30 +1,32 @@
-# Build Stage
-FROM golang:1.20-alpine AS builder
+# Stage 1: Build
+FROM golang:1.23 AS builder
 
+# Set the GOARCH to build for x86_64 (amd64)
+ENV GOARCH=amd64
 WORKDIR /app
 
-# Copy go.mod and go.sum files
+# Copy go.mod and go.sum files and download dependencies
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
 
-# Copy the source code
-COPY main.go .
+# Copy the rest of the application code
+COPY . .
 
-# Build the Go application
-RUN CGO_ENABLED=0 go build -o app .
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -o server .
 
-# Runtime Stage
+# Stage 2: Run
 FROM alpine:latest
+WORKDIR /root/
 
-WORKDIR /app
+# Install certificates to enable HTTPS support
+RUN apk --no-cache add ca-certificates
 
 # Copy the binary from the builder stage
-COPY --from=builder /app/app .
+COPY --from=builder /app/server .
 
-# Expose port
-EXPOSE 8080
+# Expose the port
+EXPOSE 3000
 
-# Run the binary
-ENTRYPOINT ["./app"]
+# Run the application
+CMD ["./server"]

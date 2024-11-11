@@ -51,6 +51,7 @@
     "fargate",
     "flyctl",
     "getrandom",
+    "godotenv",
     "headlessui",
     "heroicons",
     "Hetzner",

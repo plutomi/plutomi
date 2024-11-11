@@ -1,6 +1,8 @@
 package main
 
 import (
+	"api/handlers"
+	"api/shared"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,24 +15,14 @@ import (
 	"go.uber.org/zap"
 )
 
-type PlutomiResponse struct {
-	Message string `json:"message"`
-	DocsUrl string `json:"docs_url"`
-}
-
-type EnvironmentVariables struct {
-	Environment string
-	Port        string
-}
-
 // loadEnv loads environment variables and logs any errors encountered, using the provided logger
-func loadEnv(logger *zap.Logger) EnvironmentVariables {
+func loadEnv(logger *zap.Logger) shared.EnvironmentVariables {
 	err := godotenv.Load()
 	if err != nil {
 		logger.Warn("Error loading .env file, using defaults")
 	}
 
-	env := EnvironmentVariables{
+	env := shared.EnvironmentVariables{
 		Environment: getEnvWithDefault("ENVIRONMENT", "development", logger),
 		Port:        getEnvWithDefault("PORT", "3000", logger),
 	}
@@ -75,35 +67,12 @@ func setupRoutes(logger *zap.Logger) *chi.Mux {
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		handleHome(w, r, logger)
+		handlers.HandleRoot(w, r, logger)
 	})
 
-	
-
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		handleNotFound(w, r, logger)
+		handlers.HandleNotFound(w, r, logger)
 	})
 
 	return r
-}
-
-// handleHome is a sample route handler that takes in a logger
-func handleHome(w http.ResponseWriter, r *http.Request, logger *zap.Logger) {
-	res := PlutomiResponse{
-		Message: "Hello from the Plutomi API! Did you mean to go to the docs?",
-		DocsUrl: "https://plutomi.com/docs/api",
-	}
-
-	logger.Info("Home route accessed")
-	render.JSON(w, r, res)
-}
-
-func handleNotFound(w http.ResponseWriter, r *http.Request, logger *zap.Logger) {
-	logger.Warn("Route not found", zap.String("method", r.Method), zap.String("path", r.URL.Path))
-	res := PlutomiResponse{
-		Message: "Route not found",
-		DocsUrl: "https://plutomi.com/docs/api",
-	}
-	render.Status(r, http.StatusNotFound)
-	render.JSON(w, r, res)
 }
