@@ -6,18 +6,18 @@ locals {
 
 
 # Creates an SSH key pair for EC2 instances
-resource "tls_private_key" "k3s_key" {
+resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 2048
 }
 
-resource "aws_key_pair" "k3s_key_pair" { # TODO rename
-  key_name   = "k3s_key_pair"
-  public_key = tls_private_key.k3s_key.public_key_openssh
+resource "aws_key_pair" "ssh_key_pair" { # TODO rename
+  key_name   = "plutomi-${var.environment}-ssh-key"
+  public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
 output "ssh_private_key" {
-  value     = tls_private_key.k3s_key.private_key_pem
+  value     = tls_private_key.ssh_key.private_key_pem
   sensitive = true
 }
 
@@ -175,7 +175,7 @@ resource "aws_instance" "control_plane_nodes" {
   instance_type = "m6a.large"
   # ami                         = "ami-0085e579c65d43668" // Amazon Linux 2023 arm64
   ami                         = "ami-063d43db0594b521b" // Amazon Linux 2023 x86_64
-  key_name                    = aws_key_pair.k3s_key_pair.key_name
+  key_name                    = aws_key_pair.ssh_key_pair.key_name
   subnet_id                   = aws_subnet.public_subnet[count.index].id
   vpc_security_group_ids      = [aws_security_group.control_plane_security_group.id]
   associate_public_ip_address = true
@@ -191,6 +191,9 @@ resource "aws_instance" "control_plane_nodes" {
     volume_size = 12
     volume_type = "gp3"
   }
+
+  # Allow ECR and Secrets Manager access
+  iam_instance_profile = aws_iam_instance_profile.instance_profile.name
 
 }
 
@@ -319,11 +322,6 @@ resource "aws_secretsmanager_secret_version" "my_app_secret_version" {
 }
 
 
-# Create IAM user for accessing Secrets Manager
-resource "aws_iam_user" "secrets_manager_user" {
-  name = "secrets-manager-access-user"
-}
-
 
 # Define the IAM policy for restricted Secrets Manager access
 resource "aws_iam_policy" "secrets_manager_ip_restricted" {
@@ -377,35 +375,25 @@ resource "aws_iam_policy" "secrets_manager_ip_restricted" {
 }
 
 
-# TODO Remove
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2-role"
 
-# Attach the IP-restricted policy to the user
-resource "aws_iam_user_policy_attachment" "secrets_manager_policy_attachment" {
-  user       = aws_iam_user.secrets_manager_user.name
-  policy_arn = aws_iam_policy.secrets_manager_ip_restricted.arn
-}
-
-# TODO Remove
-
-# Generate access keys for the IAM user
-resource "aws_iam_access_key" "secrets_manager_access_key" {
-  user = aws_iam_user.secrets_manager_user.name
-}
-
-
-
-
-# TODO Remove
-
-
-# Output access key and secret key (for secure storage in Kubernetes)
-output "aws_access_key_id" {
-  value     = aws_iam_access_key.secrets_manager_access_key.id
-  sensitive = true
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
 }
 
 
-output "aws_secret_access_key" {
-  value     = aws_iam_access_key.secrets_manager_access_key.secret
-  sensitive = true
+resource "aws_iam_instance_profile" "instance_profile" {
+  name = "ec2-instance-profile"
+  role = aws_iam_role.ec2_role.name
 }

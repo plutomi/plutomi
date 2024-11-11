@@ -1,6 +1,6 @@
 ### Prerequisites
 
-Most of the Plutomi infrastructure is managed by Terraform. This creates a catch-22 situation where you need to create a few things by hand before you can deploy the application, like an S3 bucket to store the Terraform state files per environment and a DynamoDB table for locking the state file. It is highly recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment such as `plutomi-development`, `plutomi-staging`, and `plutomi-production`. We will create a role in the `plutomi-shared` account that can be assumed by the other accounts for managing the Terraform state.
+Most of the Plutomi infrastructure is managed by Terraform. This creates a catch-22 situation where you need to create a few things by hand before you can deploy the application. We do not use Terraform Cloud, instead we manage our own [Terraform state using S3 and DynamoDB](https://developer.hashicorp.com/terraform/language/backend/s3). It is highly recommended to create a top level `shared` account for these resources, and it is assumed that you have a multi account setup on AWS, one for each environment such as `plutomi-development`, `plutomi-staging`, and `plutomi-production`. We will create a role in the `plutomi-shared` account that can be assumed by the other accounts for managing the Terraform state.
 
 The deployment will create the following:
 
@@ -8,6 +8,7 @@ The deployment will create the following:
 - SNS topic and SQS as a destination for emails
 - The DNS records that SES requires (DKIM, SPF) on Cloudflare
 - R2 storage bucket for application assets
+- 3 EC2 instances to run our workload
 
 # TODO - create Cloudflare R2 keys and add to secrets
 
@@ -42,7 +43,7 @@ aws dynamodb create-table \
     --billing-mode PAY_PER_REQUEST
 ```
 
-Once you've created a bucket and a table in the shared account, you need to create a policy that allows actions on S3 and DynamoDB -> https://developer.hashicorp.com/terraform/language/backend/s3
+Once you've created a bucket and a table in the shared account, you need to create a policy that allows taking actions on these resources:
 
 ```json
 {
@@ -70,7 +71,7 @@ Once you've created a bucket and a table in the shared account, you need to crea
 }
 ```
 
-Then, create a role that allows assuming this policy from the sub accounts:
+Then, create a role that allows assuming this policy from the `developer` / `staging`/ `production` accounts:
 
 ```bash
 {
@@ -92,7 +93,7 @@ Then, create a role that allows assuming this policy from the sub accounts:
 }
 ```
 
-Then, cd into terraform and initialize it. You can do this from the other accounts:
+Then, `cd` into the `/terraform` directory and initialize it. You can do this from the other accounts:
 
 ```bash
 cd terraform
@@ -123,7 +124,32 @@ If everything looks good, apply the changes:
 terraform apply -var-file=secrets.tfvars
 ```
 
-## Deploy to other environments
+# Get your SSH key
+
+terraform output -raw plutomi-development-ssh-key > plutomi-development-ssh-key.pem # TODO rename
+
+## TODO below is outdated now
+
+### Add your AWS keys when deploying from the user created by terraform
+
+# Set up AWS IAM credentials in Kubernetes secret
+
+> The template/deployment.yaml file pulls this in for you
+
+export AWS_ACCOUNT_ID=your_account_id
+export AWS_REGION=your_region
+
+### Note about how third party credentials should be stored in Secrets Manager, generic config like environment or svc.local urls can be in shared values file
+
+### TODO move cloudlare token to here
+
+```bash
+kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_DNS_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
+```
+
+---
+
+## Deploying to other environments
 
 From here on out, each deploy will use the secrets variables and the appropriate aws profile.
 
@@ -149,41 +175,3 @@ terraform apply -var-file=secrets.tfvars -var-file=secrets-ENVIRONMENT.tfvars
 You should now see multiple state files in your S3 bucket, one for each environment:
 
 ![state](/images/state.png)
-
-# Get your SSH key
-
-terraform output -raw ssh_private_key > k3s_key_pair.pem
-
-## TODO below is outdated now
-
-### Add your AWS keys when deploying from the user created by terraform
-
-# Set up AWS IAM credentials in Kubernetes secret
-
-> The template/deployment.yaml file pulls this in for you
-
-export AWS_ACCESS_KEY_ID=your_access_key_id
-export AWS_SECRET_ACCESS_KEY=your_secret_access_key
-export AWS_ACCOUNT_ID=your_account_id
-export AWS_REGION=your_region
-
-kubectl create secret generic aws-credentials \
- --from-literal=AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
-  --from-literal=AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
- --from-literal=AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} \
-  --from-literal=AWS_REGION=${AWS_REGION}
-
-# Set up ECR Docker registry credentials in Kubernetes secret
-
-kubectl create secret docker-registry ecr-credentials \
- --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
- --docker-username=AWS \
- --docker-password=$(aws ecr get-login-password --region $AWS_REGION)
-
-### Note about how third party credentials should be stored in Secrets Manager, generic config like environment or svc.local urls can be in shared values file
-
-### TODO move cloudlare token to here
-
-```bash
-kubectl create secret generic cloudflare-token --dry-run=client --from-literal=CLOUDFLARE_DNS_TOKEN=TOKEN_HERE -n cert-manager -o yaml | kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format yaml > ./k8s/secrets/cloudflare.yaml
-```
