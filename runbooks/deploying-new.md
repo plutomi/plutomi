@@ -137,6 +137,7 @@ terraform output -raw plutomi-development-ssh-key > plutomi-development-ssh-key.
 In the previous step, we created a new ECR repository for each service. Now, we need to build the Docker images and push them to ECR. There's a script to help you out, just tell it what service you want to build and with which account and it will push to ECR for you. You can do this by running the following command:
 
 ```bash
+# Make sure you run this from the root of the repository
 ./scripts/docker.sh api plutomi-development
 ```
 
@@ -189,4 +190,4 @@ For multi platform builds, you only have to do this once:
 docker buildx create --name multiarch --use --bootstrap
 
 Build the image and push it to the repository. This might take a while depending if cross compiling.
-docker buildx build --platform linux/amd64,linux/arm64 -t plutomi/<api|web|consumer> . --push
+docker buildx build --platform linux/amd64 -t plutomi/<api|web|consumer> . --push

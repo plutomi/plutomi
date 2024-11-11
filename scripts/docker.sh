@@ -23,17 +23,15 @@ if ! [[ " ${allowed_services[@]} " =~ " $1 " ]]; then
   exit 2
 fi
 
-
-
 # Assign variables
 SERVICE_NAME=$1
 AWS_PROFILE=$2
 AWS_REGION="us-east-1"
 IMAGE_TAG="latest"
 
-
 # Fetch the ECR repository URL from Terraform output for the specified service
 ECR_URL=$(cd ./terraform && terraform output -json ecr_repo_urls | jq -r ".\"$SERVICE_NAME\"")
+
 
 # Check if the ECR URL was retrieved successfully
 if [ -z "$ECR_URL" ] || [ "$ECR_URL" == "null" ]; then
@@ -44,10 +42,10 @@ fi
 # Authenticate Docker to AWS ECR
 aws ecr get-login-password --region $AWS_REGION --profile $AWS_PROFILE | docker login --username AWS --password-stdin $ECR_URL
 
-# TODO change to buildx
+
 # Build the Docker image for the specified service
 # docker build -t $SERVICE_NAME ./services/$SERVICE_NAME/Dockerfile .
-docker build -t $SERVICE_NAME -f ./services/$SERVICE_NAME/Dockerfile .
+docker buildx build --platform linux/amd64 -t $SERVICE_NAME -f ./services/$SERVICE_NAME/Dockerfile .
 
 # Tag the Docker image
 docker tag $SERVICE_NAME:latest $ECR_URL:$IMAGE_TAG

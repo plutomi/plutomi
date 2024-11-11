@@ -87,7 +87,7 @@ resource "aws_vpc_security_group_egress_rule" "control_plane_outbound" {
   ip_protocol       = "-1"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_api_access" {
+resource "aws_vpc_security_group_ingress_rule" "control_plane_home_api_access" {
   security_group_id = aws_security_group.control_plane_security_group.id
   from_port         = 6443
   to_port           = 6443
@@ -96,7 +96,7 @@ resource "aws_vpc_security_group_ingress_rule" "control_plane_api_access" {
   description       = "Allow API access from home IP"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_api_access" {
+resource "aws_vpc_security_group_ingress_rule" "control_plane_home_http_access" {
   security_group_id = aws_security_group.control_plane_security_group.id
   from_port         = 80
   to_port           = 80
@@ -105,7 +105,7 @@ resource "aws_vpc_security_group_ingress_rule" "control_plane_api_access" {
   description       = "Allow HTTP access from home IP"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_api_access" {
+resource "aws_vpc_security_group_ingress_rule" "control_plane_home_https_access" {
   security_group_id = aws_security_group.control_plane_security_group.id
   from_port         = 443
   to_port           = 443
