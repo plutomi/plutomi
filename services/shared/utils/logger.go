@@ -42,7 +42,7 @@ func GetLogger(application string) *zap.Logger {
 
 	// You have to defer the Sync method to guarantee that all the logs are flushed AS WELL AS wherever you call GetLogger()
 	defer logger.Sync()
-	
+
 	logger.Info(fmt.Sprintf("Logger initialized in %s", application))
 
 	return logger

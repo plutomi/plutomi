@@ -18,16 +18,24 @@ const application = "api"
 func main() {
 	// Load environment variables
 	env := utils.LoadEnv()
+	
 
 	// Get a logger
 	logger := utils.GetLogger(application)
 	defer logger.Sync()
+
+
+	logger.Debug("JOSE DEBUG MYSQL URL", zap.String("MYSQL URL", env.MySQLUrl))
+	// Get a MySQL connection
+	mysql := utils.GetDB(logger, application, env)
+	defer mysql.Close()
 
 	// Set global app context
 	appCtx := &types.AppContext{
 		Env:         env,
 		Logger:      logger,
 		Application: application,
+		MySQL:       mysql,
 	}
 
 	// Setup routes
@@ -40,7 +48,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger.Info(fmt.Sprintf("Starting %s mode on port %s", env.Environment, env.Port), zap.String("env", string(envJSON)))
+	logger.Info(fmt.Sprintf("%s listening on port %s", application, env.Port), zap.String("env", string(envJSON)))
 
 	if err := http.ListenAndServe(":"+env.Port, routes); err != nil {
 		time.Sleep(2 * time.Second)
