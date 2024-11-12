@@ -22,7 +22,7 @@ func LoadEnv() types.EnvironmentVariables {
 	}
 
 	defaultEnv := "development"
-	defaultPort := "3000"
+	defaultPort := "8080"
 
 	env := types.EnvironmentVariables{
 		Environment:  GetEnvWithDefault("ENVIRONMENT", &defaultEnv, logger),

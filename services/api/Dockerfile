@@ -21,8 +21,8 @@ WORKDIR /root/
 # Copy the binary from the builder stage
 COPY --from=builder /app/services/api/api .
 
-# Expose the port - TODO change to 8080
-EXPOSE 3000 
+# Expose the port 
+EXPOSE 8080 
 
 # Run the application
 CMD ["./api"]
