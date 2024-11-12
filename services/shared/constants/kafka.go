@@ -1,8 +1,9 @@
 package constants
+
 type Topics struct {
-	Auth       string
-	AuthRetry  string
-	AuthDLQ    string
+	Auth      string
+	AuthRetry string
+	AuthDLQ   string
 }
 
 // ConsumerGroups struct with constant fields

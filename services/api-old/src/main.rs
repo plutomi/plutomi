@@ -1,46 +1,9 @@
-use axum::{
-    middleware,
-    response::Redirect,
-    routing::{get, post},
-    Router,
-};
-use constants::{DOCS_ROUTES, PORT};
-use controllers::{health_check, method_not_allowed, not_found, post_users};
-use serde_json::json;
-use shared::{
-    get_env::get_env,
-    kafka::KafkaClient,
-    logger::{LogObject, Logger, LoggerContext},
-    mysql::MySQLClient,
-};
-use std::sync::Arc;
-use structs::app_state::AppState;
-use tower::ServiceBuilder;
-use utils::{log_req_res::log_request, timeout::timeout};
 
-mod constants;
-mod controllers;
-mod handlers;
-mod structs;
-mod utils;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), String> {
-    println!("Getting environment variables INIT!!");
 
-    let envx = dotenvy::dotenv();
 
-    if envx.is_err() {
-        println!("Failed to load .env file");
-    }
-
-    println!("Getting environment variables!");
-
-    let env = get_env();
-
-    println!("GOT environment variables! Getting logger");
-    let logger = Logger::init(LoggerContext { application: "api" })?;
-    println!("GOTlogger! getting kafka client...");
 
     // TODO: Redirect with a toast message
     let docs_redirect_url = format!("{}/docs/api?from=api", &env.BASE_WEB_URL);
@@ -48,8 +11,7 @@ async fn main() -> Result<(), String> {
     let kafka = KafkaClient::new("api", &Arc::clone(&logger), false, None, None);
     println!("GOT KAFKA CLIENT! Getting mysql!");
 
-    let mysql = MySQLClient::new("api", &logger, None).await?;
-    println!("GOT mysql!! Getting state...");
+
 
     // Create an instance of AppState to be shared with all routes
     let state = Arc::new(AppState {

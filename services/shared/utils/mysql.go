@@ -20,9 +20,9 @@ func GetDB(logger *zap.Logger, application string, env types.EnvironmentVariable
 	logger.Info(fmt.Sprintf("Connected to MySQL in %s", application))
 
 	// Configure the connection pool
-	db.SetMaxOpenConns(25)                 
-	db.SetMaxIdleConns(25)                 
-	db.SetConnMaxLifetime(5 * time.Minute) 
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(25)
+	db.SetConnMaxLifetime(5 * time.Minute)
 
 	return db
 

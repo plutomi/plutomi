@@ -1,12 +1,21 @@
 package constants
 
-// IDAlphabet as a slice of strings
-var IDAlphabet = []string{
-	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
-	"k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-	"u", "v", "w", "x", "y", "z", "A", "B", "C", "D",
-	"E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
-	"O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
-	"Y", "Z",
+import (
+	"log"
+
+	gonanoid "github.com/matoous/go-nanoid"
+)
+
+// TODO remove 0, O, I, l, 1 B and 8?
+const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const idLength = 12
+
+func GenerateID(length int) string {
+	id, err := gonanoid.Generate(alphabet, idLength)
+	if err != nil {
+		log.Fatal("Failed to generate ID")
+
+	}
+
+	return id
 }

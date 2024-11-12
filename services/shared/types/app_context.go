@@ -5,10 +5,9 @@ import (
 	"go.uber.org/zap"
 )
 
-
 type AppContext struct {
-	Env    EnvironmentVariables
-	Logger *zap.Logger
+	Env         EnvironmentVariables
+	Logger      *zap.Logger
 	Application string
-	MySQL *sqlx.DB
+	MySQL       *sqlx.DB
 }
