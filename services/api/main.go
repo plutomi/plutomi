@@ -1,61 +1,49 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"plutomi/api/handlers"
+	"os"
+	"plutomi/api/routes"
 	"plutomi/shared/types"
 	"plutomi/shared/utils"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
 	"go.uber.org/zap"
 )
 
-
+const application = "api"
 
 func main() {
+	// Load environment variables
+	env := utils.LoadEnv()
 
-	
-	// Initialize zap logger
-	logger, _ := zap.NewProduction()
+	// Get a logger
+	logger := utils.GetLogger(application)
 	defer logger.Sync()
 
-	// Load environment variables 
-	env := utils.LoadEnv(logger)
-
+	// Set global app context
 	appCtx := &types.AppContext{
-		Env:    env,
-		Logger: logger,
+		Env:         env,
+		Logger:      logger,
+		Application: application,
 	}
 
+	// Setup routes
+	routes := routes.SetupRoutes(appCtx)
 
-	routes := setupRoutes(appCtx)
+	// Convert the env struct to JSON for logging
+	envJSON, err := json.Marshal(env)
+	if err != nil {
+		logger.Error("Failed to marshal env to JSON", zap.String("error", err.Error()))
+		os.Exit(1)
+	}
 
-	logger.Info("Starting server", zap.String("environment", env.Environment), zap.String("port", env.Port), zap.String("TEST", env.Test))
-	fmt.Printf("Server is running in %s mode on port %s\n", env.Environment, env.Port)
-	http.ListenAndServe(":"+env.Port, routes)
-}
+	logger.Info(fmt.Sprintf("Starting %s mode on port %s", env.Environment, env.Port), zap.String("env", string(envJSON)))
 
-// setupRoutes initializes the router, passing the logger to route handlers
-func setupRoutes(context *types.AppContext) *chi.Mux {
-	r := chi.NewRouter()
-	r.Use(middleware.AllowContentType("application/json"))
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(30 * time.Second))
-	r.Use(render.SetContentType(render.ContentTypeJSON))
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.HandleRoot(w, r, context)
-	})
-
-	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		handlers.HandleNotFound(w, r, context)
-	})
-
-	return r
+	if err := http.ListenAndServe(":"+env.Port, routes); err != nil {
+		time.Sleep(2 * time.Second)
+		logger.Fatal("Server failed to start in %s", zap.String("error", err.Error()))
+	}
 }
