@@ -2,16 +2,17 @@ package handlers
 
 import (
 	"net/http"
-	"plutomi/shared"
+	apiTypes "plutomi/api/types"
+	"plutomi/shared/types"
 
 	"github.com/go-chi/render"
 	"go.uber.org/zap"
 )
 
-func HandleRoot(w http.ResponseWriter, r *http.Request, context *shared.AppContext) {
+func HandleRoot(w http.ResponseWriter, r *http.Request, context *types.AppContext) {
 	context.Logger.Warn("API Root", zap.String("method", r.Method), zap.String("path", r.URL.Path))
 
-	res := shared.PlutomiResponse{
+	res := apiTypes.PlutomiResponse{
 		Message: "Hello from the Plutomi API! Did you mean to go to the docs?",
 		DocsUrl: "https://plutomi.com/docs/api",
 	}

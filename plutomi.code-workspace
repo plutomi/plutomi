@@ -26,12 +26,6 @@
     }
   ],
   "settings": {
-    "rust-analyzer.linkedProjects": [
-      "services/api/Cargo.toml",
-      "services/consumers/notifications-auth/Cargo.toml",
-      "services/shared/Cargo.toml",
-      "services/migrator/Cargo.toml"
-    ],
     "eslint.workingDirectories": [
       { "directory": "services/api", "changeProcessCWD": true },
       { "directory": "services/web", "changeProcessCWD": true },

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"plutomi/api/handlers"
-	"plutomi/shared"
+	"plutomi/shared/types"
+	"plutomi/shared/utils"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -16,14 +17,16 @@ import (
 
 
 func main() {
+
+	
 	// Initialize zap logger
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
 	// Load environment variables 
-	env := shared.LoadEnv(logger)
+	env := utils.LoadEnv(logger)
 
-	appCtx := &shared.AppContext{
+	appCtx := &types.AppContext{
 		Env:    env,
 		Logger: logger,
 	}
@@ -37,7 +40,7 @@ func main() {
 }
 
 // setupRoutes initializes the router, passing the logger to route handlers
-func setupRoutes(context *shared.AppContext) *chi.Mux {
+func setupRoutes(context *types.AppContext) *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(middleware.AllowContentType("application/json"))
 	r.Use(middleware.RequestID)

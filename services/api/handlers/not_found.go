@@ -2,15 +2,16 @@ package handlers
 
 import (
 	"net/http"
-	"plutomi/shared"
+	apiTypes "plutomi/api/types"
+	"plutomi/shared/types"
 
 	"github.com/go-chi/render"
 	"go.uber.org/zap"
 )
 
-func HandleNotFound(w http.ResponseWriter, r *http.Request, context *shared.AppContext) {
+func HandleNotFound(w http.ResponseWriter, r *http.Request, context *types.AppContext) {
 	context.Logger.Warn("Route not found", zap.String("method", r.Method), zap.String("path", r.URL.Path))
-	res := shared.PlutomiResponse{
+	res := apiTypes.PlutomiResponse{
 		Message: "Route not found",
 		DocsUrl: "https://plutomi.com/docs/api",
 	}
