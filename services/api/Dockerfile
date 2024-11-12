@@ -1,32 +1,28 @@
 # Stage 1: Build
 FROM golang:1.23 AS builder
 
-# Set the GOARCH to build for x86_64 (amd64)
-ENV GOARCH=amd64
 WORKDIR /app
 
-# Copy go.mod and go.sum files and download dependencies
-COPY go.mod go.sum ./
-RUN go mod download
+# Copy all code into the build context
+COPY ./services/api ./services/api
+COPY ./services/shared ./services/shared
 
-# Copy the rest of the application code
-COPY . .
+# Set the working directory to the api service
+WORKDIR /app/services/api
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o server .
+# Build the application (this will fetch dependencies as needed)
+RUN CGO_ENABLED=0 GOOS=linux go build -o api .
 
 # Stage 2: Run
-FROM alpine:latest
+FROM gcr.io/distroless/static-debian12:latest
+
 WORKDIR /root/
 
-# Install certificates to enable HTTPS support
-RUN apk --no-cache add ca-certificates
-
 # Copy the binary from the builder stage
-COPY --from=builder /app/server .
+COPY --from=builder /app/services/api/api .
 
-# Expose the port
-EXPOSE 3000
+# Expose the port - TODO change to 8080
+EXPOSE 3000 
 
 # Run the application
-CMD ["./server"]
+CMD ["./api"]
