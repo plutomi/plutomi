@@ -1,67 +1,32 @@
-# Use the official Rust image based on Debian Bookworm for the builder stage
-FROM --platform=linux/amd64 rust:1.79-bookworm AS builder
+# Stage 1: Build
+FROM golang:1.23 AS builder
 
-# Install necessary build dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        pkg-config \
-        libssl-dev \
-        cmake \
-        build-essential \
-        zlib1g-dev \
-        liblz4-dev \
-        libcurl4-openssl-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set environment variable to prevent vendoring OpenSSL
-ENV OPENSSL_NO_VENDOR=1
-
-# Set working directory
+# Set the GOARCH to build for x86_64 (amd64)
+ENV GOARCH=amd64
 WORKDIR /app
 
-# Copy shared library code
-COPY ./services/shared /app/services/shared
+# Copy go.mod and go.sum files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
 
-# Copy dependency manifests
-COPY ./services/api/Cargo.toml ./services/api/Cargo.lock ./services/api/
+# Copy the rest of the application code
+COPY . .
 
-# Create a dummy main file to compile dependencies only
-RUN mkdir -p ./services/api/src && \
-    echo "fn main() {}" > ./services/api/src/main.rs
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -o server .
 
-# Build dependencies
-RUN cd ./services/api && \
-    cargo build --release --locked
+# Stage 2: Run
+FROM alpine:latest
+WORKDIR /root/
 
-# Copy the actual source code
-COPY ./services/api/src ./services/api/src
+# Install certificates to enable HTTPS support
+RUN apk --no-cache add ca-certificates
 
-# Build the actual application
-RUN cd ./services/api && \
-    cargo build --release --locked
+# Copy the binary from the builder stage
+COPY --from=builder /app/server .
 
-# Final stage: use a minimal Debian Bookworm image
-FROM --platform=linux/amd64 debian:bookworm-slim AS final
+# Expose the port
+EXPOSE 3000
 
-# Install necessary runtime dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        libssl3 \
-        liblz4-1 \
-        zlib1g \
-        libcurl4 && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set up a non-root user
-RUN addgroup --system api && adduser --system --ingroup api api
-USER api
-
-# Expose the port the API service listens on
-EXPOSE 8080
-
-# Copy the built binary from the builder stage
-COPY --from=builder /app/services/api/target/release/api /app/api
-
-# Set the entrypoint to run the API
-ENTRYPOINT ["/app/api"]
+# Run the application
+CMD ["./server"]
