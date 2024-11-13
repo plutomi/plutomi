@@ -21,7 +21,6 @@ func SetupRoutes(ctx *context.Context) *chi.Mux {
 		middleware.RequestID,
 		middleware.RealIP,
 		middleware.Recoverer,
-		middleware.RedirectSlashes,
 		middleware.Timeout(30*time.Second),
 		render.SetContentType(render.ContentTypeJSON),
 	)
@@ -40,7 +39,13 @@ func SetupRoutes(ctx *context.Context) *chi.Mux {
 	router.Get("/api", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DocsRoot(w, r, ctx)
 	})
+	router.Get("/api/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DocsRoot(w, r, ctx)
+	})
 	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DocsRoot(w, r, ctx)
+	})
+	router.Get("/docs/", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DocsRoot(w, r, ctx)
 	})
 
