@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 	"plutomi/api/handlers"
-	"plutomi/shared/types"
+	"plutomi/shared/context"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -11,10 +11,20 @@ import (
 	"github.com/go-chi/render"
 )
 
+type Handler struct {
+    ctx *context.Context
+}
+
 // TODO add middleware to log all incoming and outgoing requests
 
-func SetupRoutes(context *types.AppContext) *chi.Mux {
-	router := chi.NewRouter()
+func WithContext(ctx *context.Context) *Handler {
+    return &Handler{ctx: ctx}
+}
+
+func SetupRoutes(ctx *context.Context) *chi.Mux {
+    router := chi.NewRouter()
+    wc := WithContext(ctx)
+    
 
 	// Middleware setup
 	router.Use(
@@ -29,9 +39,7 @@ func SetupRoutes(context *types.AppContext) *chi.Mux {
 	)
 
 	// Internal k8s health check
-	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		handlers.HealthCheck(w, r, context)
-	})
+	router.Get("/health", wc.HealthCheck)
 
 	// Public health check
 	router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
