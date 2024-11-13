@@ -16,6 +16,7 @@ import (
 const application = "api"
 
 func main() {
+	// ! TODO: move env, logger, mysql and kafka to shared/config
 	// Load environment variables
 	env := utils.LoadEnv()
 	

@@ -28,12 +28,7 @@ async fn main() -> Result<(), String> {
     });
 
     let app = Router::new()
-        // This is the internal kubernetes health check route
-        .route("/health", get(health_check))
-        // Public health check route
-        .route("/api/health", get(health_check))
-        // All of these should redirect to the web app
-        .merge(docs_routes)
+
         .route("/api/users", post(post_users))
         .fallback(not_found)
         .layer(

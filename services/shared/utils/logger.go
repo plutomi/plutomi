@@ -44,6 +44,6 @@ func GetLogger(application string) *zap.Logger {
 	defer logger.Sync()
 
 	logger.Info(fmt.Sprintf("Logger initialized in %s", application))
-
+logger.With(zap.String("application", application)).Info("Logger initialized")
 	return logger
 }

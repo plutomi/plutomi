@@ -16,23 +16,48 @@ import (
 func SetupRoutes(context *types.AppContext) *chi.Mux {
 	router := chi.NewRouter()
 
-	router.Use(middleware.AllowContentType("application/json"))
-	router.Use(middleware.CleanPath)
-	router.Use(middleware.RequestID)
-	router.Use(middleware.RealIP)
-	router.Use(middleware.Recoverer)
-	router.Use(middleware.Timeout(30 * time.Second))
-	router.Use(render.SetContentType(render.ContentTypeJSON))
+	// Middleware setup
+	router.Use(
+		middleware.AllowContentType("application/json"),
+		middleware.CleanPath,
+		middleware.RequestID,
+		middleware.RealIP,
+		middleware.Recoverer,
+		middleware.RedirectSlashes,
+		middleware.Timeout(30*time.Second),
+		render.SetContentType(render.ContentTypeJSON),
+	)
 
-
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.HandleRoot(w, r, context)
+	// Internal k8s health check
+	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HealthCheck(w, r, context)
 	})
 
+	// Public health check
+	router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HealthCheck(w, r, context)
+	})
+
+	// Show docs
+	router.Get("/api", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DocsRoot(w, r, context)
+	})
+	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DocsRoot(w, r, context)
+	})
+
+
+
+
+
+	// Catch all
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		handlers.HandleNotFound(w, r, context)
+		handlers.NotFound(w, r, context)
+	})
+
+	router.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
+		handlers.MethodNotAllowed(w, r, context)
 	})
 
 	return router
 }
-
