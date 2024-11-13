@@ -24,6 +24,7 @@ func GetDB(logger *zap.Logger, application string, env types.EnvironmentVariable
 	db.SetMaxIdleConns(25)
 	db.SetConnMaxLifetime(5 * time.Minute)
 
+
 	return db
 
 }
