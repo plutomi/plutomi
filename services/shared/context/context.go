@@ -29,6 +29,7 @@ func InitContext(application string) *Context {
 
 	mysql := utils.GetDB(logger, application, env)
 
+
 	return &Context{
 		Env:         env,
 		Logger:      logger,

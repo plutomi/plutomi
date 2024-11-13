@@ -13,7 +13,6 @@ import (
 
 const application = "api"
 
-
 func main() {
 	ctx := ctx.InitContext(application)
 	defer ctx.Logger.Sync()

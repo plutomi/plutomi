@@ -11,20 +11,8 @@ import (
 	"github.com/go-chi/render"
 )
 
-type Handler struct {
-    ctx *context.Context
-}
-
-// TODO add middleware to log all incoming and outgoing requests
-
-func WithContext(ctx *context.Context) *Handler {
-    return &Handler{ctx: ctx}
-}
-
 func SetupRoutes(ctx *context.Context) *chi.Mux {
-    router := chi.NewRouter()
-    wc := WithContext(ctx)
-    
+	router := chi.NewRouter()
 
 	// Middleware setup
 	router.Use(
@@ -39,32 +27,30 @@ func SetupRoutes(ctx *context.Context) *chi.Mux {
 	)
 
 	// Internal k8s health check
-	router.Get("/health", wc.HealthCheck)
+	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HealthCheck(w, r, ctx)
+	})
 
 	// Public health check
 	router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
-		handlers.HealthCheck(w, r, context)
+		handlers.HealthCheck(w, r, ctx)
 	})
 
 	// Show docs
 	router.Get("/api", func(w http.ResponseWriter, r *http.Request) {
-		handlers.DocsRoot(w, r, context)
+		handlers.DocsRoot(w, r, ctx)
 	})
 	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
-		handlers.DocsRoot(w, r, context)
+		handlers.DocsRoot(w, r, ctx)
 	})
-
-
-
-
 
 	// Catch all
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		handlers.NotFound(w, r, context)
+		handlers.NotFound(w, r, ctx)
 	})
 
 	router.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
-		handlers.MethodNotAllowed(w, r, context)
+		handlers.MethodNotAllowed(w, r, ctx)
 	})
 
 	return router
