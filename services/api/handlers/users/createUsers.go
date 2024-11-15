@@ -22,63 +22,38 @@ type CreateUserRequest struct {
 
 type PlutomiUserCreatedResponse struct {
 	Message string `json:"message"`
-	User    DBUser `json:"user"`
+	User    []DBUser `json:"user"`
 }
 
 func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.Context) {
 	var req CreateUserRequest
 
 	// Parse JSON from request body
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		render.Status(r, http.StatusBadRequest)
-		res := types.BasePlutomiResponse{
-			Message: "Invalid request body when creating a user",
-			DocsUrl: "https://plutomi.com/docs/api/users/create",
-		}
-		render.JSON(w, r, res)
-		return
-	}
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+if err != nil {
+	render.Status(r, http.StatusBadRequest)
+	render.JSON(w, r, types.BasePlutomiResponse{
+		Message: "Invalid request body when creating a user",
+		DocsUrl: "https://plutomi.com/docs/api/users/create",
+	})
+	return
+}
 
 	// Prepare statement for inserting user into database
-	stmt, err := ctx.MySQL.Preparex("INSERT INTO users (username, email) VALUES (?, ?)")
+	_, err = ctx.MySQL.Exec("INSERT INTO users (username, email) VALUES (?, ?)", req.Username, req.Email)
 	if err != nil {
 		render.Status(r, http.StatusInternalServerError)
 		res := types.BasePlutomiResponse{
-			Message: "Failed to prepare statement",
-			DocsUrl: "https://plutomi.com/docs/api/users/create",
-		}
-		render.JSON(w, r, res)
-		return
-	}
-	defer stmt.Close()
-
-	// Execute the prepared statement
-	result, err := stmt.Exec(req.Username, req.Email)
-	if err != nil {
-		render.Status(r, http.StatusInternalServerError)
-		res := types.BasePlutomiResponse{
-			Message: "Failed to insert user",
+			Message: "Failed to insert",
 			DocsUrl: "https://plutomi.com/docs/api/users/create",
 		}
 		render.JSON(w, r, res)
 		return
 	}
 
-	// Retrieve the ID of the last inserted user
-	userId, err := result.LastInsertId()
-	if err != nil {
-		render.Status(r, http.StatusInternalServerError)
-		res := types.BasePlutomiResponse{
-			Message: "Failed to retrieve last inserted ID",
-			DocsUrl: "https://plutomi.com/docs/api/users/create",
-		}
-		render.JSON(w, r, res)
-		return
-	}
 
-	// Query for the newly created user
-	var createdUser DBUser
-	err = ctx.MySQL.Get(&createdUser, "SELECT id, username, email FROM users WHERE id = ?", userId)
+	rows, err := ctx.MySQL.Queryx("SELECT * FROM users")
 	if err != nil {
 		render.Status(r, http.StatusInternalServerError)
 		res := types.BasePlutomiResponse{
@@ -88,11 +63,30 @@ func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.Context) {
 		render.JSON(w, r, res)
 		return
 	}
+	defer rows.Close()
 
-	// Prepare the response
+	var users []DBUser
+
+
+	for rows.Next() {
+		var u DBUser
+		err := rows.StructScan(&u)
+		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
+			res := types.BasePlutomiResponse{
+				Message: "Failed to retrieve created user",
+				DocsUrl: "https://plutomi.com/docs/api/users/create",
+			}
+			render.JSON(w, r, res)
+			return
+		}
+		users = append(users, u)
+	}
+
+	//Prepare the response
 	res := PlutomiUserCreatedResponse{
 		Message: "User created successfully",
-		User:    createdUser,
+		User:    users,
 	}
 
 	render.Status(r, http.StatusCreated)
