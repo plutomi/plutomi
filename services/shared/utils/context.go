@@ -3,6 +3,8 @@ package utils
 import (
 	"plutomi/shared/types"
 
+	clients "plutomi/shared/clients"
+
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
@@ -26,7 +28,7 @@ func InitContext(application string) *Context {
 
 	logger := GetLogger(application)
 
-	mysql := GetDB(logger, application, env)
+	mysql := clients.GetDB(logger, application, env)
 	// TODO add kafka
 
 	return &Context{
