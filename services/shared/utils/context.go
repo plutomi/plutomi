@@ -1,8 +1,7 @@
-package context
+package utils
 
 import (
 	"plutomi/shared/types"
-	"plutomi/shared/utils"
 
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
@@ -23,12 +22,12 @@ type Context struct {
 func InitContext(application string) *Context {
 
 	// Load environment variables
-	env := utils.LoadEnv()
+	env := LoadEnv()
 
-	logger := utils.GetLogger(application)
+	logger := GetLogger(application)
 
-	mysql := utils.GetDB(logger, application, env)
-
+	mysql := GetDB(logger, application, env)
+	// TODO add kafka
 
 	return &Context{
 		Env:         env,

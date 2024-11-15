@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	ctx "plutomi/shared/context"
+
+	utils "plutomi/shared/utils"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
@@ -11,7 +12,7 @@ import (
 )
 
 func main() {
-	ctx := ctx.InitContext("migrator")
+	ctx := utils.InitContext("migrator")
 	defer ctx.Logger.Sync()
 	defer ctx.MySQL.Close()
 

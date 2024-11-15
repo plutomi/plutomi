@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"plutomi/api/routes"
-	ctx "plutomi/shared/context"
 	"time"
+
+	utils "plutomi/shared/utils"
 
 	"go.uber.org/zap"
 )
@@ -14,7 +15,7 @@ import (
 const application = "api"
 
 func main() {
-	ctx := ctx.InitContext(application)
+	ctx := utils.InitContext(application)
 	defer ctx.Logger.Sync()
 	defer ctx.MySQL.Close()
 

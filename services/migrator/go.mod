@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/golang-migrate/migrate/v4 v4.18.1
+	go.uber.org/zap v1.27.0
 	plutomi/shared v0.0.0-00010101000000-000000000000
 )
 
@@ -27,7 +28,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.30.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
-	go.uber.org/zap v1.27.0 // indirect
 )
 
 replace plutomi/shared => ../shared

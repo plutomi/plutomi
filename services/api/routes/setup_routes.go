@@ -4,7 +4,7 @@ import (
 	"net/http"
 	meta "plutomi/api/handlers/meta"
 	"plutomi/api/handlers/users"
-	"plutomi/shared/context"
+	utils "plutomi/shared/utils"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -12,7 +12,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-func SetupRoutes(ctx *context.Context) *chi.Mux {
+func SetupRoutes(ctx *utils.Context) *chi.Mux {
 	router := chi.NewRouter()
 
 	// Middleware setup
