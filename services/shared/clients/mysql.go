@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetDB(logger *zap.Logger, application string, env types.EnvironmentVariables) *sqlx.DB {
+func GetMySQL(logger *zap.Logger, application string, env types.EnvironmentVariables) *sqlx.DB {
 	db, err := sqlx.Connect("mysql", env.MySQLUrl)
 	if err != nil {
 		msg := fmt.Sprintf("Failed to connect to database in %s", application)

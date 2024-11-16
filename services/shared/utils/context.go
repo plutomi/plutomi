@@ -28,7 +28,7 @@ func InitContext(application string) *Context {
 
 	logger := GetLogger(application)
 
-	mysql := clients.GetDB(logger, application, env)
+	mysql := clients.GetMySQL(logger, application, env)
 	// TODO add kafka
 
 	return &Context{
