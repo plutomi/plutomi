@@ -7,16 +7,21 @@ import (
 	"plutomi/shared/constants"
 	"plutomi/shared/utils"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"go.uber.org/zap"
 )
 
-type MessageHandler func(record *kgo.Record, ctx *utils.AppContext) error
+type MessageHandler func(consumer *PlutomiConsumer, record *kgo.Record) error
 
 type PlutomiConsumer struct {
     client     *kgo.Client
     handler    MessageHandler
     retryTopic constants.KafkaTopic
     dlqTopic   constants.KafkaTopic
+    Logger   *zap.Logger
+    MySQL     *sqlx.DB
+    Ctx       *utils.AppContext
 }
 
 func NewPlutomiConsumer(
@@ -26,6 +31,7 @@ func NewPlutomiConsumer(
     topic constants.KafkaTopic,
     retryTopic constants.KafkaTopic,
     dlqTopic constants.KafkaTopic,
+    appContext *utils.AppContext,
 ) (*PlutomiConsumer, error) {
     opts := []kgo.Opt{
         kgo.SeedBrokers(brokers...),
@@ -44,6 +50,10 @@ func NewPlutomiConsumer(
         handler:    handler,
         retryTopic: retryTopic,
         dlqTopic:   dlqTopic,
+        // Destructure this a bit so its easier to use
+        Logger:    appContext.Logger,
+        MySQL:    appContext.MySQL,
+        Ctx:     appContext,
     }, nil
 }
 
@@ -51,7 +61,7 @@ func (pc *PlutomiConsumer) Close() {
     pc.client.Close()
 }
 
-func (pc *PlutomiConsumer) Run(ctx context.Context, appContext *utils.AppContext) {
+func (pc *PlutomiConsumer) Run(ctx context.Context) {
     for {
         fetches := pc.client.PollFetches(ctx)
         if fetches.IsClientClosed() {
@@ -63,7 +73,7 @@ func (pc *PlutomiConsumer) Run(ctx context.Context, appContext *utils.AppContext
         })
 
         fetches.EachRecord(func(record *kgo.Record) {
-            err := pc.handler(record, appContext)
+            err := pc.handler(pc, record)
             if err != nil {
                 // Handle error
                 nextTopic := pc.getNextTopic(constants.KafkaTopic(record.Topic))
