@@ -12,7 +12,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-func SetupRoutes(ctx *utils.Context) *chi.Mux {
+func SetupRoutes(ctx *utils.AppContext) *chi.Mux {
 	router := chi.NewRouter()
 
 	// Middleware setup

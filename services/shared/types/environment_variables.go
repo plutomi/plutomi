@@ -10,3 +10,4 @@ type EnvironmentVariables struct {
 	AxiomToken   string `json:"axiom_token"`
 	AxiomOrgId   string `json:"axiom_org_id"`
 }
+

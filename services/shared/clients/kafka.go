@@ -10,7 +10,6 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-type MessageHandler func(*kgo.Record, *utils.Context) error
 
 type PlutomiConsumer struct {
     client     *kgo.Client
@@ -51,7 +50,7 @@ func (pc *PlutomiConsumer) Close() {
     pc.client.Close()
 }
 
-func (pc *PlutomiConsumer) Run(ctx context.Context) {
+func (pc *PlutomiConsumer) Run(ctx context.Context, config *utils.Config) {
     for {
         fetches := pc.client.PollFetches(ctx)
         if fetches.IsClientClosed() {

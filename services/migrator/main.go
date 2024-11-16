@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	ctx := utils.InitContext("migrator")
+	ctx := utils.InitAppContext("migrator")
 	defer ctx.Logger.Sync()
 	defer ctx.MySQL.Close()
 

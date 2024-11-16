@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"plutomi/api/types"
-	ctx "plutomi/shared/utils"
+	utils "plutomi/shared/utils"
 
 	"github.com/go-chi/render"
 )
@@ -25,7 +25,7 @@ type PlutomiUserCreatedResponse struct {
 	User    []DBUser `json:"user"`
 }
 
-func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.Context) {
+func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *utils.AppContext) {
 	var req CreateUserRequest
 
 	// Parse JSON from request body

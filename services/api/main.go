@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"plutomi/api/routes"
+	clients "plutomi/shared/clients"
 	"time"
 
 	utils "plutomi/shared/utils"
@@ -15,9 +16,22 @@ import (
 const application = "api"
 
 func main() {
-	ctx := utils.InitContext(application)
-	defer ctx.Logger.Sync()
-	defer ctx.MySQL.Close()
+	// Initialize the environment variables
+	env := utils.LoadEnv()
+
+	// Initialize the logger
+	logger := utils.GetLogger(application)
+	defer logger.Sync()
+
+
+	// Initialize MySQL 
+	mysql := clients.GetMySQL(logger, application, env)
+	defer mysql.Close()
+
+
+	// Initialize the context
+	ctx := utils.InitAppContext(application, logger, env, mysql)
+
 
 	// Setup routes
 	routes := routes.SetupRoutes(ctx)

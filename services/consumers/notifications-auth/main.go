@@ -20,7 +20,7 @@ func handler(record *kgo.Record, ctx *utils.Context) error {
 }
 
 func main() {
-	ctx := utils.InitContext("notifications-auth")
+	ctx := utils.InitAppContext("notifications-auth")
 	defer ctx.Logger.Sync()
 	defer ctx.MySQL.Close()
 	
