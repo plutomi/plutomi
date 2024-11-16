@@ -29,9 +29,8 @@ func main() {
 	defer mysql.Close()
 
 
-	// Initialize the context
+	// Initialize the AppContext
 	ctx := utils.InitAppContext(application, logger, env, mysql)
-
 
 	// Setup routes
 	routes := routes.SetupRoutes(ctx)

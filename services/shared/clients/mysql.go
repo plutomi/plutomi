@@ -2,6 +2,7 @@ package clients
 
 import (
 	"fmt"
+	"plutomi/shared/types"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"

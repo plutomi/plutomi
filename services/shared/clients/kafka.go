@@ -10,6 +10,7 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
+type MessageHandler func(record *kgo.Record, ctx *utils.AppContext) error
 
 type PlutomiConsumer struct {
     client     *kgo.Client
@@ -50,7 +51,7 @@ func (pc *PlutomiConsumer) Close() {
     pc.client.Close()
 }
 
-func (pc *PlutomiConsumer) Run(ctx context.Context, config *utils.Config) {
+func (pc *PlutomiConsumer) Run(ctx context.Context, appContext *utils.AppContext) {
     for {
         fetches := pc.client.PollFetches(ctx)
         if fetches.IsClientClosed() {
@@ -62,7 +63,7 @@ func (pc *PlutomiConsumer) Run(ctx context.Context, config *utils.Config) {
         })
 
         fetches.EachRecord(func(record *kgo.Record) {
-            err := pc.handler(record, ctx)
+            err := pc.handler(record, appContext)
             if err != nil {
                 // Handle error
                 nextTopic := pc.getNextTopic(constants.KafkaTopic(record.Topic))

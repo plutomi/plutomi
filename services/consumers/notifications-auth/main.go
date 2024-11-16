@@ -14,20 +14,34 @@ import (
 	"go.uber.org/zap"
 )
 
-func handler(record *kgo.Record, ctx *utils.Context) error {
+func handler(record *kgo.Record, ctx *utils.AppContext) error {
 	ctx.Logger.Info("Received message", zap.String("message", string(record.Value)))
 	return nil
 }
 
+const application = "notifications-auth-consumer"
+
+
 func main() {
-	ctx := utils.InitAppContext("notifications-auth")
-	defer ctx.Logger.Sync()
-	defer ctx.MySQL.Close()
+	// Initialize the environment variables
+	env := utils.LoadEnv()
+
+	// Initialize the logger
+	logger := utils.GetLogger(application)
+	defer logger.Sync()
+
+
+	// Initialize MySQL 
+	mysql := clients.GetMySQL(logger, application, env)
+	defer mysql.Close()
+
+
+	// Initialize the AppContext
+	ctx := utils.InitAppContext(application, logger, env, mysql)
+
 	
 
     brokers := []string{"localhost:9092"}
-
-
 
 
     consumer, err := clients.NewPlutomiConsumer(
@@ -45,7 +59,7 @@ func main() {
     }
 	
 
-    ctx, cancel := context.WithCancel(context.Background())
+    go_context, cancel := context.WithCancel(context.Background())
     defer cancel()
 
     // Handle graceful shutdown
@@ -59,5 +73,5 @@ func main() {
     }()
 
     // Run the consumer
-    consumer.Run(ctx)
+    consumer.Run(go_context, ctx)
 }

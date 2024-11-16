@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	clients "plutomi/shared/clients"
 	utils "plutomi/shared/utils"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -10,11 +11,24 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"go.uber.org/zap"
 )
+const application = "migrator"
 
 func main() {
-	ctx := utils.InitAppContext("migrator")
-	defer ctx.Logger.Sync()
-	defer ctx.MySQL.Close()
+	// Initialize the environment variables
+	env := utils.LoadEnv()
+
+	// Initialize the logger
+	logger := utils.GetLogger(application)
+	defer logger.Sync()
+
+
+	// Initialize MySQL 
+	mysql := clients.GetMySQL(logger, application, env)
+	defer mysql.Close()
+
+
+	// Initialize the AppContext
+	ctx := utils.InitAppContext(application, logger, env, mysql)
 
 	m, err := migrate.New(
 		"file://migrations",
