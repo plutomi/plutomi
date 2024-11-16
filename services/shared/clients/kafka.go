@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"os"
 	"plutomi/shared/constants"
+	"plutomi/shared/utils"
 
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-type MessageHandler func(*kgo.Record) error
+type MessageHandler func(*kgo.Record, *utils.Context) error
 
 type PlutomiConsumer struct {
     client     *kgo.Client
@@ -21,8 +22,8 @@ type PlutomiConsumer struct {
 func NewPlutomiConsumer(
     brokers []string,
     groupID constants.ConsumerGroup,
-    topic constants.KafkaTopic,
     handler MessageHandler,
+    topic constants.KafkaTopic,
     retryTopic constants.KafkaTopic,
     dlqTopic constants.KafkaTopic,
 ) (*PlutomiConsumer, error) {
@@ -62,7 +63,7 @@ func (pc *PlutomiConsumer) Run(ctx context.Context) {
         })
 
         fetches.EachRecord(func(record *kgo.Record) {
-            err := pc.handler(record)
+            err := pc.handler(record, ctx)
             if err != nil {
                 // Handle error
                 nextTopic := pc.getNextTopic(constants.KafkaTopic(record.Topic))
