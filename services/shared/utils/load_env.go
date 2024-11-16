@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func LoadEnv() types.EnvironmentVariables {
+func LoadEnv(env_path string) types.EnvironmentVariables {
 	// Use it's own logger so no catch 22 with the *real* logger
 	logger, logErr := zap.NewDevelopment()
 	if logErr != nil {
@@ -16,7 +16,7 @@ func LoadEnv() types.EnvironmentVariables {
 	}
 	defer logger.Sync()
 
-	err := godotenv.Load("../../.env")
+	err := godotenv.Load(env_path)
 	if err != nil {
 		logger.Warn("Error loading .env file, using defaults")
 	}

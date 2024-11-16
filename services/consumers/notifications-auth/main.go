@@ -24,10 +24,10 @@ const application = "notifications-auth-consumer"
 
 func main() {
 	// Initialize the environment variables
-	env := utils.LoadEnv()
+	env := utils.LoadEnv("../../../.env")
 
 	// Initialize the logger
-	logger := utils.GetLogger(application)
+	logger := utils.GetLogger(application, env)
 	defer logger.Sync()
 
 
