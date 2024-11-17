@@ -16,7 +16,6 @@ import (
 	"go.uber.org/zap"
 )
 
-
 type MessageHandler func(consumer *PlutomiConsumer, record *kgo.Record) error
 
 type PlutomiConsumer struct {
@@ -41,49 +40,29 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	mysql := clients.GetMySQL(logger, consumer_name, env)
 	defer mysql.Close()
 
+	// Initialize the Kafka client
+	kafka := clients.GetKafka([]string{env.KafkaUrl}, group, topic, logger)
+
 	// Initialize the AppContext
 	ctx := &types.AppContext{
 		Env:         env,
 		Logger:      logger,
 		Application: consumer_name,
 		MySQL:       mysql,
-	}
-
-	// Set the brokers
-	brokers := []string{env.KafkaUrl}
-
-
-	opts := []kgo.Opt{
-		kgo.SeedBrokers(brokers...),
-		kgo.ConsumerGroup(string(group)),
-		kgo.ConsumeTopics(string(topic)),
-		// Disable auto-commit to allow for manual offset management
-		kgo.DisableAutoCommit(),
-		kgo.ConsumeResetOffset(kgo.NewOffset().AtStart()),
-		//kgo.WithLogger(kgo.BasicLogger(os.Stdout, kgo.LogLevelDebug,  func() string { return "[KafkaClient] " })),
-	}
-
-	client, err := kgo.NewClient(opts...)
-
-	if err != nil {
-		msg := fmt.Errorf("unable to create client in %s topic for consumer group %s: %s", topic, group, err)
-		ctx.Logger.Fatal(msg.Error())
+		Kafka:       kafka,
 	}
 
 	ctx.Logger.Info("Created Kafka client", zap.String("groupID", string(group)), zap.String("topic", string(topic)))
-	
+
 	consumer := &PlutomiConsumer{
-		client:  client,
+		client:  kafka,
 		handler: handler,
-		Logger: ctx.Logger,
-		MySQL:  ctx.MySQL,
-		Ctx:    ctx,
+		Logger:  ctx.Logger,
+		MySQL:   ctx.MySQL,
+		Ctx:     ctx,
 	}
 
-	if err != nil {
-		logger.Fatal("Failed to create consumer", zap.String("error", err.Error()))
-	}
-
+	// Graceful shutdown
 	go_context, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -101,8 +80,6 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	// Run the consumer
 	consumer.Run(go_context)
 }
-
-
 
 func (pc *PlutomiConsumer) Run(ctx context.Context) {
 	for {
@@ -134,7 +111,7 @@ func (pc *PlutomiConsumer) Run(ctx context.Context) {
 					err := pc.publishToTopic(nextTopic, record)
 					if err != nil {
 						pc.Logger.Error("Failed to publish to topic", zap.String("topic", string(nextTopic)), zap.Error(err))
-                        // Don't commit the message so it gets reprocessed
+						// Don't commit the message so it gets reprocessed
 						return
 					}
 					pc.client.CommitRecords(ctx, record)
