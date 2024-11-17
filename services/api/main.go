@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"plutomi/api/routes"
-	"plutomi/shared/types"
 	"syscall"
 	"time"
 
@@ -15,6 +14,7 @@ import (
 
 	"go.uber.org/zap"
 
+	types "plutomi/shared/types"
 	utils "plutomi/shared/utils"
 )
 
@@ -43,7 +43,7 @@ func main() {
 		Logger:      logger,
 		Application: application,
 		MySQL:       mysql,
-		Kafka: 	 kafka,
+		Kafka: 	kafka,
 	}
 
 	// Setup routes

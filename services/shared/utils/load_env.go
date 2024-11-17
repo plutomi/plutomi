@@ -2,13 +2,14 @@ package utils
 
 import (
 	"log"
-	"plutomi/shared/types"
+
+	stypes "plutomi/shared/types"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 )
 
-func LoadEnv(env_path string) types.EnvironmentVariables {
+func LoadEnv(env_path string) stypes.EnvironmentVariables {
 	// Use it's own logger so no catch 22 with the *real* logger
 	logger, logErr := zap.NewDevelopment()
 	if logErr != nil {
@@ -24,7 +25,7 @@ func LoadEnv(env_path string) types.EnvironmentVariables {
 	defaultEnv := "development"
 	defaultPort := "8080"
 
-	env := types.EnvironmentVariables{
+	env := stypes.EnvironmentVariables{
 		Environment:  GetEnvWithDefault("ENVIRONMENT", &defaultEnv, logger),
 		Port:         GetEnvWithDefault("PORT", &defaultPort, logger),
 		MySQLUrl:     GetEnvWithDefault("MYSQL_URL", nil, logger),

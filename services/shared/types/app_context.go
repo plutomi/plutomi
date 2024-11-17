@@ -1,16 +1,17 @@
 package types
 
 import (
-	"plutomi/shared/clients"
-
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
+
+	sc "plutomi/shared/clients"
 )
 
+
 type AppContext struct {
-	Env         EnvironmentVariables
+	Env        EnvironmentVariables
 	Logger      *zap.Logger
 	Application string
 	MySQL       *sqlx.DB
-	Kafka 	 	*clients.PlutomiKafka
+	Kafka 	 	sc.PlutomiKafka
 }

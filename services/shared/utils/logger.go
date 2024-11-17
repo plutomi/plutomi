@@ -3,13 +3,14 @@ package utils
 import (
 	"log"
 	"os"
-	"plutomi/shared/types"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
 	adapter "github.com/axiomhq/axiom-go/adapters/zap"
 	"github.com/axiomhq/axiom-go/axiom"
+
+	types "plutomi/shared/types"
 )
 
 // GetLogger returns a new zap logger with an Axiom core and a console core

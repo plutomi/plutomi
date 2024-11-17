@@ -2,6 +2,8 @@ package clients
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"plutomi/shared/constants"
 
@@ -41,43 +43,60 @@ func (k *PlutomiKafka) Close() {
 	k.Client.Close()
 }
 
+var NextTopicMap = map[constants.KafkaTopic]constants.KafkaTopic{
+    constants.TopicAuth:      constants.TopicAuthRetry,
+    constants.TopicAuthRetry: constants.TopicAuthDLQ,
+    constants.TopicAuthDLQ:   "",
+    constants.TopicTest:      constants.TopicTestRetry,
+    constants.TopicTestRetry: constants.TopicTestDLQ,
+    constants.TopicTestDLQ:   "",
+}
 
 func (k *PlutomiKafka) GetNextTopic(currentTopic constants.KafkaTopic) constants.KafkaTopic {
-
-	// Auth topics
-	if currentTopic == constants.TopicAuth {
-		return constants.TopicAuthRetry
+	if nextTopic, ok := NextTopicMap[currentTopic]; ok {
+		return nextTopic
 	}
-
-	if currentTopic == constants.TopicAuthRetry {
-		return constants.TopicAuthDLQ
-	}
-
-
-
-	// Test topics
-	if currentTopic == constants.TopicTest {
-		return constants.TopicTestRetry
-	}
-
-	if currentTopic == constants.TopicTestRetry {
-		return constants.TopicTestDLQ
-	}
-
-
-
 	return ""
 }
 
 
-func (k *PlutomiKafka) PublishToTopic(topic constants.KafkaTopic, record *kgo.Record) error {
-	newRecord := &kgo.Record{
-		Topic: string(topic),
-		Key:   record.Key,
-		Value: record.Value,
+
+// PublishToTopic publishes a message to a Kafka topic.
+// If `record` is provided, it uses that directly - mostly used in Consumers.
+// If `key` and `value` are provided, it marshals the value and creates a new record.
+func (k *PlutomiKafka) PublishToTopic(topic constants.KafkaTopic, record *kgo.Record, key string, value interface{}) error {
+	var newRecord *kgo.Record
+
+	// If a record is already provided, reuse it
+	if record != nil {
+		newRecord = &kgo.Record{
+			Topic: string(topic),
+			Key:   record.Key,
+			Value: record.Value,
+		}
+	} else {
+		// If key and value are provided, create a new record
+		if key == "" || value == nil {
+			return errors.New("either record or key and value must be provided")
+		}
+
+		// Marshal the value to JSON
+		data, err := json.Marshal(value)
+		if err != nil {
+			return fmt.Errorf("failed to marshal value: %w", err)
+		}
+
+		newRecord = &kgo.Record{
+			Topic: string(topic),
+			Key:   []byte(key),
+			Value: data,
+		}
 	}
 
-	err := k.Client.ProduceSync(context.Background(), newRecord).FirstErr()
+	// Publish the record
+	if err := k.Client.ProduceSync(context.Background(), newRecord).FirstErr(); err != nil {
+		return fmt.Errorf("failed to publish message to topic %s: %w", topic, err)
+	}
 
-	return err
+	return nil
 }

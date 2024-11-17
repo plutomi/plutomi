@@ -4,7 +4,7 @@ import (
 	"net/http"
 	meta "plutomi/api/handlers/meta"
 	"plutomi/api/handlers/users"
-	"plutomi/shared/types"
+	types "plutomi/shared/types"
 	"time"
 
 	"github.com/go-chi/chi"
