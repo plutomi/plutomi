@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,6 +11,7 @@ import (
 	"time"
 
 	clients "plutomi/shared/clients"
+	constants "plutomi/shared/constants"
 
 	"go.uber.org/zap"
 
@@ -33,24 +32,22 @@ func main() {
 	mysql := clients.GetMySQL(logger, application, env)
 	defer mysql.Close()
 
+	// Initialize Kafka
+	kafka := clients.GetKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
+	defer kafka.Close()
+
 	// Initialize the AppContext
 	ctx := &types.AppContext{
 		Env:         env,
 		Logger:      logger,
 		Application: application,
 		MySQL:       mysql,
+		Kafka: 	 kafka,
 	}
 
 	// Setup routes
 	routes := routes.SetupRoutes(ctx)
 
-	// Convert the env struct to JSON for logging
-	envJSON, err := json.Marshal(ctx.Env)
-	if err != nil {
-		ctx.Logger.Fatal("Failed to marshal env to JSON", zap.String("error", err.Error()))
-	}
-
-	ctx.Logger.Info(fmt.Sprintf("%s listening on port %s", application, ctx.Env.Port), zap.String("env", string(envJSON)))
 
 	// Create an HTTP server with a context
 	server := &http.Server{

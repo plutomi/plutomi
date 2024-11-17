@@ -22,7 +22,6 @@ func HealthCheck(w http.ResponseWriter, r *http.Request, ctx *sharedTypes.AppCon
 	res := PlutomiHealthCheckResponse{
 		BasePlutomiResponse: types.BasePlutomiResponse{Message: "Saul Goodman", DocsUrl: "https://plutomi.com/docs/api"},
 		MySQL:               ctx.MySQL.Ping() == nil,
-		// TODO kafka
 		// TODO redis
 	}
 
