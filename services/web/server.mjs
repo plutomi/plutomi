@@ -53,6 +53,31 @@ app.get("/health", (req, res) => {
 app.all("*", remixHandler);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () =>
-  console.log(`Express server listening at http://localhost:${port}`)
-);
+const server = app.listen(port, () => {
+  console.log(`Express server listening at http://localhost:${port}`);
+});
+
+// Graceful shutdown
+const shutdown = () => {
+  console.log("Shutting down server...");
+
+  // Close server and give ongoing requests 5 seconds to complete
+  server.close((err) => {
+    if (err) {
+      console.error("Error during server shutdown:", err);
+      process.exit(1);
+    }
+    console.log("Server shut down gracefully.");
+    process.exit(0);
+  });
+
+  // Force exit if still not shut down after 5 seconds
+  setTimeout(() => {
+    console.error("Forcing server shutdown...");
+    process.exit(1);
+  }, 5000);
+};
+
+// Listen for termination signals
+process.on("SIGINT", shutdown); // Handle Ctrl+C
+process.on("SIGTERM", shutdown); // Handle termination signals from orchestration tools like Docker
