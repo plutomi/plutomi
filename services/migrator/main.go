@@ -13,6 +13,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"go.uber.org/zap"
 )
+
 const application = "migrator"
 
 func main() {
@@ -23,13 +24,10 @@ func main() {
 	logger := utils.GetLogger(application, env)
 	defer logger.Sync()
 
-
-	// Initialize MySQL 
+	// Initialize MySQL
 	mysql := clients.GetMySQL(logger, application, env)
 	defer mysql.Close()
 
-
-	// Initialize the AppContext
 	// Initialize the AppContext
 	ctx := sharedTypes.AppContext{
 		Env:         env,
