@@ -34,6 +34,14 @@
       {
         "directory": "services/consumers/notifications-auth",
         "changeProcessCWD": true
+      },
+      {
+        "directory": "services/consumers/notifications-auth-retry",
+        "changeProcessCWD": true
+      },
+      {
+        "directory": "services/consumers/notifications-auth-dlq",
+        "changeProcessCWD": true
       }
     ],
     "search.exclude": {
