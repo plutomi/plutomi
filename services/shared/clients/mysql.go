@@ -24,7 +24,6 @@ func GetMySQL(logger *zap.Logger, application string, env types.EnvironmentVaria
 	db.SetMaxIdleConns(25)
 	db.SetConnMaxLifetime(5 * time.Minute)
 
-
 	return db
 
 }

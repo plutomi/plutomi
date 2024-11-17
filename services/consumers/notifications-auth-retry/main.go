@@ -18,5 +18,5 @@ func SampleHandler(self *consumers.PlutomiConsumer, record *kgo.Record) error {
 
 
 func main() {
-	consumers.CreateConsumer("notifications-auth-consumer", constants.TopicAuth, constants.ConsumerGroupNotifications, SampleHandler)
+	consumers.CreateConsumer("notifications-auth-consumer", constants.TopicAuthRetry, constants.ConsumerGroupNotifications, SampleHandler)
 }
