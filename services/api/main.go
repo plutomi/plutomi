@@ -33,8 +33,9 @@ func main() {
 	defer mysql.Close()
 
 	// Initialize Kafka
-	kafka := clients.GetKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
+	kafka := clients.NewKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
 	defer kafka.Close()
+
 
 	// Initialize the AppContext
 	ctx := &types.AppContext{

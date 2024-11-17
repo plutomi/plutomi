@@ -1,8 +1,9 @@
 package types
 
 import (
+	"plutomi/shared/clients"
+
 	"github.com/jmoiron/sqlx"
-	"github.com/twmb/franz-go/pkg/kgo"
 	"go.uber.org/zap"
 )
 
@@ -11,5 +12,5 @@ type AppContext struct {
 	Logger      *zap.Logger
 	Application string
 	MySQL       *sqlx.DB
-	Kafka 	 *kgo.Client
+	Kafka 	 	*clients.PlutomiKafka
 }

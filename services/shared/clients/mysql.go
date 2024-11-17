@@ -2,7 +2,7 @@ package clients
 
 import (
 	"fmt"
-	"plutomi/shared/types"
+	sharedTypes "plutomi/shared/types"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetMySQL(logger *zap.Logger, application string, env types.EnvironmentVariables) *sqlx.DB {
+func GetMySQL(logger *zap.Logger, application string, env sharedTypes.EnvironmentVariables) *sqlx.DB {
 	db, err := sqlx.Connect("mysql", env.MySQLUrl)
 	if err != nil {
 		msg := fmt.Sprintf("Failed to connect to database in %s", application)

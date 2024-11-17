@@ -19,7 +19,7 @@ import (
 type MessageHandler func(consumer *PlutomiConsumer, record *kgo.Record) error
 
 type PlutomiConsumer struct {
-	Kafka  *kgo.Client
+	Kafka  clients.PlutomiKafka
 	handler MessageHandler
 	Application string
 	Logger *zap.Logger
@@ -41,7 +41,8 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	defer mysql.Close()
 
 	// Initialize the Kafka client
-	kafka := clients.GetKafka([]string{env.KafkaUrl}, group, topic, logger)
+	kafka := clients.NewKafka([]string{env.KafkaUrl}, group, topic, logger)
+	defer kafka.Close()
 
 	// Initialize the AppContext
 	ctx := &types.AppContext{
@@ -55,7 +56,7 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	ctx.Logger.Info("Created Kafka client", zap.String("groupID", string(group)), zap.String("topic", string(topic)))
 
 	consumer := &PlutomiConsumer{
-		Kafka:  kafka,
+		Kafka:  *kafka,
 		handler: handler,
 		Logger:  ctx.Logger,
 		MySQL:   ctx.MySQL,
@@ -84,7 +85,7 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 func (pc *PlutomiConsumer) Run(ctx context.Context) {
 	for {
 		pc.Logger.Debug("Polling for messages...")
-		fetches := pc.Kafka.PollFetches(ctx)
+		fetches := pc.Kafka.Client.PollFetches(ctx)
 		if fetches.IsClientClosed() {
 			pc.Logger.Info("Client closed, shutting down")
 			return
@@ -105,52 +106,31 @@ func (pc *PlutomiConsumer) Run(ctx context.Context) {
 			if err != nil {
 				pc.Logger.Error("Failed to process message", zap.Error(err))
 				// Publish to next topic
-				nextTopic := getNextTopic(constants.KafkaTopic(record.Topic))
+				nextTopic := pc.Kafka.GetNextTopic(constants.KafkaTopic(record.Topic))
 
 				if nextTopic != "" {
-					err := pc.publishToTopic(nextTopic, record)
+					err := pc.Kafka.PublishToTopic(nextTopic, record)
 					if err != nil {
 						pc.Logger.Error("Failed to publish to topic", zap.String("topic", string(nextTopic)), zap.Error(err))
 						// Don't commit the message so it gets reprocessed
 						return
 					}
-					pc.Kafka.CommitRecords(ctx, record)
+					pc.Kafka.Client.CommitRecords(ctx, record)
 					pc.Logger.Info("Message published to topic", zap.String("topic", string(nextTopic)))
 					return
 				}
 
 				pc.Logger.Warn("No next topic found, will not retry,", zap.String("topic", record.Topic))
-				pc.Kafka.CommitRecords(ctx, record)
+				pc.Kafka.Client.CommitRecords(ctx, record)
 				return
 
 			}
 
 			pc.Logger.Info("Message processed successfully", zap.String("key", string(record.Key)), zap.String("value", string(record.Value)))
-			pc.Kafka.CommitRecords(ctx, record)
+			pc.Kafka.Client.CommitRecords(ctx, record)
 		})
 	}
 }
 
-func getNextTopic(currentTopic constants.KafkaTopic) constants.KafkaTopic {
-	if currentTopic == constants.TopicAuth {
-		return constants.TopicAuthRetry
-	}
 
-	if currentTopic == constants.TopicAuthRetry {
-		return constants.TopicAuthDLQ
-	}
 
-	return ""
-}
-
-func (pc *PlutomiConsumer) publishToTopic(topic constants.KafkaTopic, record *kgo.Record) error {
-	newRecord := &kgo.Record{
-		Topic: string(topic),
-		Key:   record.Key,
-		Value: record.Value,
-	}
-
-	err := pc.Kafka.ProduceSync(context.Background(), newRecord).FirstErr()
-
-	return err
-}
