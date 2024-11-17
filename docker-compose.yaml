@@ -50,7 +50,8 @@ services:
       echo 'Kafka is reachable, creating topics...'; \
       topics=(auth auth-retry auth-dlq); \
       for topic in $${topics[@]}; do \
-        /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 && echo \"Topic $${topic} created or already exists.\"; \
+        /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 \
+        --config retention.bytes=1073741824 --config retention.ms=604800000 && echo \"Topic $${topic} created or already exists.\"; \
       done; \
       echo 'Successfully created all topics.' \
       "
