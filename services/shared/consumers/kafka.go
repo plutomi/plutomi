@@ -19,9 +19,9 @@ import (
 type MessageHandler func(consumer *PlutomiConsumer, record *kgo.Record) error
 
 type PlutomiConsumer struct {
-	client  *kgo.Client
+	Kafka  *kgo.Client
 	handler MessageHandler
-
+	Application string
 	Logger *zap.Logger
 	MySQL  *sqlx.DB
 	Ctx    *types.AppContext
@@ -55,11 +55,11 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	ctx.Logger.Info("Created Kafka client", zap.String("groupID", string(group)), zap.String("topic", string(topic)))
 
 	consumer := &PlutomiConsumer{
-		client:  kafka,
+		Kafka:  kafka,
 		handler: handler,
 		Logger:  ctx.Logger,
 		MySQL:   ctx.MySQL,
-		Ctx:     ctx,
+		Application: consumer_name,
 	}
 
 	// Graceful shutdown
@@ -72,7 +72,7 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	go func() {
 		<-sigs
 		fmt.Println("Shutting down consumer...")
-		consumer.client.Close()
+		consumer.Kafka.Close()
 		cancel()
 	}()
 
@@ -84,7 +84,7 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 func (pc *PlutomiConsumer) Run(ctx context.Context) {
 	for {
 		pc.Logger.Debug("Polling for messages...")
-		fetches := pc.client.PollFetches(ctx)
+		fetches := pc.Kafka.PollFetches(ctx)
 		if fetches.IsClientClosed() {
 			pc.Logger.Info("Client closed, shutting down")
 			return
@@ -114,19 +114,19 @@ func (pc *PlutomiConsumer) Run(ctx context.Context) {
 						// Don't commit the message so it gets reprocessed
 						return
 					}
-					pc.client.CommitRecords(ctx, record)
+					pc.Kafka.CommitRecords(ctx, record)
 					pc.Logger.Info("Message published to topic", zap.String("topic", string(nextTopic)))
 					return
 				}
 
 				pc.Logger.Warn("No next topic found, will not retry,", zap.String("topic", record.Topic))
-				pc.client.CommitRecords(ctx, record)
+				pc.Kafka.CommitRecords(ctx, record)
 				return
 
 			}
 
 			pc.Logger.Info("Message processed successfully", zap.String("key", string(record.Key)), zap.String("value", string(record.Value)))
-			pc.client.CommitRecords(ctx, record)
+			pc.Kafka.CommitRecords(ctx, record)
 		})
 	}
 }
@@ -150,7 +150,7 @@ func (pc *PlutomiConsumer) publishToTopic(topic constants.KafkaTopic, record *kg
 		Value: record.Value,
 	}
 
-	err := pc.client.ProduceSync(context.Background(), newRecord).FirstErr()
+	err := pc.Kafka.ProduceSync(context.Background(), newRecord).FirstErr()
 
 	return err
 }
