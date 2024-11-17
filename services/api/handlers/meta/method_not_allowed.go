@@ -3,13 +3,13 @@ package handlers
 import (
 	"net/http"
 	apiTypes "plutomi/api/types"
-	utils "plutomi/shared/utils"
+	sharedTypes "plutomi/shared/types"
 
 	"github.com/go-chi/render"
 	"go.uber.org/zap"
 )
 
-func MethodNotAllowed(w http.ResponseWriter, r *http.Request, ctx *utils.AppContext) {
+func MethodNotAllowed(w http.ResponseWriter, r *http.Request, ctx *sharedTypes.AppContext) {
 	ctx.Logger.Warn("Method not allowed", zap.String("method", r.Method), zap.String("path", r.URL.Path))
 	res := apiTypes.BasePlutomiResponse{
 		Message: "Method not allowed",

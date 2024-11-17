@@ -6,6 +6,8 @@ import (
 	clients "plutomi/shared/clients"
 	utils "plutomi/shared/utils"
 
+	sharedTypes "plutomi/shared/types"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -28,7 +30,13 @@ func main() {
 
 
 	// Initialize the AppContext
-	ctx := utils.InitAppContext(application, logger, env, mysql)
+	// Initialize the AppContext
+	ctx := sharedTypes.AppContext{
+		Env:         env,
+		Logger:      logger,
+		Application: application,
+		MySQL:       mysql,
+	}
 
 	m, err := migrate.New(
 		"file://migrations",

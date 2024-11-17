@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"plutomi/api/routes"
+	"plutomi/shared/types"
+
 	clients "plutomi/shared/clients"
 	"time"
 
@@ -30,8 +32,14 @@ func main() {
 
 
 	// Initialize the AppContext
-	ctx := utils.InitAppContext(application, logger, env, mysql)
-
+	// Initialize the AppContext
+	ctx := &types.AppContext{
+		Env:         env,
+		Logger:      logger,
+		Application: application,
+		MySQL:       mysql,
+	}
+	
 	// Setup routes
 	routes := routes.SetupRoutes(ctx)
 

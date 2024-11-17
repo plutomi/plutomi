@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 	"plutomi/api/types"
-	utils "plutomi/shared/utils"
+	sharedTypes "plutomi/shared/types"
 
 	"github.com/go-chi/render"
 	"go.uber.org/zap"
@@ -16,7 +16,7 @@ type PlutomiHealthCheckResponse struct {
 	Redis bool `json:"redis"`
 }
 
-func HealthCheck(w http.ResponseWriter, r *http.Request, ctx *utils.AppContext) {
+func HealthCheck(w http.ResponseWriter, r *http.Request, ctx *sharedTypes.AppContext) {
 	ctx.Logger.Debug("API HealthCheck", zap.String("method", r.Method), zap.String("path", r.URL.Path))
 
 	res := PlutomiHealthCheckResponse{
