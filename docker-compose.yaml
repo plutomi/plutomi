@@ -50,7 +50,7 @@ services:
         sleep 5; \
       done; \
       echo 'Kafka is reachable, creating topics...'; \
-      topics=(auth auth-retry auth-dlq); \
+      topics=(auth auth-retry auth-dlq test test-retry test-dlq); \
       for topic in $${topics[@]}; do \
         /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1; \
         /opt/bitnami/kafka/bin/kafka-configs.sh --bootstrap-server kafka:9092 --entity-type topics --entity-name $${topic} --alter --add-config retention.ms=604800000 retention.bytes=1073741824; \
