@@ -21,8 +21,7 @@ type MessageHandler func(consumer *PlutomiConsumer, record *kgo.Record) error
 type PlutomiConsumer struct {
 	client  *kgo.Client
 	handler MessageHandler
-	// retryTopic constants.KafkaTopic
-	// dlqTopic   constants.KafkaTopic
+
 	Logger *zap.Logger
 	MySQL  *sqlx.DB
 	Ctx    *utils.AppContext

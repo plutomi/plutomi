@@ -6,8 +6,8 @@ import (
 	gonanoid "github.com/matoous/go-nanoid"
 )
 
-// TODO remove 0, O, I, l, 1 B and 8?
-const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+// Removed 0, O, o, I, l, 1, i, B, 8
+const alphabet = "2345679abcdefghjkmnpqrstuvwxyzACDEFGHJKLMNOPQRSTUVWXYZ"
 const idLength = 12
 
 func GenerateID(length int) string {
