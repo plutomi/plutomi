@@ -8,8 +8,9 @@ import (
 
 	clients "plutomi/shared/clients"
 	"plutomi/shared/constants"
-	types "plutomi/shared/types"
 	"plutomi/shared/utils"
+
+	ctx "plutomi/shared/context"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -24,7 +25,7 @@ type PlutomiConsumer struct {
 	Application string
 	Logger *zap.Logger
 	MySQL  *sqlx.DB
-	Ctx    *types.AppContext
+	Ctx    *ctx.AppContext
 }
 
 // Starts a consumer that listens on the supplied topic
@@ -45,7 +46,7 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	defer kafka.Close()
 
 	// Initialize the AppContext
-	ctx := &types.AppContext{
+	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
 		Application: consumer_name,

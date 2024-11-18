@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"plutomi/api/routes"
+	ctx "plutomi/shared/context"
 	"syscall"
 	"time"
 
@@ -14,7 +15,6 @@ import (
 
 	"go.uber.org/zap"
 
-	types "plutomi/shared/types"
 	utils "plutomi/shared/utils"
 )
 
@@ -38,7 +38,7 @@ func main() {
 
 
 	// Initialize the AppContext
-	ctx := &types.AppContext{
+	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
 		Application: application,
