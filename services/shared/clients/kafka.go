@@ -81,21 +81,15 @@ func (k *PlutomiKafka) Close() {
 	k.Client.Close()
 }
 
-var NextTopicMap = map[constants.KafkaTopic]constants.KafkaTopic{
-	// Useful for debugging
-	constants.TopicTest:      constants.TopicTestRetry,
-	constants.TopicTestRetry: constants.TopicTestDLQ,
-	constants.TopicTestDLQ:   "",
 
-	constants.TopicAuth:      constants.TopicAuthRetry,
-	constants.TopicAuthRetry: constants.TopicAuthDLQ,
-	constants.TopicAuthDLQ:   "",
-}
 
 func (k *PlutomiKafka) GetNextTopic(currentTopic constants.KafkaTopic) constants.KafkaTopic {
-	if nextTopic, ok := NextTopicMap[currentTopic]; ok {
+	nextTopic , exists := constants.NextTopicMap[currentTopic]
+
+	if exists {
 		return nextTopic
 	}
+
 	return ""
 }
 
