@@ -45,10 +45,6 @@ app.use(express.static("build/client", { maxAge: "12h" }));
 
 app.use(morgan("tiny"));
 
-app.get("/health", (req, res) => {
-  res.send("OK");
-});
-
 // handle SSR requests
 app.all("*", remixHandler);
 
