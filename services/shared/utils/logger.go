@@ -17,7 +17,6 @@ import (
 // Logs to both Axiom and the console
 func GetLogger(application string, env types.EnvironmentVariables) *zap.Logger {
 
-
 	// 1. Setup the Axiom core for zap
 	var axiomCore zapcore.Core
 	axiomCoreInitialized := false

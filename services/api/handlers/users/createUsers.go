@@ -83,7 +83,6 @@ func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
 
 	idString := strconv.FormatInt(lastInsertID, 10)
 
-	// ctx.Kafka.PublishToTopic(constants.TopicTest, idString, "value")
 
 	// Retrieve the user from the database
 

@@ -9,11 +9,10 @@ import (
 	types "plutomi/shared/types"
 )
 
-
 type AppContext struct {
-	Env        types.EnvironmentVariables
+	Env         types.EnvironmentVariables
 	Logger      *zap.Logger
 	Application string
 	MySQL       *sqlx.DB
-	Kafka 	 	*sc.PlutomiKafka
+	Kafka       *sc.PlutomiKafka
 }

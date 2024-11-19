@@ -20,12 +20,12 @@ import (
 type MessageHandler func(consumer *PlutomiConsumer, record *kgo.Record) error
 
 type PlutomiConsumer struct {
-	Kafka  clients.PlutomiKafka
-	handler MessageHandler
+	Kafka       clients.PlutomiKafka
+	handler     MessageHandler
 	Application string
-	Logger *zap.Logger
-	MySQL  *sqlx.DB
-	Ctx    *ctx.AppContext
+	Logger      *zap.Logger
+	MySQL       *sqlx.DB
+	Ctx         *ctx.AppContext
 }
 
 // Starts a consumer that listens on the supplied topic
@@ -57,10 +57,10 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	ctx.Logger.Info("Created Kafka client", zap.String("groupID", string(group)), zap.String("topic", string(topic)))
 
 	consumer := &PlutomiConsumer{
-		Kafka:  *kafka,
-		handler: handler,
-		Logger:  ctx.Logger,
-		MySQL:   ctx.MySQL,
+		Kafka:       *kafka,
+		handler:     handler,
+		Logger:      ctx.Logger,
+		MySQL:       ctx.MySQL,
 		Application: consumer_name,
 	}
 
@@ -132,6 +132,3 @@ func (pc *PlutomiConsumer) Run(ctx context.Context) {
 		})
 	}
 }
-
-
-
