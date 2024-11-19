@@ -33,7 +33,7 @@ For each entity, we maintain a main Kafka topic along with corresponding retry a
 
 - **Main Topic**: The initial destination for all events.
 
-# TODO recommended self hosting specs? 3 nodes of 2vcpu, 8gb ram, 100gb ssd
+# TODO recommended self hosting specs? 3 nodes of 2vcpu, 8gb ram, 100gb ssd !
 
 - **Retry Topic**: Messages that fail processing in the main topic are rerouted here. Retries implement exponential backoff to prevent overwhelming the system.
 
