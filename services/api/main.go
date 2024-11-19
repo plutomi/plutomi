@@ -11,7 +11,6 @@ import (
 	"time"
 
 	clients "plutomi/shared/clients"
-	constants "plutomi/shared/constants"
 
 	"go.uber.org/zap"
 
@@ -33,7 +32,9 @@ func main() {
 	defer mysql.Close()
 
 	// Initialize Kafka
-	kafka := clients.NewKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
+	 kafka := clients.NewKafkaProducer([]string{env.KafkaUrl}, logger, application)
+	// kafka := clients.NewKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
+
 	defer kafka.Close()
 
 	// Initialize the AppContext

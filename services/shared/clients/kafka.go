@@ -41,6 +41,44 @@ func NewKafka(brokers []string, group constants.ConsumerGroup, topic constants.K
 }
 
 
+
+// NewKafkaProducer initializes a Kafka producer-only client.
+func NewKafkaProducer(brokers []string, logger *zap.Logger, application string) *PlutomiKafka {
+	opts := []kgo.Opt{
+		kgo.SeedBrokers(brokers...),
+	}
+
+	client, err := kgo.NewClient(opts...)
+	if err != nil {
+		msg := fmt.Errorf("unable to create Kafka producer: %s", err)
+		logger.Fatal(msg.Error())
+	}
+
+	msg := fmt.Sprintf("Created Kafka producer client in %s", application)
+	logger.Info(msg)
+	return &PlutomiKafka{Client: client}
+}
+
+// NewKafkaConsumer initializes a Kafka consumer-producer client.
+func NewKafkaConsumer(brokers []string, group constants.ConsumerGroup, topic constants.KafkaTopic, logger *zap.Logger) *PlutomiKafka {
+	opts := []kgo.Opt{
+		kgo.SeedBrokers(brokers...),
+		kgo.ConsumerGroup(string(group)),
+		kgo.ConsumeTopics(string(topic)),
+		kgo.DisableAutoCommit(),
+		kgo.ConsumeResetOffset(kgo.NewOffset().AtStart()),
+	}
+
+	client, err := kgo.NewClient(opts...)
+	if err != nil {
+		msg := fmt.Errorf("unable to create Kafka consumer for group '%s': %s", group, err)
+		logger.Fatal(msg.Error())
+	}
+
+	logger.Info(fmt.Sprintf("Created Kafka consumer for group '%s'", group))
+	return &PlutomiKafka{Client: client}
+}
+
 func (k *PlutomiKafka) Close() {
 	k.Client.Close()
 }
