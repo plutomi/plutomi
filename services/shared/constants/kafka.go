@@ -3,7 +3,7 @@ package constants
 type KafkaTopic string
 type ConsumerGroup string
 
-// ! If you modify these, make sure to modify the NextTopicMap below!
+// ! If you modify this, make sure to modify the NextTopicMap below as well as the docker-compose.yaml to create the topic for dev
 const (
 	
 	TopicTest      KafkaTopic = "test"
