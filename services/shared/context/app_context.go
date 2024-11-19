@@ -12,7 +12,7 @@ import (
 type AppContext struct {
 	Env         types.EnvironmentVariables
 	Logger      *zap.Logger
-	Application string
+	Service string
 	MySQL       *sqlx.DB
 	Kafka       *sc.PlutomiKafka
 }

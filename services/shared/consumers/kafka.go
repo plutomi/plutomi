@@ -22,7 +22,7 @@ type MessageHandler func(consumer *PlutomiConsumer, record *kgo.Record) error
 type PlutomiConsumer struct {
 	Kafka       clients.PlutomiKafka
 	handler     MessageHandler
-	Application string
+	Service string
 	Logger      *zap.Logger
 	MySQL       *sqlx.DB
 	Ctx         *ctx.AppContext
@@ -49,7 +49,7 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
-		Application: consumer_name,
+		Service: consumer_name,
 		MySQL:       mysql,
 		Kafka:       kafka,
 	}
@@ -61,7 +61,7 @@ func CreateConsumer(consumer_name string, topic constants.KafkaTopic, group cons
 		handler:     handler,
 		Logger:      ctx.Logger,
 		MySQL:       ctx.MySQL,
-		Application: consumer_name,
+		Service: consumer_name,
 	}
 
 	// Graceful shutdown

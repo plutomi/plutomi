@@ -11,7 +11,7 @@ import (
 )
 
 func SampleHandler(self *consumers.PlutomiConsumer, record *kgo.Record) error {
-	msg := fmt.Sprintf("Received message in %s - publishing to retry!", self.Application)
+	msg := fmt.Sprintf("Received message in %s - publishing to retry!", self.Service)
 	self.Logger.Info(msg, zap.String("key", string(record.Key)), zap.String("value", string(record.Value)))
 	return nil
 }

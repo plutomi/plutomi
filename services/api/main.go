@@ -17,22 +17,22 @@ import (
 	utils "plutomi/shared/utils"
 )
 
-const application = "api"
+const service = "api"
 
 func main() {
 	// Initialize the environment variables
 	env := utils.LoadEnv("../../.env")
 
 	// Initialize the logger
-	logger := utils.GetLogger(application, env)
+	logger := utils.GetLogger(service, env)
 	defer logger.Sync()
 
 	// Initialize MySQL
-	mysql := clients.GetMySQL(logger, application, env)
+	mysql := clients.GetMySQL(logger, service, env)
 	defer mysql.Close()
 
 	// Initialize Kafka
-	 kafka := clients.NewKafkaProducer([]string{env.KafkaUrl}, logger, application)
+	 kafka := clients.NewKafkaProducer([]string{env.KafkaUrl}, logger, service)
 	// kafka := clients.NewKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
 
 	defer kafka.Close()
@@ -41,7 +41,7 @@ func main() {
 	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
-		Application: application,
+		Service: service,
 		MySQL:       mysql,
 		Kafka:       kafka,
 	}

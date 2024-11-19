@@ -14,25 +14,25 @@ import (
 	"go.uber.org/zap"
 )
 
-const application = "migrator"
+const service = "migrator"
 
 func main() {
 	// Initialize the environment variables
 	env := utils.LoadEnv("../../.env")
 
 	// Initialize the logger
-	logger := utils.GetLogger(application, env)
+	logger := utils.GetLogger(service, env)
 	defer logger.Sync()
 
 	// Initialize MySQL
-	mysql := clients.GetMySQL(logger, application, env)
+	mysql := clients.GetMySQL(logger, service, env)
 	defer mysql.Close()
 
 	// Initialize the AppContext
 	ctx := ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
-		Application: application,
+		Service: service,
 		MySQL:       mysql,
 	}
 
