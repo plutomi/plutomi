@@ -36,19 +36,17 @@ func main() {
 	kafka := clients.NewKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
 	defer kafka.Close()
 
-
 	// Initialize the AppContext
 	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
 		Application: application,
 		MySQL:       mysql,
-		Kafka: 	kafka,
+		Kafka:       kafka,
 	}
 
 	// Setup routes
 	routes := routes.SetupRoutes(ctx)
-
 
 	// Create an HTTP server with a context
 	server := &http.Server{

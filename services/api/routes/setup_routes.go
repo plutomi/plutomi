@@ -50,6 +50,7 @@ func SetupRoutes(ctx *ctx.AppContext) *chi.Mux {
 		meta.DocsRoot(w, r, ctx)
 	})
 
+	// Test route
 	router.Post("/api/users", func(w http.ResponseWriter, r *http.Request) {
 		users.CreateUsers(w, r, ctx)
 	})

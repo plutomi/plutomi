@@ -6,7 +6,7 @@ import (
 	clients "plutomi/shared/clients"
 	utils "plutomi/shared/utils"
 
-	sharedTypes "plutomi/shared/types"
+	ctx "plutomi/shared/context"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
@@ -29,7 +29,7 @@ func main() {
 	defer mysql.Close()
 
 	// Initialize the AppContext
-	ctx := sharedTypes.AppContext{
+	ctx := ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
 		Application: application,

@@ -110,7 +110,7 @@ func (pc *PlutomiConsumer) Run(ctx context.Context) {
 				nextTopic := pc.Kafka.GetNextTopic(constants.KafkaTopic(record.Topic))
 
 				if nextTopic != "" {
-					err := pc.Kafka.PublishToTopic(nextTopic, record, "", nil)
+					err := pc.Kafka.PublishToTopic(nextTopic, string(record.Key), record.Value)
 					if err != nil {
 						pc.Logger.Error("Failed to publish to topic", zap.String("topic", string(nextTopic)), zap.Error(err))
 						// Don't commit the message so it gets reprocessed

@@ -10,8 +10,8 @@ import (
 )
 
 type PlutomiHealthCheckResponse struct {
-    types.BasePlutomiResponse
-    MySQL bool `json:"mysql"`
+	types.BasePlutomiResponse
+	MySQL bool `json:"mysql"`
 	Kafka bool `json:"kafka"`
 	Redis bool `json:"redis"`
 }

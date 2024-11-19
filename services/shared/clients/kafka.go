@@ -31,9 +31,11 @@ func NewKafka(brokers []string, group constants.ConsumerGroup, topic constants.K
 	client, err := kgo.NewClient(opts...)
 
 	if err != nil {
-		msg := fmt.Errorf("unable to create client in %s topic for consumer group %s: %s", topic, group, err)
+		msg := fmt.Errorf("unable to create client in '%s' topic for consumer group %s: %s", topic, group, err)
 		logger.Fatal(msg.Error())
 	}
+
+	logger.Info(fmt.Sprintf("Created Kafka client for '%s' topic in '%s' consumer group", topic, group))
 
 	return &PlutomiKafka{Client: client}
 }
@@ -64,17 +66,9 @@ func (k *PlutomiKafka) GetNextTopic(currentTopic constants.KafkaTopic) constants
 // PublishToTopic publishes a message to a Kafka topic.
 // If `record` is provided, it uses that directly - mostly used in Consumers.
 // If `key` and `value` are provided, it marshals the value and creates a new record.
-func (k *PlutomiKafka) PublishToTopic(topic constants.KafkaTopic, record *kgo.Record, key string, value interface{}) error {
+func (k *PlutomiKafka) PublishToTopic(topic constants.KafkaTopic,  key string, value interface{}) error {
 	var newRecord *kgo.Record
 
-	// If a record is already provided, reuse it
-	if record != nil {
-		newRecord = &kgo.Record{
-			Topic: string(topic),
-			Key:   record.Key,
-			Value: record.Value,
-		}
-	} else {
 		// If key and value are provided, create a new record
 		if key == "" || value == nil {
 			return errors.New("either record or key and value must be provided")
@@ -91,7 +85,6 @@ func (k *PlutomiKafka) PublishToTopic(topic constants.KafkaTopic, record *kgo.Re
 			Key:   []byte(key),
 			Value: data,
 		}
-	}
 
 	// Publish the record
 	if err := k.Client.ProduceSync(context.Background(), newRecord).FirstErr(); err != nil {

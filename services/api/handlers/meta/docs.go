@@ -14,7 +14,6 @@ func DocsRoot(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
 
 	ctx.Logger.Info("Sending message to Kafka")
 
-	
 	res := apiTypes.BasePlutomiResponse{
 		Message: "Hello from the Plutomi API! Did you mean to go to the docs?",
 		DocsUrl: "https://plutomi.com/docs/api",
