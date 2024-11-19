@@ -25,8 +25,9 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ .spec.template.spec.terminationGracePeriodSeconds }}
       imagePullSecrets:
-        # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-        - name: ecr-credentials
+        # TODO verify this in another PR
+        # # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+        # - name: ecr-credentials
       containers:
         {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
@@ -67,9 +68,6 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
           envFrom:
-            # Add the AWS credentials from the secret
-            - secretRef:
-                name: aws-credentials
               # Add any shared secrets
             {{- range $key, $value := $.Values.shared.env }}
             - name: {{ $key }}
