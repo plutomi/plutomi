@@ -192,7 +192,10 @@ docker buildx create --name multiarch --use --bootstrap
 Build the image and push it to the repository. This might take a while depending if cross compiling.
 docker buildx build --platform linux/amd64 -t plutomi/<api|web|consumer> . --push
 
-
-
 ## TODO strimzi
+
 https://github.com/strimzi/strimzi-kafka-operator/blob/0.44.0/examples/kafka/kraft/kafka-with-dual-role-nodes.yaml
+
+## TODO note about session manager
+
+https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html

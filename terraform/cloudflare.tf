@@ -41,27 +41,6 @@ resource "cloudflare_record" "dmarc_record" {
   tags    = ["ses", "dmarc", var.environment]
 }
 
-# Retrieve the public IPs of the EC2 instances
-# locals {
-#   control_plane_ips = [
-#     for instance in aws_instance.control_plane_nodes : instance.public_ip
-#   ]
-# }
-
-# # Add DNS A records in Cloudflare pointing to each EC2 instance's public IP
-# resource "cloudflare_record" "control_plane_dns" {
-#   count   = length(local.control_plane_ips)       # Create one record per instance
-#   zone_id = var.cloudflare_zone_id                # Cloudflare Zone ID for your domain
-#   name    = "node-${count.index}.${var.base_url}" # Adjust the subdomain name as needed
-#   type    = "A"
-#   ttl     = 300
-#   content = local.control_plane_ips[count.index] # Public IP for the instance
-#   tags    = ["ec2", "control-plane", var.environment]
-#   proxied = true # Enable Cloudflare proxying
-#   # Ensure this resource depends on the EC2 instances being created
-#   depends_on = [aws_instance.control_plane_nodes]
-# }
-
 
 # DKIM CNAME records
 resource "cloudflare_record" "dkim_records" {
@@ -73,4 +52,45 @@ resource "cloudflare_record" "dkim_records" {
   ttl        = 300
   depends_on = [aws_ses_domain_dkim.ses_dkim]
   tags       = ["ses", "dkim", var.environment]
+}
+
+# Create a local variable to hold the first domain validation option
+locals {
+  validation_option = [for dvo in aws_acm_certificate.alb_certificate_plutomi.domain_validation_options : dvo][0]
+}
+
+
+# Add the ACM certificate validation records# Add the ACM certificate validation record
+resource "cloudflare_record" "acm_certificate_validation" {
+  zone_id = var.cloudflare_zone_id
+  name    = local.validation_option.resource_record_name
+  type    = local.validation_option.resource_record_type
+  content = local.validation_option.resource_record_value
+  ttl     = 300
+}
+
+
+resource "cloudflare_record" "alb_dns_record" {
+  zone_id = var.cloudflare_zone_id
+  name    = var.base_url
+  type    = "CNAME"
+
+  content = aws_lb.application_load_balancer.dns_name
+  ttl     = 1
+  proxied = true
+  tags    = [var.environment, "alb"]
+
+}
+
+
+resource "cloudflare_record" "alb_dns_subdomain_record" {
+  zone_id = var.cloudflare_zone_id
+  name    = "*.${var.base_url}"
+  type    = "CNAME"
+
+  content = aws_lb.application_load_balancer.dns_name
+  ttl     = 1
+  proxied = true
+  tags    = [var.environment, "alb"]
+
 }
