@@ -1,8 +1,6 @@
 ingress:
   metadata:
     name: ingress
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt
   spec:
     rules:
       - host: "plutomi.com"
@@ -34,13 +32,3 @@ ingress:
                   name: web
                   port:
                     number: 80
-    tls:
-      - hosts:
-          - "plutomi.com"
-          # YOU HAVE TO USE DNS FOR WILDCARD CERT
-          # https://stackoverflow.com/questions/68219076/cert-manager-no-configured-challenge-solvers-can-be-used-for-this-challenge
-          # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
-          # If you get banned for too many cert attempts, just add a new domain
-          # and you can create a new cert. Wildcard, ideally, is best.
-          - "*.plutomi.com" 
-        secretName: plutomi-tls-secret

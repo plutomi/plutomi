@@ -199,3 +199,5 @@ https://github.com/strimzi/strimzi-kafka-operator/blob/0.44.0/examples/kafka/kra
 ## TODO note about session manager
 
 https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html
+
+aws ssm start-session --target instanceId
