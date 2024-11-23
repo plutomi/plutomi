@@ -32,7 +32,7 @@ resource "axiom_token" "production_token" {
   # Don't redeploy on staging / production
   count       = var.environment == "development" ? 1 : 0
   name        = "Production API Token"
-  description = "This token is used for production_token purposes ONLY."
+  description = "This token is used for production purposes ONLY."
   dataset_capabilities = {
     "production" = {
       ingest = ["create"]

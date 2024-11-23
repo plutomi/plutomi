@@ -6,7 +6,7 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-
+    
 	adapter "github.com/axiomhq/axiom-go/adapters/zap"
 	"github.com/axiomhq/axiom-go/axiom"
 
@@ -46,11 +46,8 @@ func GetLogger(application string, env types.EnvironmentVariables) *zap.Logger {
 		core = consoleCore
 	}
 
-	// 4. Create the logger with the combined core
 	logger := zap.New(core)
 
-	// You have to defer the Sync method to guarantee that all the logs are flushed AS WELL AS wherever you call GetLogger()
-	defer logger.Sync()
 
 	logger.With(zap.String("application", application)).Info("Logger initialized")
 	return logger

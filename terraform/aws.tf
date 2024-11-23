@@ -87,52 +87,52 @@ resource "aws_vpc_security_group_egress_rule" "control_plane_outbound" {
   ip_protocol       = "-1"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_home_api_access" {
-  security_group_id = aws_security_group.control_plane_security_group.id
-  from_port         = 6443
-  to_port           = 6443
-  ip_protocol       = "tcp"
-  cidr_ipv4         = local.home_ip_cidr
-  description       = "Allow API access from home IP"
-}
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_home_api_access" {
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port         = 6443
+#   to_port           = 6443
+#   ip_protocol       = "tcp"
+#   cidr_ipv4         = local.home_ip_cidr
+#   description       = "Allow K3s access from home IP"
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_home_http_access" {
-  security_group_id = aws_security_group.control_plane_security_group.id
-  from_port         = 80
-  to_port           = 80
-  ip_protocol       = "tcp"
-  cidr_ipv4         = local.home_ip_cidr
-  description       = "Allow HTTP access from home IP"
-}
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_home_http_access" {
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port         = 80
+#   to_port           = 80
+#   ip_protocol       = "tcp"
+#   cidr_ipv4         = local.home_ip_cidr
+#   description       = "Allow HTTP access from home IP"
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_home_https_access" {
-  security_group_id = aws_security_group.control_plane_security_group.id
-  from_port         = 443
-  to_port           = 443
-  ip_protocol       = "tcp"
-  cidr_ipv4         = local.home_ip_cidr
-  description       = "Allow HTTPs access from home IP"
-}
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_home_https_access" {
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port         = 443
+#   to_port           = 443
+#   ip_protocol       = "tcp"
+#   cidr_ipv4         = local.home_ip_cidr
+#   description       = "Allow HTTPs access from home IP"
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_http_access" {
-  for_each          = toset(var.cloudflare_ips)
-  security_group_id = aws_security_group.control_plane_security_group.id
-  from_port         = 80
-  to_port           = 80
-  ip_protocol       = "tcp"
-  cidr_ipv4         = each.value
-  description       = "Allow HTTP access from Cloudflare IPs"
-}
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_http_access" {
+#   for_each          = toset(var.cloudflare_ips)
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port         = 80
+#   to_port           = 80
+#   ip_protocol       = "tcp"
+#   cidr_ipv4         = each.value
+#   description       = "Allow HTTP access from Cloudflare IPs"
+# }
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_https_access" {
-  for_each          = toset(var.cloudflare_ips)
-  security_group_id = aws_security_group.control_plane_security_group.id
-  from_port         = 443
-  to_port           = 443
-  ip_protocol       = "tcp"
-  cidr_ipv4         = each.value
-  description       = "Allow HTTPS access from Cloudflare IPs"
-}
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_https_access" {
+#   for_each          = toset(var.cloudflare_ips)
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port         = 443
+#   to_port           = 443
+#   ip_protocol       = "tcp"
+#   cidr_ipv4         = each.value
+#   description       = "Allow HTTPS access from Cloudflare IPs"
+# }
 
 resource "aws_vpc_security_group_ingress_rule" "control_plane_ssh_access" {
   security_group_id = aws_security_group.control_plane_security_group.id
@@ -216,7 +216,7 @@ resource "aws_instance" "control_plane_nodes" {
   key_name                    = aws_key_pair.ssh_key_pair.key_name
   subnet_id                   = aws_subnet.public_subnet[count.index].id
   vpc_security_group_ids      = [aws_security_group.control_plane_security_group.id]
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   availability_zone           = element(data.aws_availability_zones.available.names, count.index)
   depends_on = [
     aws_security_group.control_plane_security_group,
