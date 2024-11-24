@@ -27,11 +27,25 @@ resource "aws_subnet" "public_subnet" {
 }
 
 
+// Attach the AmazonSSMManagedInstanceCore policy to the EC2 role so we can SSH into it through Session Manager
 resource "aws_iam_policy_attachment" "ssm_policy_attachment" {
   name       = "attach-ssm-policy"
   roles      = [aws_iam_role.ec2_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
+
+// Attach the AmazonEC2ContainerRegistryReadOnly policy to the EC2 role so we can pull images from ECR
+resource "aws_iam_role_policy_attachment" "ecr_readonly" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+// Attach the SecretsManagerReadWrite policy to the EC2 role so we can access secrets
+resource "aws_iam_role_policy_attachment" "secrets_manager" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+}
+
 
 resource "aws_subnet" "private_subnet" {
   count                   = 3
@@ -307,57 +321,6 @@ resource "aws_secretsmanager_secret_version" "my_app_secret_version" {
 
 
 
-# Define the IAM policy for restricted Secrets Manager access
-resource "aws_iam_policy" "secrets_manager_ip_restricted" {
-  name        = "secrets-manager-ip-restricted"
-  description = "Allows access to Secrets Manager only from specific IP addresses"
-
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          # Allows retrieving values from Secrets Manager for things like DB credentials and third party API keys
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
-        ],
-        "Resource" : aws_secretsmanager_secret.my_app_secret.arn,
-        # "Condition": { TODO
-        #   "IpAddress": {
-        #     "aws:SourceIp": [
-        #       "YOUR_SERVER_IP_1",
-        #       "YOUR_SERVER_IP_2",
-        #       "YOUR_SERVER_IP_3"
-        #     ]
-        #   }
-        # }
-      },
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          // Allows retrieving an ECR authorization token, which is necessary for logging in to ECR to pull images
-          "ecr:GetAuthorizationToken"
-        ],
-        "Resource" : "*"
-      },
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          // Allows checking the availability of ECR layers and getting image download URLs
-          // https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage"
-        ],
-        "Resource" : [
-          for repo in aws_ecr_repository.repositories : repo.arn
-        ]
-      }
-    ]
-  })
-}
-
 
 resource "aws_iam_role" "ec2_role" {
   name = "ec2-role"
@@ -377,21 +340,11 @@ resource "aws_iam_role" "ec2_role" {
 }
 
 
+
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "ec2-instance-profile"
   role = aws_iam_role.ec2_role.name
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 ############################################################
