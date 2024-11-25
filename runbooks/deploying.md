@@ -44,11 +44,33 @@ This is how we encrypt secrets in the cluster AND allows us to commit them into 
 
 ### Initialize the nodes
 
-> If installing on a single node, you can simply do:
->
-> **curl -sfL https://get.k3s.io | sh -**
->
-> And skip most of the steps below as they deal with replication and high availability.
+> Note: We swap out containerd with docker
+
+Install Docker , enable it, and run it on boot:
+
+```bash
+sudo yum install -y docker
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+Install the AWS ECR credential helper:
+
+```bash
+sudo yum install -y amazon-ecr-credential-helper
+```
+
+Edit the docker config file to use the credential helper:
+
+```bash
+TODO update this
+```
+
+Restart Docker:
+
+```bash
+sudo systemctl restart docker
+```
 
 ---
 
@@ -62,8 +84,8 @@ export K3S_TOKEN=$(openssl rand -base64 50 | tr -d '\n/=+')
 # Get the IP of the node
 export NODE_IP=$(hostname -i)
 
-
-curl -sfL https://get.k3s.io | K3S_TOKEN=$K3S_TOKEN K3S_KUBECONFIG_MODE="644" sh -s - server  --cluster-init  --node-ip $NODE_IP --advertise-address $NODE_IP  --tls-san $NODE_IP
+# Install K3S with docker runtime
+curl -sfL https://get.k3s.io | K3S_TOKEN=$K3S_TOKEN K3S_KUBECONFIG_MODE="644" sh -s - server --docker --cluster-init  --node-ip $NODE_IP --advertise-address $NODE_IP  --tls-san $NODE_IP
 
 # Copy the new secret token that was created so other nodes can join
 export SERVER_NODE_TOKEN=$(sudo cat /var/lib/rancher/k3s/server/node-token)
@@ -77,15 +99,15 @@ Install the K3S agent on the second and third nodes using the `$SERVER_NODE_TOKE
 # Second Node
 export NODE_IP=$(hostname -i)
 
-export SERVER_NODE_TOKEN=(YOUR_SERVER_NODE_TOKEN)
-curl -sfL https://get.k3s.io | K3S_TOKEN=$SERVER_NODE_TOKEN K3S_KUBECONFIG_MODE="644" sh -s - server  --server https://IP_FROM_THE_FIRST_NODE:6443  --node-ip $NODE_IP --advertise-address $NODE_IP --tls-san $NODE_IP
+export SERVER_NODE_TOKEN=YOUR_SERVER_NODE_TOKEN_FROM_FIRST_NODE
+curl -sfL https://get.k3s.io | K3S_TOKEN=$SERVER_NODE_TOKEN K3S_KUBECONFIG_MODE="644" sh -s - server --docker  --server https://IP_FROM_THE_FIRST_NODE:6443  --node-ip $NODE_IP --advertise-address $NODE_IP --tls-san $NODE_IP
 
 # Third Node
 export NODE_IP=$(hostname -i)
-export SERVER_NODE_TOKEN=(YOUR_SERVER_NODE_TOKEN)
+export SERVER_NODE_TOKEN=YOUR_SERVER_NODE_TOKEN_FROM_FIRST_NODE
 
 
-curl -sfL https://get.k3s.io | K3S_TOKEN=$SERVER_NODE_TOKEN K3S_KUBECONFIG_MODE="644" sh -s - server  --server https://IP_FROM_THE_FIRST_NODE:6443  --node-ip $NODE_IP --advertise-address $NODE_IP --tls-san $NODE_IP
+curl -sfL https://get.k3s.io | K3S_TOKEN=$SERVER_NODE_TOKEN K3S_KUBECONFIG_MODE="644" sh -s - server  --docker --server https://IP_FROM_THE_FIRST_NODE:6443  --node-ip $NODE_IP --advertise-address $NODE_IP --tls-san $NODE_IP
 
 ```
 
@@ -292,7 +314,7 @@ helm upgrade --install kafka-ui-deploy . -f values/values.yaml -f values/kafka-u
 
 ### Traefik
 
-Allow traffic in, this will make a request for a TLS certificate if you are using those settings at the ingress. It is here where you want to update your DNS to point to your nodes. After running the command, it might take a few minutes for the certificate to be generated and applied:
+Now we need to allow traffic to our applications with Traefik ingress
 
 ```bash
 helm upgrade --install traefik-deploy . -f values/ingress.yaml

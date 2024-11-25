@@ -12,7 +12,10 @@ if [ $# -lt 2 ]; then
 
 fi
 
-allowed_services=("api" "web")
+# TODO consumers
+
+# TODO add this to adding a new service
+allowed_services=("api" "web" "migrator")
 
 # Check if the argument is not in the allowed values
 if ! [[ " ${allowed_services[@]} " =~ " $1 " ]]; then
@@ -27,7 +30,7 @@ fi
 SERVICE_NAME=$1
 AWS_PROFILE=$2
 AWS_REGION="us-east-1"
-IMAGE_TAG="latest2"
+IMAGE_TAG="latest"
 
 # Fetch the ECR repository URL from Terraform output for the specified service
 ECR_URL=$(cd ./terraform && terraform output -json ecr_repo_urls | jq -r ".\"$SERVICE_NAME\"")
@@ -42,15 +45,14 @@ fi
 # Authenticate Docker to AWS ECR
 aws ecr get-login-password --region $AWS_REGION --profile $AWS_PROFILE | docker login --username AWS --password-stdin $ECR_URL
 
+docker buildx use default
+docker buildx inspect --bootstrap
+
 
 # Build the Docker image for the specified service
-# docker build -t $SERVICE_NAME ./services/$SERVICE_NAME/Dockerfile .
-docker buildx build --platform linux/amd64 -t $SERVICE_NAME -f ./services/$SERVICE_NAME/Dockerfile .
+# https://docs.docker.com/build/metadata/attestations/slsa-provenance/
+docker buildx build --platform linux/amd64 --provenance=false -t $ECR_URL:$IMAGE_TAG -f ./services/$SERVICE_NAME/Dockerfile . --push
 
-# Tag the Docker image
-docker tag $SERVICE_NAME:latest $ECR_URL:$IMAGE_TAG
 
-# Push the image to ECR
-docker push $ECR_URL:$IMAGE_TAG
 
 echo "Docker image for '$SERVICE_NAME' has been successfully pushed to $ECR_URL:$IMAGE_TAG"

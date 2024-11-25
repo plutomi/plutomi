@@ -13,6 +13,9 @@ mail_from_subdomain = "notifications-development"
 aws_region          = "us-east-1"
 aws_profile         = "your-profile-development"
 home_ip             = "XXX.X.XXX.XX"
+# TODO maybe no lnoger needed
+aws_account_id      = "ABCDEF123456"
+
 
 ### Cloudflare
 cloudflare_account_id = "1234567890abcdef1234567890"

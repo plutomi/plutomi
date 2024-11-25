@@ -60,7 +60,12 @@ variable "mail_from_subdomain" {
 }
 
 variable "aws_region" {
-  description = "The AWS region - typically us-east-1"
+  description = "The AWS region - defaults us-east-1"
+  default     = "us-east-1"
+}
+
+variable "aws_account_id" { # TODO no longer needed?
+  description = "The AWS account ID - used for ECR"
 }
 
 variable "aws_profile" {

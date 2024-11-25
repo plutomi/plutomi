@@ -1,9 +1,3 @@
-# TODO set this up properly 
-# Local variable to compute home IP CIDR block
-locals {
-  home_ip_cidr = "${var.home_ip}/32"
-}
-
 resource "aws_vpc" "plutomi_vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -40,11 +34,18 @@ resource "aws_iam_role_policy_attachment" "ecr_readonly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
+
+resource "aws_iam_role_policy_attachment" "ec2_readonly" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+}
+
 // Attach the SecretsManagerReadWrite policy to the EC2 role so we can access secrets
 resource "aws_iam_role_policy_attachment" "secrets_manager" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 }
+
 
 
 resource "aws_subnet" "private_subnet" {
@@ -169,7 +170,7 @@ resource "aws_instance" "control_plane_nodes" {
   // https://instances.vantage.sh/?min_memory=8&min_vcpus=2&cost_duration=monthly&reserved_term=yrTerm3Standard.noUpfront
   instance_type = "m6a.large"
   # ami                         = "ami-0085e579c65d43668" // Amazon Linux 2023 arm64
-  ami      = "ami-063d43db0594b521b" // Amazon Linux 2023 x86_64
+  ami           = "ami-063d43db0594b521b" // Amazon Linux 2023 x86_64
   // Servers are in private subnet
   subnet_id                   = aws_subnet.private_subnet[count.index].id
   vpc_security_group_ids      = [aws_security_group.control_plane_security_group.id]
