@@ -11,6 +11,6 @@ import (
 type AppContext struct {
 	Env         types.EnvironmentVariables
 	Logger      *zap.Logger
-	Service string
+	ServiceName string
 	MySQL       *sqlx.DB
 }

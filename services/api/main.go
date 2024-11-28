@@ -17,18 +17,18 @@ import (
 	utils "plutomi/shared/utils"
 )
 
-const service = "api"
+const name = "api"
 
 func main() {
 	// Initialize the environment variables
 	env := utils.LoadEnv("../../.env")
 
 	// Initialize the logger
-	logger := utils.GetLogger(service, env)
+	logger := utils.GetLogger(name, env)
 	defer logger.Sync()
 
 	// Initialize MySQL
-	mysql := clients.GetMySQL(logger, service, env)
+	mysql := clients.GetMySQL(logger, name, env)
 	defer mysql.Close()
 
 
@@ -36,7 +36,7 @@ func main() {
 	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
-		Service: service,
+		ServiceName: name,
 		MySQL:       mysql,
 	}
 
