@@ -92,19 +92,10 @@ variable "cloudflare_zone_id" {
   sensitive   = true
 }
 
-variable "cloudflare_account_id" {
-  description = "The account ID for Cloudflare"
-  sensitive   = true
-}
 
-variable "cloudflare_region" {
-  # https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/
-  description = "The region for the Cloudflare bucket"
-}
 
-variable "cloudflare_bucket_name" {
-  description = "The name of the R2 bucket for Cloudflare"
-}
+
+
 
 # #### Axiom
 # Not currently used as this provider has a few issues
@@ -114,7 +105,7 @@ variable "axiom_admin_api_token" {
 }
 
 
-variable "cloudflare_ips" {
+variable "cloudflare_ip4" {
   // https://www.cloudflare.com/ips/
   type = list(string)
   default = [
@@ -131,6 +122,22 @@ variable "cloudflare_ips" {
     "104.16.0.0/13",
     "104.24.0.0/14",
     "172.64.0.0/13",
-    "131.0.72.0/22"
+    "131.0.72.0/22",
+    "173.245.48.0/20"
   ]
 }
+
+variable "cloudflare_ipv6" {
+  type = list(string)
+  default = [
+"2400:cb00::/32",
+"2606:4700::/32",
+"2803:f800::/32",
+"2405:b500::/32",
+"2405:8100::/32",
+"2a06:98c0::/29",
+"2c0f:f248::/32"
+  ]
+}
+
+

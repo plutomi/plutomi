@@ -1,1 +1,1 @@
-Update to have tf logo on let, remove in progress for r2
+Update to have tf logo, ecr, s3, dynamo etc.

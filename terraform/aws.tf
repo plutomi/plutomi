@@ -166,15 +166,16 @@ data "aws_availability_zones" "available" {
 
 
 resource "aws_instance" "control_plane_nodes" {
-  count = 3
+  count = 1
   // https://instances.vantage.sh/?min_memory=8&min_vcpus=2&cost_duration=monthly&reserved_term=yrTerm3Standard.noUpfront
-  instance_type = "m6a.large"
-  # ami                         = "ami-0085e579c65d43668" // Amazon Linux 2023 arm64
-  ami           = "ami-063d43db0594b521b" // Amazon Linux 2023 x86_64
-  // Servers are in private subnet
-  subnet_id                   = aws_subnet.private_subnet[count.index].id
+  instance_type = "m8g.medium"
+  ami                         = "ami-0085e579c65d43668" // Amazon Linux 2023 arm64
+  # ami           = "ami-063d43db0594b521b" // Amazon Linux 2023 x86_64
+  // Servers are in public subnet for now (while developing)
+  subnet_id                   = aws_subnet.public_subnet[count.index].id
   vpc_security_group_ids      = [aws_security_group.control_plane_security_group.id]
-  associate_public_ip_address = false
+  // for now (while developing)
+  associate_public_ip_address = true
   availability_zone           = element(data.aws_availability_zones.available.names, count.index)
   depends_on = [
     aws_security_group.control_plane_security_group,
@@ -185,7 +186,7 @@ resource "aws_instance" "control_plane_nodes" {
 
   # Override the root volume
   root_block_device {
-    volume_size = 12
+    volume_size = 20
     volume_type = "gp3"
   }
 
@@ -199,9 +200,7 @@ resource "aws_instance" "control_plane_nodes" {
 }
 
 
-
 ## This creates an SES identity, an SNS topic, and an SQS queue to be used for email notifications.
-
 # Queue for SES Events
 resource "aws_sqs_queue" "events_queue" {
   name       = var.ses_events_queue_name
@@ -303,22 +302,22 @@ output "ecr_repo_urls" {
 
 
 # Create the Secrets Manager secret
-resource "aws_secretsmanager_secret" "my_app_secret" {
-  name = "plutomi-secrets"
-}
+# resource "aws_secretsmanager_secret" "my_app_secret" {
+#   name = "plutomi-secrets"
+# }
 
-# Add key-value pairs to the secret
-resource "aws_secretsmanager_secret_version" "my_app_secret_version" {
-  secret_id = aws_secretsmanager_secret.my_app_secret.id
+# # Add key-value pairs to the secret
+# resource "aws_secretsmanager_secret_version" "my_app_secret_version" {
+#   secret_id = aws_secretsmanager_secret.my_app_secret.id
 
-  secret_string = jsonencode({
-    // Sample TODO
-    db_username = "my_db_username"
-    db_password = "my_db_password"
-    api_key     = "my_api_key"
-    other_key   = "other_value"
-  })
-}
+#   secret_string = jsonencode({
+#     // Sample TODO
+#     db_username = "my_db_username"
+#     db_password = "my_db_password"
+#     api_key     = "my_api_key"
+#     other_key   = "other_value"
+#   })
+# }
 
 
 
@@ -351,124 +350,124 @@ resource "aws_iam_instance_profile" "instance_profile" {
 ############################################################
 ########### Load Balancer Security Group ###################
 ############################################################
-resource "aws_security_group" "alb_sg" {
-  name        = "plutomi-${var.environment}-alb-sg"
-  description = "Security group for the ALB"
-  vpc_id      = aws_vpc.plutomi_vpc.id
+# resource "aws_security_group" "alb_sg" {
+#   name        = "plutomi-${var.environment}-alb-sg"
+#   description = "Security group for the ALB"
+#   vpc_id      = aws_vpc.plutomi_vpc.id
 
-  ingress {
-    description = "Allow HTTP traffic from anywhere"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   ingress {
+#     description = "Allow HTTP traffic from anywhere"
+#     from_port   = 80
+#     to_port     = 80
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
-  ingress {
-    description = "Allow HTTPS traffic from anywhere"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   ingress {
+#     description = "Allow HTTPS traffic from anywhere"
+#     from_port   = 443
+#     to_port     = 443
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
-  egress {
-    description = "Allow all outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   egress {
+#     description = "Allow all outbound traffic"
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
-  tags = {
-    name = "plutomi-${var.environment}-alb-sg"
-  }
-}
+#   tags = {
+#     name = "plutomi-${var.environment}-alb-sg"
+#   }
+# }
 
 ############################################################
 ###################### Load Balancer #######################
 ############################################################
-resource "aws_lb" "application_load_balancer" {
-  name                       = "plutomi-${var.environment}-alb"
-  load_balancer_type         = "application"
-  security_groups            = [aws_security_group.alb_sg.id]
-  subnets                    = [for subnet in aws_subnet.public_subnet : subnet.id]
-  enable_deletion_protection = false
+# resource "aws_lb" "application_load_balancer" {
+#   name                       = "plutomi-${var.environment}-alb"
+#   load_balancer_type         = "application"
+#   security_groups            = [aws_security_group.alb_sg.id]
+#   subnets                    = [for subnet in aws_subnet.public_subnet : subnet.id]
+#   enable_deletion_protection = false
 
 
-  tags = {
-    name = "plutomi-${var.environment}-alb"
-  }
-}
+#   tags = {
+#     name = "plutomi-${var.environment}-alb"
+#   }
+# }
 
 
 
 ############################################################
 ################### EC2 Target Group #######################
 ############################################################
-resource "aws_lb_target_group" "alb_target_group" {
-  name     = "plutomi-${var.environment}-tg"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.plutomi_vpc.id
+# resource "aws_lb_target_group" "alb_target_group" {
+#   name     = "plutomi-${var.environment}-tg"
+#   port     = 80
+#   protocol = "HTTP"
+#   vpc_id   = aws_vpc.plutomi_vpc.id
 
-  health_check {
-    path                = "/"
-    protocol            = "HTTP"
-    matcher             = "200"
-    interval            = 30
-    timeout             = 5
-    healthy_threshold   = 5
-    unhealthy_threshold = 2
-  }
+#   health_check {
+#     path                = "/"
+#     protocol            = "HTTP"
+#     matcher             = "200"
+#     interval            = 30
+#     timeout             = 5
+#     healthy_threshold   = 5
+#     unhealthy_threshold = 2
+#   }
 
-  tags = {
-    name = "plutomi-${var.environment}-tg"
-  }
-}
+#   tags = {
+#     name = "plutomi-${var.environment}-tg"
+#   }
+# }
 
 
 
 ############################################################
 ########### Listener on Port 80 for the instnaces ##########
-############################################################
-resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.application_load_balancer.arn
-  port              = "80"
-  protocol          = "HTTP"
+# ############################################################
+# resource "aws_lb_listener" "http_listener" {
+#   load_balancer_arn = aws_lb.application_load_balancer.arn
+#   port              = "80"
+#   protocol          = "HTTP"
 
-  default_action {
-    type = "redirect"
-    redirect {
-      protocol    = "HTTPS"
-      port        = "443"
-      status_code = "HTTP_301"
-    }
-  }
-}
+#   default_action {
+#     type = "redirect"
+#     redirect {
+#       protocol    = "HTTPS"
+#       port        = "443"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
 
-resource "aws_lb_listener" "https_listener" {
-  load_balancer_arn = aws_lb.application_load_balancer.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.alb_certificate_plutomi.arn
+# resource "aws_lb_listener" "https_listener" {
+#   load_balancer_arn = aws_lb.application_load_balancer.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-2016-08"
+#   certificate_arn   = aws_acm_certificate.alb_certificate_plutomi.arn
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.alb_target_group.arn
-  }
-}
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.alb_target_group.arn
+#   }
+# }
 
 ############################################################
 ########### Register the instnaces in the target group ##########
 ############################################################
-resource "aws_lb_target_group_attachment" "control_plane_nodes" {
-  count            = length(aws_instance.control_plane_nodes)
-  target_group_arn = aws_lb_target_group.alb_target_group.arn
-  target_id        = aws_instance.control_plane_nodes[count.index].id
-  port             = 80
-}
+# resource "aws_lb_target_group_attachment" "control_plane_nodes" {
+#   count            = length(aws_instance.control_plane_nodes)
+#   target_group_arn = aws_lb_target_group.alb_target_group.arn
+#   target_id        = aws_instance.control_plane_nodes[count.index].id
+#   port             = 80
+# }
 
 
 
@@ -478,64 +477,62 @@ resource "aws_lb_target_group_attachment" "control_plane_nodes" {
 ############################################################
 
 
-resource "aws_acm_certificate" "alb_certificate_plutomi" {
-  domain_name               = var.base_url
-  subject_alternative_names = ["*.${var.base_url}"]
-  validation_method         = "DNS"
+# resource "aws_acm_certificate" "alb_certificate_plutomi" {
+#   domain_name               = var.base_url
+#   subject_alternative_names = ["*.${var.base_url}"]
+#   validation_method         = "DNS"
 
-  tags = {
-    name = "plutomi-${var.environment}-alb-certificate"
-  }
-}
+#   tags = {
+#     name = "plutomi-${var.environment}-alb-certificate"
+#   }
+# }
 
-resource "aws_acm_certificate_validation" "alb_certificate_validation" {
-  certificate_arn         = aws_acm_certificate.alb_certificate_plutomi.arn
-  validation_record_fqdns = [cloudflare_record.acm_certificate_validation.name]
-}
-
-
-resource "aws_security_group_rule" "allow_http_from_alb" {
-  type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.control_plane_security_group.id
-  source_security_group_id = aws_security_group.alb_sg.id
-  description              = "Allow HTTP from ALB"
-}
+# resource "aws_acm_certificate_validation" "alb_certificate_validation" {
+#   certificate_arn         = aws_acm_certificate.alb_certificate_plutomi.arn
+#   validation_record_fqdns = [cloudflare_record.acm_certificate_validation.name]
+# }
 
 
-# Allocate Elastic IP for NAT instance
-resource "aws_eip" "nat_eip" {
 
-}
+# resource "aws_security_group_rule" "allow_http_from_alb" {
+#   type                     = "ingress"
+#   from_port                = 80
+#   to_port                  = 80
+#   protocol                 = "tcp"
+#   security_group_id        = aws_security_group.control_plane_security_group.id
+#   source_security_group_id = aws_security_group.alb_sg.id
+#   description              = "Allow HTTP from ALB"
+# }
 
-# NAT instance security group
-resource "aws_security_group" "nat_sg" {
-  name        = "plutomi-${var.environment}-nat-sg"
-  description = "Security group for NAT instance"
-  vpc_id      = aws_vpc.plutomi_vpc.id
 
-  ingress {
-    description = "Allow inbound traffic from private subnets"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [for subnet in aws_subnet.private_subnet : subnet.cidr_block]
-  }
 
-  egress {
-    description = "Allow outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 
-  tags = {
-    Name = "plutomi-${var.environment}-nat-sg"
-  }
-}
+# # NAT instance security group
+# resource "aws_security_group" "nat_sg" {
+#   name        = "plutomi-${var.environment}-nat-sg"
+#   description = "Security group for NAT instance"
+#   vpc_id      = aws_vpc.plutomi_vpc.id
+
+#   ingress {
+#     description = "Allow inbound traffic from private subnets"
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = [for subnet in aws_subnet.private_subnet : subnet.cidr_block]
+#   }
+
+#   egress {
+#     description = "Allow outbound traffic"
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+
+#   tags = {
+#     Name = "plutomi-${var.environment}-nat-sg"
+#   }
+# }
 
 # Create route tables for private subnets
 resource "aws_route_table" "private_route_table" {
@@ -554,21 +551,46 @@ resource "aws_route_table_association" "private_subnet_association" {
   route_table_id = aws_route_table.private_route_table[count.index].id
 }
 
+
 # NAT instance using fck-nat module
-module "fck_nat" {
-  source  = "RaJiska/fck-nat/aws"
-  version = "1.3.0"
+# module "fck_nat" {
+#   source  = "RaJiska/fck-nat/aws"
+#   version = "1.3.0"
 
-  name                          = "plutomi-${var.environment}-nat-gateway"
-  vpc_id                        = aws_vpc.plutomi_vpc.id
-  subnet_id                     = aws_subnet.public_subnet[0].id
-  eip_allocation_ids            = [aws_eip.nat_eip.id]
-  additional_security_group_ids = [aws_security_group.nat_sg.id]
+#   name                          = "plutomi-${var.environment}-nat-gateway"
+#   vpc_id                        = aws_vpc.plutomi_vpc.id
+#   subnet_id                     = aws_subnet.public_subnet[0].id
+#   eip_allocation_ids            = [aws_eip.nat_eip.id]
+#   additional_security_group_ids = [aws_security_group.nat_sg.id]
 
-  update_route_tables = true
-  instance_type       = "t4g.nano"
-  route_tables_ids = {
-    for index, rtb in aws_route_table.private_route_table : "private-rtb-${index}" => rtb.id
-  }
+#   update_route_tables = true
+#   instance_type       = "t4g.nano"
+#   route_tables_ids = {
+#     for index, rtb in aws_route_table.private_route_table : "private-rtb-${index}" => rtb.id
+#   }
+# }
+
+
+
+
+resource "aws_security_group_rule" "allow_http_from_cloudflare" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  security_group_id = aws_security_group.control_plane_security_group.id
+  cidr_blocks       = var.cloudflare_ip4
+  description       = "Allow HTTP traffic from Cloudflare IPs"
 }
 
+# Temporary
+# resource "aws_security_group_rule" "allow_https_from_cloudflare" {
+#   type              = "ingress"
+#   from_port         = 443
+#   to_port           = 443
+#   protocol          = "tcp"
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   cidr_blocks       = var.cloudflare_ip4
+#   ipv6_cidr_blocks  = var.cloudflare_ipv6
+#   description       = "Allow HTTPS traffic from Cloudflare IPs"
+# }

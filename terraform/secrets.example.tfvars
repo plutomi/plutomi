@@ -18,13 +18,9 @@ aws_account_id      = "ABCDEF123456"
 
 
 ### Cloudflare
-cloudflare_account_id = "1234567890abcdef1234567890"
 # https://developers.cloudflare.com/fundamentals/api/get-started/create-token/ / https://dash.cloudflare.com/profile/api-tokens
 cloudflare_admin_token = "your-cloudflare-admin-token"
-cloudflare_bucket_name = "your-bucket-development-assets"
 cloudflare_zone_id     = "your-cloudflare-account-id"
-# https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/
-cloudflare_region = "ENAM"
 
 ### Axiom
 # Deployed once in development mode

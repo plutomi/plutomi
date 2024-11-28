@@ -9,7 +9,7 @@ The deployment will create the following: # TODo update with nodtes from PR
 - SES identity for sending emails
 - SNS topic and SQS as a destination for emails
 - The DNS records that SES requires (DKIM, SPF) on Cloudflare
-- R2 storage bucket for application assets
+- S3 bucket for application assets
 - 3 EC2 instances to run our workload
 
 # TODO - create Cloudflare R2 keys and add to secrets

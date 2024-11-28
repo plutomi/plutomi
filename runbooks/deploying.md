@@ -2,8 +2,7 @@
 
 - [Prerequisites](#prerequisites)
 - [AWS / SES](#aws)
-- [CloudFlare](#cloudflare) - Make sure to create a CLOUDFLARE_DNS_TOKEN with the `Zone:Edit, DNS:Edit` permissions
-- TODO add CLOUDFLARE_R2_ADMIN_TOKEN - https://dash.cloudflare.com/?to=/:account/r2/api-tokens
+- [CloudFlare](#cloudflare) - Make sure to create a CLOUDFLARE_DNS_TOKEN with the `Zone:Edit, DNS:Edit, SSL and Certificates:Edit` permissions
 - [Initializing Nodes](#initialize-the-nodes)
 - [Linkerd (Optional)](#install-linkerd)
 - [Sealed Secrets](#sealed-secrets)

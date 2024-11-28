@@ -11,8 +11,7 @@ import (
 
 const WORK_DElAY = 1 * time.Second
 
-
-func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, performWork func(*ctx.AppContext) (bool, error)) error {
+func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, handler func(*ctx.AppContext) (bool, error)) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -24,13 +23,14 @@ func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, performWork func
 			return nil
 		default:
 			// Perform the background work
-			hasWork, err := performWork(appCtx)
+			retryASAP, err := handler(appCtx)
 			if err != nil {
 				appCtx.Logger.Error("Error performing work", zap.String("error", err.Error()))
 			}
 
-			if !hasWork {
-				// If no work was done, wait before polling again
+			// If there's more work to do (or it failed), retry immediately
+			// Otherwise sleep for a bit before retrying
+			if !retryASAP {
 				time.Sleep(WORK_DElAY)
 			}
 		}

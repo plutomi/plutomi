@@ -1,10 +1,4 @@
-# This creates an R2 bucket for blob storage on Cloudflare.
 
-resource "cloudflare_r2_bucket" "cloudflare-bucket" {
-  account_id = var.cloudflare_account_id
-  name       = var.cloudflare_bucket_name
-  location   = var.cloudflare_region
-}
 
 # Mail From MX Record
 resource "cloudflare_record" "mail_from_mx_record" {
@@ -54,43 +48,65 @@ resource "cloudflare_record" "dkim_records" {
   tags       = ["ses", "dkim", var.environment]
 }
 
-# Create a local variable to hold the first domain validation option
-locals {
-  validation_option = [for dvo in aws_acm_certificate.alb_certificate_plutomi.domain_validation_options : dvo][0]
-}
+# # Create a local variable to hold the first domain validation option
+# locals {
+#   validation_option = [for dvo in aws_acm_certificate.alb_certificate_plutomi.domain_validation_options : dvo][0]
+# }
 
 
-# Add the ACM certificate validation records# Add the ACM certificate validation record
-resource "cloudflare_record" "acm_certificate_validation" {
-  zone_id = var.cloudflare_zone_id
-  name    = local.validation_option.resource_record_name
-  type    = local.validation_option.resource_record_type
-  content = local.validation_option.resource_record_value
-  ttl     = 300
-}
+# # Add the ACM certificate validation records# Add the ACM certificate validation record
+# resource "cloudflare_record" "acm_certificate_validation" {
+#   zone_id = var.cloudflare_zone_id
+#   name    = local.validation_option.resource_record_name
+#   type    = local.validation_option.resource_record_type
+#   content = local.validation_option.resource_record_value
+#   ttl     = 300
+# }
 
 
-resource "cloudflare_record" "alb_dns_record" {
+# resource "cloudflare_record" "alb_dns_record" {
+#   zone_id = var.cloudflare_zone_id
+#   name    = var.base_url
+#   type    = "CNAME"
+
+#   content = aws_lb.application_load_balancer.dns_name
+#   ttl     = 1
+#   proxied = true
+#   tags    = [var.environment, "alb"]
+
+# }
+
+
+# resource "cloudflare_record" "alb_dns_subdomain_record" {
+#   zone_id = var.cloudflare_zone_id
+#   name    = "*.${var.base_url}"
+#   type    = "CNAME"
+
+#   content = aws_lb.application_load_balancer.dns_name
+#   ttl     = 1
+#   proxied = true
+#   tags    = [var.environment, "alb"]
+
+# }
+
+resource "cloudflare_record" "domain_to_server" {
   zone_id = var.cloudflare_zone_id
   name    = var.base_url
-  type    = "CNAME"
-
-  content = aws_lb.application_load_balancer.dns_name
-  ttl     = 1
+  type    = "A"
+  content =  aws_instance.control_plane_nodes[0].public_ip
   proxied = true
-  tags    = [var.environment, "alb"]
-
+  ttl     = 1
+  tags    = [var.environment, "server"]
 }
 
-
-resource "cloudflare_record" "alb_dns_subdomain_record" {
+resource "cloudflare_record" "wildcard_subdomain" {
   zone_id = var.cloudflare_zone_id
-  name    = "*.${var.base_url}"
-  type    = "CNAME"
-
-  content = aws_lb.application_load_balancer.dns_name
-  ttl     = 1
+  name    = "*"
+  type    = "A"
+  content   = aws_instance.control_plane_nodes[0].public_ip
   proxied = true
-  tags    = [var.environment, "alb"]
-
+  ttl     = 1
+  tags    = [var.environment, "server"]
 }
+
+
