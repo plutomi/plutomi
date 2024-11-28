@@ -11,6 +11,7 @@ import (
 	clients "plutomi/shared/clients"
 	ctx "plutomi/shared/context"
 
+	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 
 	csm "plutomi/shared/consumers"
@@ -65,61 +66,105 @@ func main() {
 	time.Sleep(2 * time.Second)
 	appCtx.Logger.Info("Worker stopped gracefully")
 }
+// pollMySQL polls the MySQL database for pending tasks, processes one if available,
+// and determines if there are more tasks to process or if it should poll again immediately.
+// It returns a boolean indicating whether to poll immediately and an error if one occurred.
+func pollMySQL(appCtx *ctx.AppContext) (hasWork bool, err error) {
+    // Start a new database transaction.
+    var tx *sqlx.Tx
+    tx, err = appCtx.MySQL.Beginx()
+    if err != nil {
+        // If starting the transaction fails, return the error.
+        // Set hasWork = true to retry immediately.
+        return true, err
+    }
 
-func pollMySQL(appCtx *ctx.AppContext) (bool, error) {
-	// Start a transaction
-	tx, err := appCtx.MySQL.Beginx()
-	if err != nil {
-		return true, err
+    // Defer a function to handle transaction commit or rollback.
+    defer func() {
+        if err != nil {
+            // If an error occurred, rollback the transaction.
+           err = tx.Rollback()
+
+		   if err != nil {
+			   appCtx.Logger.Error("Failed to rollback transaction", zap.String("error", err.Error()))
+		   }
+
+        } else {
+            // If no error, commit the transaction.
+           err =  tx.Commit()
+		   if err != nil {
+			   appCtx.Logger.Error("Failed to commit transaction", zap.String("error", err.Error()))
+
+		   }
+        }
+    }()
+
+    // Define a struct to hold task data.
+    type Task struct {
+        ID       int    `db:"id"`
+        TaskData string `db:"task_data"`
+    }
+
+    // Slice to hold up to two tasks.
+    var tasks []Task
+
+    // Query for up to two tasks with a status of 'pending' and lock the rows for update.
+    err = tx.Select(&tasks, "SELECT id, task_data FROM tasks WHERE status = 'pending' LIMIT 2 FOR UPDATE")
+    if err != nil {
+        // Return any error encountered during the query.
+        // Set hasWork = true to retry immediately.
+        return true, err
+    }
+
+	if err == sql.ErrNoRows {
+		// No pending tasks found, return without processing.
+        // The deferred function will commit the transaction.
+        // Set hasWork = false to indicate no immediate work to do.
+		return false, nil
 	}
 
-	// Ensure rollback if the function exits early
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		} else {
-			tx.Commit()
-		}
-	}()
+    // Process the first task in the list.
+    task := tasks[0]
 
-	// Query for one task with a status of 'pending' (lock the row for update)
-	row := tx.QueryRowx("SELECT id, task_data FROM tasks WHERE status = 'pending' LIMIT 1 FOR UPDATE")
+    // Log that we're processing the task.
+    appCtx.Logger.Info("Processing task", zap.Int("id", task.ID), zap.String("task_data", task.TaskData))
 
-	var id int
-	var taskData string
+    // TODO: Add task processing logic here.
+    // err = processTask(task.TaskData)
+    // if err != nil {
+    //     // Return error if task processing fails.
+    //     // Set hasWork = true to retry immediately.
+    //     return true, err
+    // }
 
-	// Scan the row
-	if err := row.Scan(&id, &taskData); err != nil {
-		if err == sql.ErrNoRows {
-			// No work available, exit early
-			return false, nil
-		}
-		// Other error during scanning
-		return true, err
+    // After processing the task, update its status to 'completed' in the database.
+    var result sql.Result
+    result, err = tx.Exec("UPDATE tasks SET status = 'completed' WHERE id = ?", task.ID)
+    if err != nil {
+        // Return the error if the update fails.
+        // Set hasWork = true to retry immediately.
+        return true, err
+    }
+
+    // Check how many rows were affected by the update.
+    var rowsAffected int64
+    rowsAffected, err = result.RowsAffected()
+    if err != nil {
+        // Return the error if unable to get rows affected.
+        // Set hasWork = true to retry immediately.
+        return true, err
+    }
+    if rowsAffected == 0 {
+        // Warn if no rows were updated, which could indicate a race condition.
+        appCtx.Logger.Warn("No rows were updated, possible race condition", zap.Int("id", task.ID))
+    }
+
+
+	// If there are more tasks to process, return hasWork = true to retry immediately and pick it up
+	if len(tasks) > 1 {
+		return true, nil
 	}
 
-	// Process the task
-	appCtx.Logger.Info("Processing task", zap.Int("id", id), zap.String("task_data", taskData))
-
-	// ! TODO logic here
-	
-	// Update task status in the database
-	result, err := tx.Exec("UPDATE tasks SET status = 'completed' WHERE id = ?", id)
-	if err != nil {
-		tx.Rollback()
-		return true, err
-	}
-
-	// Check rows affected
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		tx.Rollback()
-		return true, err
-	}
-	if rowsAffected == 0 {
-		appCtx.Logger.Warn("No rows were updated, possible race condition", zap.Int("id", id))
-	}
-
-	// Commit the transaction explicitly (deferred above)
-	return true, nil
+    // Return that there is no more *immediate* work to be done until the next interval
+    return false, nil
 }
