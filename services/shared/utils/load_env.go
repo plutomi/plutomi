@@ -29,7 +29,6 @@ func LoadEnv(env_path string) stypes.EnvironmentVariables {
 		Environment:  GetEnvWithDefault("ENVIRONMENT", &defaultEnv, logger),
 		Port:         GetEnvWithDefault("PORT", &defaultPort, logger),
 		MySQLUrl:     GetEnvWithDefault("MYSQL_URL", nil, logger),
-		KafkaUrl:     GetEnvWithDefault("KAFKA_URL", nil, logger),
 		BaseWebUrl:   GetEnvWithDefault("BASE_WEB_URL", nil, logger),
 		AxiomDataset: GetEnvWithDefault("AXIOM_DATASET", nil, logger),
 		AxiomToken:   GetEnvWithDefault("AXIOM_TOKEN", nil, logger),

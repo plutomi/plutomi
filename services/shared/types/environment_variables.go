@@ -4,7 +4,6 @@ type EnvironmentVariables struct {
 	Environment  string `json:"environment"`
 	Port         string `json:"port"`
 	MySQLUrl     string `json:"mysql_url"`
-	KafkaUrl     string `json:"kafka_url"`
 	BaseWebUrl   string `json:"base_web_url"`
 	AxiomDataset string `json:"axiom_dataset"`
 	AxiomToken   string `json:"axiom_token"`

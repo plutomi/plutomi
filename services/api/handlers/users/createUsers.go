@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"plutomi/api/types"
-	"strconv"
 
-	"plutomi/shared/constants"
 	ctx "plutomi/shared/context"
 	utils "plutomi/shared/utils"
 
@@ -81,7 +79,7 @@ func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
 	}
 	ctx.Logger.Info("User created", zap.Int64("id", lastInsertID))
 
-	idString := strconv.FormatInt(lastInsertID, 10)
+	// idString := strconv.FormatInt(lastInsertID, 10)
 
 
 	// Retrieve the user from the database
@@ -102,11 +100,10 @@ func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
 		render.JSON(w, r, res)
 		return
 	}
-	ctx.Logger.Info("Retrieved user, inserting into kafka", zap.Int64("id", lastInsertID))
+	ctx.Logger.Info("Retrieved user, inserting into MySQL", zap.Int64("id", lastInsertID))
 
-	ctx.Kafka.PublishToTopic(constants.TopicTest, idString, user)
+	// TODO write into MySQL
 
-	ctx.Logger.Info("SENT to kafka", zap.Int64("id", lastInsertID))
 
 	//Prepare the response
 	res := PlutomiUserCreatedResponse{

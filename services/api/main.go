@@ -31,11 +31,6 @@ func main() {
 	mysql := clients.GetMySQL(logger, service, env)
 	defer mysql.Close()
 
-	// Initialize Kafka
-	 kafka := clients.NewKafkaProducer([]string{env.KafkaUrl}, logger, service)
-	// kafka := clients.NewKafka([]string{env.KafkaUrl}, constants.ConsumerGroupNotifications, constants.TopicAuth, logger)
-
-	defer kafka.Close()
 
 	// Initialize the AppContext
 	ctx := &ctx.AppContext{
@@ -43,7 +38,6 @@ func main() {
 		Logger:      logger,
 		Service: service,
 		MySQL:       mysql,
-		Kafka:       kafka,
 	}
 
 	// Setup routes

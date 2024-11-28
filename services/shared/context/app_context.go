@@ -5,7 +5,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 
-	sc "plutomi/shared/clients"
 	types "plutomi/shared/types"
 )
 
@@ -14,5 +13,4 @@ type AppContext struct {
 	Logger      *zap.Logger
 	Service string
 	MySQL       *sqlx.DB
-	Kafka       *sc.PlutomiKafka
 }
