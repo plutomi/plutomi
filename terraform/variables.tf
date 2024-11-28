@@ -105,7 +105,7 @@ variable "axiom_admin_api_token" {
 }
 
 
-variable "cloudflare_ip4" {
+variable "cloudflare_ipv4" {
   // https://www.cloudflare.com/ips/
   type = list(string)
   default = [

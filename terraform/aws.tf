@@ -105,60 +105,60 @@ resource "aws_vpc_security_group_egress_rule" "control_plane_outbound" {
 
 
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_server_intranode" {
-  security_group_id            = aws_security_group.control_plane_security_group.id
-  referenced_security_group_id = aws_security_group.control_plane_security_group.id
-  from_port                    = 6443
-  to_port                      = 6443
-  ip_protocol                  = "tcp"
-  description                  = "Allow K3s API server communication between nodes"
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_server_intranode" {
+#   security_group_id            = aws_security_group.control_plane_security_group.id
+#   referenced_security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port                    = 6443
+#   to_port                      = 6443
+#   ip_protocol                  = "tcp"
+#   description                  = "Allow K3s API server communication between nodes"
 
-}
-
-
-resource "aws_vpc_security_group_ingress_rule" "control_plane_node_port" {
-  security_group_id            = aws_security_group.control_plane_security_group.id
-  referenced_security_group_id = aws_security_group.control_plane_security_group.id
-  from_port                    = 30000
-  to_port                      = 32767
-  ip_protocol                  = "tcp"
-  description                  = "Allow NodePort services"
-
-}
+# }
 
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_etcd" {
-  security_group_id            = aws_security_group.control_plane_security_group.id
-  referenced_security_group_id = aws_security_group.control_plane_security_group.id
-  from_port                    = 2379
-  to_port                      = 2380
-  ip_protocol                  = "tcp"
-  description                  = "Allow etcd communication between nodes"
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_node_port" {
+#   security_group_id            = aws_security_group.control_plane_security_group.id
+#   referenced_security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port                    = 30000
+#   to_port                      = 32767
+#   ip_protocol                  = "tcp"
+#   description                  = "Allow NodePort services"
 
-}
-
-
-
-resource "aws_vpc_security_group_ingress_rule" "control_plane_flannel" {
-  security_group_id            = aws_security_group.control_plane_security_group.id
-  referenced_security_group_id = aws_security_group.control_plane_security_group.id
-  from_port                    = 8472
-  to_port                      = 8472
-  ip_protocol                  = "udp"
-  description                  = "Allow Flannel VXLAN traffic"
-
-}
+# }
 
 
-resource "aws_vpc_security_group_ingress_rule" "control_plane_metrics" {
-  security_group_id            = aws_security_group.control_plane_security_group.id
-  referenced_security_group_id = aws_security_group.control_plane_security_group.id
-  from_port                    = 10250
-  to_port                      = 10250
-  ip_protocol                  = "tcp"
-  description                  = "Allow Kubelet metrics"
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_etcd" {
+#   security_group_id            = aws_security_group.control_plane_security_group.id
+#   referenced_security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port                    = 2379
+#   to_port                      = 2380
+#   ip_protocol                  = "tcp"
+#   description                  = "Allow etcd communication between nodes"
 
-}
+# }
+
+
+
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_flannel" {
+#   security_group_id            = aws_security_group.control_plane_security_group.id
+#   referenced_security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port                    = 8472
+#   to_port                      = 8472
+#   ip_protocol                  = "udp"
+#   description                  = "Allow Flannel VXLAN traffic"
+
+# }
+
+
+# resource "aws_vpc_security_group_ingress_rule" "control_plane_metrics" {
+#   security_group_id            = aws_security_group.control_plane_security_group.id
+#   referenced_security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port                    = 10250
+#   to_port                      = 10250
+#   ip_protocol                  = "tcp"
+#   description                  = "Allow Kubelet metrics"
+
+# }
 
 data "aws_availability_zones" "available" {
   state = "available"
@@ -495,6 +495,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 
 
 # resource "aws_security_group_rule" "allow_http_from_alb" {
+// ! TODO Don't use this - tf suggestion
 #   type                     = "ingress"
 #   from_port                = 80
 #   to_port                  = 80
@@ -573,18 +574,21 @@ resource "aws_route_table_association" "private_subnet_association" {
 
 
 
-resource "aws_security_group_rule" "allow_http_from_cloudflare" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  security_group_id = aws_security_group.control_plane_security_group.id
-  cidr_blocks       = var.cloudflare_ip4
-  description       = "Allow HTTP traffic from Cloudflare IPs"
-}
+# resource "aws_security_group_rule" "allow_http_from_cloudflare" {
+// ! TODO Don't use this - tf suggestion
+#   type              = "ingress"
+#   from_port         = 80
+#   to_port           = 80
+#   protocol          = "tcp"
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   cidr_blocks       = var.cloudflare_ip4
+#   description       = "Allow HTTP traffic from Cloudflare IPs"
+
+# }
 
 # Temporary
 # resource "aws_security_group_rule" "allow_https_from_cloudflare" {
+// ! TODO Don't use this - tf suggestion
 #   type              = "ingress"
 #   from_port         = 443
 #   to_port           = 443
@@ -593,4 +597,62 @@ resource "aws_security_group_rule" "allow_http_from_cloudflare" {
 #   cidr_blocks       = var.cloudflare_ip4
 #   ipv6_cidr_blocks  = var.cloudflare_ipv6
 #   description       = "Allow HTTPS traffic from Cloudflare IPs"
+# }
+
+
+
+/// -----
+
+# Create ingress rules for IPv4
+resource "aws_vpc_security_group_ingress_rule" "cloudflare_http_ipv4" {
+  for_each          = toset(var.cloudflare_ipv4)
+  security_group_id = aws_security_group.control_plane_security_group.id
+  from_port         = 80
+  to_port           = 80
+  ip_protocol =  "tcp"
+  cidr_ipv4        = each.key
+
+  tags = {
+    Name = "Cloudflare HTTP Inbound"
+  }
+}
+
+# resource "aws_vpc_security_group_ingress_rule" "cloudflare_https_ipv4" {
+#   for_each          = toset(var.cloudflare_ipv4)
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port         = 443
+#   to_port           = 443
+#   ip_protocol          = "tcp"
+#   cidr_ipv4        = [each.key]
+
+#   tags = {
+#     Name = "Cloudflare HTTPS Inbound"
+#   }
+# }
+
+# Create ingress rules for IPv6
+resource "aws_vpc_security_group_ingress_rule" "cloudflare_http_ipv6" {
+  for_each          = toset(var.cloudflare_ipv6)
+  security_group_id = aws_security_group.control_plane_security_group.id
+  from_port         = 80
+  to_port           = 80
+  ip_protocol          = "tcp"
+  cidr_ipv6 =   each.key
+
+  tags = {
+    Name = "Cloudflare HTTP Inbound"
+  }
+}
+
+# resource "aws_vpc_security_group_ingress_rule" "cloudflare_https_ipv6" {
+#   ip_protocol = "tcp"
+#   for_each          = toset(var.cloudflare_ipv6)
+#   security_group_id = aws_security_group.control_plane_security_group.id
+#   from_port         = 443
+#   to_port           = 443
+#   cidr_ipv6   = [each.key]
+
+#   tags = {
+#     Name = "Cloudflare HTTPS Inbound"
+#   }
 # }
