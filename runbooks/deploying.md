@@ -9,7 +9,6 @@
 - [Sealed Secrets](#sealed-secrets)
 - [Datasources](#create-our-data-sources)
   - [MySQL](#mysql)
-  - [Kafka](#kafka)
 - [Services](#deploy-the-services)
 - [Monitoring (Axiom - Optional)](#monitoring)
 
@@ -17,7 +16,7 @@
 
 Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API TODO consumer note are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
-For the datastores, we use [MySQL](https://www.mysql.com/) as our primary OLTP store and [Kafka](https://kafka.apache.org/) for asynchronous event processing. We use [Strimzi](https://strimzi.io/) to manage our Kafka cluster.
+For the datastores, we use [MySQL](https://www.mysql.com/) as our primary OLTP store and TODO plan to add redis in a bit for rate limiting on API Keys
 
 Plutomi has _not_ been tested to run on a VPS with networked storage like EC2 & EBS, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
 
@@ -264,53 +263,15 @@ Since other services depend on these, we will deploy them first.
 
 TBD - we are still deciding on how to handle this. We are considering using [Vitess](https://vitess.io/) to manage our MySQL cluster.
 
-### Kafka
-
-We use the [Strimzi operator](https://strimzi.io/) to manage our Kafka cluster.
-
-```bash
-# Create the namespace
-kubectl create namespace kafka
-
-# Install the Strimzi operator
-kubectl create -f 'https://strimzi.io/install/latest?namespace=default'
-
-
-# Apply the `Kafka` Cluster CR file - this might take a minute
-helm upgrade --install kafka-cluster-deploy . -f values/values.yaml -f values/kafka-cluster.yaml -f values/production.yaml
-
-
-# Create the topics
-helm upgrade --install kafka-topics-deploy . -f values/values.yaml -f values/kafka-topics.yaml -f values/production.yaml
-
-
-# Create a test producer pod
-kubectl run kafka-producer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --command -- /bin/sh -c "sleep infinity"
-
-
-# Exec into it and produce a message, you'll be greeted with a terminal just type and press enter
-kubectl exec -it kafka-producer -c kafka-producer -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test
-
-# Create a test consumer pod
-kubectl run kafka-consumer --image=quay.io/strimzi/kafka:0.43.0-kafka-3.8.0 --restart=Never --command -- /bin/sh -c "sleep infinity"
-
-# Exec into it and read from that topic, you should see the previous message
-kubectl exec -it kafka-consumer -c kafka-consumer -- bin/kafka-console-consumer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic test --from-beginning
-
-```
-
 ## Deploy the Services
 
-```bash
+````bash
 # Web
 helm upgrade --install web-deploy . -f values/values.yaml -f values/web.yaml -f values/production.yaml
 
 # API
 helm upgrade --install api-deploy . -f values/values.yaml  -f values/api.yaml -f values/production.yaml
 
-# Kafka UI
-helm upgrade --install kafka-ui-deploy . -f values/values.yaml -f values/kafka-ui.yaml -f values/production.yaml
-```
 
 ### Traefik
 
@@ -318,7 +279,7 @@ Now we need to allow traffic to our applications with Traefik ingress
 
 ```bash
 helm upgrade --install traefik-deploy . -f values/ingress.yaml
-```
+````
 
 ### Monitoring
 

@@ -23,23 +23,7 @@ Plutomi follows a modular monolith architecture, featuring a [Remix](https://rem
 
 ### Infrastructure and Third-Party Tools
 
-We run on Kubernetes ([K3S](https://k3s.io/)) and manage our infrastructure using [Terraform](https://terraform.com/). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
-
-### Event Streaming Pipeline
-
-Our event streaming pipeline, modeled after [Uber's architecture](https://www.uber.com/en-JP/blog/reliable-reprocessing/), is powered by Kafka. All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
-
-For each entity, we maintain a main Kafka topic along with corresponding retry and dead letter queue (DLQ) topics to handle failures gracefully:
-
-- **Main Topic**: The initial destination for all events.
-
-# TODO recommended self hosting specs? 3 nodes of 2vcpu, 8gb ram, 100gb ssd !
-
-- **Retry Topic**: Messages that fail processing in the main topic are rerouted here. Retries implement exponential backoff to prevent overwhelming the system.
-
-- **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Once underlying issues are resolved (e.g., code fixes, service restoration), the messages are reprocessed by moving them back into the retry topic in a controlled manner, ensuring they do not disrupt live traffic.
-
-For more details on the event streaming pipeline and to view the events, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
+We run on Kubernetes ([K3S](https://k3s.io/)) and manage our infrastructure using [Terraform](https://terraform.com/). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our `jobs` table in MySQL. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
 
 ## Running Locally
 
@@ -47,16 +31,15 @@ For more details on the event streaming pipeline and to view the events, refer t
 
 - [Node 20](https://nodejs.org/en/download)
 - [Rust](https://www.rust-lang.org/tools/install) TODO REMOVE
-- [cmake](https://cmake.org/download/) - for [rdkafka dependency](https://github.com/fede1024/rust-rdkafka?tab=readme-ov-file#installation) TODO REMOVE
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) - for deploying infrastructure
 
-To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MySQL, Kafka with the required topics, and KafkaUI on ports 3306, 9094, and 9000 respectively.
+To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MySQL on ports 3306, and you should be good to go!
 
-> Credentials for all datasources are `admin` and `password`.
+> Credentials for all datasources will be `admin` and `password`.
 
-Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script which will run migrations for MySQL (using the `migrator` service) and start the `api` and `web` services, along with the kafka consumers.
+Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script which will run migrations for MySQL (using the `migrator` service) and start the `api` and `web` services.
 
 ```bash
 $ cp .env.example .env
