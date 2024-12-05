@@ -20,7 +20,7 @@
     "compression": "^1.7.4",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.12",
-    "express": "^4.21.0",
+    "express": "^4.21.2",
     "isbot": "^4.1.0",
     "morgan": "^1.10.0",
     "react": "^18.2.0",
