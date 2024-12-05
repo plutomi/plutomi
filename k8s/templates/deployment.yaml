@@ -24,10 +24,14 @@ spec:
         {{- end }}
     spec:
       terminationGracePeriodSeconds: {{ .spec.template.spec.terminationGracePeriodSeconds }}
+      imagePullSecrets:
+        # TODO verify this in another PR
+        # # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+        # - name: ecr-credentials
       containers:
         {{- range .spec.template.spec.containers }}
         - name: {{ .name }}
-          image: {{ .image }}
+          image: "{{ .Values.AWS_ACCOUNT_ID }}.dkr.ecr.{{ .Values.AWS_REGION }}.amazonaws.com/{{ .image }}"
           imagePullPolicy: Always
           {{- if .resources }}
           resources:
@@ -63,6 +67,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          envFrom:
               # Add any shared secrets
             {{- range $key, $value := $.Values.shared.env }}
             - name: {{ $key }}

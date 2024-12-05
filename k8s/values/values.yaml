@@ -5,5 +5,3 @@ shared:
       value: development
     BASE_WEB_URL:
       value: https://plutomi.com
-    KAFKA_BROKERS_URL:
-      value: "kafka-kafka-bootstrap.default.svc.cluster.local:9092"

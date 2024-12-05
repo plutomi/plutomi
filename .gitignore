@@ -19,6 +19,7 @@ build/
 
 # misc
 .DS_Store
+**/.DS_Store
 *.pem
 
 # debug
@@ -50,6 +51,7 @@ cdk.context.json
 # Built directories
 dist/
 
+.github/.DS_Store
 
 # Ignore any files accidentally copied to local dir
 root@*/*
@@ -57,3 +59,20 @@ root@*/*
 
 # Ignore the temporary secret file
 secret.yaml
+
+
+
+# Ignore everything inside of terraform unless explicitly added
+/terraform/**
+
+
+!/terraform/main.tf
+!/terraform/secrets.example.tfvars
+!/terraform/secrets-staging.example.tfvars
+!/terraform/secrets-production.example.tfvars
+!/terraform/variables.tf
+!/terraform/providers.tf
+!/terraform/aws.tf
+!/terraform/cloudflare.tf
+!/terraform/axiom.tf
+!/terraform/hetzner.tf

@@ -1,6 +1,6 @@
 # Plutomi
 
-Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
+Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows.
 
 ![infra](./images/infra.png)
 
@@ -19,46 +19,34 @@ Plutomi allows you to create applications for anything from jobs to program enro
 
 ## Architecture
 
-Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in Rust. All core services rely on a single primary OLTP database, MySQL, which handles all operational data rather than splitting data between consumers or services. Blob storage is managed by [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) provides caching & rate limiting.
+Plutomi follows a modular monolith architecture, featuring a [Remix](https://remix.run/) frontend and an [Axum](https://github.com/tokio-rs/axum) API written in RustTODO REMOVE. All core services rely on a single primary OLTP database, MySQL, which handles all operational data rather than splitting data between consumers or services. Blob storage is managed by [TODO REMOVE](https://www.cloudflare.com/developer-platform/r2/), while features like search and analytics are powered by [OpenSearch](https://opensearch.org/) and [ClickHouse](https://clickhouse.com/). [Valkey](https://valkey.io/) provides caching & rate limiting.
 
 ### Infrastructure and Third-Party Tools
 
-We run on Kubernetes ([K3S](https://k3s.io/)) and manage our infrastructure using AWS CDK [for now](https://github.com/plutomi/plutomi/issues/994). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our Kafka topics. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
-
-### Event Streaming Pipeline
-
-Our event streaming pipeline, modeled after [Uber's architecture](https://www.uber.com/en-JP/blog/reliable-reprocessing/), is powered by Kafka. All event processing is managed by independent consumers written in Rust, which communicate with Kafka rather than directly with each other or the API.
-
-For each entity, we maintain a main Kafka topic along with corresponding retry and dead letter queue (DLQ) topics to handle failures gracefully:
-
-- **Main Topic**: The initial destination for all events.
-
-- **Retry Topic**: Messages that fail processing in the main topic are rerouted here. Retries implement exponential backoff to prevent overwhelming the system.
-
-- **Dead Letter Queue (DLQ)**: If a message fails after multiple retries, it's moved to the DLQ for further investigation. Once underlying issues are resolved (e.g., code fixes, service restoration), the messages are reprocessed by moving them back into the retry topic in a controlled manner, ensuring they do not disrupt live traffic.
-
-For more details on the event streaming pipeline and to view the events, refer to [EVENT_STREAMING_PIPELINE.md](./EVENT_STREAMING_PIPELINE.md).
+We run on Kubernetes ([K3S](https://k3s.io/)) and manage our infrastructure using [Terraform](https://terraform.com/). We use [SES](https://aws.amazon.com/ses/) to send emails and normalize those events into our `jobs` table in MySQL. Optional components include [Linkerd](https://linkerd.io/) for service mesh, [Axiom](https://axiom.co/) for logging, and [Cloudflare](https://www.cloudflare.com/) for CDN.
 
 ## Running Locally
 
 **Prerequisites:**
 
 - [Node 20](https://nodejs.org/en/download)
-- [Rust](https://www.rust-lang.org/tools/install)
-- [cmake](https://cmake.org/download/) - for [rdkafka dependency](https://github.com/fede1024/rust-rdkafka?tab=readme-ov-file#installation)
+- [Rust](https://www.rust-lang.org/tools/install) TODO REMOVE
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
-- [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and [SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
+- [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
+- [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) - for deploying infrastructure
 
-To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MySQL, Kafka with the required topics, and KafkaUI on ports 3306, 9092, and 9000 respectively.
+To setup your datasources, simply run `docker compose up -d` to run the [docker-compose.yaml](./docker-compose.yaml) file. This will start MySQL on ports 3306, and you should be good to go!
 
-> Credentials for all datasources are `admin` and `password`.
+> Credentials for all datasources will be `admin` and `password`.
 
-Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script which will run migrations for MySQL (using the `migrator` service) and start the `api` and `web` services, along with the kafka consumers.
+Then, simply copy the `.env.example` file to `.env` and execute the `run.sh` script which will run migrations for MySQL (using the `migrator` service) and start the `api` and `web` services.
 
 ```bash
 $ cp .env.example .env
 $ ./scripts/run.sh
 ```
+
+## TODO verify CF MAIL FROM works! Still validating
 
 You can also run any service individually:
 
@@ -70,8 +58,15 @@ $ ./scripts/run.sh --service <web|api|migrator|consumers>
 
 Plutomi is designed to be flexible and can be deployed anywhere you can get your hands on a server, we recommend at least 3. All Docker images are available on [Docker Hub](https://hub.docker.com/u/plutomi). Check out [DEPLOYING.md](DEPLOYING.md) for more information.
 
+> For managing infrastructure through Terraform we do store that in S3 with DynamoDB. note TOD
+
 ## Questions / Troubleshooting
 
 Some common issues are documented in [TROUBLESHOOTING.md](TROUBLESHOOTING.md). If you're wondering why certain architectural decisions were made, check the [decisions](./decisions/README.md) folder as you might find it in there.
 
 If you have other questions, feel free to open a discussion or issue, or contact me on [X @notjoswayski](https://twitter.com/notjoswayski) or via email at jose@plutomi.com.
+
+-- TODO see the terraform/ dir
+
+--
+TODO see runbooks for htings like how to add a new service etc.

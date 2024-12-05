@@ -1,0 +1,143 @@
+#### AWS
+
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  default     = "10.0.0.0/16"
+}
+
+variable "public_subnet_cidrs" {
+  type        = list(string)
+  description = "CIDR blocks for public subnets"
+  default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+}
+
+variable "private_subnet_cidrs" {
+  type        = list(string)
+  description = "CIDR blocks for private subnets"
+  default     = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+}
+
+
+variable "home_ip" {
+  description = "Your home IP address"
+}
+
+
+
+variable "environment" {
+  description = "The environment for the deployment"
+}
+variable "base_url" {
+  description = "The hostname of the base URL"
+}
+
+variable "contact_email" {
+  description = "The contact email for the domain"
+}
+
+variable "ses_configuration_set_name" {
+  description = "Name of the SES configuration set"
+  default     = "ses-configuration-set"
+}
+
+variable "ses_events_topic_name" {
+  description = "Name of the SNS topic for SES events"
+  default     = "ses-events-topic"
+}
+
+variable "ses_event_destination_name" {
+  description = "Name of the SES event destination"
+  default     = "ses-event-destination"
+}
+
+variable "ses_events_queue_name" {
+  description = "The name of the SQS events queue"
+  default     = "ses-events-queue"
+}
+
+variable "mail_from_subdomain" {
+  description = "The subdomain for the mail from domain"
+}
+
+variable "aws_region" {
+  description = "The AWS region - defaults us-east-1"
+  default     = "us-east-1"
+}
+
+variable "aws_account_id" { # TODO no longer needed?
+  description = "The AWS account ID - used for ECR"
+}
+
+variable "aws_profile" {
+  description = "The SSO profile for AWS"
+}
+
+variable "ecr_repositories" {
+  type    = list(string)               # TODO add consumer
+  default = ["web", "api", "migrator"] # plutomi-notifications-user-consumer etc.
+}
+
+
+#### Cloudflare
+
+variable "cloudflare_admin_token" {
+  # This should have Zone.Zone, Zone.DNS, and Account.WorkersR2Storage edit permissions
+  description = "The admin token for creating the bucket storage bucket and managing SES DNS records"
+  sensitive   = true
+}
+
+variable "cloudflare_zone_id" {
+  # For MX, SPF, and DKIM records
+  description = "The zone ID for Cloudflare"
+  sensitive   = true
+}
+
+
+
+
+
+
+# #### Axiom
+# Not currently used as this provider has a few issues
+variable "axiom_admin_api_token" {
+  description = "The admin API token for Axiom to create datasets and api keys"
+  sensitive   = true
+}
+
+
+variable "cloudflare_ipv4" {
+  // https://www.cloudflare.com/ips/
+  type = list(string)
+  default = [
+    "103.21.244.0/22",
+    "103.22.200.0/22",
+    "103.31.4.0/22",
+    "141.101.64.0/18",
+    "108.162.192.0/18",
+    "190.93.240.0/20",
+    "188.114.96.0/20",
+    "197.234.240.0/22",
+    "198.41.128.0/17",
+    "162.158.0.0/15",
+    "104.16.0.0/13",
+    "104.24.0.0/14",
+    "172.64.0.0/13",
+    "131.0.72.0/22",
+    "173.245.48.0/20"
+  ]
+}
+
+variable "cloudflare_ipv6" {
+  type = list(string)
+  default = [
+"2400:cb00::/32",
+"2606:4700::/32",
+"2803:f800::/32",
+"2405:b500::/32",
+"2405:8100::/32",
+"2a06:98c0::/29",
+"2c0f:f248::/32"
+  ]
+}
+
+

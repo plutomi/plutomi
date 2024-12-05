@@ -1,6 +1,4 @@
-networks:
-  kafka:
-    driver: bridge
+version: "3.8"
 
 services:
   mysql:
@@ -14,63 +12,11 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: password
     volumes:
-      - mysql_data:/data/mysql
+      - mysql_data:/var/lib/mysql
 
-  kafka:
-    image: bitnami/kafka:latest
-    networks:
-      - kafka
-    ports:
-      - "9094:9094"
-    environment:
-      - KAFKA_CFG_NODE_ID=0
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-    volumes:
-      - kafka_data:/data/kafka
 
-  topic-creator:
-    image: bitnami/kafka:latest
-    networks:
-      - kafka
-    depends_on:
-      - kafka
-    # MODIFY BELOW TO ADD NEW TOPICS
-    entrypoint: >
-      /bin/bash -c " \
-      echo 'Waiting for Kafka to be reachable...'; \
-      while ! /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list > /dev/null 2>&1; do \
-        echo 'Kafka is not reachable yet, retrying...'; \
-        sleep 5; \
-      done; \
-      echo 'Kafka is reachable, creating topics...'; \
-      topics=(auth auth-retry auth-dlq); \
-      for topic in $${topics[@]}; do \
-        /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $${topic} --if-not-exists --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 && echo \"Topic $${topic} created or already exists.\"; \
-      done; \
-      echo 'Successfully created all topics.' \
-      "
-    restart: "no"
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    networks:
-      - kafka
-    ports:
-      - "9000:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: "local"
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
-      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT"
-    depends_on:
-      - kafka
+
 volumes:
   mysql_data:
-    driver: local
-  kafka_data:
     driver: local

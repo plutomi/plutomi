@@ -1,3 +1,5 @@
+# ! TODO: this needs ifle paths updated to run from root!
+
 # Use a small base image and multi-stage builds to reduce final image size
 FROM node:20.2.0-alpine3.18 as base
 
@@ -34,9 +36,9 @@ EXPOSE 3000
 
 # Copy necessary files from previous stages
 COPY --from=prod-deps --chown=remix:remix /app/package*.json ./
-
 COPY --from=prod-deps --chown=remix:remix /app/node_modules ./node_modules
-COPY --from=builder --chown=remix:remix /app/dist ./dist
+COPY --from=builder --chown=remix:remix /app/build ./build
+COPY --from=builder --chown=remix:remix /app/server.mjs ./server.mjs
 COPY --from=builder --chown=remix:remix /app/public ./public
 
 # Adjust the ENTRYPOINT to run the compiled JavaScript file

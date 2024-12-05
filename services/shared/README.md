@@ -1,3 +1,3 @@
 ### Shared Utils
 
-Anything reused (mostly in the backend) with the `api` and `events-consumer` should go here. Things like generating IDs, logging, or any other utility functions.
+Anything used across the backend services like the API and consumers are stored here. Things like generating IDs, logging, and DB clients, or any other utility functions.
