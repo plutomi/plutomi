@@ -46,6 +46,8 @@ This is how we encrypt secrets in the cluster AND allows us to commit them into 
 
 Install Docker , enable it, and run it on boot:
 
+sudo yum update -y
+
 ```bash
 sudo yum install -y docker
 sudo systemctl start docker
@@ -61,14 +63,25 @@ sudo yum install -y amazon-ecr-credential-helper
 Edit the docker config file to use the credential helper:
 
 ```bash
-TODO update this
+mkdir -p ~/.docker
+vim ~/.docker/config.json
 ```
+
+# TODO this wasnt working at one point?
+
+{
+"credHelpers": {
+"YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com": "ecr-login"
+}
+}
+
+````
 
 Restart Docker:
 
 ```bash
 sudo systemctl restart docker
-```
+````
 
 ---
 
@@ -138,42 +151,6 @@ Install Helm
 ```bash
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
-
-## [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)
-
-<!-- # TODO remove
-
-Sealed secrets allow us to safely store encrypted secrets in the public repo.
-
-Install it:
-
-```bash
-helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
-
-helm install sealed-secrets -n kube-system --set-string fullnameOverride=sealed-secrets-controller sealed-secrets/sealed-secrets
-``` -->
-
-<!-- Copy the KUBECONFIG file to your local machine: -->
-<!--
-```bash
-scp -i ~/.ssh/YOUR_SSH_KEY root@YOUR_SERVER_IP:/etc/rancher/k3s/k3s.yaml ~/.kube/YOUR_CONFIG_NAME
-```
-
-Edit the file, and change the IP the master node that has the **sealed-secrets-controller** on it. You can find this node with:
-
-```bash
-kubectl get pods -o wide --all-namespaces | grep sealed-secrets-controller
-``` -->
-
-<!-- Then, ensure you're using it: -->
-
-<!-- ```bash
-export KUBECONFIG=~/.kube/YOUR_CONFIG_NAME
-``` -->
-
-<!-- If using Cloudflare for DNS, we need a token for cert-manager to use. We need to store it in a secret as well: -->
-
-<!-- Create other global secrets shared by most of the backend: -->
 
 <!-- # TODO MYSQL
 
