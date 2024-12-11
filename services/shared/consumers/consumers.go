@@ -2,6 +2,7 @@ package consumers
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go.uber.org/zap"
@@ -9,9 +10,8 @@ import (
 	ctx "plutomi/shared/context"
 )
 
-const WORK_DElAY = 1 * time.Second
 
-func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, handler func(*ctx.AppContext) (bool, error)) error {
+func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, handler func(*ctx.AppContext) (bool, error), workDelay time.Duration) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -23,6 +23,7 @@ func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, handler func(*ct
 			return nil
 		default:
 			// Perform the background work
+			appCtx.Logger.Info("Worker starting work")
 			retryASAP, err := handler(appCtx)
 			if err != nil {
 				appCtx.Logger.Error("Error performing work", zap.String("error", err.Error()))
@@ -31,7 +32,9 @@ func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, handler func(*ct
 			// If there's more work to do (or it failed), retry immediately
 			// Otherwise sleep for a bit before retrying
 			if !retryASAP {
-				time.Sleep(WORK_DElAY)
+				msg := fmt.Sprintf("Worker sleeping for %s", workDelay)
+				appCtx.Logger.Info(msg)
+				time.Sleep(workDelay)
 			}
 		}
 	}

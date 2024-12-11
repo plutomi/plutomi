@@ -31,7 +31,6 @@ func main() {
 	mysql := clients.GetMySQL(logger, name, env)
 	defer mysql.Close()
 
-
 	// Initialize the AppContext
 	ctx := &ctx.AppContext{
 		Env:         env,
@@ -60,6 +59,9 @@ func main() {
 		}
 	}()
 
+	// Start the worker
+	go pollAndProcessEvents(ctx)
+
 	// Block until a signal is received
 	<-stop
 
@@ -73,4 +75,54 @@ func main() {
 	}
 
 	ctx.Logger.Info("Server exited gracefully")
+}
+
+func pollAndProcessEvents(appCtx *ctx.AppContext) {
+	for {
+		events := fetchEvents(appCtx)
+		for _, event := range events {
+			handleEvent(appCtx, event)
+		}
+		time.Sleep(1 * time.Second) // Poll interval
+	}
+}
+
+func fetchEvents(appCtx *ctx.AppContext) []PlutomiEvent {
+	var events []Event
+	rows, err := appCtx.MySQL.Query("SELECT id, type, data FROM events WHERE processed = false LIMIT 10")
+	if err != nil {
+		appCtx.Logger.Error("Error fetching events", zap.Error(err))
+		return events
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var event Event
+		err := rows.Scan(&event.ID, &event.Type, &event.Data)
+		if err != nil {
+			appCtx.Logger.Error("Error scanning event", zap.Error(err))
+			continue
+		}
+		events = append(events, event)
+	}
+	return events
+}
+
+func handleEvent(appCtx *ctx.AppContext, event Event) {
+	switch event.Type {
+	case "order.created":
+		go sendEmail(appCtx, event)
+		go chargeCard(appCtx, event)
+	case "order.refunded":
+		go sendRefundEmail(appCtx, event)
+		go refundInStripe(appCtx, event)
+	default:
+		appCtx.Logger.Warn("Unknown event type", zap.String("type", event.Type))
+	}
+
+	// Mark event as processed
+	_, err := appCtx.MySQL.Exec("UPDATE events SET processed = true WHERE id = ?", event.ID)
+	if err != nil {
+		appCtx.Logger.Error("Failed to mark event as processed", zap.String("eventID", event.ID), zap.Error(err))
+	}
 }

@@ -15,6 +15,7 @@ import (
 	"go.uber.org/zap"
 
 	csm "plutomi/shared/consumers"
+	entities "plutomi/shared/entities"
 	utils "plutomi/shared/utils"
 )
 
@@ -50,7 +51,8 @@ func main() {
 
 	// Start the worker in a goroutine
 	go func() {
-		if err := csm.StartConsumer(workerCtx, appCtx, pollMySQL); err != nil {
+		err := csm.StartConsumer(workerCtx, appCtx, pollMySQL, 1 * time.Second)
+		if err != nil {
 			appCtx.Logger.Fatal("Worker encountered an error", zap.String("error", err.Error()))
 		}
 	}()
@@ -75,6 +77,7 @@ func pollMySQL(appCtx *ctx.AppContext) (retryASAP bool, err error) {
 	var tx *sqlx.Tx
 	tx, err = appCtx.MySQL.Beginx()
 	if err != nil {
+		appCtx.Logger.Error("Failed to start transaction", zap.String("error", err.Error()))
 		// If starting the transaction fails, return the error.
 		// Set retryASAP = true to retry immediately.
 		return true, err
@@ -100,24 +103,20 @@ func pollMySQL(appCtx *ctx.AppContext) (retryASAP bool, err error) {
 		}
 	}()
 
-	// Define a struct to hold task data.
-	type Task struct {
-		ID       int    `db:"id"`
-		TaskData string `db:"task_data"`
-	}
-
-	// Slice to hold up to two tasks.
-	var tasks []Task
+	var tasks []entities.InternalTask
 
 	// Query for up to two tasks with a status of 'pending' and lock the rows for update.
-	err = tx.Select(&tasks, "SELECT id, task_data FROM tasks WHERE status = 'pending' LIMIT 2 FOR UPDATE")
+	// The reason for selecting two tasks is to process one and check if there are more tasks to process.
+	err = tx.Select(&tasks, "SELECT id, type, data FROM internal_tasks WHERE status = 'pending' ORDER BY id ASC LIMIT 2 FOR UPDATE SKIP LOCKED")
 	if err != nil {
+		appCtx.Logger.Error("Failed to query for tasks", zap.String("error", err.Error()))
 		// Return any error encountered during the query.
 		// Set retryASAP = true to retry immediately.
 		return true, err
 	}
 
-	if err == sql.ErrNoRows {
+	if err == sql.ErrNoRows || len(tasks) == 0 {
+		appCtx.Logger.Info("No pending tasks found")
 		// No pending tasks found, return without processing.
 		// The deferred function will commit the transaction.
 		// Set retryASAP = false to indicate no immediate work to do.
@@ -128,20 +127,23 @@ func pollMySQL(appCtx *ctx.AppContext) (retryASAP bool, err error) {
 	task := tasks[0]
 
 	// Log that we're processing the task.
-	appCtx.Logger.Info("Processing task", zap.Int("id", task.ID), zap.String("task_data", task.TaskData))
+	appCtx.Logger.Info("Processing task", zap.Int("id", task.ID), zap.String("data", task.Data))
 
 	// TODO: Add task processing logic here.
-	// err = processTask(task.TaskData)
-	// if err != nil {
-	//     // Return error if task processing fails.
-	//     // Set retryASAP = true to retry immediately.
-	//     return true, err
-	// }
+	err = processTask(task, *appCtx)
+	if err != nil {
+		appCtx.Logger.Error("Failed to process task", zap.String("error", err.Error()))
+	    // Return error if task processing fails.
+	    // Set retryASAP = true to retry immediately.
+	    return true, err
+	}
 
 	// After processing the task, update its status to 'completed' in the database.
+	// TODO task_audit?
 	var result sql.Result
-	result, err = tx.Exec("UPDATE tasks SET status = 'completed' WHERE id = ?", task.ID)
+	result, err = tx.Exec("UPDATE internal_tasks SET status = 'completed' WHERE id = ?", task.ID)
 	if err != nil {
+		appCtx.Logger.Error("Failed to update task status", zap.String("error", err.Error()))
 		// Return the error if the update fails.
 		// Set retryASAP = true to retry immediately.
 		return true, err
@@ -151,6 +153,7 @@ func pollMySQL(appCtx *ctx.AppContext) (retryASAP bool, err error) {
 	var rowsAffected int64
 	rowsAffected, err = result.RowsAffected()
 	if err != nil {
+		appCtx.Logger.Error("Failed to get rows affected", zap.String("error", err.Error()))
 		// Return the error if unable to get rows affected.
 		// Set retryASAP = true to retry immediately.
 		return true, err
@@ -162,9 +165,24 @@ func pollMySQL(appCtx *ctx.AppContext) (retryASAP bool, err error) {
 
 	// If there are more tasks to process, return retryASAP = true to retry immediately and pick it up
 	if len(tasks) > 1 {
+		appCtx.Logger.Info("More tasks to process")
 		return true, nil
 	}
 
+
 	// Return that there is no more *immediate* work to be done until the next interval
 	return false, nil
+}
+
+func processTask(task entities.InternalTask, appCtx ctx.AppContext) error {
+
+	if task.Type == "poop" {
+		appCtx.Logger.Info("Processing task", zap.Int("id", task.ID), zap.String("data", task.Data))
+		return nil
+	}
+
+	appCtx.Logger.Error("Unknown task type", zap.String("type", task.Type))
+
+
+	return nil
 }
