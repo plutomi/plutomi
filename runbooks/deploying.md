@@ -87,6 +87,8 @@ sudo systemctl restart docker
 
 Install K3S with that token
 
+# TODO switch to root user!
+
 ```bash
 # Create a K3S_TOKEN secret
 
