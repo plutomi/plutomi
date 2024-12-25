@@ -15,7 +15,7 @@
 
 Plutomi runs on Kubernetes, specifically [K3S](https://k3s.io). The web and API TODO consumer note are both dockerized and the images can be found on [Docker Hub](https://hub.docker.com/u/plutomi). We will do our best to keep **x86** and **ARM** versions up to date but x86 will take priority this is the only architecture we have available in the US at this time.
 
-For the datastores, we use [MySQL](https://www.mysql.com/) as our primary OLTP store and TODO plan to add redis in a bit for rate limiting on API Keys
+For the datastores, we use [MySQL](https://www.mysql.com/) as our primary OLTP store.
 
 Plutomi has _not_ been tested to run on a VPS with networked storage like EC2 & EBS, although this shouldn't be a blocker as K3S can and does work with it. We run on multiple nodes with local SSD storage on Hetzner. If you'd like some free credits to get started with Hetzner, but can be run on just one node without issue. Please use [our referral link](https://hetzner.cloud/?ref=7BufEUOAUm8x) if you'd like some free credits :D
 

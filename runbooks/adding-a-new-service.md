@@ -6,8 +6,6 @@ Add new repo to the `ecr_repositories` variable
 
 Create new folder structure in services/
 
-if in rust, add to rust analyzer TODO REMOVE
-
 update any secrets in secrets manager
 
 Update run.sh script
