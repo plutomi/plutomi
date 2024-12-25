@@ -2,21 +2,22 @@ package routes
 
 import (
 	"net/http"
-	meta "plutomi/api/handlers/meta"
-	"plutomi/api/handlers/users"
-	ctx "plutomi/shared/context"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
+
+	meta "plutomi/api/handlers/meta"
+	users "plutomi/api/handlers/users"
+	ctx "plutomi/shared/context"
 )
 
-func SetupRoutes(ctx *ctx.AppContext) *chi.Mux {
-	router := chi.NewRouter()
+func SetupRoutes(appCtx *ctx.AppContext) *chi.Mux {
+	r := chi.NewRouter()
 
-	// Middleware setup
-	router.Use(
+	// Setup common middlewares
+	r.Use(
 		middleware.AllowContentType("application/json"),
 		middleware.CleanPath,
 		middleware.RequestID,
@@ -26,43 +27,45 @@ func SetupRoutes(ctx *ctx.AppContext) *chi.Mux {
 		render.SetContentType(render.ContentTypeJSON),
 	)
 
-	// Internal k8s health check
-	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		meta.HealthCheck(w, r, ctx)
+	// Top-level health check (k8s internal)
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		meta.HealthCheck(w, r, appCtx)
 	})
 
-	// Public health check
-	router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
-		meta.HealthCheck(w, r, ctx)
+	// API routes
+	r.Route("/api", func(api chi.Router) {
+		api.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+			meta.HealthCheck(w, r, appCtx)
+		})
+
+		// API docs route
+		api.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			meta.DocsRoot(w, r, appCtx)
+		})
+		api.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
+			meta.DocsRoot(w, r, appCtx)
+		})
+
+		// Users route
+		api.Post("/users", func(w http.ResponseWriter, r *http.Request) {
+			users.CreateUsers(w, r, appCtx)
+		})
 	})
 
-	// Show docs
-	router.Get("/api", func(w http.ResponseWriter, r *http.Request) {
-		meta.DocsRoot(w, r, ctx)
-	})
-	router.Get("/api/", func(w http.ResponseWriter, r *http.Request) {
-		meta.DocsRoot(w, r, ctx)
-	})
-	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
-		meta.DocsRoot(w, r, ctx)
-	})
-	router.Get("/docs/", func(w http.ResponseWriter, r *http.Request) {
-		meta.DocsRoot(w, r, ctx)
-	})
-
-	// Test route
-	router.Post("/api/users", func(w http.ResponseWriter, r *http.Request) {
-		users.CreateUsers(w, r, ctx)
+	// Docs routes
+	r.Route("/docs", func(docs chi.Router) {
+		docs.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			meta.DocsRoot(w, r, appCtx)
+		})
 	})
 
 	// Catch all
-	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		meta.NotFound(w, r, ctx)
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		meta.NotFound(w, r, appCtx)
+	})
+	r.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
+		meta.MethodNotAllowed(w, r, appCtx)
 	})
 
-	router.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
-		meta.MethodNotAllowed(w, r, ctx)
-	})
-
-	return router
+	return r
 }

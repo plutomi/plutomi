@@ -46,6 +46,7 @@ rust_warning() {
 
 trap cleanup SIGINT SIGTERM
 
+# TODO Update
 run_api() {
     cd "$PROJECT_ROOT/services/api"
     echo -e "\nStarting API..."

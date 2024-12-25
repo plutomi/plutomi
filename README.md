@@ -46,8 +46,7 @@ For more details on the event streaming pipeline and to view the events, refer t
 **Prerequisites:**
 
 - [Node 20](https://nodejs.org/en/download)
-- [Rust](https://www.rust-lang.org/tools/install) TODO REMOVE
-- [cmake](https://cmake.org/download/) - for [rdkafka dependency](https://github.com/fede1024/rust-rdkafka?tab=readme-ov-file#installation)
+- [Go](https://go.dev/dl/)
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS SSO](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 - [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) - for deploying infrastructure
