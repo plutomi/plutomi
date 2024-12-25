@@ -12,11 +12,21 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: password
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/data/mysql
 
-
-
+  nats:
+    image: nats:2.9.21-alpine
+    container_name: nats
+    # Enable JetStream and store data under /data (which we mount below).
+    command: ["-js", "--store_dir=/data"]
+    ports:
+      - "4222:4222" # NATS client connections
+      - "8222:8222" # HTTP monitoring
+    volumes:
+      - nats_data:/data
 
 volumes:
   mysql_data:
+    driver: local
+  nats_data:
     driver: local

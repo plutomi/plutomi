@@ -10,7 +10,6 @@ import (
 	ctx "plutomi/shared/context"
 )
 
-
 func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, handler func(*ctx.AppContext) (bool, error), workDelay time.Duration) error {
 	for {
 		select {
@@ -23,7 +22,7 @@ func StartConsumer(ctx context.Context, appCtx *ctx.AppContext, handler func(*ct
 			return nil
 		default:
 			// Perform the background work
-			appCtx.Logger.Info("Worker starting work")
+			appCtx.Logger.Info("Worker starting...")
 			retryASAP, err := handler(appCtx)
 			if err != nil {
 				appCtx.Logger.Error("Error performing work", zap.String("error", err.Error()))

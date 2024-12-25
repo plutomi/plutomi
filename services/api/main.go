@@ -31,12 +31,17 @@ func main() {
 	mysql := clients.GetMySQL(logger, name, env)
 	defer mysql.Close()
 
+	// Initialize the NATS client
+	js, natsConn := clients.GetNATS(logger, name, env)
+	defer natsConn.Drain()
+
 	// Initialize the AppContext
 	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
 		ServiceName: name,
 		MySQL:       mysql,
+		JetStream:   js,
 	}
 
 	// Setup routes
