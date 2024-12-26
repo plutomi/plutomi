@@ -31,6 +31,9 @@ func SetupRoutes(appCtx *ctx.AppContext) *chi.Mux {
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		meta.HealthCheck(w, r, appCtx)
 	})
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		meta.HealthCheck(w, r, appCtx)
+	})
 
 	// API routes
 	r.Route("/api", func(api chi.Router) {

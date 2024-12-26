@@ -12,7 +12,6 @@ import (
 type PlutomiHealthCheckResponse struct {
 	types.BasePlutomiResponse
 	MySQL bool `json:"mysql"`
-	Redis bool `json:"redis"`
 }
 
 func HealthCheck(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
@@ -21,7 +20,6 @@ func HealthCheck(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
 	res := PlutomiHealthCheckResponse{
 		BasePlutomiResponse: types.BasePlutomiResponse{Message: "Saul Goodman", DocsUrl: "https://plutomi.com/docs/api"},
 		MySQL:               ctx.MySQL.Ping() == nil,
-		// TODO redis
 	}
 
 	render.JSON(w, r, res)

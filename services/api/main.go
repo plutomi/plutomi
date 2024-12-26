@@ -31,17 +31,12 @@ func main() {
 	mysql := clients.GetMySQL(logger, name, env)
 	defer mysql.Close()
 
-	// Initialize the NATS client
-	js, natsConn := clients.GetNATS(logger, name, env)
-	defer natsConn.Drain()
-
 	// Initialize the AppContext
 	ctx := &ctx.AppContext{
 		Env:         env,
 		Logger:      logger,
 		ServiceName: name,
 		MySQL:       mysql,
-		JetStream:   js,
 	}
 
 	// Setup routes
@@ -69,13 +64,9 @@ func main() {
 		}
 	}()
 
-	// Start the worker
-	// go pollAndProcessEvents(ctx)
-
 	// Block until a signal is received
 	<-stop
 
-	// Gracefully shut down the server
 	ctx.Logger.Info("Shutting down server...")
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

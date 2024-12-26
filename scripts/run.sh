@@ -27,7 +27,6 @@ cleanup() {
     [ ! -z "$API_PID" ] && kill $API_PID
     [ ! -z "$WEB_PID" ] && kill $WEB_PID
     [ ! -z "$MIGRATOR_PID" ] && kill $MIGRATOR_PID
-    [ ! -z "$CONSUMERS_PID" ] && kill $CONSUMERS_PID
     [ ! -z "$WARNING_PID" ] && kill $WARNING_PID
     echo "Done."
 }
@@ -39,21 +38,14 @@ print_error_and_usage() {
     exit 1
 }
 
-rust_warning() {
-    local service_name=$1
-    echo -e "${BIYELLOW}This $service_name might take a minute to start but once it's up you won't have to wait so long due to hot reloading!${NC}"
-}
 
 trap cleanup SIGINT SIGTERM
 
-# TODO Update
 run_api() {
     cd "$PROJECT_ROOT/services/api"
     echo -e "\nStarting API..."
-    rust_warning "API" &
     WARNING_PID=$!
-    cargo install cargo-watch
-    cargo watch -x run &
+    go run main.go
     API_PID=$!
 }
 
@@ -63,16 +55,6 @@ run_migrator() {
     WARNING_PID=$!
     cargo run &
     MIGRATOR_PID=$!
-}
-
-run_consumers() {
-    cd "$PROJECT_ROOT/services/consumers/notifications-auth"
-    echo -e "\nStarting notifications-auth-consumer..."
-    rust_warning "notifications-auth-consumer" &
-    WARNING_PID=$!
-    cargo install cargo-watch
-    cargo watch -x run &
-    CONSUMERS_PID=$!
 }
 
 run_web() {

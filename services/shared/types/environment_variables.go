@@ -8,5 +8,4 @@ type EnvironmentVariables struct {
 	AxiomDataset string `json:"axiom_dataset"`
 	AxiomToken   string `json:"axiom_token"`
 	AxiomOrgId   string `json:"axiom_org_id"`
-	NatsUrl      string `json:"nats_url"`
 }
