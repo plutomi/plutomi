@@ -1,45 +1,37 @@
-# ! TODO: this needs ifle paths updated to run from root!
+# Use an official Node.js runtime as a parent image
+FROM node:latest AS builder
 
-# Use a small base image and multi-stage builds to reduce final image size
-FROM node:20.2.0-alpine3.18 as base
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
 
-# Install dependencies and build tools
-FROM base as builder
+# Set the working directory
 WORKDIR /app
+
+# Copy package.json and lock file
 COPY package*.json ./
-# Install all dependencies, including devDependencies for building
-RUN npm ci
 
+# Install dependencies
+RUN npm ci --omit=dev
+
+# Copy the rest of the app’s source code
 COPY . .
-# Compile TypeScript to JavaScript
+
+# Build the Next.js app
 RUN npm run build
-# Remove development dependencies to make the next steps faster
-RUN npm prune --production
 
-# Prepare production dependencies in a separate stage to minimize image size
-FROM base as prod-deps
+# Production image
+FROM node:latest AS runner
+
 WORKDIR /app
+
+# Copy the built files from the builder stage
 COPY --from=builder /app/package*.json ./
-# Install only production dependencies
-RUN npm ci --production
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
 
-# Final stage for the runtime environment
-FROM base as runner
-WORKDIR /app
-
-# Setup a non-root user for security purposes
-RUN addgroup --system --gid 1001 remix && \
-    adduser --system --uid 1001 remix
-USER remix
-
+# Expose the port
 EXPOSE 3000
 
-# Copy necessary files from previous stages
-COPY --from=prod-deps --chown=remix:remix /app/package*.json ./
-COPY --from=prod-deps --chown=remix:remix /app/node_modules ./node_modules
-COPY --from=builder --chown=remix:remix /app/build ./build
-COPY --from=builder --chown=remix:remix /app/server.mjs ./server.mjs
-COPY --from=builder --chown=remix:remix /app/public ./public
-
-# Adjust the ENTRYPOINT to run the compiled JavaScript file
-ENTRYPOINT ["npm", "run", "start"]
+# Start the server
+CMD ["npm", "start"]

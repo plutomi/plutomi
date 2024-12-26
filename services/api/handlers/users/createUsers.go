@@ -35,10 +35,8 @@ type PlutomiUserCreatedResponse struct {
 	User    DBUser `json:"user"`
 }
 
-func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
+func CreateUsers(w http.ResponseWriter, r *http.Request, appCtx *ctx.AppContext) {
 	var req CreateUserRequest
-
-	// Parse JSON from request body
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -50,18 +48,19 @@ func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
 		return
 	}
 
-	ctx.Logger.Info("Creating user", zap.String("email", req.Email), zap.String("first_name", req.FirstName), zap.String("last_name", req.LastName))
+	appCtx.Logger.Info("Creating user", zap.String("email", req.Email), zap.String("first_name", req.FirstName), zap.String("last_name", req.LastName))
 
 	// Prepare statement for inserting user into database
-	insertedUser, err := ctx.MySQL.Exec("INSERT INTO users (first_name, last_name, email, public_id, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(3), NOW(3))",
+	insertedUser, err := appCtx.MySQL.Exec("INSERT INTO users (first_name, last_name, email, public_id, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(3), NOW(3))",
 		req.FirstName, req.LastName, req.Email, utils.GenerateID(12))
+
 	if err != nil {
 		render.Status(r, http.StatusInternalServerError)
 		res := types.BasePlutomiResponse{
 			Message: "Failed to insert",
 			DocsUrl: "https://plutomi.com/docs/api/users/create",
 		}
-		ctx.Logger.Error("Failed to insert user", zap.Error(err))
+		appCtx.Logger.Error("Failed to insert user", zap.Error(err))
 		render.JSON(w, r, res)
 		return
 	}
@@ -77,35 +76,26 @@ func CreateUsers(w http.ResponseWriter, r *http.Request, ctx *ctx.AppContext) {
 		render.JSON(w, r, res)
 		return
 	}
-	ctx.Logger.Info("User created", zap.Int64("id", lastInsertID))
 
-	// idString := strconv.FormatInt(lastInsertID, 10)
-
-
-	// Retrieve the user from the database
-
-	ctx.Logger.Info("getting user from db again", zap.Int64("id", lastInsertID))
+	appCtx.Logger.Info("Getting user from db using lastInsertId", zap.Int64("id", lastInsertID))
 
 	var user DBUser
-	usrErr := ctx.MySQL.Get(&user, "SELECT * FROM users WHERE id = ?", lastInsertID)
+	usrErr := appCtx.MySQL.Get(&user, "SELECT * FROM users WHERE id = ?", lastInsertID)
 	if usrErr != nil {
 		render.Status(r, http.StatusInternalServerError)
-
+		msg := "An error occurred getting user after insert"
 		res := PlutomiUserCreatedResponse{
-			Message: "An error ocurred getting user after insert",
+			Message: msg,
 			User:    user,
 		}
 
-		ctx.Logger.Error("Failed to get user after insert", zap.Error(usrErr))
+		appCtx.Logger.Error(msg, zap.Error(usrErr))
 		render.JSON(w, r, res)
 		return
 	}
-	ctx.Logger.Info("Retrieved user, inserting into MySQL", zap.Int64("id", lastInsertID))
 
-	// TODO write into MySQL
+	appCtx.Logger.Info("Retrieved user with ID", zap.Int64("id", lastInsertID))
 
-
-	//Prepare the response
 	res := PlutomiUserCreatedResponse{
 		Message: "User created successfully",
 		User:    user,

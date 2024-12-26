@@ -37,6 +37,7 @@
     "consts",
     "Cooldown",
     "cpus",
+    "ctypes",
     "datapoints",
     "datasources",
     "datetime",

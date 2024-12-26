@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"plutomi/api/routes"
-	ctx "plutomi/shared/context"
+	appCtx "plutomi/shared/context"
 	"syscall"
 	"time"
 
@@ -32,7 +32,7 @@ func main() {
 	defer mysql.Close()
 
 	// Initialize the AppContext
-	ctx := &ctx.AppContext{
+	appCtx := &appCtx.AppContext{
 		Env:         env,
 		Logger:      logger,
 		ServiceName: name,
@@ -40,11 +40,11 @@ func main() {
 	}
 
 	// Setup routes
-	routes := routes.SetupRoutes(ctx)
+	routes := routes.SetupRoutes(appCtx)
 
 	// Create an HTTP server with a context
 	server := &http.Server{
-		Addr:    ":" + ctx.Env.Port,
+		Addr:    ":" + appCtx.Env.Port,
 		Handler: routes,
 	}
 
@@ -54,26 +54,29 @@ func main() {
 
 	// Run the server in a goroutine
 	go func() {
-		ctx.Logger.Info("Starting server...", zap.String("port", ctx.Env.Port))
-
+		appCtx.Logger.Info("Starting server...", zap.String("port", appCtx.Env.Port))
 		err := server.ListenAndServe()
-
-		if err != nil && err != http.ErrServerClosed {
-			ctx.Logger.Fatal("Server failed to start", zap.String("error", err.Error()))
-
+		if err != nil {
+			if err == http.ErrServerClosed {
+				appCtx.Logger.Info("Server exited gracefully")
+				return
+			}
+			appCtx.Logger.Fatal("Server failed to start", zap.String("error", err.Error()))
 		}
 	}()
 
 	// Block until a signal is received
 	<-stop
 
-	ctx.Logger.Info("Shutting down server...")
+	appCtx.Logger.Info("Shutting down server...")
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := server.Shutdown(shutdownCtx); err != nil {
-		ctx.Logger.Fatal("Server forced to shutdown", zap.String("error", err.Error()))
+	err := server.Shutdown(shutdownCtx)
+
+	if err != nil {
+		appCtx.Logger.Fatal("Server forced to shutdown", zap.String("error", err.Error()))
 	}
 
-	ctx.Logger.Info("Server exited gracefully")
+	appCtx.Logger.Info("Server exited gracefully.")
 }
