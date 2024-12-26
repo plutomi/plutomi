@@ -1,1 +1,0 @@
-Update to have tf logo, ecr, s3, dynamo etc.

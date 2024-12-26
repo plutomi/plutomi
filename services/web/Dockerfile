@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:latest AS builder
+FROM node:22-alpine AS builder
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 
 # Production image
-FROM node:latest AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
