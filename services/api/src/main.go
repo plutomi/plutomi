@@ -21,4 +21,6 @@ func main() {
 		fmt.Println("User is suspended.")
 		return
 	}
+
+	user.Suspended
 }
