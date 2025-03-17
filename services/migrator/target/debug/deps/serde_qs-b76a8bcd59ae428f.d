@@ -1,0 +1,10 @@
+/Users/josevalerio/Documents/GitHub/plutomi/services/migrator/target/debug/deps/libserde_qs-b76a8bcd59ae428f.rmeta: /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/lib.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/de/mod.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/de/parse.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/error.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/ser.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/utils.rs
+
+/Users/josevalerio/Documents/GitHub/plutomi/services/migrator/target/debug/deps/serde_qs-b76a8bcd59ae428f.d: /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/lib.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/de/mod.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/de/parse.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/error.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/ser.rs /Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/utils.rs
+
+/Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/lib.rs:
+/Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/de/mod.rs:
+/Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/de/parse.rs:
+/Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/error.rs:
+/Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/ser.rs:
+/Users/josevalerio/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.13.0/src/utils.rs:
